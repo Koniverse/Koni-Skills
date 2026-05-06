@@ -214,6 +214,178 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ---
 
+## ARCHITECTURE.md — System Architecture
+
+**Use when**: User asks to create/update system architecture, document tech stack, record component architecture, or after BMad produces architecture artifacts that need standardization.
+
+**File location**: `docs/ARCHITECTURE.md`
+
+This is a structured reference document — updated in-place unlike CONTEXT.md which is append-only. Individual architecture decisions are recorded in CONTEXT.md; ARCHITECTURE.md is the synthesized view.
+
+```markdown
+# ARCHITECTURE — <Project Name>
+
+> Last updated: YYYY-MM-DD (vX.Y.Z)
+> Maintainer: <team or lead>
+
+## System overview
+
+<3-5 sentence executive summary: what the system does at a high level,
+the primary architectural style (monolith, microservices, serverless, etc.),
+and the key architectural drivers (scale, latency, compliance, cost).>
+
+## Tech stack
+
+| Layer | Technology | Version | Rationale |
+|-------|-----------|---------|-----------|
+| Runtime | Node.js / Python / Go | X.Y | <one sentence why> |
+| Framework | Next.js / FastAPI / etc. | X.Y | <one sentence why> |
+| Database | PostgreSQL / etc. | X.Y | <one sentence why> |
+| Cache | Redis / etc. | X.Y | <one sentence why> |
+| Queue | — | — | — |
+| Hosting | Vercel / Fly.io / AWS | — | <one sentence why> |
+| Auth | NextAuth.js / Clerk / etc. | X.Y | <one sentence why> |
+| Monitoring | Sentry / Datadog / etc. | — | <one sentence why> |
+
+## Component architecture
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Web App    │────▶│   API Layer  │────▶│   Database   │
+│  (Next.js)   │     │  (tRPC/REST) │     │ (PostgreSQL) │
+└──────────────┘     └──────────────┘     └──────────────┘
+       │                     │
+       ▼                     ▼
+┌──────────────┐     ┌──────────────┐
+│    Auth      │     │    Queue     │
+│ (NextAuth)   │     │  (optional)  │
+└──────────────┘     └──────────────┘
+```
+
+| Component | Responsibility | Tech | Key files |
+|-----------|---------------|------|-----------|
+| Web App | UI rendering, client state, routing | Next.js 14 (App Router) | `app/`, `components/` |
+| API Layer | Business logic, validation, DB queries | tRPC / REST | `server/api/`, `app/api/` |
+| Database | Persistent storage, migrations | PostgreSQL + Prisma | `prisma/schema.prisma` |
+| Auth | Session management, OAuth flows | NextAuth.js | `server/auth.ts` |
+
+## Data architecture
+
+### Core models
+
+| Model | Table | Key fields | Indexes |
+|-------|-------|------------|---------|
+| User | `users` | id, email, name, created_at | `email (unique)` |
+| Task | `tasks` | id, user_id, title, status, priority, created_at | `user_id`, `status` |
+
+### Data flow
+
+```
+Client (browser)
+  │  POST /api/tasks  { title, description }
+  ▼
+API Route (Next.js Route Handler)
+  │  validate input (zod)
+  │  check auth (getServerSession)
+  ▼
+Prisma Client
+  │  INSERT INTO tasks ...
+  ▼
+PostgreSQL
+  │  returns new row
+  ▼
+API Route
+  │  return JSON response
+  ▼
+Client (optimistic update + revalidate)
+```
+
+## API architecture
+
+| Endpoint | Method | Auth | Purpose |
+|----------|--------|------|---------|
+| `/api/tasks` | GET | Required | List user's tasks |
+| `/api/tasks` | POST | Required | Create task |
+| `/api/tasks/[id]` | PATCH | Required | Update task |
+| `/api/tasks/[id]` | DELETE | Required | Delete task |
+
+### Error response format
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Title is required",
+    "field": "title"
+  }
+}
+```
+
+## Security architecture
+
+| Concern | Approach | Detail |
+|---------|----------|--------|
+| Authentication | NextAuth.js JWT sessions | HttpOnly cookie, 30-day expiry |
+| Authorization | Row-level ownership | All queries filter by `user_id = session.user.id` |
+| Input validation | Zod schemas | Every API input validated at the boundary |
+| CSRF | NextAuth built-in | Double-submit cookie pattern |
+| Secrets | Environment variables | `.env.local` (never committed), validated at startup |
+
+## Deployment architecture
+
+```
+GitHub (main branch)
+  │  git push
+  ▼
+GitHub Actions (CI)
+  │  lint → typecheck → test → build
+  ▼
+Vercel (hosting)
+  ├── Production (main)     → app.koni.app
+  └── Preview (PR branches) → *.vercel.app
+  │
+  ▼
+Supabase (PostgreSQL)
+  └── Production database
+```
+
+| Environment | URL | Branch | DB |
+|-------------|-----|--------|----|
+| Production | app.koni.app | main | Supabase prod |
+| Preview | `<pr>.vercel.app` | feature/* | Supabase staging |
+
+## Integration architecture
+
+| External service | Purpose | Auth method | Fallback |
+|-----------------|---------|-------------|----------|
+| <Service name> | <what it does> | API key / OAuth | <graceful degradation> |
+
+## Architecture decision records
+
+Individual decisions that shaped this architecture are recorded in [CONTEXT.md](CONTEXT.md):
+
+| Decision | Topic | Date | Version |
+|----------|-------|------|---------|
+| [D1](CONTEXT.md) | <title> | YYYY-MM-DD | vX.Y.Z |
+| [D2](CONTEXT.md) | <title> | YYYY-MM-DD | vX.Y.Z |
+
+Link new architecture decisions from CONTEXT.md here as they are recorded.
+
+## Open architecture questions
+
+- [ ] <unresolved architecture question>
+- [ ] <tradeoff being evaluated>
+```
+
+### Updating ARCHITECTURE.md
+
+- **When**: After any architecture decision (CONTEXT.md entry), tech stack change, or new integration.
+- **How**: Edit the relevant section in-place. Update the `Last updated` date and version.
+- **Cross-reference**: Always link the relevant CONTEXT.md entry in the ADR table.
+- **Omit empty sections**: If a section (e.g., Queue, Integration) has no content, remove it. Add it back when needed.
+
+---
+
 ## DESIGN Spec for a Story
 
 **Use when**: A story has significant visual complexity that warrants a design spec.

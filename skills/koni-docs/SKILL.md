@@ -2,12 +2,12 @@
 name: koni-docs
 description: >
   Manages all documentation artifacts in the koni-docs framework: SETUP,
-  PRD, LESSONS, CHANGELOG, CONTEXT, DESIGN, and Sprints (epics / stories /
-  sprint files / STATUS). Use when the user asks to update docs, create a
-  story, record a decision, log a lesson, write a changelog entry, run the
-  pre-commit doc checklist, or when any planning tool (BMad, GStack,
-  Superpowers) produces artifacts that need standardization into the docs/
-  structure.
+  PRD, ARCHITECTURE, LESSONS, CHANGELOG, CONTEXT, DESIGN, and Sprints (epics /
+  stories / sprint files / STATUS). Use when the user asks to update docs,
+  create a story, record a decision, log a lesson, write a changelog entry,
+  document system architecture, run the pre-commit doc checklist, or when any
+  planning tool (BMad, GStack, Superpowers) produces artifacts that need
+  standardization into the docs/ structure.
 ---
 # koni-docs — Documentation Management
 
@@ -23,6 +23,7 @@ docs/
 ├── README.md          ← doc hub + pre-commit checklist
 ├── SETUP.md           ← dev environment (clone → npm run dev)
 ├── PRD.md             ← product spec: Epics / User Stories / Tasks
+├── ARCHITECTURE.md    ← system architecture: tech stack, components, data, API, infra
 ├── CHANGELOG.md       ← full release history (every version)
 ├── CONTEXT.md         ← decision log (append-only, never rewrite)
 ├── LESSONS.md         ← recurring traps + patterns
@@ -176,6 +177,7 @@ koni-docs:
 | "revise / correct decision D`<N>`"            | Append revision entry, never edit original (RULE-7)                                       | `templates.md` §Revision         |
 | "add a lesson" / "log a lesson"                 | Find highest entry number, use LESSONS template                                           | `templates.md` §LESSONS          |
 | "write changelog for vX.Y.Z"                    | Use CHANGELOG template, bump VERSION simultaneously                                       | `templates.md` §CHANGELOG        |
+| "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                  | `templates.md` §ARCHITECTURE     |
 | "update PRD for [feature]"                      | Update both FR table row AND §7 story entry                                              | `templates.md` §PRD              |
 | "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates.md` §DESIGN           |
 | "create an epic"                                | Use epic template                                                                         | `templates.md` §Epic             |
