@@ -24,13 +24,17 @@ backlog → ready → in-progress → review → done
 
 ## Scripts reference
 
+Scripts are bundled with the koni-docs skill in `skills/koni-docs/scripts/`. Execute them directly from the skill path — no copying needed.
+
 | Command | What it does | When to run |
 |---|---|---|
-| `npm run agile:status` | Regenerate `STATUS.md` from all story frontmatter | Before every commit that changes story status |
-| `node scripts/agile-sync-up.mjs` | Propagate AC from story → EPIC + PRD §7 | After story status changes |
-| `node scripts/agile-inject-tasks.mjs` | Regenerate Tasks from AC (AC is canonical) | When AC changes |
-| `node scripts/agile-backfill-fields.mjs` | Backfill `assignee`/`commit`/`sprint` on existing stories | When setting up sprint system in existing project |
-| `node scripts/changelog-backfill-commits.mjs` | Backfill missing commit SHAs in CHANGELOG | When SHAs are missing |
+| `node skills/koni-docs/scripts/generate-status.mjs --docs-path Docs/` | Regenerate `STATUS.md` from all story frontmatter | Before every commit that changes story status |
+| `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path Docs/` | Propagate story status upward — updates EPIC table, PRD §7, PRD §4 FR row, and sprint scope | After story status changes |
+| `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path Docs/ --story US-X.Y` | Regenerate Tasks section from Acceptance Criteria (AC is canonical) | When AC changes |
+| `node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path Docs/` | Backfill `assignee`/`commit`/`sprint` on existing stories | When setting up sprint system in existing project |
+| `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path Docs/` | Backfill "pending" commit SHAs in CHANGELOG with real SHAs from git | When SHAs are missing |
+
+All scripts accept `--dry-run` for safe preview mode.
 
 **Always run `npm run agile:status` before committing any story status change.**
 STATUS.md is auto-generated — never hand-edit it (RULE-5).

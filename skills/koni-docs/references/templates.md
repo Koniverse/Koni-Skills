@@ -285,6 +285,24 @@ context that informs the design. Link to CONTEXT.md entries if applicable.>
 - [ ] TASK-X.Y.1 — <first concrete sub-task with file path if applicable>
 - [ ] TASK-X.Y.2 — <second>
 
+## Changelog entry
+
+> This is the exact text that goes into CHANGELOG.md when the story ships.
+> Draft it when the story nears completion. On ship, copy this into CHANGELOG.md
+> under the new version header (see templates.md §CHANGELOG entry).
+
+### Added
+- <Feature / component added>
+
+### Changed
+- <Behavior or API changed — old vs new>
+
+### Fixed
+- <Bug description + root cause>
+
+### Removed
+- <What was dropped and why>
+
 ## Implementation notes
 
 <Workarounds, design tradeoffs, library quirks, security notes
