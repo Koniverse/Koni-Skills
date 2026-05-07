@@ -771,10 +771,10 @@ This follows the BMad coverage map pattern for traceability.>
 
 ## Stories
 
-| ID | Title | Status | Version |
-|---|---|---|---|
-| [US-X.1](../stories/US-X.1-<slug>.md) | <title> | ✅ done | v0.X.0 |
-| [US-X.2](../stories/US-X.2-<slug>.md) | <title> | 🚧 in-progress | — |
+| ID | Title | Goal | Status | Version |
+|---|---|---|---|---|
+| [US-X.1](../stories/US-X.1-<slug>.md) | <title> | <one-line user outcome> | ✅ done | v0.X.0 |
+| [US-X.2](../stories/US-X.2-<slug>.md) | <title> | <one-line user outcome> | 🚧 in-progress | — |
 
 ## Acceptance criteria (propagated from stories)
 
