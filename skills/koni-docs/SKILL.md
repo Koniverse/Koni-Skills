@@ -22,6 +22,7 @@ description: >
 docs/
 ├── README.md          ← doc hub + pre-commit checklist
 ├── SETUP.md           ← dev environment (clone → npm run dev)
+├── BRIEF.md           ← product brief: executive summary, problem, solution, scope, vision
 ├── PRD.md             ← product spec: Epics / User Stories / Tasks
 ├── ARCHITECTURE.md    ← system architecture: tech stack, components, data, API, infra
 ├── CHANGELOG.md       ← full release history (every version)
@@ -116,6 +117,7 @@ Run through every item before committing:
 [ ] VERSION bumped per semver rule
 [ ] CHANGELOG.md — story's "Changelog entry" section copied in, commit SHA filled (RULE-1, RULE-2)
 [ ] PRD.md story status updated if scope changed
+[ ] BRIEF.md updated if product vision, scope, or success criteria changed
 [ ] CONTEXT.md has new entry if a decision was made
 [ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
@@ -178,6 +180,7 @@ koni-docs:
 | "add a lesson" / "log a lesson"                 | Find highest entry number, use LESSONS template                                           | `templates.md` §LESSONS          |
 | "write changelog for vX.Y.Z"                    | Use CHANGELOG template, bump VERSION simultaneously                                       | `templates.md` §CHANGELOG        |
 | "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                  | `templates.md` §ARCHITECTURE     |
+| "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                            | `templates.md` §BRIEF.md        |
 | "update PRD for [feature]"                      | Update both FR table row AND §7 story entry                                              | `templates.md` §PRD              |
 | "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates.md` §DESIGN           |
 | "create an epic"                                | Use epic template                                                                         | `templates.md` §Epic             |
@@ -199,9 +202,10 @@ Load these on demand based on user intent:
 | File                                  | When to load                                                             | Contents                                                          |
 | ------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | `references/rules.md`               | User asks about rules, pre-commit check, or rule violation surfaces      | 9 core rules with severity, compliance steps, grep checks         |
-| `references/templates.md`           | User asks to create/update any document                                  | 11 template types with filled examples                            |
+| `references/templates.md`           | User asks to create/update any document                                  | 12 template types with filled examples (BRIEF, PRD, ARCHITECTURE, CHANGELOG, CONTEXT, LESSONS, DESIGN, Story, Epic, Sprint, SETUP, CLAUDE.md) |
 | `references/sprint-system.md`       | User asks about sprints, agile workflow, scripts, or 5-layer consistency | Naming conventions, scripts, consistency check, setup guide       |
 | `references/migration-from-bmad.md` | User asks to migrate from BMad to koni-docs                              | Architecture comparison, artifact mapping, step-by-step procedure |
+| `references/bmad-template-analysis.md` | User asks about BMad template standards, or mapping BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
 
 **Plugin skills**: If the project's CLAUDE.md declares `koni-docs-plugins`, load those skills for technology-specific rules that extend the core rule set.
 
