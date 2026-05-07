@@ -80,7 +80,7 @@ These 9 rules apply to ALL Koniverse projects. Full enforcement details in `refe
 | RULE-1  | VERSION + CHANGELOG in same commit                            | Pre-commit |
 | RULE-2  | CHANGELOG commit hash mandatory, never "pending"              | Pre-commit |
 | RULE-5  | STATUS.md auto-generated, never hand-edit                     | Post-gen   |
-| RULE-6  | Story id must match filename + PRD §7                        | During     |
+| RULE-6  | Story id must match filename + PRD §11                       | During     |
 | RULE-7  | CONTEXT.md append-only, corrections via revision entry        | During     |
 | RULE-10 | Mark tasks [x] as you complete them                           | During     |
 | RULE-11 | New env var → SETUP + DEPLOY + .env.example in same commit   | Pre-commit |
@@ -172,7 +172,7 @@ koni-docs:
 
 | User request                                    | Action                                                                                    | Load                                |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------- |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §7, use story template                                       | `templates.md` §Story file       |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use story template                                      | `templates.md` §Story file       |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                      | `rules.md` §RULE-6               |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                         | `sprint-system.md` §5-layer      |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, use decision template                                              | `templates.md` §CONTEXT          |
@@ -181,7 +181,7 @@ koni-docs:
 | "write changelog for vX.Y.Z"                    | Use CHANGELOG template, bump VERSION simultaneously                                       | `templates.md` §CHANGELOG        |
 | "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                  | `templates.md` §ARCHITECTURE     |
 | "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                            | `templates.md` §BRIEF.md        |
-| "update PRD for [feature]"                      | Update both FR table row AND §7 story entry                                              | `templates.md` §PRD              |
+| "update PRD for [feature]"                      | Update both FR table row AND §11 story entry                                             | `templates.md` §PRD              |
 | "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates.md` §DESIGN           |
 | "create an epic"                                | Use epic template                                                                         | `templates.md` §Epic             |
 | "create sprint file"                            | Use sprint template                                                                       | `templates.md` §Sprint           |
@@ -233,7 +233,7 @@ All scripts accept:
 | Script                             | Purpose                                                                             | Example                                                                                   |
 | ---------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `generate-status.mjs`            | Regenerate `STATUS.md` kanban from all story frontmatter                          | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/`                   |
-| `agile-sync-up.mjs`              | Propagate story status through all 5 doc layers (EPIC, PRD §7, PRD §4 FR, sprint) | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                     |
+| `agile-sync-up.mjs`              | Propagate story status through all 5 doc layers (EPIC, PRD §11, PRD §8 FR, sprint) | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                     |
 | `agile-inject-tasks.mjs`         | Regenerate Tasks section from Acceptance Criteria (AC is canonical)                 | `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-2.1` |
 | `agile-backfill-fields.mjs`      | Add missing frontmatter fields to existing stories                                  | `node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path docs/`             |
 | `changelog-backfill-commits.mjs` | Replace "pending" commit SHAs in CHANGELOG with real SHAs from git history          | `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/`        |

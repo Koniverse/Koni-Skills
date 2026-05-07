@@ -267,25 +267,209 @@ Inspiring but grounded — 1 paragraph.]
 
 **Source**: Maps from BMad `prd.md` + extracts §1 from `brief.md`. The PRD is the canonical product specification — it absorbs the Brief's executive summary and expands it with detailed requirements, personas, and the epic/story index.
 
-### Full PRD template (§1–§7)
+### Full PRD template (§1–§11)
 
 ```markdown
+---
+stepsCompleted: []
+inputDocuments: []
+classification:
+  projectType: '{SaaS B2B / Mobile B2C / Web3 / Marketplace / API Platform / ...}'
+  domain: '{primary business domain}'
+  complexity: '{Low / Medium / High}'
+  projectContext: '{Greenfield / Brownfield}'
+workflowType: 'prd'
+lastEdited: 'YYYY-MM-DD'
+editHistory:
+  - date: 'YYYY-MM-DD'
+    changes: '{summary of what changed in this edit}'
+---
+
 # {Project Name} — Product Requirements Document
 
-> **Version**: X.Y.Z — see [VERSION](../VERSION) for the live value.
-> **Status**: {Live at URL / In development}
-> **Format**: Agile (Epics → User Stories → Tasks).
-> Convention: `EPIC-<N>` / `US-<EPIC>.<N>` / `TASK-<US>.<N>`.
+**Version:** X.Y.Z
+**Date:** YYYY-MM-DD
+**Status:** {Live at URL / In development / Regenerated vX.Y}
+**Dual-Audience:** Human stakeholders + LLM implementation agents
+
+> **Scope boundary:** This PRD contains business requirements only. Implementation
+> details (schema, framework names, API endpoint paths, infrastructure mechanisms)
+> belong in `architecture.md` and downstream task descriptions.
 
 ---
 
-## 1. Executive summary
+## 1. Executive Summary
 
-[2-3 paragraph narrative derived from BRIEF.md §Executive Summary.
-What is this? What problem does it solve? Why does it matter?
-Include key differentiators — this section should stand alone.]
+### Vision
 
-## 2. Background & strategic decisions
+[1 paragraph: The long-term vision. What does this product become?
+What's the north star?]
+
+**Positioning Statement:** {Product Name} — {one-line value proposition}.
+
+### What Makes It Special
+
+[2-3 paragraphs: Key differentiators vs alternatives. What strategic
+advantages does this product have? Why this approach over others?]
+
+1. **{Advantage 1}** — {explanation}
+2. **{Advantage 2}** — {explanation}
+3. **{Advantage 3}** — {explanation}
+
+### Core Philosophies
+
+| # | Philosophy | Implication |
+|---|-----------|-------------|
+| 1 | {principle name} | {what this means in practice} |
+| 2 | {principle name} | {what this means in practice} |
+| 3 | {principle name} | {what this means in practice} |
+
+### Project Classification
+
+| Dimension | Value |
+|-----------|-------|
+| Project Type | {type} |
+| Domain | {domain} |
+| Complexity | {complexity} |
+| Context | {greenfield / brownfield} |
+| Target Users | {who this is for} |
+
+### Why Now
+
+- {Market trend or regulatory pressure driving urgency}
+- {Technology enabler that makes this possible now}
+- {Competitive window or execution advantage}
+
+---
+
+## 2. Success Criteria
+
+### User Success Metrics
+
+| ID | Metric | Target | Measurement |
+|----|--------|--------|-------------|
+| US-1 | {user-facing metric} | {quantified target} | {how measured} |
+| US-2 | {user-facing metric} | {quantified target} | {how measured} |
+
+### Business Success Metrics
+
+| ID | Metric | Target | Measurement |
+|----|--------|--------|-------------|
+| BS-1 | {business metric} | {quantified target} | {how measured} |
+| BS-2 | {business metric} | {quantified target} | {how measured} |
+
+### Technical Success Metrics
+
+| ID | Metric | Target | Measurement |
+|----|--------|--------|-------------|
+| TS-1 | {technical metric} | {quantified target} | {how measured} |
+| TS-2 | {technical metric} | {quantified target} | {how measured} |
+
+### Aha Moment Targets
+
+1. **Aha Moment #1 — {Name}:** {What the user experiences. Why it's magical.}
+   Target: {quantified time or action}.
+2. **Aha Moment #2 — {Name}:** {What the user experiences.}
+   Target: {quantified time or action}.
+
+---
+
+## 3. Product Scope
+
+### Phase 1: MVP — {MVP theme / goal}
+
+**Goal:** {1 sentence — what MVP proves}
+
+| Area | Included | Excluded |
+|------|----------|----------|
+| {Area 1} | {MVP scope} | {Deferred} |
+| {Area 2} | {MVP scope} | {Deferred} |
+
+**MVP Exit Criteria:**
+- {Measurable criterion}
+- {Measurable criterion}
+
+### Phase 2: {Beta / Growth} — {Phase theme}
+
+**Goal:** {1 sentence — what this phase achieves}
+
+| Area | Additions |
+|------|-----------|
+| {Area 1} | {What's added beyond MVP} |
+| {Area 2} | {What's added beyond MVP} |
+
+**{Phase 2} Exit Criteria:**
+- {Measurable criterion}
+- {Measurable criterion}
+
+### Phase 3: {Release / Scale} — {Phase theme}
+
+**Goal:** {1 sentence — what this phase achieves}
+
+| Area | Additions |
+|------|-----------|
+| {Area 1} | {What's added beyond previous phase} |
+| {Area 2} | {What's added beyond previous phase} |
+
+### Scope Boundaries (All Phases)
+
+**Permanently Out of Scope:**
+- {Feature / capability that will never be in this product}
+- {Rationale — brief}
+
+---
+
+## 4. User Journeys
+
+### Journey 1: {Journey Name} ({Primary Persona})
+
+**Persona:** {1-2 sentences describing who this is and what they need}
+
+**Trigger:** {What prompts this journey — an event, a notification, a task}
+
+1. **{Step name}:** {What the user does. Key interaction detail.}
+2. **{Step name}:** {What the user does. Key interaction detail.}
+3. **{Step name}:** {What the user does. Key interaction detail.}
+4. **{Step name}:** {What the user does. Key interaction detail.}
+5. **Outcome:** {What the user achieves at the end}
+
+**Success Metric:** {Quantified measure of journey success}
+
+### Journey 2: {Journey Name} ({Persona})
+
+**Persona:** {description}
+
+**Trigger:** {what prompts this}
+
+1. **{Step}:** {action}
+2. ...
+5. **Outcome:** {result}
+
+**Success Metric:** {quantified measure}
+
+### Journey 3: {Journey Name} ({Persona})
+
+[... repeat pattern for 3-7 journeys covering all major user flows]
+
+---
+
+## 5. Personas
+
+### P1 — {Primary persona name} ({user segment})
+- **Trigger**: {what prompts them to seek a solution}
+- **Pain**: {concrete pain points — what hurts today}
+- **Uses the product**: {how they interact, key jobs-to-be-done}
+- **Won't pay if**: {deal-breakers — what would make them walk away}
+
+### P2 — {Secondary persona name} ({user segment})
+- **Trigger**: {what prompts them}
+- **Pain**: {concrete pain points}
+- **Uses**: {how they interact}
+- **Won't pay if**: {deal-breakers}
+
+---
+
+## 6. Background & Strategic Decisions
 
 [Key decisions that shaped the product direction. Each decision gets
 an ID, description, date, and rationale. Maps from BMad Architecture
@@ -294,22 +478,31 @@ ADs and CONTEXT.md entries.]
 | ID | Decision | Date | Rationale |
 |----|----------|------|-----------|
 | A1 | {decision title} | YYYY-MM-DD | {1-2 sentence rationale} |
+| A2 | {decision title} | YYYY-MM-DD | {1-2 sentence rationale} |
 
-## 3. Personas
+---
 
-### V1 — {Primary persona name} ({segment})
-- **Trigger**: {what prompts them to seek a solution}
-- **Pain**: {concrete pain points}
-- **Uses the product**: {how they interact, key JTBD}
-- **Won't pay if**: {deal-breakers}
+## 7. Domain-Specific Requirements
 
-### V2 — {Secondary persona name} ({segment}) (if applicable)
-- **Trigger**: {what prompts them}
-- **Pain**: {concrete pain points}
-- **Uses**: {how they interact}
-- **Won't pay if**: {deal-breakers}
+> **Note:** This section is **optional**. Include it ONLY when the product domain
+> has specific compliance, regulatory, or technical constraints (crypto, healthcare,
+> fintech, legal, etc.). For generic SaaS/web apps, omit this entire section.
 
-## 4. Functional requirements (FR)
+### {Domain Category 1}
+
+| ID | Requirement | Rationale |
+|----|-------------|-----------|
+| D-1 | {domain-specific requirement} | {why this matters in this domain} |
+
+### {Domain Category 2} (if applicable)
+
+| ID | Requirement | Rationale |
+|----|-------------|-----------|
+| D-2 | {requirement} | {rationale} |
+
+---
+
+## 8. Functional Requirements (FR)
 
 | ID | Requirement | Priority | Status | Epic |
 |----|-------------|----------|--------|------|
@@ -318,20 +511,29 @@ ADs and CONTEXT.md entries.]
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reverted in vX.Y.Z` / `🗑️ deprecated vX.Y.Z`.
 
-## 5. Non-functional requirements (NFR)
+---
+
+## 9. Non-Functional Requirements (NFR)
 
 | ID | Requirement | Target | Status |
 |----|-------------|--------|--------|
 | NFR-1 | {requirement} | {measurable target} | {status} |
 
-## 6. Out of scope (V1)
+---
 
-- {feature / capability explicitly excluded from current version}
-- {rationale — brief, one line each}
+## 10. Glossary
+
+> **Note:** This section is **optional**. Include it when the domain has specialized
+> terminology that both human stakeholders and AI agents need clarified.
+
+| Term | Definition |
+|------|------------|
+| {Term 1} | {1-2 sentence definition in business terms} |
+| {Term 2} | {1-2 sentence definition in business terms} |
 
 ---
 
-## 7. Epics & user stories
+## 11. Epics & User Stories
 
 ### EPIC-1: {Epic Title}
 
@@ -357,6 +559,15 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 [Repeat for all epics]
 ```
 
+### Updating PRD.md
+
+- **When**: After BMad produces PRD artifacts, when scope changes, or when a new epic/story is added.
+- **How**: Edit the relevant section in-place. Update `lastEdited` and `editHistory` in frontmatter.
+- **Sections 1-6**: Updated during initial PRD creation from BMad output. Rarely change after.
+- **Section 8 (FR)**: Updated every time a story ships or scope changes (add rows, update status).
+- **Section 11 (§7 index)**: Updated when stories are created, status changes, or new epics are added.
+- **Cross-reference**: Link to BRIEF.md from §1 header. Link to ARCHITECTURE.md from §6. Link to CONTEXT.md for individual decisions.
+
 ### FR table row (§4 Functional requirements)
 
 ```markdown
@@ -365,7 +576,7 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
-### Story entry in PRD §7
+### Story entry in PRD §11
 
 ```markdown
 ### US-X.Y — <Story title>
@@ -391,14 +602,14 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 <One sentence why it was removed. Link to the CONTEXT entry.>
 ```
 
-### §7 Epics & Stories Index
+### §11 Epics & Stories Index
 
-<BMad standard: this index lives in PRD §7. Each story entry links to its
-canonical story file in docs/sprints/stories/. The index is updated when
-stories are created or their status changes.>
+<This index lives in PRD §11. Each story entry links to its canonical story
+file in docs/sprints/stories/. The index is updated when stories are created
+or their status changes.>
 
 ```markdown
-## §7. Epics & Stories Index
+## 11. Epics & User Stories
 
 ### EPIC-1 — {Epic Title}
 | Story | Title | Status | Version |
