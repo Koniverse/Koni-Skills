@@ -29,6 +29,7 @@ docs/
 ├── CONTEXT.md         ← decision log (append-only, never rewrite)
 ├── LESSONS.md         ← recurring traps + patterns
 ├── design/            ← per-story design specs (US-X.Y-<slug>-design.md)
+├── okr/               ← (optional) file-native quarterly OKR ledgers (YYYY-QN.md)
 └── sprints/
     ├── README.md      ← agile schema + workflow
     ├── STATUS.md      ← AUTO-GENERATED kanban (never hand-edit)
@@ -100,13 +101,13 @@ These 9 rules apply to ALL Koniverse projects. Full enforcement details in `refe
 3. **Find or create the story** in `docs/sprints/stories/`:
    - Flip `status:` → `in-progress`
    - Set `sprint:` to the active sprint id
-   - If no story exists, create a stub using the story template (`references/templates.md` §Story file) before starting.
+   - If no story exists, create a stub using the full story template (`references/templates/story.md`) before starting.
 4. **Update the sprint file** — ensure the story row exists in the active sprint scope table.
 
 ### 3b. During implementation
 
 - Mark tasks `[x]` in the story file **as you complete them**, not all at the end (RULE-10).
-- If you make an architecture or scope decision, append a `CONTEXT.md` entry immediately (see `references/templates.md` §CONTEXT).
+- If you make an architecture or scope decision, append a `CONTEXT.md` entry immediately (see `references/templates/context.md`).
 - If you encounter a trap or discover a reusable pattern, append a `LESSONS.md` entry.
 
 ### 3c. Pre-commit checklist
@@ -170,28 +171,35 @@ koni-docs:
 
 ## 5. Activation — how to use this skill
 
-| User request                                    | Action                                                                                    | Load                                |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------- |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use story template                                      | `templates.md` §Story file       |
-| "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                      | `rules.md` §RULE-6               |
-| "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                         | `sprint-system.md` §5-layer      |
-| "log a decision" / "record architecture choice" | Find highest D`<N>`, use decision template                                              | `templates.md` §CONTEXT          |
-| "revise / correct decision D`<N>`"            | Append revision entry, never edit original (RULE-7)                                       | `templates.md` §Revision         |
-| "add a lesson" / "log a lesson"                 | Find highest entry number, use LESSONS template                                           | `templates.md` §LESSONS          |
-| "write changelog for vX.Y.Z"                    | Use CHANGELOG template, bump VERSION simultaneously                                       | `templates.md` §CHANGELOG        |
-| "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                  | `templates.md` §ARCHITECTURE     |
-| "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                            | `templates.md` §BRIEF.md        |
-| "update PRD for [feature]"                      | Update both FR table row AND §11 story entry                                             | `templates.md` §PRD              |
-| "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates.md` §DESIGN           |
-| "create an epic"                                | Use epic template                                                                         | `templates.md` §Epic             |
-| "create sprint file"                            | Use sprint template                                                                       | `templates.md` §Sprint           |
-| "run doc checklist" / "pre-commit check"        | Walk §3c checklist item by item                                                          | `rules.md` + `sprint-system.md` |
-| "update setup for new env var"                  | RULE-11: update all three files                                                           | `templates.md` §SETUP            |
-| "regenerate status"                             | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` → commit         | `sprint-system.md` §Scripts      |
-| "sync stories to PRD"                           | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                     | `sprint-system.md` §5-layer      |
-| "inject tasks from AC"                          | `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-X.Y` | `sprint-system.md` §Scripts      |
-| "backfill changelog SHAs"                       | `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/`        | `sprint-system.md` §Scripts      |
-| "standardize output from [tool]"                | Map tool output to canonical docs/ structure                                              | §1 Pipeline                        |
+Every document template lives in its own file under
+[`references/templates/`](references/templates/). Load only the template
+file matching the user's request.
+
+| User request                                    | Action                                                                                    | Load                                       |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template                                  | `templates/story.md`                       |
+| "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
+| "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                          | `sprint-system.md` §5-layer                |
+| "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |
+| "revise / correct decision D`<N>`"              | Append revision entry, never edit original (RULE-7)                                       | `templates/context.md` §Revision           |
+| "add a lesson" / "log a lesson"                 | Find highest entry number, append LESSONS entry                                           | `templates/lessons.md`                     |
+| "write changelog for vX.Y.Z"                    | Append CHANGELOG entry, bump VERSION simultaneously                                       | `templates/changelog.md`                   |
+| "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                   | `templates/architecture.md`                |
+| "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                             | `templates/brief.md`                       |
+| "update PRD for [feature]"                      | Update both FR table row AND §11 story entry                                              | `templates/prd.md`                         |
+| "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates/design-spec.md`                 |
+| "create an epic"                                | Use full epic template                                                                    | `templates/epic.md`                        |
+| "create sprint file"                            | Use sprint template                                                                       | `templates/sprint.md`                      |
+| "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | `templates/setup.md`                       |
+| "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | `templates/okr.md`                         |
+| "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md integration blocks                                  | `templates/integration.md`                 |
+| "what templates exist?"                         | Browse the index                                                                          | `templates.md` (thin index)                |
+| "run doc checklist" / "pre-commit check"        | Walk §3c checklist item by item                                                           | `rules.md` + `sprint-system.md`            |
+| "regenerate status"                             | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` → commit            | `sprint-system.md` §Scripts                |
+| "sync stories to PRD"                           | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                       | `sprint-system.md` §5-layer                |
+| "inject tasks from AC"                          | `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-X.Y`   | `sprint-system.md` §Scripts                |
+| "backfill changelog SHAs"                       | `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/`          | `sprint-system.md` §Scripts                |
+| "standardize output from [tool]"                | Map tool output to canonical docs/ structure                                              | §1 Pipeline                                |
 
 ---
 
@@ -201,10 +209,23 @@ Load these on demand based on user intent:
 
 | File                                  | When to load                                                             | Contents                                                          |
 | ------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| `references/rules.md`               | User asks about rules, pre-commit check, or rule violation surfaces      | 9 core rules with severity, compliance steps, grep checks         |
-| `references/templates.md`           | User asks to create/update any document                                  | 12 template types with filled examples (BRIEF, PRD, ARCHITECTURE, CHANGELOG, CONTEXT, LESSONS, DESIGN, Story, Epic, Sprint, SETUP, CLAUDE.md) |
-| `references/sprint-system.md`       | User asks about sprints, agile workflow, scripts, or 5-layer consistency | Naming conventions, scripts, consistency check, setup guide       |
-| `references/migration-from-bmad.md` | User asks to migrate from BMad to koni-docs                              | Architecture comparison, artifact mapping, step-by-step procedure |
+| `references/rules.md`                 | User asks about rules, pre-commit check, or rule violation surfaces      | 9 core rules with severity, compliance steps, grep checks         |
+| `references/templates.md`             | User asks "what templates exist?" or needs to navigate templates         | Thin index — names each template, when to use it, links to the canonical file. Also has quick frontmatter cheatsheet for Story/Epic/Sprint. |
+| `references/templates/changelog.md`   | Writing changelog entry / shipping a version                             | CHANGELOG entry template, rules (RULE-1/RULE-2), safe-insertion pattern (anchor on `[Unreleased]`), filled example |
+| `references/templates/context.md`     | Recording a decision or revision (append-only, RULE-7)                   | Phase header + decision entry + revision entry templates, anti-patterns table, filled example (D3 TAM pivot) |
+| `references/templates/lessons.md`     | Codifying a recurring trap / pattern                                     | Entry template, maintenance rules, filled example (`next build` vs `tsc`) |
+| `references/templates/brief.md`       | Creating/updating product brief (precedes PRD §1)                        | 8-section template (Exec / Problem / Solution / Differentiator / Persona / Success / Scope / Vision), filled example (Koni ERP brief) |
+| `references/templates/prd.md`         | Creating/updating PRD §1–§11, FR row, story entry, §11 index             | Full §1–§11 template, update procedure, FR table row format, story-in-PRD entry, condensed filled snippet |
+| `references/templates/architecture.md` | Documenting tech stack / components / data / AD-N summary table         | Full ARCHITECTURE template (overview / stack / components / data / API / security / deploy / integrations / ADs), filled example |
+| `references/templates/design-spec.md` | A story has visual or interaction complexity warranting a dedicated spec | Header refs + screens/states + layout decisions + component inventory + open questions, filled example (US-3.7 pod project) |
+| `references/templates/epic.md`        | Creating/updating an epic                                                | Full BMad-grade Epic template — per-section guidance, required-vs-optional matrix by epic size, Mermaid patterns for entity maps + happy-path sequence diagrams, filled mini-example |
+| `references/templates/story.md`       | Creating/stubbing/updating a story                                       | Full BMad-grade Story template — per-section guidance, required-vs-optional matrix by story size (1-13 pts), AC numbering rules, verification-command table pattern, filled mini-example |
+| `references/templates/sprint.md`      | Opening or closing a sprint                                              | Frontmatter + Sprint scope table + goal recap + phased plan + retrospective + cross-references, filled example (sprint-2026-W19) |
+| `references/templates/setup.md`       | Adding an env var (RULE-11 — all three files in same commit)             | SETUP block format + .env.example format + DEPLOY env table + RULE-11 checklist, filled examples for all three |
+| `references/templates/okr.md`         | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md`                 | File-naming rule, YAML schema, KR formula rules (SELECT-only, end-exclusive boundaries), weekly notes, permissions, filled example (2026-Q2.md) |
+| `references/templates/integration.md` | Wiring koni-docs into a new project, refreshing Active Context           | CLAUDE.md `Koni-Docs Integration` block + AGENTS.md reference block + 7 trigger points for Active Context updates, filled example |
+| `references/sprint-system.md`         | User asks about sprints, agile workflow, scripts, or 5-layer consistency | Naming conventions, scripts, consistency check, setup guide       |
+| `references/migration-from-bmad.md`   | User asks to migrate from BMad to koni-docs                              | Architecture comparison, artifact mapping, step-by-step procedure |
 | `references/bmad-template-analysis.md` | User asks about BMad template standards, or mapping BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
 
 **Plugin skills**: If the project's CLAUDE.md declares `koni-docs-plugins`, load those skills for technology-specific rules that extend the core rule set.
