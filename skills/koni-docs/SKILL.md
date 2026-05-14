@@ -270,3 +270,17 @@ If the project wants `npm run agile:status` for human devs, add to `package.json
 ```
 
 The agent always uses the direct `node skills/koni-docs/scripts/...` path — the npm script is purely a convenience alias for humans.
+
+### Regression test
+
+Before changing any sync script, run the self-contained integration test:
+
+```bash
+node skills/koni-docs/scripts/__tests__/sync-test.mjs
+```
+
+The test builds its own fixture in a tmpdir, exercises all 5 sync scripts
+against mixed old/new template shapes (4-col EPIC, 5-col EPIC with Goal,
+per-story PRD §7 section, per-epic PRD §11 table, 7-col sprint scope),
+and asserts the expected outputs cell-by-cell. Use `--keep` to inspect
+the fixture after a failure. Exit code 0 = all pass.
