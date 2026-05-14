@@ -3,11 +3,17 @@
 /**
  * agile-sync-up.mjs — Propagate story status upward through all 5 doc layers.
  *
- * For each story file in Docs/sprints/stories/, this script:
- *   1. Updates the EPIC file's Stories table (status + version)
- *   2. Updates PRD.md §7 story entry (status)
- *   3. Updates PRD.md §4 FR table row (status) via prd_ref field
- *   4. Updates the active sprint file's scope table
+ * For each story file in <docs>/sprints/stories/, this script:
+ *   1. Updates the EPIC file's Stories table (status + version) — handles
+ *      both the 4-column (ID/Title/Status/Version) and 5-column
+ *      (ID/Title/Goal/Status/Version) shapes by replacing the LAST TWO
+ *      data cells of the matched row.
+ *   2. Updates PRD.md story entry — tries the per-story `### US-X.Y` section
+ *      format (old), then falls back to the per-epic table format under
+ *      §Epics & User Stories (new template).
+ *   3. Updates PRD.md FR table row (status) via prd_ref field.
+ *   4. Updates the active sprint file's scope table (status only — sprint
+ *      scope has no version column).
  *   5. (STATUS.md is handled separately by generate-status.mjs)
  *
  * Usage: node scripts/agile-sync-up.mjs [--docs-path Docs/] [--story US-X.Y]
@@ -74,31 +80,74 @@ function findStoryFile(storyId) {
   return null;
 }
 
-// --- Update epic Stories table row ---
-function updateEpicStoriesTable(epicPath, storyId, status, version) {
-  let content = readFileSync(epicPath, 'utf-8');
-  const statusIcon = status === 'done' ? '✅ done' :
+// --- Status icon helpers ---
+function statusIconShort(status) {
+  return status === 'done' ? '✅ done' :
     status === 'in-progress' ? '🚧 in-progress' :
     status === 'review' ? '👀 review' :
     status === 'blocked' ? '🚫 blocked' :
     status === 'ready' ? '🟢 ready' : '📋 backlog';
-  const versionStr = version && status === 'done' ? `v${version}` : '—';
-
-  // Match the story row in the Stories table: | [US-X.Y](...) | <title> | <status> | <version> |
-  const rowPattern = new RegExp(
-    `(\\| \\[${storyId.replace(/\./g, '\\.')}\\]\\([^)]+\\) \\| [^|]+ \\| )[^|]+( \\| )[^|]*( \\|)`,
-    'g'
-  );
-
-  if (rowPattern.test(content)) {
-    content = content.replace(rowPattern, `$1${statusIcon}$2${versionStr}$3`);
-    if (!DRY_RUN) writeFileSync(epicPath, content, 'utf-8');
-    return true;
-  }
-  return false;
 }
 
-// --- Update PRD §7 story entry ---
+// --- Table-row updater (column-shape-agnostic) ---
+//
+// Locates a markdown table row matching `rowMatcher(line)` and rewrites
+// specific data cells named by `updates`. Cell positions are addressed
+// from the END of the row, which keeps the updater robust against
+// inserted columns (e.g. the new "Goal" column on EPIC stories tables).
+//
+// `updates` is an array of `[fromEnd, value]` pairs where fromEnd=0 is
+// the last data cell, fromEnd=1 is the second-to-last, etc.
+function updateTableRowCells(content, rowMatcher, updates) {
+  const lines = content.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    if (!rowMatcher(lines[i])) continue;
+    const cells = lines[i].split('|');
+    // A valid pipe-table row has empty strings at cells[0] and cells[last]
+    // (the text before the first `|` and after the last `|`).
+    if (cells.length < 4) continue;
+    if (cells[0].trim() !== '' || cells[cells.length - 1].trim() !== '') continue;
+    const dataCellCount = cells.length - 2;
+    for (const [fromEnd, value] of updates) {
+      const pos = cells.length - 2 - fromEnd;
+      if (pos < 1 || pos > dataCellCount) continue;
+      cells[pos] = ` ${value} `;
+    }
+    lines[i] = cells.join('|');
+    return { content: lines.join('\n'), updated: true };
+  }
+  return { content, updated: false };
+}
+
+// --- Match helpers for table rows ---
+function epicStoryRowMatcher(storyId) {
+  // Matches both `| [US-X.Y](...) |` and `| US-X.Y |` first-cell shapes.
+  const escaped = storyId.replace(/\./g, '\\.');
+  const linked = new RegExp(`\\|\\s*\\[${escaped}\\]\\(`);
+  const plain = new RegExp(`\\|\\s*${escaped}\\s*\\|`);
+  return (line) => linked.test(line) || plain.test(line);
+}
+
+// --- Update epic Stories table row ---
+// Handles BOTH old 4-col (ID/Title/Status/Version) and new 5-col
+// (ID/Title/Goal/Status/Version) layouts by writing the LAST TWO data
+// cells regardless of how many columns precede them.
+function updateEpicStoriesTable(epicPath, storyId, status, version) {
+  const raw = readFileSync(epicPath, 'utf-8');
+  const statusIcon = statusIconShort(status);
+  const versionStr = version && status === 'done' ? `v${version}` : '—';
+
+  const { content, updated } = updateTableRowCells(
+    raw,
+    epicStoryRowMatcher(storyId),
+    [[0, versionStr], [1, statusIcon]]
+  );
+
+  if (updated && !DRY_RUN) writeFileSync(epicPath, content, 'utf-8');
+  return updated;
+}
+
+// --- Update PRD story entry (per-story section format — old PRD template) ---
 // Returns: 'updated' | 'current' | 'not_found'
 function updatePRDStoryEntry(prdPath, storyId, status, version) {
   let content = readFileSync(prdPath, 'utf-8');
@@ -138,6 +187,40 @@ function updatePRDStoryEntry(prdPath, storyId, status, version) {
   return 'current';
 }
 
+// --- Update PRD §11 epic/story index (per-epic table format — new PRD template) ---
+// The new PRD template groups stories into a 4-column table per epic:
+//   | Story | Title | Status | Version |
+//   | US-X.Y | <title> | 📋 Backlog | — |
+//
+// Returns: 'updated' | 'current' | 'not_found'
+function updatePRDStoriesIndex(prdPath, storyId, status, version) {
+  const raw = readFileSync(prdPath, 'utf-8');
+  const statusIcon = statusIconShort(status);
+  const versionStr = version && status === 'done' ? `v${version}` : '—';
+
+  // Capture current row to detect "current" vs "updated" — replay match using
+  // the same matcher the updater uses to find the row.
+  const matcher = epicStoryRowMatcher(storyId);
+  const lines = raw.split('\n');
+  let beforeRow = null;
+  for (const line of lines) {
+    if (matcher(line)) { beforeRow = line; break; }
+  }
+  if (beforeRow === null) return 'not_found';
+
+  const { content, updated } = updateTableRowCells(
+    raw,
+    matcher,
+    [[0, versionStr], [1, statusIcon]]
+  );
+  if (!updated) return 'not_found';
+  // Compare row to detect no-op
+  const afterRow = content.split('\n').find(matcher);
+  if (afterRow === beforeRow) return 'current';
+  if (!DRY_RUN) writeFileSync(prdPath, content, 'utf-8');
+  return 'updated';
+}
+
 // --- Update PRD §4 FR table row ---
 function updatePRDFRRow(prdPath, frRef, status, version) {
   if (!frRef) return false;
@@ -163,6 +246,10 @@ function updatePRDFRRow(prdPath, frRef, status, version) {
 }
 
 // --- Update sprint file scope table ---
+// Sprint scope template is `| US | Title | Epic | Pri | Points | Status | Story file |`
+// — Status is the second-to-last cell. Updates only the status cell (no version
+// column in sprint scope). The line-based updater handles any column count as
+// long as Status remains the second-to-last cell.
 function updateSprintScopeTable(sprintId, storyId, status, version) {
   if (!sprintId) return false;
   if (!existsSync(SPRINTS_DIR)) return false;
@@ -173,25 +260,17 @@ function updateSprintScopeTable(sprintId, storyId, status, version) {
   if (!sprintFile) return false;
 
   const sprintPath = join(SPRINTS_DIR, sprintFile);
-  let content = readFileSync(sprintPath, 'utf-8');
+  const raw = readFileSync(sprintPath, 'utf-8');
+  const statusIcon = statusIconShort(status);
 
-  const statusIcon = status === 'done' ? '✅ done' :
-    status === 'in-progress' ? '🚧 in-progress' :
-    status === 'review' ? '👀 review' :
-    status === 'blocked' ? '🚫 blocked' : '📋 backlog';
-
-  // Match the story row in the sprint scope table
-  const rowPattern = new RegExp(
-    `(\\| ${storyId.replace(/\./g, '\\.')} \\| [^|]+ \\| [^|]+ \\| [^|]+ \\| [^|]+ \\| )[^|]+( \\|)`,
-    'g'
+  const { content, updated } = updateTableRowCells(
+    raw,
+    epicStoryRowMatcher(storyId),
+    [[1, statusIcon]]
   );
 
-  if (rowPattern.test(content)) {
-    content = content.replace(rowPattern, `$1${statusIcon}$2`);
-    if (!DRY_RUN) writeFileSync(sprintPath, content, 'utf-8');
-    return true;
-  }
-  return false;
+  if (updated && !DRY_RUN) writeFileSync(sprintPath, content, 'utf-8');
+  return updated;
 }
 
 // --- Main ---
@@ -245,22 +324,33 @@ function main() {
       }
     }
 
-    // 2. PRD §7
+    // 2. PRD story entry — update BOTH formats if present:
+    //    - per-story `### US-X.Y` section (old PRD template)
+    //    - per-epic table row in §11 (new PRD template)
+    //    A migrated PRD has only one, but a transitional one may have both;
+    //    updating both keeps them in sync.
     if (existsSync(PRD_PATH)) {
-      const prdResult = updatePRDStoryEntry(PRD_PATH, id, status, version_shipped);
-      if (prdResult === 'updated') {
-        console.log('  ✓ PRD §7 updated');
+      const sectionResult = updatePRDStoryEntry(PRD_PATH, id, status, version_shipped);
+      const tableResult = updatePRDStoriesIndex(PRD_PATH, id, status, version_shipped);
+      const formats = [];
+      if (sectionResult === 'updated') formats.push('section');
+      if (tableResult === 'updated') formats.push('table');
+      if (formats.length > 0) {
+        console.log(`  ✓ PRD story entry updated (${formats.join(' + ')})`);
         results.prdStory++;
-      } else if (prdResult === 'current') {
-        console.log('  - PRD §7 already up to date');
+      } else if (sectionResult === 'current' || tableResult === 'current') {
+        const which = [];
+        if (sectionResult === 'current') which.push('section');
+        if (tableResult === 'current') which.push('table');
+        console.log(`  - PRD story entry already up to date (${which.join(' + ')})`);
       } else {
-        console.log('  ⚠ PRD §7 — story entry not found');
+        console.log('  ⚠ PRD story entry not found (no per-story section or per-epic table row)');
       }
 
-      // 3. PRD §4 (FR table)
+      // 3. PRD FR table
       if (prd_ref) {
         const okFR = updatePRDFRRow(PRD_PATH, prd_ref, status, version_shipped);
-        console.log(okFR ? '  ✓ PRD §4 FR row updated' : '  ⚠ PRD §4 — FR row not found');
+        console.log(okFR ? '  ✓ PRD FR row updated' : '  ⚠ PRD FR row not found');
         if (okFR) results.prdFR++;
       }
     }
