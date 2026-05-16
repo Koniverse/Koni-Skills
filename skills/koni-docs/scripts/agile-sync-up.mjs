@@ -121,11 +121,27 @@ function updateTableRowCells(content, rowMatcher, updates) {
 
 // --- Match helpers for table rows ---
 function epicStoryRowMatcher(storyId) {
-  // Matches both `| [US-X.Y](...) |` and `| US-X.Y |` first-cell shapes.
+  // The story id must be the FIRST DATA CELL of the row — the shape used by
+  // every tracking table (epic Stories, PRD §11 index, sprint scope):
+  // `| [US-X.Y](...) | ... |` or `| US-X.Y | ... |`.
+  //
+  // This deliberately does NOT match rows that merely *reference* the story
+  // in a later column — Feature pillars' "Stories" column, AD/FR Coverage's
+  // "Story" column, Cross-story testing's "Stories" column. Those rows'
+  // last two cells are NOT (status, version); rewriting them corrupts the
+  // table (see __tests__ Test 7 / docs LESSONS).
   const escaped = storyId.replace(/\./g, '\\.');
-  const linked = new RegExp(`\\|\\s*\\[${escaped}\\]\\(`);
-  const plain = new RegExp(`\\|\\s*${escaped}\\s*\\|`);
-  return (line) => linked.test(line) || plain.test(line);
+  const linkedCell = new RegExp(`^\\s*\\[${escaped}\\]\\(`);
+  const plainCell = new RegExp(`^\\s*${escaped}\\s*$`);
+  return (line) => {
+    if (!line.includes('|')) return false;
+    const cells = line.split('|');
+    // Valid pipe-table row: empty before first `|` and after last `|`.
+    if (cells.length < 4) return false;
+    if (cells[0].trim() !== '' || cells[cells.length - 1].trim() !== '') return false;
+    const firstDataCell = cells[1];
+    return linkedCell.test(firstDataCell) || plainCell.test(firstDataCell);
+  };
 }
 
 // --- Update epic Stories table row ---
