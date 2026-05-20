@@ -75,13 +75,19 @@ function main() {
     console.log('No story files found. Generating empty STATUS.md.');
   }
 
-  // Parse all stories
+  // Parse all stories — skip files without a parseable story frontmatter
+  // (e.g. README.md or index files in the stories directory).
   const stories = [];
+  const skipped = [];
   for (const file of files) {
     const raw = readFileSync(join(STORIES_DIR, file), 'utf-8');
     const fm = parseFrontmatter(raw);
+    if (!fm.id) { skipped.push(file); continue; }
     fm._file = file;
     stories.push(fm);
+  }
+  if (skipped.length > 0) {
+    console.warn(`⚠ Skipped ${skipped.length} file(s) without an \`id\` frontmatter: ${skipped.join(', ')}`);
   }
 
   // Sort: by epic then by id
