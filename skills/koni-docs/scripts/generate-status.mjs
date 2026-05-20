@@ -42,7 +42,7 @@ function parseFrontmatter(raw) {
 }
 
 // --- Status display config ---
-const STATUS_ORDER = ['backlog', 'ready', 'in-progress', 'review', 'done', 'blocked'];
+const STATUS_ORDER = ['backlog', 'ready', 'in-progress', 'review', 'done', 'blocked', 'deprecated'];
 const STATUS_EMOJI = {
   'backlog': '📋',
   'ready': '🟢',
@@ -50,6 +50,7 @@ const STATUS_EMOJI = {
   'review': '👀',
   'done': '✅',
   'blocked': '🚫',
+  'deprecated': '🗑️',
 };
 const STATUS_LABEL = {
   'backlog': 'Backlog',
@@ -58,6 +59,7 @@ const STATUS_LABEL = {
   'review': 'Review',
   'done': 'Done',
   'blocked': 'Blocked',
+  'deprecated': 'Deprecated',
 };
 
 // --- Main ---

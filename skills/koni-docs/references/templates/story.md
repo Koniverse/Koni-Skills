@@ -47,7 +47,7 @@ tell *story size* from which sections are filled in.
 id: US-X.Y
 title: "<Story title>"
 epic: EPIC-X
-status: backlog            # backlog | ready | in-progress | review | done | blocked
+status: backlog            # backlog | ready | in-progress | review | done | blocked | deprecated
 priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
@@ -256,8 +256,11 @@ per file explaining what changed and why — not just what was added.>
 - `epic` MUST match an existing `EPIC-N.md` and the story MUST be listed
   in that epic's Stories table. `agile-sync-up.mjs` validates this.
 - `status` lifecycle: `backlog → ready → in-progress → review → done`.
-  `blocked` is a sub-state of `in-progress`. Set `version_shipped` only
-  on `done` transition; never before.
+  `blocked` is a sub-state of `in-progress` (document the reason in
+  Implementation notes). `deprecated` is a terminal state for stories
+  retired before shipping (typically driven by a CONTEXT decision);
+  cross-reference the deciding `D<N>` in the story body. Set
+  `version_shipped` only on `done` transition; never before.
 - `points`: Fibonacci only (1 / 2 / 3 / 5 / 8 / 13). A 13-pt story should
   almost always be split — large stories merge code without ever being
   reviewed in full.

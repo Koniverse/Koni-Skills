@@ -76,7 +76,7 @@ template:
 id: US-X.Y
 title: "<Story title>"
 epic: EPIC-X
-status: backlog            # backlog | ready | in-progress | review | done | blocked
+status: backlog            # backlog | ready | in-progress | review | done | blocked | deprecated
 priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
 sprint:                    # sprint-YYYY-WNN once committed

@@ -86,6 +86,7 @@ function statusIconShort(status) {
     status === 'in-progress' ? '🚧 in-progress' :
     status === 'review' ? '👀 review' :
     status === 'blocked' ? '🚫 blocked' :
+    status === 'deprecated' ? '🗑️ deprecated' :
     status === 'ready' ? '🟢 ready' : '📋 backlog';
 }
 
@@ -188,6 +189,7 @@ function updatePRDStoryEntry(prdPath, storyId, status, version) {
     : status === 'in-progress' ? '🚧 In progress'
     : status === 'review' ? '👀 In review'
     : status === 'blocked' ? '🚫 Blocked'
+    : status === 'deprecated' ? '🗑️ Deprecated'
     : '📋 Backlog';
 
   const updatedSection = section.replace(
@@ -245,6 +247,7 @@ function updatePRDFRRow(prdPath, frRef, status, version) {
   const newStatus = status === 'done' && version
     ? `✅ shipped (v${version})`
     : status === 'in-progress' ? '🚧 In progress'
+    : status === 'deprecated' ? '🗑️ deprecated'
     : '📋 Backlog';
 
   // Match FR table row: | FR-N | <desc> | <pri> | <status> | <epic> |
