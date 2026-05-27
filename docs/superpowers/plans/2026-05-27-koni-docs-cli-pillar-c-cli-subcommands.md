@@ -1537,3 +1537,17 @@ This is the **first time the new CLI dogfoods itself** — the freshly-built `ba
 - Consumer migration table in CHANGELOG (the v0.5.0-dev.0 entry above includes a partial one — expand for the final v0.5.0 release).
 - FR-ref validation against PRD §8 in `validateRefs` (deferred from Pillar B Task 16).
 - The 5 Minor polish items from Pillar B review (mutation-contract docs, dead `recursive` param, unused `unist-util-visit`, missing edge-case tests, dead `serializeChangelog` import).
+
+## Known issues to resolve in Pillar D
+
+Pillar C's final code review surfaced 4 Minor polish items. None block the v0.5.0-dev.0 merge but should be picked up in Pillar D or a polish PR.
+
+**Minor — `inject-tasks` silently ignores `--dry-run`** (`src/cli/inject-tasks.ts` line ~28): `injectIntoStory()` calls `writeDoc` unconditionally; the global `opts.dryRun` is read but never consulted. A `koni-docs inject-tasks --all --dry-run` call writes files. Fix: thread `dryRun` into the function and gate the `writeDoc` call. Add a test covering the dry-run case.
+
+**Minor — `sync` warnings print to stdout instead of stderr** (`src/cli/sync.ts` line ~184): non-fatal warnings (`console.log` with `⚠`) interleave with success output, which can break `--json` consumers that pipe stdout through `jq`. Move to `console.error`.
+
+**Minor — Dead struct fields in `SyncStats`** (`src/cli/sync.ts` lines 33, 36, 51, 171): `prdStory: number` and `skipped: number` are initialized but never incremented. Drop them.
+
+**Minor — Missing pre-release semver unit test in `parseChangelog`** (`__tests__/lib/changelog.test.ts`): the regex was extended during Pillar C to handle `0.5.0-dev.0` headers, but `changelog.test.ts` does not assert that behavior. The dogfood loop validated it end-to-end; a unit test would catch future regressions cheaply.
+
+**Minor — Version skew** (pre-existing convention): `KONI_DOCS_LIB_VERSION` in `src/lib/index.ts` is hardcoded to `0.2.0-dev.0` while root `VERSION` is `0.5.0-dev.0`. The CLI `--version` reports `0.2.0-dev.0`. If the npm package version (`package.json`) is the source of truth for the CLI's `--version`, sync those before `npm publish`.

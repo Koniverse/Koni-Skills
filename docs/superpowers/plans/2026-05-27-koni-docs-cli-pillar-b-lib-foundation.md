@@ -2583,8 +2583,8 @@ git commit -m "docs: backfill commit SHA for v0.4.0-dev.0"
 
 Pillar B's final code review surfaced one Important issue and several Minor polish items. They are not Pillar B regressions — they are deferred work.
 
-**Important — `.` root export placeholder** ([Task 1 package.json](#task-1-initialize-packages-koni-docs--package-skeleton)):
-The `package.json` `exports."."` entry points at `./dist/cli/index.mjs`, which does not exist in Pillar B (no CLI binary yet). Bare `import '@koniverse/koni-docs'` will fail `MODULE_NOT_FOUND`. Subpath imports (`/lib`, `/lib/markdown`, `/lib/schemas`) all resolve correctly. Resolved when Pillar C ships `src/cli/index.ts` and tsup adds the `cli/index` entry.
+**Important — `.` root export placeholder** ([Task 1 package.json](#task-1-initialize-packages-koni-docs--package-skeleton)) — **RESOLVED in Pillar C**:
+The `package.json` `exports."."` entry pointed at `./dist/cli/index.mjs`, which did not exist in Pillar B (no CLI binary yet). Pillar C Task 1 added `src/cli/index.ts` + tsup `cli/index` entry + `#!/usr/bin/env node` banner. Bare `import '@koniverse/koni-docs'` and `npx koni-docs` both work as of v0.5.0-dev.0.
 
 **Minor — polish items deferred to Pillar C or a separate polish PR**:
 - `updateCell` mutates `doc.ast` in place while `updateFrontmatter`/`replaceSection`/`appendToSection`/`removeSection` return new Doc values. Document the contract at the function signature, or refactor to immutable.
