@@ -1,6 +1,6 @@
 import type { Root, Heading, Content } from 'mdast';
 import { toString as nodeToString } from 'mdast-util-to-string';
-import { stringifyMarkdown } from './ast.ts';
+import { parseMarkdown, stringifyMarkdown } from './ast.ts';
 import type { Doc } from '../types.ts';
 
 export interface SectionMatch {
@@ -47,4 +47,52 @@ export function getSectionText(doc: Doc, heading: string): string {
   if (!match) return '';
   const partialAst: Root = { type: 'root', children: match.body as any };
   return stringifyMarkdown(partialAst);
+}
+
+export function replaceSection(doc: Doc, heading: string, newContent: string): Doc {
+  const match = findSectionNodes(doc.ast, heading);
+  if (!match) return doc;
+  const newAst = parseMarkdown(newContent);
+  const next: Root = {
+    type: 'root',
+    children: [
+      ...doc.ast.children.slice(0, match.headingIndex + 1),
+      ...(newAst.children as Content[]),
+      ...doc.ast.children.slice(match.endIndex),
+    ] as any,
+  };
+  return { ...doc, ast: next };
+}
+
+export function appendToSection(doc: Doc, heading: string, content: string): Doc {
+  const match = findSectionNodes(doc.ast, heading);
+  if (!match) return doc;
+  const newAst = parseMarkdown(content);
+  const next: Root = {
+    type: 'root',
+    children: [
+      ...doc.ast.children.slice(0, match.endIndex),
+      ...(newAst.children as Content[]),
+      ...doc.ast.children.slice(match.endIndex),
+    ] as any,
+  };
+  return { ...doc, ast: next };
+}
+
+export function removeSection(doc: Doc, heading: string): Doc {
+  const match = findSectionNodes(doc.ast, heading);
+  if (!match) return doc;
+  const next: Root = {
+    type: 'root',
+    children: [
+      ...doc.ast.children.slice(0, match.headingIndex),
+      ...doc.ast.children.slice(match.endIndex),
+    ] as any,
+  };
+  return { ...doc, ast: next };
+}
+
+export function replaceSectionWithTable(doc: Doc, heading: string, tableMarkdown: string): Doc {
+  // Convenience wrapper — tableMarkdown is a valid GFM table source.
+  return replaceSection(doc, heading, tableMarkdown);
 }
