@@ -16,6 +16,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.4.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar B lib foundation — v0.4.0-dev.0
+
+Ships `packages/koni-docs/src/lib/` — the reusable typed library that backs the Pillar C CLI subcommands. Composes gray-matter + unified/remark/remark-gfm + zod; replaces the hand-rolled YAML parser and position-based table addressing slated for deletion in Pillar D. 50 exports / 49 unit tests / typecheck clean / .mjs build verified.
+
+### Added
+- `@koniverse/koni-docs/lib` exports: corpus / doc / markdown / schemas / refs / changelog / git (9 modules)
+- Zod schemas for story, epic, sprint, changelog-entry
+- Column-by-NAME table addressing (foundation for the W23 Carry-bug fix to ship in Pillar C `sync`)
+- L3 ID-graph traversal: `listChildrenOf` / `listReferrersTo` / `validateRefs`
+- Thin git wrappers using `execFileSync` (no shell injection surface)
+
+**Commit**: 074d26b
+
+---
+
 ## [0.3.0] — 2026-05-27 — Real-world audit: BLOCKER fix + RULE-16 + 4 new sprint sections + 198/266-story script robustness — v0.3.0
 
 Third release. Ships the **US-1.5 audit** of two production Koniverse

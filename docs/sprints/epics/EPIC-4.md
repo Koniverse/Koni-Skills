@@ -74,6 +74,11 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.2](../stories/US-4.2-cli-bin-and-config.md) | CLI bin + `koni-docs.config.{json,mjs}` | `koni-docs-viewer [path] --port --host --open --watch --config`; optional config file overrides title and ordering | 🟢 ready | — |
 | [US-4.3](../stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | Detect sprint structure; plain landing page when absent; `--watch` auto-reloads browser on `.md` change | 🟢 ready | — |
 | [US-4.4](../stories/US-4.4-dogfood-and-publish.md) | Dogfood in Koni-Skills + publish v0.1.0 | Wire `npm run docs:preview`; publish `@koniverse/docs-viewer@0.1.0`; smoke-test against `Koni-Finance-Final` | 🟢 ready | — |
+| [US-4.5](../stories/US-4.5-lib-corpus-doc.md) | Lib core — corpus + doc module | Compose gray-matter + remark for typed Doc/Corpus value types | ✅ done | v0.4.0-dev.0 |
+| [US-4.6](../stories/US-4.6-lib-sections-tables.md) | Lib core — sections + tables (column-by-NAME) | Section + table primitives with column-name addressing — fixes W23 BLOCKER | ✅ done | v0.4.0-dev.0 |
+| [US-4.7](../stories/US-4.7-lib-checkboxes-schemas.md) | Lib core — checkboxes + Zod schemas | Typed checkbox lists + Zod schemas for story/epic/sprint/changelog-entry | ✅ done | v0.4.0-dev.0 |
+| [US-4.8](../stories/US-4.8-lib-refs.md) | Lib core — refs (L3 ID graph) | listChildrenOf / listReferrersTo / validateRefs for cross-doc IDs | ✅ done | v0.4.0-dev.0 |
+| [US-4.9](../stories/US-4.9-lib-changelog-git.md) | Lib core — changelog + git utilities | CHANGELOG parse/updateCommitSha + thin git wrappers (no shell) | ✅ done | v0.4.0-dev.0 |
 
 ## Cross-cutting invariants
 
