@@ -13,3 +13,6 @@ export {
   getActiveSprint,
   resolveById,
 } from './corpus.ts';
+
+export type { SectionMatch } from './markdown/sections.ts';
+export { findSection, getSectionText } from './markdown/sections.ts';
