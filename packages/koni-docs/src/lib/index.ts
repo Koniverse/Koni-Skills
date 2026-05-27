@@ -1,4 +1,4 @@
-export const KONI_DOCS_LIB_VERSION = '0.5.0';
+export const KONI_DOCS_LIB_VERSION = '0.6.0';
 
 // Core types
 export type { Doc, MatterEntry, Corpus } from './types.ts';
