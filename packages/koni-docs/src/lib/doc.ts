@@ -30,3 +30,7 @@ export function serializeDoc(doc: Doc): string {
 export function writeDoc(path: string, doc: Doc): void {
   writeFileSync(path, serializeDoc(doc), 'utf-8');
 }
+
+export function updateFrontmatter(doc: Doc, partial: Record<string, unknown>): Doc {
+  return { ...doc, frontmatter: { ...doc.frontmatter, ...partial } };
+}

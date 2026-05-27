@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readDoc, parseDoc, serializeDoc } from '../../src/lib/doc.ts';
+import { readDoc, parseDoc, serializeDoc, updateFrontmatter, writeDoc } from '../../src/lib/doc.ts';
 
 const root = mkdtempSync(join(tmpdir(), 'koni-docs-doc-'));
 process.on('exit', () => rmSync(root, { recursive: true, force: true }));
@@ -32,4 +32,23 @@ test('serializeDoc: round-trip preserves content when AST untouched', () => {
   assert.match(out, /^---\n/);
   assert.match(out, /id: US-3.1/);
   assert.match(out, /# Heading/);
+});
+
+test('updateFrontmatter: merges and preserves existing keys', () => {
+  const doc = parseDoc('---\nid: US-1.1\nstatus: backlog\n---\n\nbody\n', '/x.md');
+  const next = updateFrontmatter(doc, { status: 'done', version_shipped: 'v0.1.0' });
+  assert.equal(next.frontmatter.id, 'US-1.1');
+  assert.equal(next.frontmatter.status, 'done');
+  assert.equal(next.frontmatter.version_shipped, 'v0.1.0');
+});
+
+test('writeDoc: writes serialized doc to disk', () => {
+  const p = join(root, 'wd.md');
+  const doc = parseDoc('---\nid: US-1.2\n---\n\n# Hi\n', p);
+  const next = updateFrontmatter(doc, { status: 'done' });
+  writeDoc(p, next);
+  const onDisk = readFileSync(p, 'utf-8');
+  assert.match(onDisk, /id: US-1\.2/);
+  assert.match(onDisk, /status: done/);
+  assert.match(onDisk, /# Hi/);
 });
