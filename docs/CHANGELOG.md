@@ -27,7 +27,7 @@ Ships `packages/koni-docs/src/lib/` — the reusable typed library that backs th
 - L3 ID-graph traversal: `listChildrenOf` / `listReferrersTo` / `validateRefs`
 - Thin git wrappers using `execFileSync` (no shell injection surface)
 
-**Commit**: pending
+**Commit**: 074d26b
 
 ---
 
