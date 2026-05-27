@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.5.0] — 2026-05-27 — Pillar D ship: polish + migration + npm publish — v0.5.0
+
+Stable v0.5.0 release of `@koniverse/koni-docs`. Closes the CLI expansion epic with consumer-facing migration docs and an npm-published CLI binary.
+
+### Added
+- npm-published `@koniverse/koni-docs` v0.5.0 with bin `koni-docs` (5 subcommands) and lib subpath exports.
+- `docs/SETUP.md` install + usage instructions.
+- Consumer migration table in CHANGELOG (replaces `.mjs` paths).
+- Unit test locking pre-release semver in `parseChangelog`.
+
+### Fixed
+- `inject-tasks` honors `--dry-run` (was silently writing files).
+- `sync` non-fatal warnings now print to stderr (no longer interleaves with `--json` stdout).
+- `KONI_DOCS_LIB_VERSION` synced with `package.json` version (was stuck at `0.2.0-dev.0`).
+- `SyncStats` interface no longer carries dead `prdStory` / `skipped` fields.
+
+### Documentation
+- `skills/koni-docs/SKILL.md` §7 rewritten: bundled `.mjs` scripts → CLI subcommand reference.
+- `skills/koni-docs/references/sprint-system.md` script paths → CLI paths.
+- `CLAUDE.md` / `AGENTS.md` Koni-docs Integration blocks updated to mention CLI install.
+
+**Commit**: pending
+
+---
+
 ## [0.5.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar C — v0.5.0-dev.0
 
 Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W23 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
