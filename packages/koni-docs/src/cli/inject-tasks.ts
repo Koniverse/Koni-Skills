@@ -17,7 +17,7 @@ function generateTasksMarkdown(storyId: string, acItems: CheckboxItem[]): string
   return '\n' + lines.join('\n') + '\n';
 }
 
-function injectIntoStory(storyPath: string): { id: string; acCount: number } | null {
+function injectIntoStory(storyPath: string, dryRun: boolean): { id: string; acCount: number } | null {
   const doc = readDoc(storyPath);
   const id = String(doc.frontmatter.id ?? '');
   if (!id) return null;
@@ -25,7 +25,7 @@ function injectIntoStory(storyPath: string): { id: string; acCount: number } | n
   if (ac.length === 0) return null;
   const tasksMd = generateTasksMarkdown(id, ac);
   const next = replaceSection(doc, 'Tasks', tasksMd);
-  writeDoc(storyPath, next);
+  if (!dryRun) writeDoc(storyPath, next);
   return { id, acCount: ac.length };
 }
 
@@ -58,7 +58,7 @@ export function registerInjectTasks(program: Command): void {
 
       const results: Array<{ id: string; acCount: number }> = [];
       for (const path of targets) {
-        const r = injectIntoStory(path);
+        const r = injectIntoStory(path, opts.dryRun);
         if (r) results.push(r);
       }
 

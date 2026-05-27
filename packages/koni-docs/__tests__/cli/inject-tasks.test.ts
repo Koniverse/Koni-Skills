@@ -45,3 +45,17 @@ test('inject-tasks: missing --story and --all exits non-zero', () => {
   const r = runCli(['inject-tasks', '--docs-path', docs]);
   assert.notEqual(r.status, 0);
 });
+
+test('inject-tasks: --dry-run does NOT modify files', () => {
+  const docs = freshDocs();
+  const storyPath = join(docs, 'sprints', 'stories', 'US-1.2-bar.md');
+  const raw = readFileSync(storyPath, 'utf-8');
+  writeFileSync(storyPath, raw + '\n## Tasks\n\n_placeholder_\n');
+  const before = readFileSync(storyPath, 'utf-8');
+
+  const r = runCli(['inject-tasks', '--story', 'US-1.2', '--docs-path', docs, '--dry-run']);
+  assert.equal(r.status, 0, `stderr: ${r.stderr}`);
+
+  const after = readFileSync(storyPath, 'utf-8');
+  assert.equal(after, before, 'dry-run must not modify the story');
+});
