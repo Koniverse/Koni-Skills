@@ -127,9 +127,9 @@ packages/koni-docs/
     "exactOptionalPropertyTypes": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "declaration": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true
@@ -155,6 +155,7 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   target: 'node20',
+  outExtension: () => ({ js: '.mjs' }),
 });
 ```
 
@@ -2577,3 +2578,17 @@ git commit -m "docs: backfill commit SHA for v0.4.0-dev.0"
 - Deletion of the five `.mjs` scripts in `skills/koni-docs/scripts/` — Pillar D.
 - `npm publish @koniverse/koni-docs@0.2.0` — Pillar D.
 - FR-ref validation against PRD §8 — deferred from Task 16 (`validateRefs` currently covers epic and sprint refs only; FR validation arrives with Pillar C `validate` subcommand if scoped in).
+
+## Known issues to resolve in Pillar C
+
+Pillar B's final code review surfaced one Important issue and several Minor polish items. They are not Pillar B regressions — they are deferred work.
+
+**Important — `.` root export placeholder** ([Task 1 package.json](#task-1-initialize-packages-koni-docs--package-skeleton)):
+The `package.json` `exports."."` entry points at `./dist/cli/index.mjs`, which does not exist in Pillar B (no CLI binary yet). Bare `import '@koniverse/koni-docs'` will fail `MODULE_NOT_FOUND`. Subpath imports (`/lib`, `/lib/markdown`, `/lib/schemas`) all resolve correctly. Resolved when Pillar C ships `src/cli/index.ts` and tsup adds the `cli/index` entry.
+
+**Minor — polish items deferred to Pillar C or a separate polish PR**:
+- `updateCell` mutates `doc.ast` in place while `updateFrontmatter`/`replaceSection`/`appendToSection`/`removeSection` return new Doc values. Document the contract at the function signature, or refactor to immutable.
+- `readFolderMatter` accepts `opts.recursive` but never reads it. Either implement (if Pillar C needs nested folders) or drop the parameter.
+- `unist-util-visit` listed in `dependencies` but never imported. Drop or wire into a future primitive that needs tree walking.
+- Missing edge-case tests: `updateCell` row-not-found path; `parseChangelog` empty input; `validateRefs` with a broken epic/sprint ref.
+- `serializeChangelog` imported but never called in `changelog.test.ts` — dead import.
