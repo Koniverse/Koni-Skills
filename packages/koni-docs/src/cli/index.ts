@@ -27,6 +27,9 @@ registerBackfillFields(program);
 import { registerBackfillCommits } from './backfill-commits.ts';
 registerBackfillCommits(program);
 
+import { registerPreview } from './preview.ts';
+registerPreview(program);
+
 program.on('command:*', () => {
   console.error('error: unknown command');
   process.exit(1);

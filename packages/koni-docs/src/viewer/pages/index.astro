@@ -1,0 +1,150 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { scanDocFiles, buildFileTree, loadDashboardData } from '../lib/corpus.ts';
+
+const allDocs = await scanDocFiles();
+const tree = buildFileTree(allDocs);
+const { stories, epics } = loadDashboardData();
+
+const totalStories = stories.length;
+const doneStories = stories.filter((s) => s.status === 'done').length;
+const inProgress = stories.filter((s) => s.status === 'in-progress').length;
+const inReview = stories.filter((s) => s.status === 'in-review' || s.status === 'review').length;
+const blocked = stories.filter((s) => s.status === 'blocked').length;
+const totalPoints = stories.reduce((acc, c) => acc + (c.points ?? 0), 0);
+const donePoints = stories
+  .filter((s) => s.status === 'done')
+  .reduce((acc, c) => acc + (c.points ?? 0), 0);
+
+const completionPercent = totalStories > 0 ? Math.round((doneStories / totalStories) * 100) : 0;
+const pointsPercent = totalPoints > 0 ? Math.round((donePoints / totalPoints) * 100) : 0;
+---
+
+<Layout title="Dashboard" tree={tree}>
+  <div class="mx-auto w-full max-w-screen-2xl px-6 py-8 md:px-10 md:py-10">
+    <header class="mb-8">
+      <p class="mb-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">koni-docs</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+        <span class="text-foreground">Docs Preview & </span>
+        <span class="text-primary">Epic Tracker</span>
+      </h1>
+      <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
+        Aggregate view of every EPIC in <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">docs/sprints/</code>
+        — completion %, points shipped, status breakdown.
+      </p>
+    </header>
+
+    <section class="mb-8 grid gap-4 md:grid-cols-4">
+      <article class="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Stories</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight">
+          {doneStories}
+          <span class="text-base font-normal text-muted-foreground">/ {totalStories}</span>
+        </p>
+        <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+          <div class="h-full bg-primary transition-all" style={`width: ${completionPercent}%`}></div>
+        </div>
+        <p class="mt-2 font-mono text-[11px] text-muted-foreground">{completionPercent}% done</p>
+      </article>
+
+      <article class="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Points</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight">
+          {donePoints}
+          <span class="text-base font-normal text-muted-foreground">/ {totalPoints}</span>
+        </p>
+        <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+          <div class="h-full bg-primary transition-all" style={`width: ${pointsPercent}%`}></div>
+        </div>
+        <p class="mt-2 font-mono text-[11px] text-muted-foreground">{pointsPercent}% shipped</p>
+      </article>
+
+      <article class="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">In Flight</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight">{inProgress + inReview}</p>
+        <p class="mt-3 font-mono text-[11px] text-muted-foreground">
+          {inProgress} in&nbsp;progress · {inReview} in&nbsp;review
+        </p>
+      </article>
+
+      <article class="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Blocked</p>
+        <p class={`mt-2 text-3xl font-bold tracking-tight ${blocked > 0 ? 'text-destructive' : ''}`}>{blocked}</p>
+        <p class="mt-3 font-mono text-[11px] text-muted-foreground">
+          {epics.length} epics · {allDocs.length} docs
+        </p>
+      </article>
+    </section>
+
+    <section>
+      <div class="mb-3 flex items-end justify-between">
+        <h2 class="text-lg font-semibold tracking-tight">Epics</h2>
+        <span class="font-mono text-xs text-muted-foreground">{epics.length} tracked</span>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {epics.map((e) => {
+          const pct = e.total > 0 ? Math.round((e.done / e.total) * 100) : 0;
+          const pPct = e.totalPoints > 0 ? Math.round((e.donePoints / e.totalPoints) * 100) : 0;
+          const epicSlug = e.epic.startsWith('EPIC-') ? `sprints/epics/${e.epic}` : null;
+          return (
+            <article class="group rounded-xl border border-border bg-card p-5 shadow-sm transition hover:border-primary/40">
+              <div class="mb-3 flex items-center justify-between gap-2">
+                <h3 class="font-mono text-sm font-semibold tracking-tight">{e.epic}</h3>
+                <span class="rounded-md border border-border bg-background px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  {e.total} stories
+                </span>
+              </div>
+
+              <div class="mb-3">
+                <div class="mb-1.5 flex items-baseline justify-between">
+                  <span class="text-2xl font-bold tracking-tight">
+                    {e.done}<span class="text-base font-normal text-muted-foreground">/{e.total}</span>
+                  </span>
+                  <span class="font-mono text-xs text-muted-foreground">{pct}%</span>
+                </div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-primary transition-all" style={`width: ${pct}%`}></div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="mb-1 flex items-baseline justify-between text-xs">
+                  <span class="font-mono uppercase tracking-wider text-muted-foreground">Points</span>
+                  <span class="font-mono text-muted-foreground">{e.donePoints}/{e.totalPoints} · {pPct}%</span>
+                </div>
+                <div class="h-1 overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-primary/60 transition-all" style={`width: ${pPct}%`}></div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                {e.done > 0 && <span class="badge badge-done">{e.done} done</span>}
+                {e.inProgress > 0 && <span class="badge badge-in-progress">{e.inProgress} in&nbsp;progress</span>}
+                {e.inReview > 0 && <span class="badge badge-in-review">{e.inReview} review</span>}
+                {e.blocked > 0 && <span class="badge badge-blocked">{e.blocked} blocked</span>}
+                {e.backlog > 0 && <span class="badge badge-backlog">{e.backlog} backlog</span>}
+              </div>
+
+              {(e.shippedVersions.length > 0 || epicSlug) && (
+                <div class="mt-4 flex items-center justify-between border-t border-border pt-3">
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {e.shippedVersions.length > 0 ? `Shipped: ${e.shippedVersions.join(', ')}` : ''}
+                  </span>
+                  {epicSlug && (
+                    <a
+                      href={`/docs/${epicSlug}`}
+                      class="font-mono text-xs text-primary transition hover:opacity-80"
+                    >
+                      View epic →
+                    </a>
+                  )}
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</Layout>

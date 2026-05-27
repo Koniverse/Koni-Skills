@@ -1,0 +1,72 @@
+---
+import * as path from 'node:path';
+import { promises as fs } from 'node:fs';
+import Layout from '../../layouts/Layout.astro';
+import { scanDocFiles, buildFileTree, getDocsDir } from '../../lib/corpus.ts';
+import { renderDocFromPath } from '../../lib/render.ts';
+
+const slug = Array.isArray(Astro.params.file) ? Astro.params.file.join('/') : (Astro.params.file ?? '');
+const docsDir = getDocsDir();
+const absolutePath = path.resolve(docsDir, `${slug}.md`);
+
+let metadata, html, toc;
+try {
+  await fs.access(absolutePath);
+  const rendered = await renderDocFromPath(absolutePath, slug);
+  metadata = rendered.metadata;
+  html = rendered.html;
+  toc = rendered.toc;
+} catch {
+  return new Response(`Doc not found: ${slug}`, { status: 404 });
+}
+
+const allDocs = await scanDocFiles();
+const tree = buildFileTree(allDocs);
+const crumbs = `${slug}`.split('/');
+---
+
+<Layout title={metadata.title} tree={tree}>
+  <div class="mx-auto w-full max-w-screen-2xl px-6 py-8 md:px-10 md:py-10">
+    <div class={`grid gap-10 ${toc.length > 0 ? 'lg:grid-cols-[minmax(0,1fr)_240px]' : ''}`}>
+      <article class="min-w-0">
+        <nav class="mb-3 flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+          <a href="/" class="hover:text-foreground">Docs</a>
+          {crumbs.map((c, i) => (
+            <>
+              <span class="text-muted-foreground/40">/</span>
+              <span class={i === crumbs.length - 1 ? 'font-medium text-foreground' : ''}>{c}</span>
+            </>
+          ))}
+        </nav>
+        <header class="mb-6">
+          <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{metadata.title}</h1>
+          {metadata.id && (
+            <div class="mt-5 grid gap-4 rounded-xl border border-border bg-card p-4 text-sm shadow-sm sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Story ID</p><p class="mt-0.5 font-mono text-xs">{metadata.id}</p></div>
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Epic</p><p class="mt-0.5 truncate">{metadata.epic ?? '—'}</p></div>
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Sprint</p><p class="mt-0.5 truncate">{metadata.sprint ?? '—'}</p></div>
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Assignee</p><p class="mt-0.5 truncate">{metadata.assignee ?? '—'}</p></div>
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Points</p><p class="mt-0.5">{metadata.points ?? 0}</p></div>
+              <div><p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Status</p><p class="mt-0.5"><span class={`badge badge-${metadata.status ?? 'backlog'}`}>{metadata.status ?? 'backlog'}</span></p></div>
+            </div>
+          )}
+        </header>
+        <div class="prose max-w-none" set:html={html} />
+      </article>
+      {toc.length > 0 && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-xl border border-border bg-card p-4 shadow-sm">
+            <p class="mb-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">On this page</p>
+            <ul class="flex flex-col gap-1.5 text-sm">
+              {toc.map((item) => (
+                <li class={item.level === 3 ? 'pl-3' : ''}>
+                  <a href={`#${item.id}`} class="block truncate text-muted-foreground transition hover:text-foreground">{item.text}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+</Layout>

@@ -70,10 +70,11 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 
 | ID | Title | Goal | Status | Version |
 |---|---|---|---|---|
-| [US-4.1](../stories/US-4.1-scaffold-and-ssr.md) | Scaffold `packages/koni-docs-viewer` + SSR migration | Set up the package, copy reference impl, switch from `getStaticPaths` to Astro Node SSR, decouple `DOCS_DIR` from monorepo paths | 🟢 ready | — |
-| [US-4.2](../stories/US-4.2-cli-bin-and-config.md) | CLI bin + `koni-docs.config.{json,mjs}` | `koni-docs-viewer [path] --port --host --open --watch --config`; optional config file overrides title and ordering | 🟢 ready | — |
-| [US-4.3](../stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | Detect sprint structure; plain landing page when absent; `--watch` auto-reloads browser on `.md` change | 🟢 ready | — |
+| [US-4.1](../stories/US-4.1-scaffold-and-ssr.md) | Scaffold `packages/koni-docs-viewer` + SSR migration | Set up the package, copy reference impl, switch from `getStaticPaths` to Astro Node SSR, decouple `DOCS_DIR` from monorepo paths | ✅ done | v0.6.0 |
+| [US-4.2](../stories/US-4.2-cli-bin-and-config.md) | CLI bin + `koni-docs.config.{json,mjs}` | `koni-docs-viewer [path] --port --host --open --watch --config`; optional config file overrides title and ordering | 🚧 in-progress | — |
+| [US-4.3](../stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | Detect sprint structure; plain landing page when absent; `--watch` auto-reloads browser on `.md` change | 🚧 in-progress | — |
 | [US-4.4](../stories/US-4.4-dogfood-and-publish.md) | Dogfood in Koni-Skills + publish v0.1.0 | Wire `npm run docs:preview`; publish `@koniverse/docs-viewer@0.1.0`; smoke-test against `Koni-Finance-Final` | 🟢 ready | — |
+| [US-4.19](../stories/US-4.19-cli-preview.md) | `koni-docs preview` subcommand | Spawn Astro dev with runtime DOCS_DIR; --port/--host/--open flags | ✅ done | v0.6.0 |
 | [US-4.5](../stories/US-4.5-lib-corpus-doc.md) | Lib core — corpus + doc module | Compose gray-matter + remark for typed Doc/Corpus value types | ✅ done | v0.4.0-dev.0 |
 | [US-4.6](../stories/US-4.6-lib-sections-tables.md) | Lib core — sections + tables (column-by-NAME) | Section + table primitives with column-name addressing — fixes W23 BLOCKER | ✅ done | v0.4.0-dev.0 |
 | [US-4.7](../stories/US-4.7-lib-checkboxes-schemas.md) | Lib core — checkboxes + Zod schemas | Typed checkbox lists + Zod schemas for story/epic/sprint/changelog-entry | ✅ done | v0.4.0-dev.0 |

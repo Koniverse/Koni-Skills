@@ -16,6 +16,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.6.0] — 2026-05-28 — Pillar E ship: Astro SSR viewer + `preview` subcommand — v0.6.0
+
+Adds the Astro SSR docs viewer at `packages/koni-docs/src/viewer/` and a new `koni-docs preview` subcommand. Lifts the proven UI pattern from `Koni-Finance-Final/apps/docs/`, adapted for SSR + runtime DOCS_DIR + Pillar B lib reuse.
+
+### Added
+- `koni-docs preview [path] --port <n> --host <h> --open` — spawns Astro dev with `KONI_DOCS_DIR` set
+- `src/viewer/` Astro SSR project: `pages/index.astro` (dashboard with KPIs + epic grid), `pages/docs/[...file].astro` (per-doc SSR with story frontmatter card + TOC), `layouts/Layout.astro`, `components/TreeNode.astro`, `styles/global.css`
+- `lib/render.ts`: marked + shiki (github-dark) + mermaid passthrough + relative-link rewrite
+- `lib/corpus.ts`: file-tree builder + dashboard data composer (delegates to Pillar B lib)
+- Runtime deps: `astro@^4.16.18`, `@astrojs/node@^8.3.0`, `marked@^12.0.1`, `shiki@^1.1.7`, `chokidar@^3.6.0`, `tailwindcss@^4`, `@tailwindcss/postcss@^4`, `tw-animate-css`
+- Preview smoke test in `__tests__/cli/preview.test.ts`
+
+### Changed
+- `package.json` `files` field includes `src/viewer/**` so the viewer ships in the npm tarball
+- VERSION triple synced to `0.6.0` (root VERSION + package.json + KONI_DOCS_LIB_VERSION)
+
+### Deferred (Pillar F)
+- chokidar + SSE live-reload (`--watch` flag in CLI design but no-op for v0.6.0)
+- `koni-docs.config.{json,mjs}` config file (title/ordering overrides)
+- Full `project.astro` overview page
+- npm publish `@koniverse/koni-docs@0.6.0`
+
+**Commit**: bc0168b
+
+---
+
 ## [0.5.0] — 2026-05-27 — Pillar D ship: polish + migration + npm publish — v0.5.0
 
 Stable v0.5.0 release of `@koniverse/koni-docs`. Closes the CLI expansion epic with consumer-facing migration docs and an npm-published CLI binary.

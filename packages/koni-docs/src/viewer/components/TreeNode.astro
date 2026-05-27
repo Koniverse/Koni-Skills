@@ -1,0 +1,116 @@
+---
+import type { TreeNode } from '../lib/corpus.ts';
+
+interface Props {
+  node: TreeNode;
+  currentPath: string;
+  depth?: number;
+}
+
+const { node, currentPath, depth = 0 } = Astro.props;
+
+function pathContains(parent: TreeNode, target: string): boolean {
+  if (!parent.children) return false;
+  for (const child of parent.children) {
+    if (child.type === 'file' && child.href === target) return true;
+    if (child.type === 'folder' && pathContains(child, target)) return true;
+  }
+  return false;
+}
+
+const isFolder = node.type === 'folder';
+const isActiveFile =
+  node.type === 'file' &&
+  (currentPath === node.href || decodeURIComponent(currentPath) === node.href);
+const containsActive = isFolder && pathContains(node, currentPath);
+const isTopLevelFolder = isFolder && depth === 0;
+const folderOpen = containsActive || isTopLevelFolder;
+
+const indent = depth === 0 ? 0 : depth * 12;
+---
+
+{
+  isFolder ? (
+    <details open={folderOpen} class="group/tree">
+      <summary
+        class="flex cursor-pointer select-none items-center gap-1.5 rounded-md py-1 pr-2 text-sm text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        style={`padding-left: ${8 + indent}px;`}
+      >
+        <svg
+          class="size-3.5 shrink-0 text-sidebar-foreground/50 transition-transform group-open/tree:rotate-90"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        <svg
+          class="size-3.5 shrink-0 text-sidebar-primary/80 group-open/tree:hidden"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+        </svg>
+        <svg
+          class="hidden size-3.5 shrink-0 text-sidebar-primary/80 group-open/tree:block"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m5 19 2.5-6h13l-2.5 6Z" />
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v3" />
+        </svg>
+        <span class="truncate font-medium">{node.name}</span>
+        {node.children && (
+          <span class="ml-auto rounded bg-sidebar-accent/40 px-1.5 text-[10px] font-medium text-sidebar-foreground/50">
+            {node.children.length}
+          </span>
+        )}
+      </summary>
+      <div class="mt-0.5 flex flex-col gap-px">
+        {node.children?.map((child) => (
+          <Astro.self node={child} currentPath={currentPath} depth={depth + 1} />
+        ))}
+      </div>
+    </details>
+  ) : (
+    <a
+      href={node.href}
+      class:list={[
+        'group flex items-center gap-1.5 rounded-md py-1 pr-2 text-sm transition',
+        isActiveFile
+          ? 'bg-sidebar-primary/15 font-medium text-sidebar-foreground'
+          : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+      ]}
+      style={`padding-left: ${20 + indent}px;`}
+      title={node.title ? `${node.name} — ${node.title}` : node.name}
+    >
+      <svg
+        class:list={[
+          'size-3.5 shrink-0',
+          isActiveFile ? 'text-sidebar-primary' : 'text-sidebar-foreground/40',
+        ]}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+        <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z" />
+      </svg>
+      <span class="truncate font-mono text-[12.5px]">{node.name}</span>
+    </a>
+  )
+}
