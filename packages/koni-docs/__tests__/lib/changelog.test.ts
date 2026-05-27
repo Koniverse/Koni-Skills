@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseChangelog, findEntryByVersion, formatVersionHeader } from '../../src/lib/changelog.ts';
+import { parseChangelog, findEntryByVersion, formatVersionHeader, updateCommitSha, serializeChangelog } from '../../src/lib/changelog.ts';
 
 const cl = `# Changelog
 
@@ -46,4 +46,17 @@ test('findEntryByVersion: locates by version', () => {
 test('formatVersionHeader: produces the canonical header', () => {
   const h = formatVersionHeader({ version: '0.3.0', date: '2026-07-01', title: 'New' });
   assert.equal(h, '## [0.3.0] — 2026-07-01 — New — v0.3.0');
+});
+
+test('updateCommitSha: replaces "pending" with real sha; preserves other content', () => {
+  const updated = updateCommitSha(cl, '0.2.0', 'def5678');
+  assert.match(updated, /## \[0\.2\.0\][^\n]+v0\.2\.0/);
+  assert.match(updated, /\*\*Commit\*\*: def5678/);
+  assert.doesNotMatch(updated, /\*\*Commit\*\*: pending/);
+  assert.match(updated, /\*\*Commit\*\*: abc1234/); // unchanged
+});
+
+test('updateCommitSha: returns unchanged input when version not found', () => {
+  const updated = updateCommitSha(cl, '9.9.9', 'deadbee');
+  assert.equal(updated, cl);
 });

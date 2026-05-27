@@ -60,3 +60,21 @@ export function findEntryByVersion(entries: ChangelogEntryParsed[], version: str
 export function formatVersionHeader(opts: { version: string; date: string; title: string }): string {
   return `## [${opts.version}] — ${opts.date} — ${opts.title} — v${opts.version}`;
 }
+
+export function updateCommitSha(raw: string, version: string, sha: string): string {
+  const entries = parseChangelog(raw);
+  const entry = findEntryByVersion(entries, version);
+  if (!entry || entry.commitLine === null) return raw;
+  const lines = raw.split('\n');
+  lines[entry.commitLine] = `**Commit**: ${sha}`;
+  return lines.join('\n');
+}
+
+/**
+ * Stub: serializing parsed entries back to a CHANGELOG file is not used by
+ * Pillar B. Pillar C subcommands operate on raw + line-level updates (see
+ * updateCommitSha). Exported for API completeness; throws if called.
+ */
+export function serializeChangelog(_entries: ChangelogEntryParsed[]): string {
+  throw new Error('serializeChangelog: not implemented in Pillar B; use raw + updateCommitSha');
+}
