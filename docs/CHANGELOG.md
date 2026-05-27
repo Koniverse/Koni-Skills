@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.5.0] — 2026-05-27 — Pillar D ship: polish + migration + npm publish — v0.5.0
+
+Stable v0.5.0 release of `@koniverse/koni-docs`. Closes the CLI expansion epic with consumer-facing migration docs and an npm-published CLI binary.
+
+### Added
+- npm-published `@koniverse/koni-docs` v0.5.0 with bin `koni-docs` (5 subcommands) and lib subpath exports.
+- `docs/SETUP.md` install + usage instructions.
+- Consumer migration table in CHANGELOG (replaces `.mjs` paths).
+- Unit test locking pre-release semver in `parseChangelog`.
+
+### Fixed
+- `inject-tasks` honors `--dry-run` (was silently writing files).
+- `sync` non-fatal warnings now print to stderr (no longer interleaves with `--json` stdout).
+- `KONI_DOCS_LIB_VERSION` synced with `package.json` version (was stuck at `0.2.0-dev.0`).
+- `SyncStats` interface no longer carries dead `prdStory` / `skipped` fields.
+
+### Documentation
+- `skills/koni-docs/SKILL.md` §7 rewritten: bundled `.mjs` scripts → CLI subcommand reference.
+- `skills/koni-docs/references/sprint-system.md` script paths → CLI paths.
+- `CLAUDE.md` / `AGENTS.md` Koni-docs Integration blocks updated to mention CLI install.
+
+**Commit**: 72c973f
+
+---
+
 ## [0.5.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar C — v0.5.0-dev.0
 
 Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W23 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
@@ -38,6 +63,27 @@ Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Dele
 
 ### Fixed
 - **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
+
+### Migration table (for consumer repos updating from < 0.4.0)
+
+The 5 legacy `.mjs` scripts under `skills/koni-docs/scripts/` are gone. Update any `package.json` `scripts` blocks, CI jobs, or git hooks that hard-coded their paths:
+
+| Old | New |
+|---|---|
+| `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` | `npx koni-docs status --docs-path docs/` |
+| `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/ --story US-X.Y` | `npx koni-docs sync --docs-path docs/ --story US-X.Y` |
+| `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --all` | `npx koni-docs inject-tasks --docs-path docs/ --all` |
+| `node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path docs/` | `npx koni-docs backfill-fields --docs-path docs/` |
+| `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/` | `npx koni-docs backfill-commits --docs-path docs/` |
+
+If you have an `npm run agile:status` script:
+
+```diff
+- "agile:status": "node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/"
++ "agile:status": "koni-docs status --docs-path docs/"
+```
+
+(Add `@koniverse/koni-docs` to your devDependencies; the `koni-docs` bin resolves locally without needing `npx` when listed in `scripts:`.)
 
 **Commit**: 7bc86ce
 

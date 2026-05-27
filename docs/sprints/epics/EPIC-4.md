@@ -85,6 +85,9 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.13](../stories/US-4.13-cli-inject-tasks.md) | `koni-docs inject-tasks` subcommand | Regen ## Tasks from AC checkboxes; delete agile-inject-tasks.mjs | ✅ done | v0.5.0-dev.0 |
 | [US-4.14](../stories/US-4.14-cli-backfill-fields.md) | `koni-docs backfill-fields` subcommand | Merge STORY_DEFAULTS for missing keys; delete agile-backfill-fields.mjs | ✅ done | v0.5.0-dev.0 |
 | [US-4.15](../stories/US-4.15-cli-backfill-commits.md) | `koni-docs backfill-commits` subcommand | Replace pending SHA via git; delete changelog-backfill-commits.mjs + sync-test.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.16](../stories/US-4.16-cli-migration-docs.md) | Migration docs (SKILL.md / sprint-system.md / CLAUDE.md / SETUP.md) | Rewrite agent-facing docs to point at CLI; consumer migration table | ✅ done | v0.5.0 |
+| [US-4.17](../stories/US-4.17-cli-npm-publish.md) | Publish @koniverse/koni-docs@0.5.0 to npm | npm publish prep complete; actual publish DEFERRED awaiting npm credentials | 👀 review | — |
+| [US-4.18](../stories/US-4.18-cli-polish-fixes.md) | CLI polish — 5 minor fixes | inject-tasks dry-run; sync stderr; SyncStats fields; pre-release test; version skew | ✅ done | v0.5.0 |
 
 ## Cross-cutting invariants
 

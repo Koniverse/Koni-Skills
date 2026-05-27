@@ -67,8 +67,8 @@ infix). The `.vi.md` files are:
 
 - **Optional** — projects opt in per their team's language preference.
 - **Never authoritative** — if `*.md` and `*.vi.md` disagree, `*.md` wins.
-- **Skipped by sync scripts** — `generate-status.mjs` /
-  `agile-sync-up.mjs` filter to `.md`-only files that DON'T match
+- **Skipped by sync scripts** — `npx koni-docs status` /
+  `npx koni-docs sync` filter to `.md`-only files that DON'T match
   `*.vi.md`. Frontmatter parsing, AC counting, status propagation: all
   English-only.
 - **Per-story discretion** — translate the stories that need broad
@@ -142,8 +142,8 @@ Run through every item before committing:
 [ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
 [ ] Story file: status → done, version_shipped set, Tasks all [x]
-[ ] node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/  (5-layer sync)
-[ ] node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/  (STATUS.md — RULE-5)
+[ ] npx koni-docs sync --docs-path docs/  (5-layer sync)
+[ ] npx koni-docs status --docs-path docs/  (STATUS.md — RULE-5)
 [ ] CLAUDE.md Active Context block updated (see §4)
 ```
 
@@ -243,10 +243,10 @@ file matching the user's request.
 | "make AGENTS.md canonical" / "slim CLAUDE.md" / "AGENTS-canonical convention" | Apply §3.1 convention: CLAUDE.md keeps only pointer + Koni-Docs Integration + Active Context; AGENTS.md absorbs project structure / docs links / conventions | `templates/integration.md` §3.1 |
 | "what templates exist?"                         | Browse the index                                                                          | `templates.md` (thin index)                |
 | "run doc checklist" / "pre-commit check"        | Walk §3c checklist item by item                                                           | `rules.md` + `sprint-system.md`            |
-| "regenerate status"                             | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` → commit            | `sprint-system.md` §Scripts                |
-| "sync stories to PRD"                           | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                       | `sprint-system.md` §5-layer                |
-| "inject tasks from AC"                          | `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-X.Y`   | `sprint-system.md` §Scripts                |
-| "backfill changelog SHAs"                       | `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/`          | `sprint-system.md` §Scripts                |
+| "regenerate status"                             | `npx koni-docs status --docs-path docs/` → commit                                         | `sprint-system.md` §Scripts                |
+| "sync stories to PRD"                           | `npx koni-docs sync --docs-path docs/`                                                    | `sprint-system.md` §5-layer                |
+| "inject tasks from AC"                          | `npx koni-docs inject-tasks --docs-path docs/ --story US-X.Y`                             | `sprint-system.md` §Scripts                |
+| "backfill changelog SHAs"                       | `npx koni-docs backfill-commits --docs-path docs/`                                        | `sprint-system.md` §Scripts                |
 | "standardize output from [tool]"                | Map tool output to canonical docs/ structure                                              | §1 Pipeline                                |
 
 ---
@@ -280,55 +280,47 @@ Load these on demand based on user intent:
 
 ---
 
-## 7. Bundled scripts
+## 7. CLI tool — `@koniverse/koni-docs`
 
-This skill ships with automation scripts in its `scripts/` directory. Per the skill-creator bundled-resources pattern, **scripts are executed directly from the skill path** — no copying into the project is needed.
-
-### How to run
-
-Always run scripts from the skill's own `scripts/` directory via `node`:
+This skill ships with a companion CLI binary published as `@koniverse/koni-docs` (v0.5.0+). Install once per consumer repo:
 
 ```bash
-node skills/koni-docs/scripts/<script>.mjs --docs-path docs/
+npm install --save-dev @koniverse/koni-docs
 ```
 
-All scripts accept:
-
-- `--docs-path <path>` — override the default `docs/` path (always pass this)
-- `--dry-run` — preview changes without writing
-
-### Script inventory
-
-| Script                             | Purpose                                                                             | Example                                                                                   |
-| ---------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `generate-status.mjs`            | Regenerate `STATUS.md` kanban from all story frontmatter                          | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/`                   |
-| `agile-sync-up.mjs`              | Propagate story status through all 5 doc layers (EPIC, PRD §11, PRD §8 FR, sprint) | `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/`                     |
-| `agile-inject-tasks.mjs`         | Regenerate Tasks section from Acceptance Criteria (AC is canonical)                 | `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-2.1` |
-| `agile-backfill-fields.mjs`      | Add missing frontmatter fields to existing stories                                  | `node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path docs/`             |
-| `changelog-backfill-commits.mjs` | Replace "pending" commit SHAs in CHANGELOG with real SHAs from git history          | `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/`        |
-
-### Optional: npm convenience script
-
-If the project wants `npm run agile:status` for human devs, add to `package.json`:
-
-```json
-"scripts": {
-  "agile:status": "node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/"
-}
-```
-
-The agent always uses the direct `node skills/koni-docs/scripts/...` path — the npm script is purely a convenience alias for humans.
-
-### Regression test
-
-Before changing any sync script, run the self-contained integration test:
+Then run subcommands via `npx koni-docs`:
 
 ```bash
-node skills/koni-docs/scripts/__tests__/sync-test.mjs
+npx koni-docs <subcommand> --docs-path docs/
 ```
 
-The test builds its own fixture in a tmpdir, exercises all 5 sync scripts
-against mixed old/new template shapes (4-col EPIC, 5-col EPIC with Goal,
-per-story PRD §7 section, per-epic PRD §11 table, 7-col sprint scope),
-and asserts the expected outputs cell-by-cell. Use `--keep` to inspect
-the fixture after a failure. Exit code 0 = all pass.
+All subcommands accept:
+
+- `--docs-path <path>` — override the default `docs/` root
+- `--dry-run` — preview changes without writing files
+- `--json` — machine-readable output
+- `--verbose` — extra logging
+
+### Subcommand inventory
+
+| Subcommand | Purpose | Example |
+|---|---|---|
+| `status` | Regenerate `STATUS.md` kanban from story frontmatter | `npx koni-docs status` |
+| `sync` | Propagate story status through 5 doc layers (column-by-NAME, W23 BLOCKER fix) | `npx koni-docs sync --story US-X.Y` |
+| `inject-tasks` | Regen `## Tasks` from `## Acceptance criteria` checkboxes | `npx koni-docs inject-tasks --story US-X.Y` |
+| `backfill-fields` | Add missing standard frontmatter keys via `STORY_DEFAULTS` | `npx koni-docs backfill-fields` |
+| `backfill-commits` | Fill `pending` commit SHAs in CHANGELOG via git history | `npx koni-docs backfill-commits` |
+
+(`preview` subcommand — Astro SSR viewer — planned for v0.6.0.)
+
+### Library API for programmatic use
+
+Other Koniverse products can import the typed lib without the CLI:
+
+```ts
+import { loadCorpus, getStories, resolveById } from '@koniverse/koni-docs/lib';
+import { storySchema, validateStory } from '@koniverse/koni-docs/lib/schemas';
+import { findSection, updateCell, parseCheckboxes } from '@koniverse/koni-docs/lib/markdown';
+```
+
+The lib has zero CLI dependencies. Composes `gray-matter` + `unified`/`remark-gfm` + `zod`.

@@ -30,10 +30,8 @@ function versionCell(status: string, version: string | undefined): string {
 
 interface SyncStats {
   epic: number;
-  prdStory: number;
   prdFr: number;
   sprint: number;
-  skipped: number;
   warnings: string[];
 }
 
@@ -48,7 +46,7 @@ function findSprintPath(corpus: Corpus, sprintId: string): string | null {
 }
 
 function syncOne(corpus: Corpus, story: MatterEntry, dryRun: boolean): SyncStats {
-  const stats: SyncStats = { epic: 0, prdStory: 0, prdFr: 0, sprint: 0, skipped: 0, warnings: [] };
+  const stats: SyncStats = { epic: 0, prdFr: 0, sprint: 0, warnings: [] };
   const fm = story.frontmatter;
   const id = String(fm.id ?? '');
   const epic = String(fm.epic ?? '');
@@ -168,7 +166,7 @@ export function registerSync(program: Command): void {
         targets = getStories(corpus);
       }
 
-      const totals: SyncStats = { epic: 0, prdStory: 0, prdFr: 0, sprint: 0, skipped: 0, warnings: [] };
+      const totals: SyncStats = { epic: 0, prdFr: 0, sprint: 0, warnings: [] };
       for (const story of targets) {
         const s = syncOne(corpus, story, opts.dryRun);
         totals.epic += s.epic;
@@ -181,7 +179,7 @@ export function registerSync(program: Command): void {
         console.log(JSON.stringify({ ok: true, dryRun: opts.dryRun, totals }, null, 2));
       } else {
         console.log(`✓ epic:${totals.epic} sprint:${totals.sprint} PRD-FR:${totals.prdFr} (${targets.length} stor${targets.length === 1 ? 'y' : 'ies'})`);
-        for (const w of totals.warnings) console.log(`  ⚠ ${w}`);
+        for (const w of totals.warnings) console.error(`  ⚠ ${w}`);
       }
       if (opts.dryRun) console.log('(dry run — no changes written)');
     });

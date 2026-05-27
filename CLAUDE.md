@@ -16,6 +16,8 @@ koni-docs:
   active_sprint: sprint-2026-W23     # open 2026-05-27 → 2026-06-03 (EPIC-4 — Docs preview tooling)
   version_file: VERSION              # path to semver file
 
+> **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.
+
 ## Active Context
 
 > **Moved to `.active-context.md`** — see [`.active-context.example.md`](./.active-context.example.md)

@@ -60,3 +60,30 @@ test('updateCommitSha: returns unchanged input when version not found', () => {
   const updated = updateCommitSha(cl, '9.9.9', 'deadbee');
   assert.equal(updated, cl);
 });
+
+test('parseChangelog: handles pre-release semver (0.5.0-dev.0)', () => {
+  const raw = `# Changelog
+
+## [Unreleased]
+
+(empty)
+
+## [0.5.0-dev.0] — 2026-05-27 — Pre-release entry — v0.5.0-dev.0
+
+Body text.
+
+**Commit**: abc1234
+
+## [0.4.0-dev.0] — 2026-05-27 — Earlier — v0.4.0-dev.0
+
+Older.
+
+**Commit**: def5678
+`;
+  const entries = parseChangelog(raw);
+  assert.equal(entries.length, 2);
+  assert.equal(entries[0]?.version, '0.5.0-dev.0');
+  assert.equal(entries[0]?.title, 'Pre-release entry');
+  assert.equal(entries[0]?.commitSha, 'abc1234');
+  assert.equal(entries[1]?.version, '0.4.0-dev.0');
+});
