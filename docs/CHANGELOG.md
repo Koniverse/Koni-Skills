@@ -37,7 +37,7 @@ Stable v0.5.0 release of `@koniverse/koni-docs`. Closes the CLI expansion epic w
 - `skills/koni-docs/references/sprint-system.md` script paths → CLI paths.
 - `CLAUDE.md` / `AGENTS.md` Koni-docs Integration blocks updated to mention CLI install.
 
-**Commit**: pending
+**Commit**: 72c973f
 
 ---
 
