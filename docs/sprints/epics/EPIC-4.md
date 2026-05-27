@@ -79,6 +79,12 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.7](../stories/US-4.7-lib-checkboxes-schemas.md) | Lib core — checkboxes + Zod schemas | Typed checkbox lists + Zod schemas for story/epic/sprint/changelog-entry | ✅ done | v0.4.0-dev.0 |
 | [US-4.8](../stories/US-4.8-lib-refs.md) | Lib core — refs (L3 ID graph) | listChildrenOf / listReferrersTo / validateRefs for cross-doc IDs | ✅ done | v0.4.0-dev.0 |
 | [US-4.9](../stories/US-4.9-lib-changelog-git.md) | Lib core — changelog + git utilities | CHANGELOG parse/updateCommitSha + thin git wrappers (no shell) | ✅ done | v0.4.0-dev.0 |
+| [US-4.10](../stories/US-4.10-cli-framework.md) | CLI framework + global opts | commander wiring, --docs-path/--dry-run/--json/--verbose, bin entry | ✅ done | v0.5.0-dev.0 |
+| [US-4.11](../stories/US-4.11-cli-status.md) | `koni-docs status` subcommand | Regenerate STATUS.md kanban; delete generate-status.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.12](../stories/US-4.12-cli-sync.md) | `koni-docs sync` subcommand | 5-layer propagation, column-by-NAME (W23 BLOCKER fix); delete agile-sync-up.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.13](../stories/US-4.13-cli-inject-tasks.md) | `koni-docs inject-tasks` subcommand | Regen ## Tasks from AC checkboxes; delete agile-inject-tasks.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.14](../stories/US-4.14-cli-backfill-fields.md) | `koni-docs backfill-fields` subcommand | Merge STORY_DEFAULTS for missing keys; delete agile-backfill-fields.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.15](../stories/US-4.15-cli-backfill-commits.md) | `koni-docs backfill-commits` subcommand | Replace pending SHA via git; delete changelog-backfill-commits.mjs + sync-test.mjs | ✅ done | v0.5.0-dev.0 |
 
 ## Cross-cutting invariants
 
