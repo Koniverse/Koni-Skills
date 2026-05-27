@@ -38,7 +38,7 @@ Adds the Astro SSR docs viewer at `packages/koni-docs/src/viewer/` and a new `ko
 - Full `project.astro` overview page
 - npm publish `@koniverse/koni-docs@0.6.0`
 
-**Commit**: pending
+**Commit**: bc0168b
 
 ---
 
