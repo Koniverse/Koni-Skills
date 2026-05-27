@@ -12,8 +12,10 @@ program
   .option('--json', 'machine-readable output', false)
   .option('--verbose', 'extra logging', false);
 
+import { registerStatus } from './status.ts';
+registerStatus(program);
+
 // Subcommands registered in later tasks:
-// import { registerStatus } from './status.ts'; registerStatus(program);
 // import { registerSync } from './sync.ts'; registerSync(program);
 // import { registerInjectTasks } from './inject-tasks.ts'; registerInjectTasks(program);
 // import { registerBackfillFields } from './backfill-fields.ts'; registerBackfillFields(program);
