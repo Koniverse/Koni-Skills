@@ -44,26 +44,17 @@ skill-creator    .agents/skills/skill-creator/SKILL.md  anthropics/skills
 
 ## Day-to-day workflows
 
-### Run sync-script regression test
-
-```bash
-node skills/koni-docs/scripts/__tests__/sync-test.mjs
-```
-
-Exit code 0 = all 5 sync scripts pass against the in-tmp fixture.
-Pass `--keep` to inspect the fixture after a failure.
-
 ### Iterate on this repo's own docs
 
 ```bash
 # Regenerate STATUS.md from story frontmatter
-node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/
+npx koni-docs status --docs-path docs/
 
 # Propagate story status across epic, PRD §11, sprint, FR row
-node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/
+npx koni-docs sync --docs-path docs/
 
 # Preview before writing
-node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/ --dry-run
+npx koni-docs sync --docs-path docs/ --dry-run
 ```
 
 ### Create a new skill in this repo
@@ -109,3 +100,29 @@ DEPLOY + .env.example together.
 For anything else, log a [`LESSONS.md`](LESSONS.md) entry once you've
 chased the root cause — that is how this repo accumulates institutional
 memory.
+
+---
+
+### Koni-docs CLI
+
+This project's docs are managed by the `@koniverse/koni-docs` CLI. Install it locally:
+
+```bash
+npm install --save-dev @koniverse/koni-docs
+```
+
+Then any of the standard sync/status operations work via npx:
+
+```bash
+npx koni-docs status
+npx koni-docs sync --story US-X.Y
+npx koni-docs inject-tasks --story US-X.Y
+npx koni-docs backfill-fields
+npx koni-docs backfill-commits
+```
+
+For programmatic / library use:
+
+```ts
+import { loadCorpus, getStories } from '@koniverse/koni-docs/lib';
+```

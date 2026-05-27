@@ -39,6 +39,27 @@ Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Dele
 ### Fixed
 - **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
 
+### Migration table (for consumer repos updating from < 0.4.0)
+
+The 5 legacy `.mjs` scripts under `skills/koni-docs/scripts/` are gone. Update any `package.json` `scripts` blocks, CI jobs, or git hooks that hard-coded their paths:
+
+| Old | New |
+|---|---|
+| `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` | `npx koni-docs status --docs-path docs/` |
+| `node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/ --story US-X.Y` | `npx koni-docs sync --docs-path docs/ --story US-X.Y` |
+| `node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --all` | `npx koni-docs inject-tasks --docs-path docs/ --all` |
+| `node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path docs/` | `npx koni-docs backfill-fields --docs-path docs/` |
+| `node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/` | `npx koni-docs backfill-commits --docs-path docs/` |
+
+If you have an `npm run agile:status` script:
+
+```diff
+- "agile:status": "node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/"
++ "agile:status": "koni-docs status --docs-path docs/"
+```
+
+(Add `@koniverse/koni-docs` to your devDependencies; the `koni-docs` bin resolves locally without needing `npx` when listed in `scripts:`.)
+
 **Commit**: 7bc86ce
 
 ---

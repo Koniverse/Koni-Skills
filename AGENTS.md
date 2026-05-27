@@ -146,5 +146,7 @@ This repo follows two koni-docs conventions worth flagging:
   every Koniverse project consuming `koni-docs`. See
   [`skills/koni-docs/references/templates/integration.md`](skills/koni-docs/references/templates/integration.md) §3.1.
 
+> **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.
+
 For the consolidated Documentation links, see the [§Documentation section
 above](#documentation).
