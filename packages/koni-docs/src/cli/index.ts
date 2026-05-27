@@ -15,8 +15,10 @@ program
 import { registerStatus } from './status.ts';
 registerStatus(program);
 
+import { registerSync } from './sync.ts';
+registerSync(program);
+
 // Subcommands registered in later tasks:
-// import { registerSync } from './sync.ts'; registerSync(program);
 // import { registerInjectTasks } from './inject-tasks.ts'; registerInjectTasks(program);
 // import { registerBackfillFields } from './backfill-fields.ts'; registerBackfillFields(program);
 // import { registerBackfillCommits } from './backfill-commits.ts'; registerBackfillCommits(program);
