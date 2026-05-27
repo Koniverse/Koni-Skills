@@ -13,7 +13,7 @@ This file holds only the Claude-Code activation surface for the
 koni-docs:
   plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W22     # last closed sprint (v0.2.0 shipped); next not yet opened
+  active_sprint: sprint-2026-W23     # open 2026-05-27 → 2026-06-03 (EPIC-4 — Docs preview tooling)
   version_file: VERSION              # path to semver file
 
 ## Active Context

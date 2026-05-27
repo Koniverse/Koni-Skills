@@ -13,13 +13,15 @@ lastEdited: '2026-05-27'
 editHistory:
   - date: '2026-05-27'
     changes: 'Initial PRD — codifies koni-docs v0.1.0 release + EPIC-2 dogfood scope + EPIC-3 catalog vision.'
+  - date: '2026-05-27'
+    changes: 'Add EPIC-4 (Docs preview tooling — koni-docs-viewer) + FR-15..FR-18.'
 ---
 
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.2.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.3.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-05-27
-**Status:** v0.1.0 + v0.2.0 shipped. EPIC-1 (koni-docs foundation) and EPIC-2 (repo dogfood) both done at 100%. EPIC-3 (catalog expansion) backlog — next sprint opens after `/office-hours` brainstorm.
+**Status:** v0.1.0 + v0.2.0 + v0.3.0 shipped. EPIC-1 and EPIC-2 done at 100%. **EPIC-4 (Docs preview tooling) in-progress — sprint-2026-W23 open (4 stories, 18 pts, all `ready`).** EPIC-3 (catalog expansion: plugin pattern) remains backlog. Next release candidate: **v0.4.0** when EPIC-4 ships at W23 close.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -313,7 +315,7 @@ reviewers.
 | FR-3 | Bundle 5 automation scripts (`generate-status`, `agile-sync-up`, `agile-inject-tasks`, `agile-backfill-fields`, `changelog-backfill-commits`) | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
 | FR-4 | Self-contained sync-script regression test that builds its own fixture | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
 | FR-5 | Distribution via `npx skills add Koniverse/Koni-Skills --skill <name>` + lockfile | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-6 | Apply koni-docs to this repo itself — full `docs/` scaffolding | P0 | 🚧 in-progress | EPIC-2 |
+| FR-6 | Apply koni-docs to this repo itself — full `docs/` scaffolding | P0 | ✅ shipped (v0.2.0) | EPIC-2 |
 | FR-7 | Wire koni-docs `Active Context` block into CLAUDE.md + AGENTS.md | P0 | ✅ shipped (v0.2.0) | EPIC-2 |
 | FR-8 | Seed `VERSION` (repo root) + `docs/CHANGELOG.md` (per SKILL.md §0) from existing git history | P1 | ✅ shipped (v0.2.0) | EPIC-2 |
 | FR-9 | Define plugin-skill pattern (Supabase, Next.js) with extension hooks | P1 | 📋 Backlog | EPIC-3 |
@@ -321,7 +323,11 @@ reviewers.
 | FR-11 | Document file-extracted Active Context pattern (Pattern B) so teams avoid CLAUDE.md merge churn | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
 | FR-12 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name (rule catalog 9 → 10) | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
 | FR-13 | Document AGENTS-canonical / CLAUDE-pointer convention in skill + apply to this repo (CLAUDE.md slim, AGENTS.md canonical with absorbed Documentation section) | P1 | ✅ shipped (v0.2.0) | EPIC-1 + EPIC-2 |
-| FR-14 | Real-world template + script audit: fix regex-escape BLOCKER, add Carry/Why/Parked/Closed/Risks sprint sections, multi-commit field, RULE-16 (bare semver), `*.vi.md` convention; robustness against 198+266-story reference repos | P0 | 🟢 ready | EPIC-1 |
+| FR-14 | Real-world template + script audit: fix regex-escape BLOCKER, add Carry/Why/Parked/Closed/Risks sprint sections, multi-commit field, RULE-16 (bare semver), `*.vi.md` convention; robustness against 198+266-story reference repos | P0 | ✅ shipped (v0.3.0) | EPIC-1 |
+| FR-15 | `packages/koni-docs-viewer/` scaffold + Astro Node SSR — runtime-configurable docs path, no monorepo coupling | P0 | 📋 Backlog | EPIC-4 |
+| FR-16 | `koni-docs-viewer` CLI bin with `--port/--host/--open/--watch/--config` + optional `koni-docs.config.{json,mjs}` | P0 | 📋 Backlog | EPIC-4 |
+| FR-17 | Schema-graceful behavior (plain mode when no `sprints/`) + chokidar+SSE live reload on `.md` change | P0 | 📋 Backlog | EPIC-4 |
+| FR-18 | Publish `@koniverse/docs-viewer@0.1.0` + dogfood `npm run docs:preview` in this repo | P1 | 📋 Backlog | EPIC-4 |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -364,7 +370,7 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 | [US-1.2](sprints/stories/US-1.2-active-context-split-pattern.md) | Add file-extracted active-context pattern (Pattern B) | ✅ done | v0.2.0 |
 | [US-1.3](sprints/stories/US-1.3-rule-15-assignee-github-login.md) | Add RULE-15: assignee = GitHub login (catalog 9 → 10) | ✅ done | v0.2.0 |
 | [US-1.4](sprints/stories/US-1.4-agents-canonical-convention.md) | Document AGENTS-canonical / CLAUDE-pointer convention in skill | ✅ done | v0.2.0 |
-| [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | 🟢 ready | — |
+| [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | ✅ done | v0.3.0 |
 
 ### EPIC-2 — Dogfood koni-docs on Koni-Skills repo
 **Goal:** Apply `koni-docs` to this repo itself so the meta-repo lives by the same rules it ships.
@@ -386,3 +392,15 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 | Story | Title | Status | Version |
 |-------|-------|--------|---------|
 | [US-3.1](sprints/stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern (Supabase, Next.js) | 📋 backlog | — |
+
+### EPIC-4 — Docs preview tooling (koni-docs-viewer)
+**Goal:** Ship `@koniverse/docs-viewer` — a globally-installable npm CLI that previews any koni-docs-shaped `docs/` folder, with schema-graceful fallback for non-Koni layouts. Companion artifact to the `koni-docs` skill.
+
+**Status:** 🚧 in-progress (sprint-2026-W23; all 4 stories ready at sprint open; decisions logged as [D11](CONTEXT.md))
+
+| Story | Title | Status | Version |
+|-------|-------|--------|---------|
+| [US-4.1](sprints/stories/US-4.1-scaffold-and-ssr.md) | Scaffold `packages/koni-docs-viewer` + Astro Node SSR migration | 🟢 ready | — |
+| [US-4.2](sprints/stories/US-4.2-cli-bin-and-config.md) | CLI bin (`--port/--host/--open/--watch`) + optional config file | 🟢 ready | — |
+| [US-4.3](sprints/stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | 🟢 ready | — |
+| [US-4.4](sprints/stories/US-4.4-dogfood-and-publish.md) | Dogfood in Koni-Skills + publish `@koniverse/docs-viewer@0.1.0` | 🟢 ready | — |

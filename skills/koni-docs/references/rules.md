@@ -217,6 +217,39 @@ One canonical ID per story across all documentation layers.
 
 ---
 
+### RULE-16: `version_shipped:` is bare semver — never `v`-prefixed
+
+**Severity**: BLOCKER
+
+**What**: Every `version_shipped:` value in story frontmatter MUST be **bare semver** — `0.7.0`, NEVER `v0.7.0`. Same rule applies to:
+- Story frontmatter `version_shipped:` (`docs/sprints/stories/US-*.md`)
+- Repo-root `VERSION` file content (`0.7.0\n`, not `v0.7.0\n`)
+- `docs/CHANGELOG.md` section anchors (`## [0.7.0]`, not `## [v0.7.0]`)
+- Any `version:` / `released_version:` field in epic / sprint / PRD frontmatter
+
+The `v` prefix IS still used for narrative / convention surfaces:
+- Git tags (`v0.7.0` — git tradition)
+- CHANGELOG narrative titles after the dash chain (`## [0.7.0] — date — title — v0.7.0`)
+- Active Context summary lines (`Last Version: v0.7.0`)
+- Body prose in stories / decisions / lessons (`shipped in v0.7.0`)
+
+**Why**: Tooling that joins on version strings — `agile-sync-up.mjs` Stories-table writer, CHANGELOG-anchor lookup, semver `compare()`, sort order — needs a single canonical key. Mixing `v0.7.0` and `0.7.0` in structured fields silently breaks equality comparisons and produces double-`v` corruption like `vv0.7.0` in synced output (the script prepends `v` to the bare convention). Real-world trap: caught during Koni-Skills v0.2.0 dogfood when US-1.1's `version_shipped: v0.1.0` produced `vv0.1.0` in EPIC-1 Stories table ([LESSONS §4](LESSONS.md)). Same split that git itself uses: tag `v0.7.0`, but `package.json` `"version": "0.7.0"`.
+
+**How to comply**:
+1. **In story frontmatter**: `version_shipped: 0.7.0` — no `v`.
+2. **In VERSION file**: bare `0.7.0` (one line, no `v`).
+3. **In CHANGELOG section anchors**: `## [0.7.0] — 2026-MM-DD — title — v0.7.0` — `[0.7.0]` is the bare anchor; the trailing `v0.7.0` is narrative.
+4. Prose elsewhere uses `v`-prefix freely.
+
+**Grep checks**:
+- Story frontmatter no-`v`: `grep -lE '^version_shipped: v' docs/sprints/stories/*.md` → must return zero files.
+- VERSION file: `head -1 VERSION | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'` → must match (no `v`).
+- CHANGELOG anchors: `grep -E '^## \[v' docs/CHANGELOG.md` → must return zero lines.
+
+**See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §template skeleton, [LESSONS §4](../../docs/LESSONS.md).
+
+---
+
 ## Post-Generation Rules
 
 ### RULE-5: STATUS.md is auto-generated

@@ -2,11 +2,11 @@
 id: US-1.5
 title: "Real-world template + script audit (Koni-Finance-Final + senti_quant)"
 epic: EPIC-1
-status: ready
+status: done
 priority: P0
 points: 8
-sprint:
-version_shipped:
+sprint: sprint-2026-W22
+version_shipped: 0.3.0
 prd_ref: FR-14, AD-10
 assignee: saltict
 commit:

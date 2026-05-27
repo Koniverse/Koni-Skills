@@ -18,9 +18,43 @@ backlog → ready → in-progress → review → done
                    blocked  ← document reason in Implementation notes
 ```
 
-**WIP limit**: at most **3 stories** `in-progress` simultaneously.
+**WIP limit**: at most **3 stories** `in-progress` simultaneously **by default**.
+
+The limit is team-configurable via the `Koni-Docs Integration` block in
+`CLAUDE.md`:
+
+```yaml
+koni-docs:
+  agile:
+    wip_limit: 3      # default 3; raise for atomic-ship sprints, lower for strict flow
+```
+
+When unset, the convention defaults to 3 (best for solo / small teams).
+Larger teams may raise to 5–7. Atomic single-session ships (e.g.
+agent-assisted sprints that close everything in one commit) sometimes
+exceed the limit transiently — `generate-status.mjs` flags WIP violations
+but does not block.
 
 **`done` requires**: `version_shipped` set + CHANGELOG entry exists + all AC `[x]`.
+
+### Hybrid EPIC numbering (BMad legacy + post-koni-docs)
+
+Some Koniverse projects (e.g. senti_quant) carry **zero-padded epic IDs
+from the BMad era** (`EPIC-01`..`EPIC-13`) alongside **plain epic IDs
+added after koni-docs adoption** (`EPIC-14`+). Both are valid; sync
+scripts treat the number as an opaque identifier.
+
+To minimize confusion:
+
+- **New projects**: use plain `EPIC-N` (no zero-padding) for all epics.
+- **Migrated projects**: keep existing padded IDs as-is for backward
+  compatibility; only new epics need plain numbering. `findEpicFile`
+  matches via `startsWith(${id}.)` so file naming must match frontmatter
+  `id:` exactly (`EPIC-08.md` ↔ `id: EPIC-08`, not `id: EPIC-8`).
+- When `agile-backfill-fields.mjs` infers epic from story id, it emits
+  plain `EPIC-N`. On a padded-ID project, hand-correct after backfill.
+  Filed as followup for a future story (auto-detect pad-style from
+  existing epic files).
 
 ## Scripts reference
 

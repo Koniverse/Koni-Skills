@@ -40,6 +40,21 @@ const STANDARD_FIELDS = [
   { key: 'updated',         default: '', required: false },
 ];
 
+// --- Inference helpers ---
+// Infer `epic:` from story `id:` when `epic` is missing but `id` is present.
+// `US-3.7` → `EPIC-3`. Nested IDs like `US-8.0.1` still derive `EPIC-8` (only
+// the first dotted segment is the epic number). Returns `null` when id is
+// malformed or absent.
+//
+// Real-world note (US-1.5 retro): Koni-Finance-Final had 5+ stories
+// (US-4.24, US-8.0, US-8.0.1, US-8.0.2, US-8.7) shipped without an `epic:`
+// field. Inference rescues every well-formed `US-X.Y` ID.
+function inferEpicFromId(id) {
+  if (!id) return null;
+  const m = id.match(/^US-(\d+)\b/);
+  return m ? `EPIC-${m[1]}` : null;
+}
+
 // --- Frontmatter parser ---
 function parseFrontmatter(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---/);
@@ -85,9 +100,16 @@ function processStory(filePath) {
   for (const field of missing) {
     const value = field.default.includes('"') ? field.default : `"${field.default}"`;
     // Don't add quotes for status values, just leave plain
-    const finalValue = field.key === 'status' || field.key === 'priority'
+    let finalValue = field.key === 'status' || field.key === 'priority'
       ? field.default
       : (field.default === '' ? '""' : field.default);
+
+    // Inferred backfill: epic from id (US-1.5 / AC-5).
+    if (field.key === 'epic') {
+      const inferred = inferEpicFromId(parsed.id);
+      if (inferred) finalValue = inferred;
+    }
+
     // Only add if we actually have a meaningful default
     if (field.default !== undefined) {
       newLines.push(`${field.key}: ${finalValue}`);
@@ -143,7 +165,9 @@ function main() {
 
   if (DRY_RUN) console.log('(dry run — no changes written)');
 
-  // Also validate required fields
+  // Also validate required fields. For `epic:` specifically, suggest the
+  // inferred value when both `id` and `epic` are missing / blank — gives
+  // the user a copy-paste fix instead of just flagging the gap.
   console.log('\n--- Validation ---');
   let errors = 0;
   for (const file of files) {
@@ -151,7 +175,9 @@ function main() {
     const fm = parseFrontmatter(raw);
     for (const field of STANDARD_FIELDS.filter(f => f.required)) {
       if (!fm[field.key]) {
-        console.log(`  ⚠ ${file}: missing required field "${field.key}"`);
+        const suggestion = field.key === 'epic' ? inferEpicFromId(fm.id) : null;
+        const hint = suggestion ? ` (suggest \`epic: ${suggestion}\` from id ${fm.id})` : '';
+        console.log(`  ⚠ ${file}: missing required field "${field.key}"${hint}`);
         errors++;
       }
     }

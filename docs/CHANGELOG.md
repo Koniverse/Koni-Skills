@@ -16,6 +16,164 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.3.0] — 2026-05-27 — Real-world audit: BLOCKER fix + RULE-16 + 4 new sprint sections + 198/266-story script robustness — v0.3.0
+
+Third release. Ships the **US-1.5 audit** of two production Koniverse
+repos (Koni-Finance-Final 198 stories / 9 epics / 8 sprints; senti_quant
+266 stories / 35 epics / 10 sprints), fixing one BLOCKER script bug, two
+WARNING-tier robustness gaps, and consolidating template patterns the
+two repos invented but the koni-docs skill didn't yet document.
+
+Sprint-2026-W22 reopened mid-day 2026-05-27 to absorb US-1.5 (8 pts P0)
+after v0.2.0 closed earlier in the day. EPIC-1 (foundation + ongoing
+enhancements) closes again at 100%: 5/5 stories, 27/27 pts.
+
+### Added
+
+**Skill — new rule: RULE-16 (`version_shipped:` is bare semver)**
+- `skills/koni-docs/references/rules.md` adds RULE-16 (Severity BLOCKER):
+  `version_shipped:` MUST be bare semver (`0.7.0`), NEVER `v`-prefixed.
+  Catalog count: 10 → 11. `v` prefix is reserved for narrative
+  surfaces (git tags, prose, Active Context summary lines). Closes
+  the long-deferred [LESSONS §4](LESSONS.md) trap from v0.2.0.
+- `SKILL.md` §2 rule table grows to 11 rows.
+- `references/templates/story.md` frontmatter comment for
+  `version_shipped:` rewritten: bare semver mandatory, `v` prefix
+  explicitly forbidden.
+
+**Skill — sprint template additions (5 new optional sections)**
+- `templates/sprint.md` §sprint-scope: documents both the canonical
+  6-column shape and the extended **7-column shape with `Carry` column**
+  (Koni-Finance-Final pattern). Values: `from W<N>` / `new` / `substrate` /
+  prose. Documents inline title annotations: `_(added YYYY-MM-DD)_`,
+  `_(closed mid-sprint vX.Y.Z)_`, `_(carry W21←W20←W19)_`.
+- `templates/sprint.md` 4 new optional sections (senti_quant pattern):
+  - `## Why <US-X.Y> in W<N>` — narrativize single load-bearing mid-sprint commitment
+  - `## Parked / deferred from W<N-1>` — explicit carry-over audit with status emojis
+  - `## Closed mid-sprint W<N>` — date + version per mid-sprint landing
+  - `## Risks & dependencies` — per-risk mitigation
+- `templates/sprint.md` close-out: optional `## Carry-overs to W<N+1>`
+  section (Koni-Finance-Final pattern).
+
+**Skill — story template additions**
+- `templates/story.md`: optional `## Story refresh — YYYY-MM-DD` block
+  for mid-implementation re-scopes (Koni-Finance-Final pattern).
+- `templates/story.md`: multi-commit `commit:` field documented
+  (comma-separated SHAs for stories with multiple landing commits).
+- `templates/story.md`: `assignee:` comment elevated to MANDATORY (RULE-15);
+  `version_shipped:` comment elevated to MANDATORY (RULE-16).
+
+**Skill — convention additions**
+- `SKILL.md` §1: **Vietnamese counterpart `*.vi.md`** convention
+  documented. English (`*.md`) is canonical (RULE-13); `*.vi.md`
+  siblings are optional translations, never authoritative, skipped
+  by sync scripts.
+- `references/sprint-system.md`: **WIP limit as team-configurable**
+  via `koni-docs.agile.wip_limit` key in CLAUDE.md Integration block
+  (defaults to 3; raise for atomic-ship sprints).
+- `references/sprint-system.md`: **hybrid EPIC numbering** convention
+  (zero-padded `EPIC-01..13` from BMad era + plain `EPIC-14+`
+  post-koni-docs) documented + fallback behavior of
+  `agile-backfill-fields.mjs`.
+
+### Changed
+
+**Script — `agile-sync-up.mjs` regex-escape contract**
+- Adds `escapeRegExp(str)` helper at top of script. Applied to every
+  dynamic input before `new RegExp(...)` construction:
+  - `epicStoryRowMatcher` (was: `\\.`-only escape; now: full escape)
+  - `updatePRDStoryEntry` section-header regex
+  - `updatePRDFRRow` table-row regex
+- `updatePRDFRRow` now **extracts every well-formed `FR-N` token** from
+  `prd_ref:` via `/\bFR-[0-9]+(?:\.[0-9]+)?\b/g`. Supports comma-separated
+  multi-FR (`prd_ref: FR-1, FR-2`); ignores `AD-N` tokens (PRD §6 AD table
+  is hand-maintained); ignores free-form prose (Koni-Finance-Final
+  US-1.34 pattern). Each extracted FR row is updated independently.
+- `updateSprintScopeTable` switches from hardcoded position-from-end
+  to **header-name-based column lookup** via new `findColumnIndex`
+  helper. Works on canonical 6-col AND Koni-Finance-Final 7-col Carry
+  shape without configuration.
+- `updateSprintScopeTable` also searches `<docs>/sprints/archive/` for
+  sprint files (some projects move closed sprints there but still
+  reference them from done stories).
+- "PRD story entry not found" downgraded from `⚠` to `-` (info) when
+  story has `prd_ref` set, and **silenced entirely** when `prd_ref`
+  is empty. Legacy projects that track stories only in Epic Stories
+  tables no longer drown the sync output (Koni-Finance-Final +
+  senti_quant pattern).
+
+**Script — `agile-backfill-fields.mjs` infers `epic:` from story ID**
+- New `inferEpicFromId(id)` helper: `US-3.7` → `EPIC-3`; nested
+  `US-8.0.1` → `EPIC-8`. When `epic:` is missing, backfill emits the
+  inferred value (instead of blank `""`).
+- Validation step suggests the inferred value when both `id:` and
+  `epic:` blank: `⚠ ... missing required field "epic" (suggest \`epic:
+  EPIC-X\` from id US-X.Y)`.
+
+**Regression test — sync-test.mjs**
+- Test 7 added: agile-sync-up regex-escape robustness. Two new fixture
+  stories cover the exact crash shape (regex-special title + multi-FR
+  prd_ref; prose `prd_ref:` with brackets/parens/AD-N tokens — the
+  Koni-Finance-Final US-1.34 shape). Assertion count: 21 → 28.
+
+### Fixed
+
+**BLOCKER — `agile-sync-up.mjs` no longer crashes on regex-special story content**
+- Was: `SyntaxError: Range out of order in character class` at
+  `agile-sync-up.mjs:254` `updatePRDFRRow` when a story's `prd_ref:`
+  contained `[`, `]`, `(`, `.`, etc. (Koni-Finance-Final US-1.34).
+  Mid-run abort left some files synced and others not.
+- Now: zero crashes against 198-story Koni-Finance-Final + 266-story
+  senti_quant. Both reference repos exit 0 in dry-run.
+- Root cause + fix codified as [LESSONS §5](LESSONS.md) and PRD AD-10
+  ("sync scripts MUST escape all dynamic input before regex construction").
+
+**Real-world dry-run delta (before → after, BLOCKER fix)**:
+| Reference repo | Stories | Before | After |
+|---|---|---|---|
+| Koni-Finance-Final | 198 | Crashed at story #34 (SyntaxError) | Exit 0; 164 epic + 168 FR + 78 sprint rows updated, 1 skipped (legitimate — story without `id:`) |
+| senti_quant | 266 | Exit 0 but ~190 noisy `⚠ PRD story entry not found` warnings | Exit 0; downgraded to silent/`-` info; only data-hygiene warnings remain (264 PRD FR not found — stories pointing at PRDs that don't list those FRs) |
+
+### Notes
+
+Decision recorded as [CONTEXT D11](CONTEXT.md) — adopt real-world
+template additions wholesale (rather than picking one-at-a-time) +
+formalize the regex-escape contract as AD-10. Both originated from the
+US-1.5 retro against Koni-Finance-Final + senti_quant.
+
+PRD added: FR-14 (US-1.5 deliverable), AD-10 (regex-escape contract).
+
+### Followups (deferred to next sprint, EPIC-1 or EPIC-3)
+
+- **CI gate** — GitHub Action running
+  `skills/koni-docs/scripts/__tests__/sync-test.mjs` on every PR.
+  Currently runs locally only. Open question in
+  [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Consumer-repo cleanup** — Koni-Finance-Final + senti_quant will
+  pick up the BLOCKER fix on their next `npx skills update koni-docs`.
+  Their data-hygiene gaps (stories missing `epic:`, `prd_ref:` pointing
+  at non-existent FRs, sprint scope rows missing for done stories)
+  remain for each repo to clean up locally.
+- **Auto-detect padded EPIC-NN format** in `agile-backfill-fields.mjs`
+  (currently emits plain `EPIC-N`; padded projects hand-correct).
+
+### Contributors
+
+Sprint-2026-W22 extension: same single contributor as the v0.2.0 ship.
+
+| GitHub login | Git name | Stories shipped | Points (v0.3.0) |
+|---|---|---|---|
+| [`saltict`](https://github.com/saltict) | AnhMTV | US-1.5 | 8 |
+
+Sprint-W22 total across v0.2.0 + v0.3.0: 8 stories, 25 points,
+1 contributor.
+
+**Commit**: v0.3.0 release commit — to be tagged at sprint-W22
+close. SHA backfilled by `changelog-backfill-commits.mjs` at
+pre-commit.
+
+---
+
 ## [0.2.0] — 2026-05-27 — Dogfood koni-docs on its own repo + 2 conventions + RULE-15 — v0.2.0
 
 Second release of Koni-Skills. **Sprint-2026-W22** ships 7 stories (17

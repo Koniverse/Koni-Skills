@@ -116,3 +116,73 @@ canonical contract; the template comment is the bug.
 
 **Pattern**: see [US-1.1](sprints/stories/US-1.1-koni-docs-initial-release.md)
 frontmatter — bare `0.1.0` is the canonical shape.
+
+> **Update (v0.3.0)**: formalized as **[RULE-16](../skills/koni-docs/references/rules.md)**
+> (BLOCKER, catalog 10 → 11). The story template comment that originally
+> read `(e.g. v0.3.1)` now reads `MANDATORY (RULE-16); bare semver e.g.
+> 0.3.1, NEVER v0.3.1`. Grep check
+> `grep -lE '^version_shipped: v' docs/sprints/stories/*.md` must return
+> zero files. Shipped via [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) (AC-10).
+
+---
+
+## 5. Sync scripts MUST escape every dynamic input before regex construction
+
+**What happened (v0.2.0 → v0.3.0, surfaced 2026-05-27 during US-1.5 real-world retro)**:
+Ran `node skills/koni-docs/scripts/agile-sync-up.mjs --dry-run` against
+**Koni-Finance-Final** (198 stories, 9 epics). Script processed ~30
+stories cleanly, then crashed at `US-1.34` with:
+
+```
+SyntaxError: Invalid regular expression:
+  /(\| AD-24 (Docker Compose dev infra) + AD-26 (...); no dedicated FR
+    — dev-experience substrate, sibling of [[US-1\.1]] (dev compose) ...
+    \. \*\*Inherits the deploy-artifact contract from [[US-1\.34]]\*\* ...
+    \| [^|]+ \| [^|]+ \| )[^|]+( \|)/g
+  Range out of order in character class
+at agile-sync-up.mjs:254 updatePRDFRRow
+```
+
+Mid-run crash — partial state for some files. Sync silently fell over.
+The senti_quant repo (266 stories, cleaner data) was unaffected — no
+story title carried the trigger characters.
+
+**Why**: `updatePRDFRRow` at line 254 built a regex by string-interpolating
+the story's `prd_ref:` value into `new RegExp(...)` **without escape**.
+`prd_ref:` was supposed to be `FR-N` tokens; this story used it as a
+free-form descriptive field containing `[`, `]`, `(`, `)`, `.`, `*`,
+`+`, and other regex metacharacters. A single unescaped `[` makes the
+regex literal invalid at construction time, and the script aborts.
+
+**How to avoid**:
+
+- **Iron rule**: ANY script that builds a `new RegExp(...)` from data
+  pulled out of frontmatter, story body, or any user-authored content
+  MUST treat that content as untrusted. Apply `escapeRegExp(str)`
+  before interpolation.
+
+  ```js
+  function escapeRegExp(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  ```
+
+- **Defense in depth**: where the script expects a structured value
+  (`prd_ref:` → comma-separated `FR-N` tokens), extract the tokens with
+  a strict matcher (`/\bFR-[0-9]+(?:\.[0-9]+)?\b/g`) BEFORE interpolating.
+  Free-form prose in the field still won't crash — it'll just produce
+  zero matches and short-circuit.
+
+- **Test fixture**: any sync-script change must add a fixture in
+  `scripts/__tests__/sync-test.mjs` exercising a story with regex-special
+  characters in title AND in `prd_ref`. See `Test 7` in that file for the
+  current shape.
+
+**Codified as**:
+- [RULE / AD-10](../docs/PRD.md#6-background--strategic-decisions) — sync scripts MUST escape all dynamic input before regex construction
+- Story [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) AC-1, AC-2, AC-3
+- Fix in [`skills/koni-docs/scripts/agile-sync-up.mjs`](../skills/koni-docs/scripts/agile-sync-up.mjs) — `escapeRegExp` helper applied to every dynamic input
+
+**Cross-references**:
+- See [CONTEXT D11](CONTEXT.md) — to be appended when the v0.3.0 ship lands and the team agrees on the regex-escape contract for future scripts.
+- See [LESSONS §1](#1-sync-script-story-row-matcher-must-use-word-boundaries-not-prefix-matching) for the W19 trap that motivated the regression-test discipline. §5 is the second sync-script bug caught by exercising real-world data; both share the lesson "small in-repo fixtures don't cover real-world edges".

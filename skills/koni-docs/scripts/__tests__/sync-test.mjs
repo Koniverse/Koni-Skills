@@ -336,6 +336,114 @@ assertContains(story3, 'sprint: ', 'Backfilled: sprint field added');
 assertContains(story3, 'assignee: ', 'Backfilled: assignee field added');
 assertContains(story3, 'commit: ', 'Backfilled: commit field added');
 
+console.log('\n━━━ Test 7: agile-sync-up regex-escape robustness (US-1.5 BLOCKER fix) ━━━\n');
+// Trap (LESSONS §5 / AD-10): story content (title, prd_ref) containing regex
+// metacharacters used to crash agile-sync-up with `SyntaxError: Range out of
+// order in character class` because raw strings were interpolated into
+// `new RegExp(...)` without escape. Triggered in real-world Koni-Finance-Final
+// US-1.34. The fix added an `escapeRegExp` helper and applied it to every
+// dynamic regex input.
+//
+// This fixture pairs two adversarial cases:
+//   - US-9.1 — title contains `[`, `]`, `(`, `)`, `.`, `*`
+//   - US-9.2 — prd_ref contains comma-separated FRs MIXED WITH AD-N tokens
+//     AND descriptive prose with brackets — the exact KFF US-1.34 shape
+
+// Story with regex-special characters in title and a multi-FR prd_ref:
+writeFileSync(join(docs, 'sprints', 'stories', 'US-9.1-regex-special.md'), `---
+id: US-9.1
+title: "Add [Component] (v2) + foo.bar * baz"
+epic: EPIC-9
+status: done
+priority: P1
+points: 2
+sprint: sprint-2026-W01
+version_shipped: "0.9.0"
+prd_ref: FR-9, FR-10
+assignee: alice
+commit: deadbe1
+created: 2026-01-09
+updated: 2026-01-09
+---
+
+## Goal
+
+Brackets and parens in story titles must not crash sync.
+`);
+
+// Story with the exact KFF US-1.34 shape: descriptive prose in prd_ref:
+writeFileSync(join(docs, 'sprints', 'stories', 'US-9.2-prose-prd-ref.md'), `---
+id: US-9.2
+title: "Docker compose dev infra"
+epic: EPIC-9
+status: done
+priority: P1
+points: 3
+sprint:
+version_shipped: "0.9.0"
+prd_ref: AD-24 (Docker Compose dev infra) + AD-26 (self-hosted Node deployment + multi-stage Dockerfile); no dedicated FR — sibling of [[US-1.1]] (dev compose) and [[US-1.10]] (prod Dockerfile)
+assignee: alice
+commit: deadbe2
+created: 2026-01-09
+updated: 2026-01-09
+---
+
+## Goal
+
+Prose with brackets + parens + dots in prd_ref must not crash sync.
+`);
+
+// Add EPIC-9 file so sync has somewhere to write the row updates:
+writeFileSync(join(docs, 'sprints', 'epics', 'EPIC-9.md'), `---
+id: EPIC-9
+title: "Regex-special edge cases"
+status: in-progress
+prd_ref: FR-9, FR-10
+created: 2026-01-09
+updated: 2026-01-09
+---
+
+## Stories
+
+| ID | Title | Goal | Status | Version |
+|---|---|---|---|---|
+| [US-9.1](../stories/US-9.1-regex-special.md) | Add [Component] (v2) | regex-special title | 📋 backlog | — |
+| [US-9.2](../stories/US-9.2-prose-prd-ref.md) | Docker compose dev infra | prose prd_ref | 📋 backlog | — |
+`);
+
+// Add FR-9 + FR-10 to the PRD so the FR table updater has rows to find.
+// We append to the existing PRD fixture rather than rewriting it.
+const prdNow = readFileSync(join(docs, 'PRD.md'), 'utf-8');
+const prdWithExtraFRs = prdNow.replace(
+  /(\| FR-2 \|[^\n]+\n)/,
+  `$1| FR-9 | Regex-special edge case | P1 | 📋 Backlog | EPIC-9 |\n| FR-10 | Multi-FR comma test | P1 | 📋 Backlog | EPIC-9 |\n`
+);
+writeFileSync(join(docs, 'PRD.md'), prdWithExtraFRs);
+
+// Run sync against US-9.1: this used to crash. Now it should exit 0 and update
+// BOTH FR-9 and FR-10 rows because prd_ref is comma-separated.
+const out9_1 = run('agile-sync-up.mjs', '--story', 'US-9.1');
+assertContains(out9_1, 'US-9.1 (done)', 'Sync runs against regex-special title without crash');
+assertContains(out9_1, 'PRD FR row updated', 'FR row update succeeded on US-9.1');
+
+const prdAfter91 = readFileSync(join(docs, 'PRD.md'), 'utf-8');
+assertContains(prdAfter91, '| FR-9 | Regex-special edge case | P1 | ✅ shipped (v0.9.0) | EPIC-9 |',
+  'FR-9 row updated via multi-FR prd_ref (FR-9, FR-10)');
+assertContains(prdAfter91, '| FR-10 | Multi-FR comma test | P1 | ✅ shipped (v0.9.0) | EPIC-9 |',
+  'FR-10 row updated via multi-FR prd_ref (BOTH comma-separated FRs touched)');
+
+const epic9After91 = readFileSync(join(docs, 'sprints', 'epics', 'EPIC-9.md'), 'utf-8');
+assertContains(epic9After91, '| ✅ done | v0.9.0 |',
+  'EPIC-9 row for US-9.1 updated (status + version)');
+
+// Run sync against US-9.2 — the actual KFF US-1.34 crash shape. Must not throw.
+const out9_2 = run('agile-sync-up.mjs', '--story', 'US-9.2');
+assertContains(out9_2, 'US-9.2 (done)', 'Sync runs against prose-only prd_ref without crash');
+// US-9.2's prd_ref has NO `FR-N` token, so FR row updater short-circuits with
+// "not found" (no crash). The AD-N tokens are correctly ignored.
+assertContains(out9_2, 'PRD FR row not found',
+  'AD-only prd_ref correctly produces "not found" (no crash)');
+
 // --- Cleanup + report ---
 console.log(`\n━━━ Results: ${passed} passed, ${failed} failed ━━━\n`);
 

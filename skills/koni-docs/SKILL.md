@@ -57,6 +57,23 @@ BRAINSTORM → BRIEF → PRD → ARCH → EPIC/US → DESIGN → REVIEW → QA �
 
 **Key principle**: Tools process content. Koni-docs standardizes output. When BMad, GStack, or Superpowers produce planning artifacts in their own directories (e.g., `_bmad-output/`), koni-docs maps them to the canonical `docs/` structure and ensures they follow Koniverse templates.
 
+### Vietnamese counterpart convention (`*.vi.md`)
+
+Some Koniverse projects (e.g. senti_quant) ship Vietnamese translations
+of canonical docs as `*.vi.md` siblings — e.g. `docs/PRD.vi.md` next to
+`docs/PRD.md`. **English is canonical** (per RULE-13): all sync scripts,
+grep checks, and verification commands operate on `*.md` (no `.vi`
+infix). The `.vi.md` files are:
+
+- **Optional** — projects opt in per their team's language preference.
+- **Never authoritative** — if `*.md` and `*.vi.md` disagree, `*.md` wins.
+- **Skipped by sync scripts** — `generate-status.mjs` /
+  `agile-sync-up.mjs` filter to `.md`-only files that DON'T match
+  `*.vi.md`. Frontmatter parsing, AC counting, status propagation: all
+  English-only.
+- **Per-story discretion** — translate the stories that need broad
+  cross-team review; leave engineering-detail stories English-only.
+
 | Pipeline Phase          | Tool                | What it produces                                               |
 | ----------------------- | ------------------- | -------------------------------------------------------------- |
 | Brainstorm              | BMad + GStack       | Raw ideas, problem framing                                     |
@@ -74,7 +91,7 @@ BRAINSTORM → BRIEF → PRD → ARCH → EPIC/US → DESIGN → REVIEW → QA �
 
 ## 2. Core rules (summary)
 
-These 10 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
+These 11 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
 
 | Rule    | Summary                                                       | Group      |
 | ------- | ------------------------------------------------------------- | ---------- |
@@ -88,6 +105,7 @@ These 10 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-13 | English-only for code, comments, UI, errors, commits, docs    | During     |
 | RULE-14 | Commit prefix: feat:/fix:/chore:/docs:/style:/refactor:/test: | Pre-commit |
 | RULE-15 | `assignee:` is the GitHub login — never git user.name         | During     |
+| RULE-16 | `version_shipped:` is bare semver — never `v`-prefixed        | During     |
 
 **Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
 

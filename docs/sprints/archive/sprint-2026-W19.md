@@ -10,7 +10,7 @@ goal: "Ship koni-docs skill v0.1.0 — SKILL.md + 9 rules + 13 templates + 5 scr
 
 | US | Title | Epic | Pri | Points | Status | Story file |
 |---|---|---|---|---|---|---|
-| US-1.1 | Koni-docs skill — initial release (v0.1.0) | EPIC-1 | P0 | 13 | ✅ done (v0.1.0) | [../stories/US-1.1-koni-docs-initial-release.md](../stories/US-1.1-koni-docs-initial-release.md) |
+| US-1.1 | Koni-docs skill — initial release (v0.1.0) | EPIC-1 | P0 | 13 | ✅ done | [../stories/US-1.1-koni-docs-initial-release.md](../stories/US-1.1-koni-docs-initial-release.md) |
 
 > **Note on sprint length**: this archived sprint covers a ~3-week span
 > (2026-05-04 → 2026-05-26) rather than the standard 1-week window. The

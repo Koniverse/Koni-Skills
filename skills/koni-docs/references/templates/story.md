@@ -51,13 +51,30 @@ status: backlog            # backlog | ready | in-progress | review | done | blo
 priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
-version_shipped:           # set when status → done (e.g. v0.3.1)
+version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
 prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs this story materializes
 assignee:                  # MANDATORY (RULE-15): GitHub login from `gh api user --jq .login` — never git user.name
-commit:                    # full SHA of landing commit (set at pre-commit)
+commit:                    # full SHA of landing commit (set at pre-commit). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
+
+## Story refresh — YYYY-MM-DD *(optional, recurring)*
+
+<For mid-implementation re-scopes that don't warrant a brand-new story.
+Append a dated block at the top of the body (after frontmatter, before
+Goal) each time the story is re-scanned against new context. The
+original Goal / AC numbering stays immutable; the refresh block records
+what changed since the prior refresh and why. Koni-Finance-Final pattern.
+
+Skip entirely on first authoring — only add when the story actually
+needs a refresh.>
+
+After re-scanning the source on YYYY-MM-DD against branch `<branch>`,
+the following decisions were locked into this story:
+
+- <decision 1>
+- <decision 2>
 
 ## Goal
 

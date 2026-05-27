@@ -511,3 +511,104 @@ itself doesn't change.
 **Date**: 2026-05-27
 **Version**: v0.2.0
 **Reference**: [`skills/koni-docs/SKILL.md`](../skills/koni-docs/SKILL.md) §0 orientation.
+
+---
+
+## Phase 1 — Catalog expansion + docs preview tooling (2026-05-27 ..)
+
+### D11. Adopt `@koniverse/docs-viewer` as the canonical docs preview CLI; create EPIC-4 separate from EPIC-3
+
+**Context**: `Koni-Finance-Final` shipped an in-repo Astro 4 app at
+`apps/docs/` that previews its `docs/` folder beautifully — file tree
+sidebar, epic dashboard, shiki + mermaid, theme toggle. The same need
+exists in every Koniverse project that adopts the koni-docs structure.
+The choices in front of us were:
+
+1. Copy `apps/docs/` into every consumer repo. (Status quo. ~85% code
+   duplication, drift inevitable.)
+2. Add it as a `koni-docs` skill artifact under `skills/`. (Conflates
+   "instructions for AI agents" with "runtime program for humans" —
+   forces a 30-50 MB Astro runtime into every skill consumer's agent
+   context.)
+3. Publish as a standalone npm CLI under `packages/`, distributed via
+   `npx`, kept as a *companion artifact* to the skill.
+
+User asked for option 3 on 2026-05-27, citing convenience ("chỉ cần
+chạy `koni-docs-viewer` trong cli") and pointing at the
+Koni-Finance-Final reference impl as ~85% reusable.
+
+**Decision**: Build `@koniverse/docs-viewer` as a scoped npm package
+under `packages/koni-docs-viewer/`. Migrate the reference impl from
+static build (`getStaticPaths`) to Astro Node SSR (`@astrojs/node`
+standalone) so docs edits land without rebuild. Make schema-graceful so
+the same CLI works on a one-`README.md` folder and on a fully-sprinted
+Koniverse repo. Create a new **EPIC-4 (Docs preview tooling)**
+separate from EPIC-3 (skill catalog expansion). Add four functional
+requirements FR-15..FR-18.
+
+This decision bundles three sub-decisions, all logged together:
+
+| # | Sub-decision | Lean | Final |
+|---|---|---|---|
+| D11.a | Package name | between `koni-docs-viewer` (unscoped) and `@koniverse/docs-viewer` (scoped) | `@koniverse/docs-viewer` (scoped — cleaner namespace, gates under the org) |
+| D11.b | Repo location | `packages/`, `apps/`, or `skills/` | `packages/koni-docs-viewer/` (publishable code; "skills are for AI agents") |
+| D11.c | EPIC home | EPIC-3 (fold under FR-10 "first non-docs Koniverse skill") or new EPIC-4 | New **EPIC-4 (Docs preview tooling)** — the viewer is a CLI for humans, not a "Koniverse skill" per the PRD §1 definition |
+
+**Rationale**:
+
+- **Skill vs package distinction matters.** Skills under `skills/` ship
+  through `npx skills add` and are loaded into AI agent context.
+  Packages under `packages/` ship through `npm publish` and run on
+  developers' machines. Conflating them would force agent consumers to
+  pay an Astro runtime cost they don't need, and would force human
+  consumers to install via a CLI they don't use.
+- **EPIC-4 separation prevents EPIC-3 scope creep.** EPIC-3 is about
+  the plugin-skill *pattern* (how `koni-supabase` extends `koni-docs`
+  rules). Bundling a CLI tool under the same epic would muddy the
+  pillar boundary and make the epic harder to scope.
+- **`@koniverse` scope future-proofs the namespace.** A future
+  `@koniverse/cli`, `@koniverse/eslint-config`, etc. all sit under the
+  same npm org. Easier brand recognition; org-level publish controls.
+- **SSR over static build is non-negotiable.** A docs preview tool
+  whose value prop is "see your edit instantly" cannot require a
+  rebuild on every save.
+
+**Alternatives considered**:
+
+- **Stay with per-consumer `apps/docs/`.** Rejected — every Koniverse
+  project re-implementing the same Astro app is exactly the kind of
+  drift `koni-docs` was created to eliminate.
+- **Build as a `koni-docs` skill artifact**. Rejected — see Skill vs
+  package distinction above. Also: skills target ≤ 500 LoC SKILL.md
+  body; the viewer source is ~1000 LoC across multiple files.
+- **Use a static-site generator (Docusaurus, VitePress).** Rejected —
+  the reference impl is already 85% done in Astro, and switching
+  framework throws that work away for a marginal UX gain.
+- **Lock-step versioning between viewer and Koni-Skills repo `VERSION`.**
+  Lean: independent semver (see [spec §11.4](superpowers/specs/2026-05-27-koni-docs-viewer-design.md#still-open-for-plan-eng-review)).
+  Still open for `/plan-eng-review`.
+
+**Impact**:
+
+- 4 new artifacts on disk:
+  [spec](superpowers/specs/2026-05-27-koni-docs-viewer-design.md),
+  [plan](superpowers/plans/2026-05-27-koni-docs-viewer-implementation.md),
+  [EPIC-4](sprints/epics/EPIC-4.md),
+  [4 stories US-4.1..4.4](sprints/stories/).
+- PRD §8 FR table gains FR-15..FR-18 (all `📋 backlog`).
+- PRD §11 epics list gains EPIC-4.
+- `.active-context.md` will refresh once the next sprint opens.
+- Repo-root `VERSION` (currently `0.2.0`) does NOT bump — that file
+  tracks the skill catalog, not the viewer.
+- The four stories total 18 points — fits a one-developer one-week
+  sprint when picked up.
+
+**Open follow-ups** (tracked in spec §11 "Still open"):
+
+- Independent semver vs lock-step (default: independent).
+- Mermaid CDN vs bundled offline mode (default: CDN for v0.1).
+- Tailwind v4 vs vanilla CSS (default: keep TW v4 from ref impl).
+
+**Date**: 2026-05-27
+**Version**: pending (v0.3.0 candidate when EPIC-4 ships)
+**Reference**: [spec](superpowers/specs/2026-05-27-koni-docs-viewer-design.md), [plan](superpowers/plans/2026-05-27-koni-docs-viewer-implementation.md), [EPIC-4](sprints/epics/EPIC-4.md).

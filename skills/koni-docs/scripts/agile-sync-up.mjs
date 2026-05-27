@@ -38,6 +38,17 @@ const EPICS_DIR = join(DOCS_PATH, 'sprints', 'epics');
 const SPRINTS_DIR = join(DOCS_PATH, 'sprints');
 const PRD_PATH = join(DOCS_PATH, 'PRD.md');
 
+// --- Regex helpers ---
+// Escape every regex metacharacter so dynamic story content (titles, AD-N
+// descriptions, prd_ref values) can be safely interpolated into a
+// `new RegExp(...)`. Trap (LESSONS §5 / AD-10 / US-1.5): a single unescaped
+// `[`, `]`, `(`, `.`, `*`, `+`, `?`, `|`, `^`, `$`, or `\` from story data
+// turns the regex literal into a SyntaxError at construction time and
+// crashes the script mid-run.
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // --- Frontmatter parser ---
 function parseFrontmatter(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---/);
@@ -131,7 +142,7 @@ function epicStoryRowMatcher(storyId) {
   // "Story" column, Cross-story testing's "Stories" column. Those rows'
   // last two cells are NOT (status, version); rewriting them corrupts the
   // table (see __tests__ Test 7 / docs LESSONS).
-  const escaped = storyId.replace(/\./g, '\\.');
+  const escaped = escapeRegExp(storyId);
   const linkedCell = new RegExp(`^\\s*\\[${escaped}\\]\\(`);
   const plainCell = new RegExp(`^\\s*${escaped}\\s*$`);
   return (line) => {
@@ -171,7 +182,7 @@ function updatePRDStoryEntry(prdPath, storyId, status, version) {
 
   // Find the story section: ### US-X.Y — <title>
   const sectionStart = new RegExp(
-    `### ${storyId.replace(/\./g, '\\.')} — .+`,
+    `### ${escapeRegExp(storyId)} — .+`,
     'g'
   );
 
@@ -240,6 +251,17 @@ function updatePRDStoriesIndex(prdPath, storyId, status, version) {
 }
 
 // --- Update PRD §4 FR table row ---
+// `frRef` from story frontmatter may be:
+//   - a single FR-N (`FR-7`)
+//   - comma-separated multiple FRs (`FR-1, FR-2, FR-11`)
+//   - mixed with AD-N (`FR-11, AD-4`)  ← AD-N is the AD table in PRD §6,
+//     hand-maintained, NOT touched by sync
+//   - free-form descriptive text from older stories (`AD-24 (Docker
+//     Compose dev infra) + AD-26 (...)`)  ← only AD-N tokens extracted;
+//     descriptive prose ignored
+//
+// Extract every `FR-N` token, escape, and try to update each FR row
+// independently. Returns true if AT LEAST ONE FR row was updated.
 function updatePRDFRRow(prdPath, frRef, status, version) {
   if (!frRef) return false;
   let content = readFileSync(prdPath, 'utf-8');
@@ -250,46 +272,102 @@ function updatePRDFRRow(prdPath, frRef, status, version) {
     : status === 'deprecated' ? '🗑️ deprecated'
     : '📋 Backlog';
 
-  // Match FR table row: | FR-N | <desc> | <pri> | <status> | <epic> |
-  const rowPattern = new RegExp(
-    `(\\| ${frRef.replace(/\./g, '\\.')} \\| [^|]+ \\| [^|]+ \\| )[^|]+( \\|)`,
-    'g'
-  );
+  // Extract every well-formed FR-N token (FR followed by digits, optionally
+  // a dotted segment like FR-3.5). Whitespace, descriptive prose, and AD-N
+  // tokens are ignored. Empty array means "no FR-N found in frRef" — common
+  // for AD-only stories.
+  const frTokens = [...frRef.matchAll(/\bFR-[0-9]+(?:\.[0-9]+)?\b/g)]
+    .map(m => m[0]);
+  if (frTokens.length === 0) return false;
 
-  if (rowPattern.test(content)) {
-    content = content.replace(rowPattern, `$1${newStatus}$2`);
-    if (!DRY_RUN) writeFileSync(prdPath, content, 'utf-8');
-    return true;
+  let anyUpdated = false;
+  for (const frId of frTokens) {
+    // Match FR table row: | FR-N | <desc> | <pri> | <status> | <epic> |
+    const rowPattern = new RegExp(
+      `(\\| ${escapeRegExp(frId)} \\| [^|]+ \\| [^|]+ \\| )[^|]+( \\|)`,
+      'g'
+    );
+
+    if (rowPattern.test(content)) {
+      content = content.replace(rowPattern, `$1${newStatus}$2`);
+      anyUpdated = true;
+    }
   }
-  return false;
+
+  if (anyUpdated && !DRY_RUN) writeFileSync(prdPath, content, 'utf-8');
+  return anyUpdated;
+}
+
+// --- Find table header column index ---
+// Given a matched row at `lines[rowIdx]`, scan upward (≤ 20 lines) for the
+// table separator (`|---|---|...`); the line immediately above it is the
+// header row. Return the column index of `columnName` (case-insensitive),
+// or -1 if header / column not found.
+//
+// Used by `updateSprintScopeTable` to locate the Status column robustly
+// across BOTH the 6-col canonical shape and the 7-col Koni-Finance-Final
+// shape (which inserts a `Carry` column before `Story file`). Was-bug
+// (US-1.5 / AC-6): hardcoded fromEnd-based position assumed 6-col and
+// silently wrote to the wrong cell on 7-col tables.
+function findColumnIndex(lines, rowIdx, columnName) {
+  const target = columnName.toLowerCase();
+  for (let i = rowIdx - 1; i >= 0 && i >= rowIdx - 20; i--) {
+    if (/^\s*\|[-:|\s]+\|\s*$/.test(lines[i]) && i > 0) {
+      const headers = lines[i - 1].split('|').map(c => c.trim().toLowerCase());
+      return headers.findIndex(h => h === target);
+    }
+  }
+  return -1;
 }
 
 // --- Update sprint file scope table ---
 // Sprint scope template is `| US | Title | Epic | Pri | Points | Status | Story file |`
-// — Status is the second-to-last cell. Updates only the status cell (no version
-// column in sprint scope). The line-based updater handles any column count as
-// long as Status remains the second-to-last cell.
+// (6 data cells) BUT Koni-Finance-Final adds a `Carry` column between Status
+// and Story file (7 data cells). The updater locates the Status column by
+// HEADER NAME, not by position-from-end, so both shapes write to the right cell.
 function updateSprintScopeTable(sprintId, storyId, status, version) {
   if (!sprintId) return false;
   if (!existsSync(SPRINTS_DIR)) return false;
 
-  // Find sprint file
-  const sprintFiles = readdirSync(SPRINTS_DIR).filter(f => f.startsWith('sprint-') && f.endsWith('.md'));
-  const sprintFile = sprintFiles.find(f => f.startsWith(`${sprintId}.`) || f.startsWith(`${sprintId}-`));
+  // Find sprint file (also peek into archive/ — some projects move closed
+  // sprints there but still reference them from done stories).
+  const sprintFiles = [
+    ...readdirSync(SPRINTS_DIR).filter(f => f.startsWith('sprint-') && f.endsWith('.md')),
+    ...(existsSync(join(SPRINTS_DIR, 'archive'))
+      ? readdirSync(join(SPRINTS_DIR, 'archive'))
+          .filter(f => f.startsWith('sprint-') && f.endsWith('.md'))
+          .map(f => join('archive', f))
+      : []),
+  ];
+  const sprintFile = sprintFiles.find(f => {
+    const base = f.split('/').pop();
+    return base.startsWith(`${sprintId}.`) || base.startsWith(`${sprintId}-`);
+  });
   if (!sprintFile) return false;
 
   const sprintPath = join(SPRINTS_DIR, sprintFile);
   const raw = readFileSync(sprintPath, 'utf-8');
   const statusIcon = statusIconShort(status);
+  const lines = raw.split('\n');
+  const matcher = epicStoryRowMatcher(storyId);
 
-  const { content, updated } = updateTableRowCells(
-    raw,
-    epicStoryRowMatcher(storyId),
-    [[1, statusIcon]]
-  );
+  // Find the matched row + its Status column index via the header above it.
+  let rowIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (matcher(lines[i])) { rowIdx = i; break; }
+  }
+  if (rowIdx === -1) return false;
 
-  if (updated && !DRY_RUN) writeFileSync(sprintPath, content, 'utf-8');
-  return updated;
+  const statusCol = findColumnIndex(lines, rowIdx, 'Status');
+  if (statusCol === -1) return false;
+
+  const cells = lines[rowIdx].split('|');
+  if (statusCol < 1 || statusCol >= cells.length - 1) return false;
+  cells[statusCol] = ` ${statusIcon} `;
+  lines[rowIdx] = cells.join('|');
+
+  if (!DRY_RUN) writeFileSync(sprintPath, lines.join('\n'), 'utf-8');
+  return true;
 }
 
 // --- Main ---
@@ -362,9 +440,16 @@ function main() {
         if (sectionResult === 'current') which.push('section');
         if (tableResult === 'current') which.push('table');
         console.log(`  - PRD story entry already up to date (${which.join(' + ')})`);
-      } else {
-        console.log('  ⚠ PRD story entry not found (no per-story section or per-epic table row)');
+      } else if (prd_ref) {
+        // Story claims a PRD reference but no per-story listing exists. May be
+        // a documentation gap (story not registered in PRD §11) OR a project
+        // that intentionally tracks stories only in the Epic Stories table.
+        // Surfaced as info, not warning, to keep sync output quiet on legacy
+        // projects (Koni-Finance-Final / senti_quant pattern — US-1.5 / AC-4).
+        console.log('  - PRD story entry not registered (no per-story section or per-epic table row)');
       }
+      // If prd_ref is empty AND no PRD entry exists, silent — story
+      // legitimately has no PRD coupling.
 
       // 3. PRD FR table
       if (prd_ref) {

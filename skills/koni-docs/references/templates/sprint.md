@@ -26,9 +26,40 @@ goal: "<Sprint goal — one sentence naming the deliverable, not the activity>"
 
 ## Sprint scope
 
+**Canonical 6-column shape** — most projects use this:
+
 | US | Title | Epic | Pri | Points | Status | Story file |
 |---|---|---|---|---|---|---|
 | US-X.Y | <title> | EPIC-X | P1 | 5 | 🚧 in-progress | [link](stories/US-X.Y-<slug>.md) |
+
+**Extended 7-column shape with `Carry` column** — Koni-Finance-Final pattern, useful for multi-week tracking:
+
+| US | Title | Epic | Pri | Points | Status | Carry | Story file |
+|---|---|---|---|---|---|---|---|
+| US-X.Y | <title> | EPIC-X | P1 | 5 | 🚧 in-progress | from W<N> | [link](stories/US-X.Y-<slug>.md) |
+
+`Carry` column values:
+- `from W<N>` — carries from a prior sprint (most common case)
+- `new` — first appearance in this sprint
+- `substrate` — foundational story unblocking multiple others
+- Empty cell — fresh in-scope story (when project mixes annotation styles)
+- Descriptive prose — `from W20 → W21 → W22` for chained carries
+
+`agile-sync-up.mjs` writes the **Status** cell by header name, so it works on both 6-col and 7-col shapes without configuration.
+
+### Inline title annotations (senti_quant pattern)
+
+For mid-sprint scope changes, append parenthetical timestamps + versions directly to the Title cell:
+
+| Annotation | Meaning |
+|---|---|
+| `_(added 2026-05-25)_` | Story added to scope mid-sprint |
+| `_(closed mid-sprint v0.1.12)_` | Story landed mid-sprint at the named version |
+| `_(added + closed mid-sprint 2026-05-26)_` | Both — landed same day it was added |
+| `_(carry W21←W20←W19)_` | Multi-sprint carry chain |
+| `(EPIC-34, [D44](../CONTEXT.md))` | Decision reference embedded |
+
+These markers are prose only — sync scripts ignore them. They give reviewers an audit trail in the sprint file itself, complementary to the `Carry` column.
 
 > **Convention**: AC + Tasks live inside each story file. This sprint file lists planned
 > stories at a glance only. Design + decision docs cross-linked at the bottom.
@@ -50,6 +81,41 @@ the scope fits.>
 1. **Phase 1 — <name>** (~<N> days): <what ships>
 2. **Phase 2 — <name>** (~<N> days): <what ships>
 3. **Phase N — QA + docs** (~<N> day): /qa-only, design-review, CHANGELOG, story flip to done, run sync scripts
+
+## Why <US-X.Y> in W<N> *(optional)*
+
+<For sprints with a single load-bearing mid-sprint commitment, narrate
+why that story landed THIS week. 1-2 paragraphs. Reviewers reading the
+sprint file 3 months later need this — story files don't capture
+sprint-level timing. senti_quant pattern. Skip when the sprint goal
+itself answers the question.>
+
+## Parked / deferred from W<N-1> *(optional, recommended when carry-over > 20%)*
+
+<Explicit carry-over audit at sprint open. Group prior-sprint
+in-progress stories by what happened to them this week. senti_quant
+pattern.>
+
+- ✅ **Closed in W<N-1>**: <story> — landed at vX.Y.Z
+- 🚧 **Carried into W<N>**: <story> — <why still open>
+- 🟢 **Carried into W<N> as `ready`**: <story> — scope-locked, awaiting pickup
+- 🗑️ **Retired in W<N-1>**: <story> — superseded by <other story> / scope cancelled
+
+## Closed mid-sprint W<N> *(optional, filled as stories land)*
+
+<Date + version per mid-sprint landing. Lets reviewers reconstruct
+exact ship sequence without crawling git log. senti_quant pattern.>
+
+- ✅ **2026-05-26** — US-X.Y, US-X.Z shipped in v0.1.12 (<one-line summary>)
+- ✅ **2026-05-27** — US-A.B shipped in v0.1.13
+
+## Risks & dependencies *(optional, recommended for sprints with cross-team blockers)*
+
+<Per-risk bullet with a mitigation. Not just dependency links — name
+the mitigation that lets the sprint close even if the risk fires.
+senti_quant pattern.>
+
+- **<Risk name>** — *Impact*: <what breaks if risk fires>. *Mitigation*: <what you do instead>. *Owner*: @<github-login>.
 
 ## Per-Epic Retrospective
 
@@ -76,6 +142,16 @@ the scope fits.>
 ### Followups
 
 - TBD
+
+## Carry-overs to W<N+1> *(optional, filled at sprint close)*
+
+<End-of-sprint accounting of what didn't close — each row names a
+reason + sprint of origin so the receiving W<N+1> knows the history.
+Koni-Finance-Final pattern.>
+
+| US | Reason | Sprint of origin |
+|---|---|---|
+| US-X.Y | <why still open — e.g., "blocked on US-8.0 substrate merge"> | sprint-2026-W<N-K> |
 
 ## Cross-references
 
