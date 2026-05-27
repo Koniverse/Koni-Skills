@@ -1,2 +1,9 @@
 koni-docs-workspace/
 examples/
+
+# Per-developer running snapshot of sprint + local identity context.
+# `.active-context.example.md` is the committed template; copy it to
+# `.active-context.md` and fill in your local values. Gitignoring the
+# local copy avoids merge churn when multiple developers update active
+# stories in parallel.
+.active-context.md

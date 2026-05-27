@@ -53,7 +53,7 @@ points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 version_shipped:           # set when status → done (e.g. v0.3.1)
 prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs this story materializes
-assignee:                  # MANDATORY (RULE-15): GitHub login from `gh api user --jq .login` — never git user.name
+assignee:                  # GitHub login (optional)
 commit:                    # full SHA of landing commit (set at pre-commit)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD

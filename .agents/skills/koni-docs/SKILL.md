@@ -74,7 +74,7 @@ BRAINSTORM → BRIEF → PRD → ARCH → EPIC/US → DESIGN → REVIEW → QA �
 
 ## 2. Core rules (summary)
 
-These 10 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
+These 9 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
 
 | Rule    | Summary                                                       | Group      |
 | ------- | ------------------------------------------------------------- | ---------- |
@@ -87,7 +87,6 @@ These 10 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-11 | New env var → SETUP + DEPLOY + .env.example in same commit   | Pre-commit |
 | RULE-13 | English-only for code, comments, UI, errors, commits, docs    | During     |
 | RULE-14 | Commit prefix: feat:/fix:/chore:/docs:/style:/refactor:/test: | Pre-commit |
-| RULE-15 | `assignee:` is the GitHub login — never git user.name         | During     |
 
 **Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
 
@@ -133,32 +132,18 @@ Run through every item before committing:
 
 ## 4. CLAUDE.md/AGENTS.md auto-update
 
-Every Koniverse project must have an active context block. Agent updates that block at specific trigger points (T1–T7 below).
+Every Koniverse project must have an active context block in its CLAUDE.md. Agent updates this block at specific trigger points.
 
-There are **two valid patterns** for where the Active Context block lives. Pick one per project; do not mix. Full template + rationale lives in [`references/templates/integration.md`](references/templates/integration.md) §0.
-
-| Pattern | When to use | Active Context lives in |
-|---|---|---|
-| **A — Inline** | Solo developer, one active branch, low merge volume | `CLAUDE.md` between `koni-docs:auto-update` markers |
-| **B — File-extracted (recommended for teams)** | 2+ developers, parallel branches, frequent sprint churn | `.active-context.md` (gitignored) — `CLAUDE.md` keeps a pointer; `.active-context.example.md` committed as template |
-
-**Why a separate file for teams**: the Active Context block changes on every story start, close, sprint roll, decision, and lesson — many times per week. Two devs editing it on parallel branches always merges as a conflict. Pattern B moves the volatile content into a gitignored snapshot; the durable record stays in `docs/sprints/`, `CHANGELOG.md`, `CONTEXT.md`, `LESSONS.md`. Conflicts go to zero.
-
-### CLAUDE.md integration block (config — common to both patterns)
+### CLAUDE.md integration block
 
 ```markdown
-## Koni-Docs Integration
-
+## Koni-docs Integration
 koni-docs:
   plugins: []                        # e.g. [supabase, nextjs]
   docs_path: docs/
   active_sprint: sprint-YYYY-WNN
   version_file: VERSION
-```
 
-### Active Context — Pattern A (inline in CLAUDE.md)
-
-```markdown
 ## Active Context <!-- koni-docs:auto-update -->
 - Sprint: sprint-YYYY-WNN
 - Active Stories: 🟡 US-X.Y <title>
@@ -168,20 +153,7 @@ koni-docs:
 <!-- /koni-docs:auto-update -->
 ```
 
-### Active Context — Pattern B (file-extracted, recommended for teams)
-
-`CLAUDE.md` keeps only a pointer:
-
-```markdown
-## Active Context
-
-> **Moved to `.active-context.md`** — see [`.active-context.example.md`](./.active-context.example.md)
-> for the template and the gitignored-on-purpose rationale.
-```
-
-`.active-context.md` (gitignored) holds the live snapshot — both a `Local developer` block (GitHub login, git name/email, workspace, current branch) and the auto-update `Project sprint context` block. `.active-context.example.md` is committed as the team template; contributors copy it on first checkout. Full template in [`references/templates/integration.md`](references/templates/integration.md) §2.
-
-### Trigger points (same for both patterns)
+### Trigger points
 
 | #  | Trigger                | Action                                               |
 | -- | ---------------------- | ---------------------------------------------------- |
@@ -193,7 +165,7 @@ koni-docs:
 | T6 | Add an env var         | Update SETUP + DEPLOY + .env.example (RULE-11)       |
 | T7 | Pre-commit             | Run full checklist, verify all doc layers consistent |
 
-**How to update**: Use the `Edit` tool targeting the block between `<!-- koni-docs:auto-update -->` and `<!-- /koni-docs:auto-update -->` markers. For Pattern A the markers live in `CLAUDE.md`; for Pattern B they live in `.active-context.md`. Either way, only the marker block changes — surrounding content stays untouched.
+**How to update**: Use the `Edit` tool targeting the block between `<!-- koni-docs:auto-update -->` and `<!-- /koni-docs:auto-update -->` markers. This keeps updates precise without touching surrounding content.
 
 ---
 
@@ -220,9 +192,7 @@ file matching the user's request.
 | "create sprint file"                            | Use sprint template                                                                       | `templates/sprint.md`                      |
 | "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | `templates/setup.md`                       |
 | "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | `templates/okr.md`                         |
-| "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md (+ `.active-context.md` for Pattern B) integration blocks | `templates/integration.md`        |
-| "adopt active-context split" / "move active context out of CLAUDE.md" | Pattern B: create `.active-context.example.md` + `.active-context.md` + gitignore + CLAUDE.md pointer | `templates/integration.md` §2 |
-| "make AGENTS.md canonical" / "slim CLAUDE.md" / "AGENTS-canonical convention" | Apply §3.1 convention: CLAUDE.md keeps only pointer + Koni-Docs Integration + Active Context; AGENTS.md absorbs project structure / docs links / conventions | `templates/integration.md` §3.1 |
+| "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md integration blocks                                  | `templates/integration.md`                 |
 | "what templates exist?"                         | Browse the index                                                                          | `templates.md` (thin index)                |
 | "run doc checklist" / "pre-commit check"        | Walk §3c checklist item by item                                                           | `rules.md` + `sprint-system.md`            |
 | "regenerate status"                             | `node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/` → commit            | `sprint-system.md` §Scripts                |

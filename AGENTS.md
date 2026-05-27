@@ -1,20 +1,47 @@
 # AGENTS.md — Koni-Skills Project
 
+> **This file is the single source of truth for all AI agent instructions in this project.**
+> Cursor, Gemini, Codex CLI, Copilot CLI, and Claude Code all read it.
+> [`CLAUDE.md`](CLAUDE.md) is a thin pointer back to this file plus the
+> Koni-Docs Integration block and an Active Context pointer.
+> On any conflict between AGENTS.md and CLAUDE.md, AGENTS.md wins.
+
 ## Project purpose
 
 This repository builds and maintains **skills for the Koniverse ecosystem**. Each skill is a packaged set of instructions, scripts, references, and assets that extend AI agent capabilities for specific Koniverse workflows.
+
+## Documentation
+
+This repo dogfoods its own `koni-docs` skill. Project documentation lives in [`docs/`](docs/):
+
+- [BRIEF.md](docs/BRIEF.md) — product brief
+- [PRD.md](docs/PRD.md) — product spec (§1–§11, FR table, epic/story index)
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) — skill repo + distribution architecture
+- [CONTEXT.md](docs/CONTEXT.md) — append-only decision log
+- [LESSONS.md](docs/LESSONS.md) — recurring traps + reusable patterns
+- [SETUP.md](docs/SETUP.md) — local dev environment
+- [sprints/](docs/sprints/) — agile workflow, with [STATUS.md](docs/sprints/STATUS.md) auto-generated kanban
+- [VERSION](VERSION) + [docs/CHANGELOG.md](docs/CHANGELOG.md) — semver + release history (RULE-1, RULE-2)
+
+Walk the [doc hub](docs/README.md) for the full pre-commit checklist and pipeline map.
 
 ## Project structure
 
 ```
 Koni-Skills/
-├── AGENTS.md              ← You are here — project guide for AI agents
-├── CLAUDE.md              ← Entry point, references this file
+├── AGENTS.md              ← You are here — CANONICAL guide for AI agents
+├── CLAUDE.md              ← Thin pointer to this file + Koni-Docs Integration
 ├── README.md              ← Human-facing project overview
+├── VERSION                ← Current semver string (repo root per skill canon)
+├── .active-context.example.md  ← Per-developer template (committed)
+├── .active-context.md     ← Per-developer snapshot (gitignored)
 ├── skills-lock.json       ← Tracks installed skills (auto-generated)
 ├── skills/                ← Custom skills built for Koniverse
 │   └── <skill-name>/
 │       └── SKILL.md       ← Skill definition + instructions
+├── docs/                  ← Project documentation (managed by koni-docs)
+│   ├── CHANGELOG.md       ← Full release history (canonical, per skill §0)
+│   └── ...                ← BRIEF / PRD / ARCH / CONTEXT / LESSONS / SETUP / sprints/
 └── .agents/               ← Managed skill installations (do not hand-edit)
     └── skills/
         └── <installed-skill>/
@@ -102,3 +129,22 @@ During active development with skill-creator, iteration results go in a sibling 
 - Every skill must have a `name` and `description` in its frontmatter.
 - Descriptions should be specific about WHEN to trigger — include both what the skill does and the contexts where it applies.
 - Keep SKILL.md under 500 lines; use bundled resources for additional content.
+
+## Koni-Docs
+
+This project uses `koni-docs` (built in this very repo) for documentation management. All docs follow the structure defined in [`docs/README.md`](docs/README.md). See [`skills/koni-docs/SKILL.md`](skills/koni-docs/SKILL.md) for templates, the 10 enforced rules, and the workflow.
+
+This repo follows two koni-docs conventions worth flagging:
+
+- **Active Context — Pattern B (file-extracted)**: live sprint snapshot
+  lives in `.active-context.md` (gitignored). `.active-context.example.md`
+  is the committed template; contributors copy it on first checkout. See
+  [`skills/koni-docs/references/templates/integration.md`](skills/koni-docs/references/templates/integration.md) §2.
+- **AGENTS.md is canonical**: this file is the single source of truth for
+  AI instructions; `CLAUDE.md` is a thin pointer + Koni-Docs Integration
+  config + Active Context pointer. Same convention is recommended for
+  every Koniverse project consuming `koni-docs`. See
+  [`skills/koni-docs/references/templates/integration.md`](skills/koni-docs/references/templates/integration.md) §3.1.
+
+For the consolidated Documentation links, see the [§Documentation section
+above](#documentation).

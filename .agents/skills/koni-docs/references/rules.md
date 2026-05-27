@@ -179,44 +179,6 @@ One canonical ID per story across all documentation layers.
 
 ---
 
-### RULE-15: `assignee:` is the GitHub login — never git `user.name`, never a display name
-
-**Severity**: BLOCKER
-
-**What**: Every `assignee:` value in koni-docs artifacts MUST be the contributor's **GitHub login** (the `username` half of `github.com/<username>`). Not their git `user.name`. Not their display name. Not their email handle. Same convention everywhere a person is named:
-
-- Story frontmatter `assignee:` (`docs/sprints/stories/US-*.md`)
-- Sprint scope-table assignee columns (`docs/sprints/sprint-*.md`)
-- Epic frontmatter / sprint frontmatter owner / lead fields (where present)
-- `.active-context.md` "Local developer.GitHub login" field
-- CONTEXT.md decision authorship (if recorded)
-- LESSONS.md attribution (if recorded)
-
-**Why**: GitHub login is the only identifier that survives across **@-mentions, PR reviewer assignments, `gh api users/<login>`, CODEOWNERS lookups, and audit attribution**. Git `user.name` is per-machine and per-developer — one maintainer's `user.name = AnhMTV` while their GitHub login is `saltict`, so a mismatched `assignee:` silently breaks every downstream lookup (PR ping never fires, CODEOWNERS skips them, status reports route to the wrong person).
-
-**How to comply**:
-1. **Get your own login**: `gh api user --jq .login` returns it exactly. Copy that string verbatim into `assignee:`.
-2. **Get a teammate's login**: prefer the value they already use in past stories or `.active-context.example.md`. Otherwise `gh api users/<guess>` returns HTTP 200 only if `<guess>` is the real login.
-3. **Set once, reuse**: write your login to `.active-context.md` `Local developer.GitHub login` field on first checkout. Every subsequent `assignee:` you set in any story copies from there.
-4. **Never substitute git config**: `git config user.name` is for commit attribution, not assignee routing. They can disagree, and when they do the GitHub-side wins for every tool that matters.
-
-**Grep checks**:
-- Story files using your machine's git `user.name` instead of GitHub login:
-  ```bash
-  grep -lE "^assignee: $(git config user.name)$" docs/sprints/stories/*.md
-  ```
-  Should return zero files **unless** your git `user.name` happens to equal your GitHub login.
-- Cross-check that every non-empty `assignee:` resolves via `gh`:
-  ```bash
-  grep -hE "^assignee: \S+$" docs/sprints/stories/*.md | awk '{print $2}' \
-    | sort -u | xargs -I{} sh -c 'gh api users/{} > /dev/null 2>&1 && echo "{}: ok" || echo "{}: NOT A REAL LOGIN"'
-  ```
-  Every line should print `ok`.
-
-**See**: `templates/story.md` §1 Frontmatter, `templates/sprint.md` §Sprint scope table, `templates/integration.md` §2 (`.active-context.md` Local developer block).
-
----
-
 ## Post-Generation Rules
 
 ### RULE-5: STATUS.md is auto-generated

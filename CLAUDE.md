@@ -1,11 +1,28 @@
 # CLAUDE.md — Koni-Skills
 
-This repository builds and maintains skills for the Koniverse ecosystem.
+This project uses **[AGENTS.md](AGENTS.md)** as the single source of truth
+for all AI instructions — project structure, conventions, skill catalog,
+documentation map, commit discipline, and behavioral guidelines. On any
+conflict between this file and AGENTS.md, AGENTS.md wins.
 
-For detailed project structure, conventions, and instructions on creating/editing skills, see [AGENTS.md](AGENTS.md).
+This file holds only the Claude-Code activation surface for the
+`koni-docs` skill (Koni-Docs Integration config + Active Context pointer).
 
-## Quick start
+## Koni-Docs Integration
 
-- Custom skills live in `skills/<skill-name>/`.
-- Use the `skill-creator` skill for all skill creation, editing, and evaluation workflows.
-- Installed helper skills are managed in `.agents/` (do not hand-edit).
+koni-docs:
+  plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
+  docs_path: docs/                   # where docs live
+  active_sprint: sprint-2026-W22     # last closed sprint (v0.2.0 shipped); next not yet opened
+  version_file: VERSION              # path to semver file
+
+## Active Context
+
+> **Moved to `.active-context.md`** — see [`.active-context.example.md`](./.active-context.example.md)
+> for the template and the gitignored-on-purpose rationale. The auto-update block
+> (sprint / active stories / decisions / lessons) and the per-developer block
+> (GitHub login, git name/email, current branch, workspace path) both live there.
+>
+> When you start working in this repo, copy the example to `.active-context.md`
+> and fill in your local-developer details. Koni-docs T1-T7 triggers update the
+> sprint block inside `.active-context.md`, not here.
