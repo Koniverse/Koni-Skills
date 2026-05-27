@@ -39,7 +39,7 @@ Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Dele
 ### Fixed
 - **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
 
-**Commit**: pending
+**Commit**: 7bc86ce
 
 ---
 
