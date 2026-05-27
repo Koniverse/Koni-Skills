@@ -1,8 +1,8 @@
 ---
 id: EPIC-1
 title: "Koni-docs skill — foundation + ongoing enhancements"
-status: done
-prd_ref: FR-1, FR-2, FR-3, FR-4, FR-5, FR-11, FR-12, FR-13
+status: in-progress
+prd_ref: FR-1, FR-2, FR-3, FR-4, FR-5, FR-11, FR-12, FR-13, FR-14
 created: 2026-05-06
 updated: 2026-05-27
 ---
@@ -56,6 +56,7 @@ hosted skill marketplace — that is permanently out of scope.
 | FR-11 | [US-1.2](../stories/US-1.2-active-context-split-pattern.md) | ✅ done (v0.2.0) |
 | FR-12 | [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md) | ✅ done (v0.2.0) |
 | FR-13 (shared with EPIC-2) | [US-1.4](../stories/US-1.4-agents-canonical-convention.md) | ✅ done (v0.2.0) |
+| FR-14 | [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | 🟢 ready |
 
 ## AD Coverage
 
@@ -75,6 +76,7 @@ hosted skill marketplace — that is permanently out of scope.
 | [US-1.2](../stories/US-1.2-active-context-split-pattern.md) | Add file-extracted active-context pattern | Document Pattern B (file-extracted Active Context) in skill so teams avoid CLAUDE.md merge churn | ✅ done | v0.2.0 |
 | [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md) | Add RULE-15: assignee = GitHub login | Expand rule catalog from 9 to 10 rules; make `assignee:` MANDATORY-GitHub-login across the koni-docs framework | ✅ done | v0.2.0 |
 | [US-1.4](../stories/US-1.4-agents-canonical-convention.md) | Document AGENTS-canonical / CLAUDE-pointer convention | Add §3.1 to integration.md template — recommend AGENTS.md as single source of truth, CLAUDE.md as thin pointer | ✅ done | v0.2.0 |
+| [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | Fix BLOCKER regex-escape bug in agile-sync-up; add Carry column + 4 new sprint sections + multi-commit field + Story refresh block; adopt RULE-16 (bare semver); robustness against 198+266-story real-world repos | 🟢 ready | — |
 
 ## Cross-cutting invariants
 

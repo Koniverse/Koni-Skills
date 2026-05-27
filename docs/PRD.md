@@ -291,6 +291,7 @@ reviewers.
 | AD-7 | Active Context split: Pattern B (file-extracted) recommended for teams | 2026-05-27 | Inline CLAUDE.md Active Context creates merge conflicts on every parallel-branch sprint update; gitignored `.active-context.md` makes conflicts zero |
 | AD-8 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name | 2026-05-27 | git `user.name` is per-machine; GitHub login is the only identifier surviving across @-mentions, PR reviewers, `gh api users/<login>`, CODEOWNERS, audit attribution |
 | AD-9 | AGENTS-canonical / CLAUDE-pointer convention (recommended for consumers) | 2026-05-27 | AGENTS.md reaches Cursor/Gemini/Codex/Copilot natively; duplicating content in CLAUDE.md creates drift; slim CLAUDE.md = less merge churn (pairs with Active Context Pattern B from AD-7) |
+| AD-10 | Sync scripts MUST escape all dynamic input before regex construction | 2026-05-27 | Discovered when `agile-sync-up.mjs` crashed on Koni-Finance-Final US-1.34 (story title contained `[`, `]`, `(`, `.`); BLOCKER class — any script building `new RegExp()` from story content must treat that content as untrusted |
 
 ---
 
@@ -320,6 +321,7 @@ reviewers.
 | FR-11 | Document file-extracted Active Context pattern (Pattern B) so teams avoid CLAUDE.md merge churn | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
 | FR-12 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name (rule catalog 9 → 10) | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
 | FR-13 | Document AGENTS-canonical / CLAUDE-pointer convention in skill + apply to this repo (CLAUDE.md slim, AGENTS.md canonical with absorbed Documentation section) | P1 | ✅ shipped (v0.2.0) | EPIC-1 + EPIC-2 |
+| FR-14 | Real-world template + script audit: fix regex-escape BLOCKER, add Carry/Why/Parked/Closed/Risks sprint sections, multi-commit field, RULE-16 (bare semver), `*.vi.md` convention; robustness against 198+266-story reference repos | P0 | 🟢 ready | EPIC-1 |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -362,6 +364,7 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 | [US-1.2](sprints/stories/US-1.2-active-context-split-pattern.md) | Add file-extracted active-context pattern (Pattern B) | ✅ done | v0.2.0 |
 | [US-1.3](sprints/stories/US-1.3-rule-15-assignee-github-login.md) | Add RULE-15: assignee = GitHub login (catalog 9 → 10) | ✅ done | v0.2.0 |
 | [US-1.4](sprints/stories/US-1.4-agents-canonical-convention.md) | Document AGENTS-canonical / CLAUDE-pointer convention in skill | ✅ done | v0.2.0 |
+| [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | 🟢 ready | — |
 
 ### EPIC-2 — Dogfood koni-docs on Koni-Skills repo
 **Goal:** Apply `koni-docs` to this repo itself so the meta-repo lives by the same rules it ships.

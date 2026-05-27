@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `npm run agile:status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-05-27 04:55:58 UTC
-> Total stories: 9
+> Last generated: 2026-05-27 05:59:49 UTC
+> Total stories: 10
 
 ## 📋 Backlog (1)
 
@@ -10,9 +10,11 @@
 |---|---|---|---|---|---|---|
 | US-3.1 | Define plugin-skill pattern (Supabase, Next.js) | EPIC-3 | P1 | 8 | — | — |
 
-## 🟢 Ready (0)
+## 🟢 Ready (1)
 
-_No stories_
+| ID | Title | Epic | Pri | Points | Sprint | Assignee |
+|---|---|---|---|---|---|---|
+| US-1.5 | Real-world template + script audit (Koni-Finance-Final + senti_quant) | EPIC-1 | P0 | 8 | — | saltict |
 
 ## 🟡 In Progress (0)
 
@@ -48,7 +50,7 @@ _No stories_
 ## Summary
 
 - 📋 **Backlog**: 1
-- 🟢 **Ready**: 0
+- 🟢 **Ready**: 1
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
 - ✅ **Done**: 8
