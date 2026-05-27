@@ -8,7 +8,7 @@ export interface ChangelogEntryParsed {
   commitLine: number | null;
 }
 
-const HEADER_RE = /^## \[(\d+\.\d+\.\d+)\]\s+—\s+(\d{4}-\d{2}-\d{2})\s+—\s+(.+?)(?:\s+—\s+v?\d+\.\d+\.\d+)?\s*$/;
+const HEADER_RE = /^## \[(\d+\.\d+\.\d+(?:[-.][A-Za-z0-9.]+)?)\]\s+—\s+(\d{4}-\d{2}-\d{2})\s+—\s+(.+?)(?:\s+—\s+v?\d+\.\d+\.\d+(?:[-.][A-Za-z0-9.]+)?)?\s*$/;
 const COMMIT_RE = /^\*\*Commit\*\*:\s*(\S+)/;
 
 export function parseChangelog(raw: string): ChangelogEntryParsed[] {

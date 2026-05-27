@@ -22,7 +22,7 @@ test('loadCorpus: populates stories, epics, sprints, singletons', () => {
   const c = loadCorpus(docs);
   assert.equal(c.stories.filter(s => s.frontmatter.id).length, 2);
   assert.equal(c.epics.length, 1);
-  assert.equal(c.sprints.length, 1);
+  assert.equal(c.sprints.length, 2);
   assert.ok(c.singletons.prd);
   assert.ok(c.singletons.changelog);
 });

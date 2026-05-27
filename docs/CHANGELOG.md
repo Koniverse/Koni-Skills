@@ -16,6 +16,33 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.5.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar C — v0.5.0-dev.0
+
+Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W23 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
+
+### Added
+- `koni-docs status` — replaces `generate-status.mjs` (semver ID sort)
+- `koni-docs sync` — replaces `agile-sync-up.mjs`, column-by-NAME (W23 BLOCKER fix)
+- `koni-docs inject-tasks` — replaces `agile-inject-tasks.mjs`
+- `koni-docs backfill-fields` — replaces `agile-backfill-fields.mjs`
+- `koni-docs backfill-commits` — replaces `changelog-backfill-commits.mjs`
+- `commander`-based CLI framework with global flags (`--docs-path`, `--dry-run`, `--json`, `--verbose`)
+
+### Removed (BREAKING for consumer repos hardcoding `node skills/...` paths)
+- `skills/koni-docs/scripts/generate-status.mjs`
+- `skills/koni-docs/scripts/agile-sync-up.mjs`
+- `skills/koni-docs/scripts/agile-inject-tasks.mjs`
+- `skills/koni-docs/scripts/agile-backfill-fields.mjs`
+- `skills/koni-docs/scripts/changelog-backfill-commits.mjs`
+- `skills/koni-docs/scripts/__tests__/sync-test.mjs`
+
+### Fixed
+- **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
+
+**Commit**: 7bc86ce
+
+---
+
 ## [0.4.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar B lib foundation — v0.4.0-dev.0
 
 Ships `packages/koni-docs/src/lib/` — the reusable typed library that backs the Pillar C CLI subcommands. Composes gray-matter + unified/remark/remark-gfm + zod; replaces the hand-rolled YAML parser and position-based table addressing slated for deletion in Pillar D. 50 exports / 49 unit tests / typecheck clean / .mjs build verified.

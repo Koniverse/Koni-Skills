@@ -121,5 +121,21 @@ Shipped foo and bar.
 **Commit**: pending
 `);
 
+  writeFileSync(join(docs, 'sprints', 'sprint-2026-W23.md'), `---
+id: sprint-2026-W23
+status: in-progress
+start: 2026-05-27
+end: 2026-06-03
+goal: "8-column scope table for W23 BLOCKER fixture"
+---
+
+## Sprint scope
+
+| US | Title | Epic | Pri | Points | Status | Carry | Story file |
+|---|---|---|---|---|---|---|---|
+| US-1.1 | Foo | EPIC-1 | P0 | 5 | 🟢 ready | new | [link](stories/US-1.1-foo.md) |
+| US-1.2 | Bar | EPIC-1 | P1 | 3 | 🟢 ready | new | [link](stories/US-1.2-bar.md) |
+`);
+
   return docs;
 }
