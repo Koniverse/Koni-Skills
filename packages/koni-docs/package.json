@@ -1,0 +1,27 @@
+{
+  "name": "@koniverse/koni-docs",
+  "version": "0.2.0-dev.0",
+  "type": "module",
+  "description": "Koni-docs framework CLI + reusable lib for managing structured documentation",
+  "license": "MIT",
+  "engines": { "node": ">=20.0.0" },
+  "exports": {
+    ".": { "import": "./dist/cli/index.mjs", "types": "./dist/cli/index.d.ts" },
+    "./lib": { "import": "./dist/lib/index.mjs", "types": "./dist/lib/index.d.ts" },
+    "./lib/markdown": { "import": "./dist/lib/markdown/index.mjs", "types": "./dist/lib/markdown/index.d.ts" },
+    "./lib/schemas": { "import": "./dist/lib/schemas/index.mjs", "types": "./dist/lib/schemas/index.d.ts" }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "test": "node --import tsx --test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "tsup": "^8.0.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
