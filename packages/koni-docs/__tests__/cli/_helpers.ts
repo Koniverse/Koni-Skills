@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLI_ENTRY = join(__dirname, '..', '..', 'src', 'cli', 'index.ts');
+const TSX_LOADER = join(__dirname, '..', '..', 'node_modules', 'tsx', 'dist', 'loader.mjs');
 
 export interface CliResult {
   stdout: string;
@@ -12,7 +13,7 @@ export interface CliResult {
 }
 
 export function runCli(args: string[], opts: { cwd?: string } = {}): CliResult {
-  const r = spawnSync(process.execPath, ['--import', 'tsx', CLI_ENTRY, ...args], {
+  const r = spawnSync(process.execPath, ['--import', TSX_LOADER, CLI_ENTRY, ...args], {
     encoding: 'utf-8',
     cwd: opts.cwd,
     env: { ...process.env, NO_COLOR: '1' },

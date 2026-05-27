@@ -24,8 +24,8 @@ registerInjectTasks(program);
 import { registerBackfillFields } from './backfill-fields.ts';
 registerBackfillFields(program);
 
-// Subcommands registered in later tasks:
-// import { registerBackfillCommits } from './backfill-commits.ts'; registerBackfillCommits(program);
+import { registerBackfillCommits } from './backfill-commits.ts';
+registerBackfillCommits(program);
 
 program.on('command:*', () => {
   console.error('error: unknown command');
