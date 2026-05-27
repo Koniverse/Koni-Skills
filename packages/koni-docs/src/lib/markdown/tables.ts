@@ -93,3 +93,51 @@ export function updateCell(doc: Doc, opts: UpdateCellOpts): Doc {
   dataRow.children[colIdx] = buildTextCell(opts.value);
   return doc;
 }
+
+export interface AppendRowOpts {
+  tableLocator: TableLocator;
+  row: Record<string, string>;
+}
+
+export function appendRow(doc: Doc, opts: AppendRowOpts): Doc {
+  const node = findTable(doc, opts.tableLocator);
+  if (!node) throw new Error(`table not found`);
+  const parsed = parseTable(node);
+  const cells: TableCell[] = parsed.headers.map(h => buildTextCell(opts.row[h] ?? ''));
+  node.children.push({ type: 'tableRow', children: cells });
+  return doc;
+}
+
+export interface RemoveRowOpts {
+  tableLocator: TableLocator;
+  rowMatcher: RowMatcher;
+}
+
+export function removeRow(doc: Doc, opts: RemoveRowOpts): Doc {
+  const node = findTable(doc, opts.tableLocator);
+  if (!node) throw new Error(`table not found`);
+  const parsed = parseTable(node);
+  const rowIdx = findRow(parsed, opts.rowMatcher);
+  if (rowIdx === -1) return doc;
+  // Data rows start at children[1]
+  node.children.splice(rowIdx + 1, 1);
+  return doc;
+}
+
+export interface TableUpdate {
+  rowMatcher: RowMatcher;
+  column: string;
+  value: string;
+}
+
+export function updateSectionTable(doc: Doc, sectionHeading: string, updates: TableUpdate[]): Doc {
+  for (const u of updates) {
+    updateCell(doc, {
+      tableLocator: { inSection: sectionHeading },
+      rowMatcher: u.rowMatcher,
+      column: u.column,
+      value: u.value,
+    });
+  }
+  return doc;
+}

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseDoc, serializeDoc } from '../../../src/lib/doc.ts';
-import { findTable, parseTable, findRow, updateCell } from '../../../src/lib/markdown/tables.ts';
+import { findTable, parseTable, findRow, updateCell, appendRow, removeRow, updateSectionTable } from '../../../src/lib/markdown/tables.ts';
 
 const sprintMd = `---
 id: sprint-2026-W23
@@ -64,4 +64,36 @@ test('updateCell: throws when column name not in header', () => {
     }),
     /column "NoSuchColumn" not found/,
   );
+});
+
+test('appendRow: appends row by column-name map', () => {
+  const doc = parseDoc(sprintMd, '/sprint.md');
+  const next = appendRow(doc, {
+    tableLocator: { inSection: 'Sprint scope' },
+    row: { US: 'US-4.3', Title: 'Baz', Epic: 'EPIC-4', Pri: 'P1', Points: '3', Status: '🟢 ready', Carry: 'new', 'Story file': '[link](stories/US-4.3.md)' },
+  });
+  const out = serializeDoc(next);
+  assert.match(out, /US-4\.3\s*\|\s*Baz/);
+});
+
+test('removeRow: removes matched row', () => {
+  const doc = parseDoc(sprintMd, '/sprint.md');
+  const next = removeRow(doc, {
+    tableLocator: { inSection: 'Sprint scope' },
+    rowMatcher: { column: 'US', value: 'US-4.2' },
+  });
+  const out = serializeDoc(next);
+  assert.doesNotMatch(out, /US-4\.2/);
+  assert.match(out, /US-4\.1/);
+});
+
+test('updateSectionTable: batches multiple cell updates', () => {
+  const doc = parseDoc(sprintMd, '/sprint.md');
+  const next = updateSectionTable(doc, 'Sprint scope', [
+    { rowMatcher: { column: 'US', value: 'US-4.1' }, column: 'Status', value: '✅ done' },
+    { rowMatcher: { column: 'US', value: 'US-4.2' }, column: 'Status', value: '🚧 in-progress' },
+  ]);
+  const out = serializeDoc(next);
+  assert.match(out, /US-4\.1\s*\|\s*Foo\s*\|\s*EPIC-4\s*\|\s*P0\s*\|\s*5\s*\|\s*✅ done/);
+  assert.match(out, /US-4\.2\s*\|\s*Bar\s*\|\s*EPIC-4\s*\|\s*P0\s*\|\s*5\s*\|\s*🚧 in-progress/);
 });
