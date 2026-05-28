@@ -3,7 +3,7 @@ import { join, basename } from 'node:path';
 import matter from 'gray-matter';
 import type { Corpus, MatterEntry } from './types.ts';
 
-export function readFolderMatter(dir: string, opts: { recursive?: boolean } = {}): MatterEntry[] {
+export function readFolderMatter(dir: string): MatterEntry[] {
   if (!existsSync(dir)) return [];
   const out: MatterEntry[] = [];
   for (const name of readdirSync(dir)) {
@@ -18,7 +18,6 @@ export function readFolderMatter(dir: string, opts: { recursive?: boolean } = {}
         body: parsed.content,
       });
     }
-    // recursive walk omitted — current koni-docs layout is flat per dir
   }
   return out;
 }

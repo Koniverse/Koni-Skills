@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseDoc } from '../../../src/lib/doc.ts';
-import { findSection, getSectionText, replaceSection, appendToSection, removeSection } from '../../../src/lib/markdown/sections.ts';
+import { findSection, findSectionStartingWith, getSectionText, replaceSection, appendToSection, removeSection } from '../../../src/lib/markdown/sections.ts';
 import { serializeDoc } from '../../../src/lib/doc.ts';
 
 const md = `---
@@ -63,4 +63,26 @@ test('removeSection: removes heading and body', () => {
   const out = serializeDoc(next);
   assert.doesNotMatch(out, /## Tasks/);
   assert.match(out, /Acceptance criteria/);
+});
+
+test('findSectionStartingWith: matches "## 8. Functional Requirements (FR)" via "## 8." prefix', () => {
+  const raw = `# PRD\n\n## 8. Functional Requirements (FR)\n\n| ID | Requirement |\n|---|---|\n| FR-1 | Foo |\n\n## 9. Done\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  const match = findSectionStartingWith(doc, '## 8.');
+  assert.ok(match, 'expected to find section starting with "## 8."');
+  assert.equal(match!.heading.depth, 2);
+  assert.ok(match!.body.some(n => n.type === 'table'), 'section body should include the table');
+});
+
+test('findSectionStartingWith: returns null when no heading matches the prefix', () => {
+  const raw = `# PRD\n\n## 7. Other\n\nbody\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  assert.equal(findSectionStartingWith(doc, '## 8.'), null);
+});
+
+test('findSectionStartingWith: matches lowercase "Functional requirements" variant', () => {
+  const raw = `# PRD\n\n## 8. Functional requirements\n\n| ID | Requirement |\n|---|---|\n| FR-1 | Foo |\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  const match = findSectionStartingWith(doc, '## 8.');
+  assert.ok(match);
 });

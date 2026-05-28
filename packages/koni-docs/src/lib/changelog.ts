@@ -69,12 +69,3 @@ export function updateCommitSha(raw: string, version: string, sha: string): stri
   lines[entry.commitLine] = `**Commit**: ${sha}`;
   return lines.join('\n');
 }
-
-/**
- * Stub: serializing parsed entries back to a CHANGELOG file is not used by
- * Pillar B. Pillar C subcommands operate on raw + line-level updates (see
- * updateCommitSha). Exported for API completeness; throws if called.
- */
-export function serializeChangelog(_entries: ChangelogEntryParsed[]): string {
-  throw new Error('serializeChangelog: not implemented in Pillar B; use raw + updateCommitSha');
-}

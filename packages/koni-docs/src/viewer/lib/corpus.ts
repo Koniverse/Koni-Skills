@@ -2,11 +2,17 @@ import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import matter from 'gray-matter';
 import { loadCorpus, getStories, type Corpus } from '@koniverse/koni-docs/lib';
+import { loadViewerConfig } from './config.ts';
 
 const DOCS_DIR = process.env.KONI_DOCS_DIR ?? path.resolve(process.cwd(), 'docs');
+const VIEWER_CONFIG = loadViewerConfig(DOCS_DIR);
 
 export function getDocsDir(): string {
   return DOCS_DIR;
+}
+
+export function getViewerTitle(): string {
+  return VIEWER_CONFIG.title ?? 'koni-docs';
 }
 
 export interface DocNode {
@@ -26,8 +32,8 @@ export interface TreeNode {
   children?: TreeNode[];
 }
 
-const TOP_LEVEL_ORDER = ['README', 'BRIEF', 'PRD', 'ARCHITECTURE', 'CONTEXT', 'DOMAIN-ENTITIES', 'SETUP', 'DEPLOY', 'CHANGELOG', 'LESSONS'];
-const FOLDER_ORDER = ['sprints', 'decisions', 'superpowers', 'dev', 'reference', 'references'];
+const TOP_LEVEL_ORDER = VIEWER_CONFIG.topLevelOrder ?? ['README', 'BRIEF', 'PRD', 'ARCHITECTURE', 'CONTEXT', 'DOMAIN-ENTITIES', 'SETUP', 'DEPLOY', 'CHANGELOG', 'LESSONS'];
+const FOLDER_ORDER = VIEWER_CONFIG.folderOrder ?? ['sprints', 'decisions', 'superpowers', 'dev', 'reference', 'references'];
 
 export async function scanDocFiles(dir: string = DOCS_DIR, baseDir: string = DOCS_DIR): Promise<DocNode[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -129,6 +135,7 @@ export interface DashboardData {
     sprint: string;
     assignee: string;
     version_shipped: string;
+    commit: string;
     slug: string;
   }>;
   epics: Array<{
@@ -159,6 +166,7 @@ export function loadDashboardData(): DashboardData {
       sprint: String(fm.sprint ?? '—'),
       assignee: String(fm.assignee ?? '—'),
       version_shipped: String(fm.version_shipped ?? ''),
+      commit: String(fm.commit ?? fm.pr ?? ''),
       slug: `sprints/stories/${s.filename.replace(/\.md$/, '')}`,
     };
   }).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));

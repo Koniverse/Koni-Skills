@@ -96,3 +96,39 @@ export function replaceSectionWithTable(doc: Doc, heading: string, tableMarkdown
   // Convenience wrapper — tableMarkdown is a valid GFM table source.
   return replaceSection(doc, heading, tableMarkdown);
 }
+
+/**
+ * Find the first heading whose rendered text starts with `prefix`. Useful for
+ * numbered section lookups where downstream text varies — e.g. matching both
+ * "## 8. Functional Requirements (FR)" and "## 8. Functional requirements"
+ * via the prefix "## 8.".
+ */
+export function findSectionStartingWith(doc: Doc, prefix: string): SectionMatch | null {
+  const m = prefix.match(/^(#+)\s+(.*)$/);
+  if (!m) return null;
+  const depth = m[1]!.length;
+  const textPrefix = m[2]!.trim();
+  for (let i = 0; i < doc.ast.children.length; i++) {
+    const node = doc.ast.children[i];
+    if (node?.type !== 'heading') continue;
+    if (node.depth !== depth) continue;
+    const text = nodeToString(node).trim();
+    if (!text.startsWith(textPrefix)) continue;
+    const startDepth = node.depth;
+    let end = doc.ast.children.length;
+    for (let j = i + 1; j < doc.ast.children.length; j++) {
+      const next = doc.ast.children[j];
+      if (next?.type === 'heading' && next.depth <= startDepth) {
+        end = j;
+        break;
+      }
+    }
+    return {
+      heading: node,
+      headingIndex: i,
+      body: doc.ast.children.slice(i + 1, end) as Content[],
+      endIndex: end,
+    };
+  }
+  return null;
+}

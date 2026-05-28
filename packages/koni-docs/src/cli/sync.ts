@@ -1,7 +1,8 @@
 import type { Command } from 'commander';
+import { toString as nodeToString } from 'mdast-util-to-string';
 import {
   loadCorpus, getStories, resolveById, readDoc, writeDoc,
-  updateCell, type MatterEntry, type Corpus,
+  updateCell, findSectionStartingWith, type MatterEntry, type Corpus,
 } from '../lib/index.ts';
 import { getGlobalOpts } from './global-opts.ts';
 
@@ -105,34 +106,31 @@ function syncOne(corpus: Corpus, story: MatterEntry, dryRun: boolean): SyncStats
     }
   }
 
-  // 3. PRD §8 FR rows
+  // 3. PRD §8 FR rows — find the section via prefix lookup so variants like
+  // "## 8. Functional Requirements (FR)" and "## 8. Functional requirements"
+  // both resolve.
   const prdEntry = corpus.singletons.prd;
   if (prdEntry && prdRef.length > 0) {
     try {
       const doc = readDoc(prdEntry.path);
+      const section8 = findSectionStartingWith(doc, '## 8.');
+      const sectionHeading = section8 ? nodeToString(section8.heading) : null;
       let prdFrUpdated = 0;
       for (const fr of prdRef) {
+        if (!sectionHeading) {
+          stats.warnings.push(`PRD §8 FR ${fr}: section "## 8." not found`);
+          continue;
+        }
         try {
           updateCell(doc, {
-            tableLocator: { inSection: 'Functional requirements' },
+            tableLocator: { inSection: sectionHeading },
             rowMatcher: { column: 'ID', value: fr },
             column: 'Status',
             value: frStatusIcon(status, version),
           });
           prdFrUpdated++;
-        } catch {
-          // Try section header with section-number prefix
-          try {
-            updateCell(doc, {
-              tableLocator: { inSection: '8. Functional requirements' },
-              rowMatcher: { column: 'ID', value: fr },
-              column: 'Status',
-              value: frStatusIcon(status, version),
-            });
-            prdFrUpdated++;
-          } catch (e) {
-            stats.warnings.push(`PRD §8 FR ${fr}: ${(e as Error).message}`);
-          }
+        } catch (e) {
+          stats.warnings.push(`PRD §8 FR ${fr}: ${(e as Error).message}`);
         }
       }
       if (prdFrUpdated > 0 && !dryRun) writeDoc(prdEntry.path, doc);

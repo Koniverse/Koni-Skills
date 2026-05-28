@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-05-28 02:50:04 UTC
-> Total stories: 28
+> Last generated: 2026-05-28 04:03:41 UTC
+> Total stories: 37
 
 ## 📋 Backlog (1)
 
@@ -14,12 +14,11 @@
 
 _No stories_
 
-## 🟡 In Progress (2)
+## 🟡 In Progress (1)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
-| US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
-| US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.28 | Publish @koniverse/koni-docs@0.7.0 to npm | EPIC-4 | P2 | 1 | sprint-2026-W26 | saltict |
 
 ## 👀 Review (1)
 
@@ -27,7 +26,7 @@ _No stories_
 |---|---|---|---|---|---|---|
 | US-4.17 | Publish @koniverse/koni-docs@0.5.0 to npm | EPIC-4 | P1 | 2 | sprint-2026-W25 | saltict |
 
-## ✅ Done (24)
+## ✅ Done (34)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -41,6 +40,8 @@ _No stories_
 | US-2.3 | Seed VERSION + CHANGELOG.md from git history | EPIC-2 | P1 | 2 | sprint-2026-W22 | saltict |
 | US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
 | US-4.5 | Lib core — corpus + doc module | EPIC-4 | P0 | 5 | sprint-2026-W24 | saltict |
 | US-4.6 | Lib core — sections + tables (column-by-NAME, W23 fix) | EPIC-4 | P0 | 5 | sprint-2026-W24 | saltict |
 | US-4.7 | Lib core — checkboxes + Zod schemas | EPIC-4 | P0 | 3 | sprint-2026-W24 | saltict |
@@ -55,6 +56,14 @@ _No stories_
 | US-4.16 | Migration docs — rewrite agent-facing docs to point at CLI | EPIC-4 | P1 | 3 | sprint-2026-W25 | saltict |
 | US-4.18 | CLI polish — 5 minor fixes from Pillar C code review | EPIC-4 | P1 | 3 | sprint-2026-W25 | saltict |
 | US-4.19 | koni-docs preview subcommand | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
+| US-4.20 | Viewer /project page — User Stories Tracker port | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
+| US-4.21 | Viewer --watch live-reload (chokidar + SSE) | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.22 | koni-docs.config.{json,mjs} viewer config loader | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
+| US-4.23 | findSectionStartingWith helper + PRD §8 prefix lookup in sync | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
+| US-4.24 | YAML quoting preservation in parseDoc/writeDoc round-trip | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.25 | koni-docs validate subcommand + validateFrRefs lib fn | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
+| US-4.26 | Drop dead code (serializeChangelog + recursive + unist-util-visit) | EPIC-4 | P1 | 3 | sprint-2026-W26 | saltict |
+| US-4.27 | Mutation-contract docblock on lib/index.ts | EPIC-4 | P1 | 1 | sprint-2026-W26 | saltict |
 
 ## 🚫 Blocked (0)
 
@@ -70,10 +79,10 @@ _No stories_
 
 - 📋 **Backlog**: 1
 - 🟢 **Ready**: 0
-- 🟡 **In Progress**: 2
+- 🟡 **In Progress**: 1
 - 👀 **Review**: 1
-- ✅ **Done**: 24
+- ✅ **Done**: 34
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
-✓ WIP: 2/3 stories in-progress.
+✓ WIP: 1/3 stories in-progress.

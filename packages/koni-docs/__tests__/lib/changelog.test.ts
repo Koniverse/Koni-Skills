@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseChangelog, findEntryByVersion, formatVersionHeader, updateCommitSha, serializeChangelog } from '../../src/lib/changelog.ts';
+import { parseChangelog, findEntryByVersion, formatVersionHeader, updateCommitSha } from '../../src/lib/changelog.ts';
 
 const cl = `# Changelog
 

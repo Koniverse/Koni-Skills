@@ -1,4 +1,18 @@
-export const KONI_DOCS_LIB_VERSION = '0.6.1';
+/**
+ * @koniverse/koni-docs lib — Mutation contract
+ *
+ * All functions exported from this lib are PURE: they take a value and return
+ * a new value. Functions whose names start with `update*` (e.g. `updateCell`,
+ * `updateFrontmatter`, `updateCommitSha`) take a value and return the modified
+ * value — they do NOT mutate inputs.
+ *
+ * Exception: `parseTable(...).node` returns a reference to the underlying
+ * mdast Table node; mutating fields on that node mutates `doc.ast`. This is
+ * documented at the call site and intentional (avoids a deep clone for the
+ * common "update one cell" path). See packages/koni-docs/src/lib/markdown/tables.ts.
+ */
+
+export const KONI_DOCS_LIB_VERSION = '0.7.0';
 
 // Core types
 export type { Doc, MatterEntry, Corpus } from './types.ts';
@@ -16,7 +30,7 @@ export {
 
 // Markdown primitives
 export {
-  findSection, getSectionText, replaceSection, appendToSection,
+  findSection, findSectionStartingWith, getSectionText, replaceSection, appendToSection,
   removeSection, replaceSectionWithTable,
 } from './markdown/sections.ts';
 export type { SectionMatch } from './markdown/sections.ts';
@@ -39,13 +53,13 @@ export type { CheckboxItem } from './markdown/checkboxes.ts';
 export * as Schemas from './schemas/index.ts';
 
 // Refs
-export { validateRefs, listChildrenOf, listReferrersTo } from './refs.ts';
-export type { RefKind, RefValidationResult } from './refs.ts';
+export { validateRefs, validateFrRefs, listChildrenOf, listReferrersTo } from './refs.ts';
+export type { RefKind, RefValidationResult, FrRefMissing } from './refs.ts';
 
 // Changelog
 export {
   parseChangelog, findEntryByVersion, formatVersionHeader,
-  updateCommitSha, serializeChangelog,
+  updateCommitSha,
 } from './changelog.ts';
 export type { ChangelogEntryParsed } from './changelog.ts';
 

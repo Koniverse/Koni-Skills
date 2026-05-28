@@ -201,6 +201,23 @@ const currentPath = Astro.url.pathname;
       document.addEventListener('astro:page-load', setup);
     </script>
 
+    <!-- Live-reload (active only when koni-docs preview --watch is on) -->
+    <script>
+      (function () {
+        if (typeof window === 'undefined') return;
+        // The SSE endpoint either streams reload events (watch mode) or only
+        // emits keepalive comments (non-watch) — connect optimistically. The
+        // connection is idempotent thanks to a bus singleton + env-gated watcher.
+        try {
+          const es = new EventSource('/koni-docs-rt/reload');
+          es.onmessage = () => { window.location.reload(); };
+          es.onerror = () => { es.close(); };
+          // Cleanup on Astro view-transition unload.
+          document.addEventListener('astro:before-swap', () => es.close(), { once: true });
+        } catch { /* EventSource unavailable — ignore */ }
+      })();
+    </script>
+
     <!-- Mermaid: client-side render of fenced diagrams -->
     <script is:inline type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';

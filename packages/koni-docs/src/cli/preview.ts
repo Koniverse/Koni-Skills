@@ -26,7 +26,8 @@ export function registerPreview(program: Command): void {
     .option('--port <n>', 'HTTP port', '4321')
     .option('--host <h>', 'Bind host', 'localhost')
     .option('--open', 'Open browser on start', false)
-    .action(function (this: Command, pathArg: string | undefined, cmdOpts: { port: string; host: string; open: boolean }) {
+    .option('--watch', 'reload connected browsers on docs/ changes', false)
+    .action(function (this: Command, pathArg: string | undefined, cmdOpts: { port: string; host: string; open: boolean; watch: boolean }) {
       const opts = getGlobalOpts(this);
       const docsDir = path.resolve(pathArg ?? opts.docsPath);
       if (!existsSync(docsDir)) {
@@ -44,6 +45,7 @@ export function registerPreview(program: Command): void {
       console.log(`🌐 koni-docs preview`);
       console.log(`   docs:   ${docsDir}`);
       console.log(`   server: http://${cmdOpts.host}:${cmdOpts.port}`);
+      console.log(`   watch:  ${cmdOpts.watch ? 'on (live-reload enabled)' : 'off'}`);
       console.log('');
 
       const child = spawn(cmd, args, {
@@ -54,6 +56,7 @@ export function registerPreview(program: Command): void {
           KONI_DOCS_DIR: docsDir,
           KONI_DOCS_HOST: cmdOpts.host,
           KONI_DOCS_PORT: cmdOpts.port,
+          KONI_DOCS_WATCH: cmdOpts.watch ? '1' : '0',
         },
       });
 
