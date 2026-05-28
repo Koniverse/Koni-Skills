@@ -30,7 +30,7 @@ export {
 
 // Markdown primitives
 export {
-  findSection, getSectionText, replaceSection, appendToSection,
+  findSection, findSectionStartingWith, getSectionText, replaceSection, appendToSection,
   removeSection, replaceSectionWithTable,
 } from './markdown/sections.ts';
 export type { SectionMatch } from './markdown/sections.ts';
