@@ -98,10 +98,11 @@ export function replaceSectionWithTable(doc: Doc, heading: string, tableMarkdown
 }
 
 /**
- * Find the first heading whose rendered text starts with `prefix`. Useful for
- * numbered section lookups where downstream text varies — e.g. matching both
- * "## 8. Functional Requirements (FR)" and "## 8. Functional requirements"
- * via the prefix "## 8.".
+ * Find the first heading whose rendered text starts with `prefix`. Generic
+ * prefix-based section lookup — e.g. `## A.` matches any H2 starting with
+ * "A.". PRD-specific call sites should prefer `findSectionByLabel`, which
+ * matches by clean label and falls back to a legacy numeric prefix for
+ * backwards-compat with older PRDs that still carry "## 8. …" headings.
  */
 export function findSectionStartingWith(doc: Doc, prefix: string): SectionMatch | null {
   const m = prefix.match(/^(#+)\s+(.*)$/);
@@ -131,4 +132,23 @@ export function findSectionStartingWith(doc: Doc, prefix: string): SectionMatch 
     };
   }
   return null;
+}
+
+/**
+ * Find a section by its clean label (e.g. "Functional Requirements"). If no
+ * exact match is found and `legacyNumber` is provided, fall back to a numeric
+ * prefix lookup (`## <N>.`) so PRDs that still carry numbered headings keep
+ * working. Tolerates a trailing parenthetical on legacy headings — e.g.
+ * "## 8. Functional Requirements (FR)" matches when `legacyNumber: 8`.
+ */
+export function findSectionByLabel(
+  doc: Doc,
+  label: string,
+  opts: { level?: number; legacyNumber?: number } = {},
+): SectionMatch | null {
+  const level = opts.level ?? 2;
+  const exact = findSectionNodes(doc.ast, label, level);
+  if (exact) return exact;
+  if (opts.legacyNumber === undefined) return null;
+  return findSectionStartingWith(doc, `${'#'.repeat(level)} ${opts.legacyNumber}.`);
 }

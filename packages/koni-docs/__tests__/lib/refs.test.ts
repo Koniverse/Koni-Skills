@@ -31,13 +31,13 @@ test('validateRefs: clean corpus reports no broken refs', () => {
   assert.equal(broken.length, 0);
 });
 
-test('validateFrRefs: returns empty when all story FR-refs are present in PRD §8', () => {
+test('validateFrRefs: returns empty when all story FR-refs are present in PRD Functional Requirements', () => {
   const c = loadCorpus(docs);
   const results = validateFrRefs(c);
   assert.equal(results.length, 0, JSON.stringify(results));
 });
 
-test('validateFrRefs: flags story FR-refs not present in PRD §8 table', () => {
+test('validateFrRefs: flags story FR-refs not present in PRD Functional Requirements table', () => {
   // Use a fresh fixture so we don't pollute the shared `docs` corpus for other tests.
   const root2 = mkdtempSync(join(tmpdir(), 'koni-docs-refs-missing-'));
   const docs2 = buildFixture(root2);

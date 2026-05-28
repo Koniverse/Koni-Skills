@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseDoc } from '../../../src/lib/doc.ts';
-import { findSection, findSectionStartingWith, getSectionText, replaceSection, appendToSection, removeSection } from '../../../src/lib/markdown/sections.ts';
+import { findSection, findSectionStartingWith, findSectionByLabel, getSectionText, replaceSection, appendToSection, removeSection } from '../../../src/lib/markdown/sections.ts';
 import { serializeDoc } from '../../../src/lib/doc.ts';
 
 const md = `---
@@ -85,4 +85,34 @@ test('findSectionStartingWith: matches lowercase "Functional requirements" varia
   const doc = parseDoc(raw, '/tmp/PRD.md');
   const match = findSectionStartingWith(doc, '## 8.');
   assert.ok(match);
+});
+
+test('findSectionByLabel: exact label match wins (canonical label form)', () => {
+  const raw = `# PRD\n\n## Functional Requirements\n\n| ID | Requirement |\n|---|---|\n| FR-1 | Foo |\n\n## Glossary\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  const match = findSectionByLabel(doc, 'Functional Requirements');
+  assert.ok(match);
+  assert.equal(match!.heading.depth, 2);
+  assert.ok(match!.body.some(n => n.type === 'table'));
+});
+
+test('findSectionByLabel: falls back to legacy numbered heading when label not present', () => {
+  const raw = `# PRD\n\n## 8. Functional Requirements (FR)\n\n| ID | Requirement |\n|---|---|\n| FR-1 | Foo |\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  const match = findSectionByLabel(doc, 'Functional Requirements', { legacyNumber: 8 });
+  assert.ok(match, 'expected legacy fallback to match "## 8. Functional Requirements (FR)"');
+  assert.ok(match!.body.some(n => n.type === 'table'));
+});
+
+test('findSectionByLabel: returns null when neither label nor legacy number present', () => {
+  const raw = `# PRD\n\n## Personas\n\nstuff\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  assert.equal(findSectionByLabel(doc, 'Functional Requirements', { legacyNumber: 8 }), null);
+});
+
+test('findSectionByLabel: legacy fallback is opt-in via legacyNumber', () => {
+  const raw = `# PRD\n\n## 8. Functional Requirements\n\nstuff\n`;
+  const doc = parseDoc(raw, '/tmp/PRD.md');
+  assert.equal(findSectionByLabel(doc, 'Functional Requirements'), null,
+    'no legacyNumber → must not fall back to numbered heading');
 });

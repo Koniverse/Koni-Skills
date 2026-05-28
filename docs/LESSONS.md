@@ -107,7 +107,7 @@ canonical contract; the template comment is the bug.
 **How to avoid**:
 - Always write `version_shipped: <bare-semver>` in story frontmatter,
   e.g. `version_shipped: 0.1.0`. Never `v0.1.0`.
-- Output columns (Epic Stories, PRD §11, PRD §8 FR, Sprint scope) get
+- Output columns (Epic Stories, PRD Epics & User Stories, PRD Functional Requirements row, Sprint scope) get
   the `v` prefix added by the script.
 - If you see a `vvX.Y.Z` in a synced doc, the cause is double-`v` in
   frontmatter — strip the `v` and re-run sync.

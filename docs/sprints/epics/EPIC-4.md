@@ -99,6 +99,7 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.26](../stories/US-4.26-lib-cleanup.md)                   | Lib cleanup — drop dead code                                        | `serializeChangelog` stub + `recursive` param + `unist-util-visit` dep gone; tsconfig excludes viewer                                                   | ✅ done | v0.7.0       |
 | [US-4.27](../stories/US-4.27-mutation-contract.md)             | Mutation-contract docblock on `lib/index.ts`                        | Documents pure-by-default convention; names the `parseTable(...).node` exception                                                                        | ✅ done | v0.7.0       |
 | [US-4.28](../stories/US-4.28-publish-v0.7.0.md)                | Publish `@koniverse/koni-docs@0.7.0` to npm                         | Successor to US-4.4; ships the full CLI + lib + viewer bundle under `@koniverse/koni-docs`                                                              | ✅ done | v0.7.0       |
+| [US-4.29](../stories/US-4.29-prd-label-only-headings.md)       | Label-only PRD heading convention + legacy-number fallback in sync  | Make `sync` / `validate` locate PRD sections by clean label (e.g. `Functional Requirements`) with optional numeric-prefix fallback; rewrite Koni-Skills PRD + template + cross-refs to the label form | ✅ done | v0.7.2       |
 
 ## Cross-cutting invariants
 

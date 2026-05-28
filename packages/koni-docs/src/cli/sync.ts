@@ -2,7 +2,9 @@ import type { Command } from 'commander';
 import { toString as nodeToString } from 'mdast-util-to-string';
 import {
   loadCorpus, getStories, resolveById, readDoc, writeDoc,
-  updateCell, findSectionStartingWith, type MatterEntry, type Corpus,
+  updateCell, findSectionByLabel,
+  PRD_FUNCTIONAL_REQUIREMENTS_LABEL, PRD_FUNCTIONAL_REQUIREMENTS_LEGACY_NUMBER,
+  type MatterEntry, type Corpus,
 } from '../lib/index.ts';
 import { getGlobalOpts } from './global-opts.ts';
 
@@ -106,19 +108,23 @@ function syncOne(corpus: Corpus, story: MatterEntry, dryRun: boolean): SyncStats
     }
   }
 
-  // 3. PRD §8 FR rows — find the section via prefix lookup so variants like
-  // "## 8. Functional Requirements (FR)" and "## 8. Functional requirements"
-  // both resolve.
+  // 3. PRD Functional Requirements rows — match the H2 by label
+  // ("## Functional Requirements"); fall back to the legacy numbered form
+  // ("## 8. …") for PRDs that haven't migrated yet.
   const prdEntry = corpus.singletons.prd;
   if (prdEntry && prdRef.length > 0) {
     try {
       const doc = readDoc(prdEntry.path);
-      const section8 = findSectionStartingWith(doc, '## 8.');
-      const sectionHeading = section8 ? nodeToString(section8.heading) : null;
+      const frSection = findSectionByLabel(doc, PRD_FUNCTIONAL_REQUIREMENTS_LABEL, {
+        legacyNumber: PRD_FUNCTIONAL_REQUIREMENTS_LEGACY_NUMBER,
+      });
+      const sectionHeading = frSection ? nodeToString(frSection.heading) : null;
       let prdFrUpdated = 0;
       for (const fr of prdRef) {
         if (!sectionHeading) {
-          stats.warnings.push(`PRD §8 FR ${fr}: section "## 8." not found`);
+          stats.warnings.push(
+            `PRD ${PRD_FUNCTIONAL_REQUIREMENTS_LABEL} FR ${fr}: section "## ${PRD_FUNCTIONAL_REQUIREMENTS_LABEL}" not found`,
+          );
           continue;
         }
         try {
@@ -130,7 +136,9 @@ function syncOne(corpus: Corpus, story: MatterEntry, dryRun: boolean): SyncStats
           });
           prdFrUpdated++;
         } catch (e) {
-          stats.warnings.push(`PRD §8 FR ${fr}: ${(e as Error).message}`);
+          stats.warnings.push(
+            `PRD ${PRD_FUNCTIONAL_REQUIREMENTS_LABEL} FR ${fr}: ${(e as Error).message}`,
+          );
         }
       }
       if (prdFrUpdated > 0 && !dryRun) writeDoc(prdEntry.path, doc);

@@ -50,7 +50,7 @@ skill-creator    .agents/skills/skill-creator/SKILL.md  anthropics/skills
 # Regenerate STATUS.md from story frontmatter
 npx koni-docs status --docs-path docs/
 
-# Propagate story status across epic, PRD §11, sprint, FR row
+# Propagate story status across epic, PRD Epics & User Stories, sprint, FR row
 npx koni-docs sync --docs-path docs/
 
 # Preview before writing

@@ -54,7 +54,7 @@ AC `[x]` + all 5 doc layers consistent.
 # Regenerate STATUS.md (RULE-5 — never hand-edit it)
 node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/
 
-# Propagate story status across epic, PRD §11, PRD §8 FR, sprint
+# Propagate story status across epic, PRD Epics & User Stories, PRD Functional Requirements, sprint
 node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/
 
 # Regenerate Tasks section from AC (AC is canonical)
@@ -78,8 +78,8 @@ same state. `agile-sync-up.mjs` propagates automatically.
 |---|---|---|
 | 1 — Story | `stories/US-X.Y-*.md` | `status: done`, `version_shipped` set, all AC + Tasks `[x]` |
 | 2 — Epic | `epics/EPIC-N.md` | Story row reflects status + version |
-| 3 — PRD §11 | `../PRD.md` | Per-epic Stories table row matches |
-| 4 — PRD §8 | `../PRD.md` | FR row `✅ shipped (vX.Y.Z)` |
+| 3 — PRD Epics & User Stories | `../PRD.md` | Per-epic Stories table row matches |
+| 4 — PRD Functional Requirements | `../PRD.md` | FR row `✅ shipped (vX.Y.Z)` |
 | 5 — Sprint | `sprint-YYYY-WNN.md` | Sprint scope row matches |
 
 ## Cross-references

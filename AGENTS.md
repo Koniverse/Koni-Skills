@@ -15,7 +15,7 @@ This repository builds and maintains **skills for the Koniverse ecosystem**. Eac
 This repo dogfoods its own `koni-docs` skill. Project documentation lives in [`docs/`](docs/):
 
 - [BRIEF.md](docs/BRIEF.md) — product brief
-- [PRD.md](docs/PRD.md) — product spec (§1–§11, FR table, epic/story index)
+- [PRD.md](docs/PRD.md) — product spec (label-only H2 sections, FR table, epic/story index)
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) — skill repo + distribution architecture
 - [CONTEXT.md](docs/CONTEXT.md) — append-only decision log
 - [LESSONS.md](docs/LESSONS.md) — recurring traps + reusable patterns

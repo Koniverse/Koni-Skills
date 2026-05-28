@@ -105,7 +105,7 @@ These 11 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-1  | VERSION + CHANGELOG in same commit                            | Pre-commit |
 | RULE-2  | CHANGELOG commit hash mandatory, never "pending"              | Pre-commit |
 | RULE-5  | STATUS.md auto-generated, never hand-edit                     | Post-gen   |
-| RULE-6  | Story id must match filename + PRD §11                       | During     |
+| RULE-6  | Story id must match filename + PRD `Epics & User Stories`    | During     |
 | RULE-7  | CONTEXT.md append-only, corrections via revision entry        | During     |
 | RULE-10 | Mark tasks [x] as you complete them                           | During     |
 | RULE-11 | New env var → SETUP + DEPLOY + .env.example in same commit   | Pre-commit |
@@ -286,7 +286,7 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template. For retroactive/codebase-discovered stories, set `assignee` from the commit AUTHOR (`git log -1 --format=%an <sha>`), never the session user | `templates/story.md` §1                    |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive/codebase-discovered stories, set `assignee` from the commit AUTHOR (`git log -1 --format=%an <sha>`), never the session user | `templates/story.md` §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                          | `sprint-system.md` §5-layer                |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |
@@ -328,8 +328,8 @@ Load these on demand based on user intent:
 | `references/templates/changelog.md`   | Writing changelog entry / shipping a version                             | CHANGELOG entry template, rules (RULE-1/RULE-2), safe-insertion pattern (anchor on `[Unreleased]`), filled example |
 | `references/templates/context.md`     | Recording a decision or revision (append-only, RULE-7)                   | Phase header + decision entry + revision entry templates, anti-patterns table, filled example (D3 TAM pivot) |
 | `references/templates/lessons.md`     | Codifying a recurring trap / pattern                                     | Entry template, maintenance rules, filled example (`next build` vs `tsc`) |
-| `references/templates/brief.md`       | Creating/updating product brief (precedes PRD §1)                        | 8-section template (Exec / Problem / Solution / Differentiator / Persona / Success / Scope / Vision), filled example (Koni ERP brief) |
-| `references/templates/prd.md`         | Creating/updating PRD §1–§11, FR row, story entry, §11 index             | Full §1–§11 template, update procedure, FR table row format, story-in-PRD entry, condensed filled snippet |
+| `references/templates/brief.md`       | Creating/updating product brief (precedes PRD Executive Summary)         | 8-section template (Exec / Problem / Solution / Differentiator / Persona / Success / Scope / Vision), filled example (Koni ERP brief) |
+| `references/templates/prd.md`         | Creating/updating PRD (label-only H2 sections, FR row, story entry, Epics & User Stories index) | Heading convention + full template skeleton, update procedure, FR row format, story-in-PRD entry, condensed filled snippet, legacy-numbered-PRD migration steps |
 | `references/templates/architecture.md` | Documenting tech stack / components / data / AD-N summary table         | Full ARCHITECTURE template (overview / stack / components / data / API / security / deploy / integrations / ADs), filled example |
 | `references/templates/design-spec.md` | A story has visual or interaction complexity warranting a dedicated spec | Header refs + screens/states + layout decisions + component inventory + open questions, filled example (US-3.7 pod project) |
 | `references/templates/epic.md`        | Creating/updating an epic                                                | Full BMad-grade Epic template — per-section guidance, required-vs-optional matrix by epic size, Mermaid patterns for entity maps + happy-path sequence diagrams, filled mini-example |
@@ -397,12 +397,12 @@ Should report the version you just installed. If `--version` shows an older numb
 | Subcommand | Since | Purpose | Example |
 |---|---|---|---|
 | `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5) | `koni-docs status` |
-| `sync` | v0.4 | Propagate story status through 5 doc layers (Epic / PRD §11 / PRD §8 FR / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD §8 prefix lookup tolerates `(FR)` suffix variants (v0.7.0) | `koni-docs sync --story US-X.Y` |
+| `sync` | v0.4 | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD section lookup uses label (`## Functional Requirements`) with legacy `## 8.` fallback (v0.7.2) | `koni-docs sync --story US-X.Y` |
 | `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
 | `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
 | `backfill-commits` | v0.4 | Replace `pending` commit SHAs in CHANGELOG with real SHAs from `git log` | `koni-docs backfill-commits` |
 | `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
-| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD §8). Exits non-zero on any error. | `koni-docs validate --json` |
+| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Exits non-zero on any error. | `koni-docs validate --json` |
 
 ### 7.5 Real-world usage — the four common loops
 
@@ -484,8 +484,8 @@ import { Schemas } from '@koniverse/koni-docs/lib';
 
 // Validators
 import {
-  validateRefs,        // L3 ID graph (story→epic, story→sprint, story→PRD §11)
-  validateFrRefs,      // ← prd_ref reachability into PRD §8 (v0.7.0)
+  validateRefs,        // L3 ID graph (story→epic, story→sprint, story→PRD Epics & User Stories)
+  validateFrRefs,      // ← prd_ref reachability into PRD Functional Requirements (v0.7.0)
 } from '@koniverse/koni-docs/lib';
 
 // Changelog + git
@@ -504,7 +504,7 @@ The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unifi
 | Symptom | Cause | Fix |
 |---|---|---|
 | `koni-docs --version` reports an older number than `package.json` | Build/install drift after editing source | `cd packages/koni-docs && npm run build && npm pack && npm install -g ./koniverse-koni-docs-<v>.tgz` |
-| `sync` warns `PRD §8 FR <id>: section "## 8." not found` | PRD section heading missing or numbered differently | Check that PRD has a `## 8.` heading; the prefix lookup (v0.7.0) matches both `## 8. Functional Requirements` and `## 8. Functional Requirements (FR)` |
+| `sync` warns `PRD Functional Requirements FR <id>: section "## Functional Requirements" not found` | PRD has no `## Functional Requirements` heading and no legacy `## 8.` heading either | Rename the H2 to `## Functional Requirements` (canonical label form). Legacy numbered headings (`## 8. Functional Requirements`, with or without `(FR)` suffix) are still matched by the v0.7.2 fallback, but new PRDs should use the label form |
 | `validate` exits non-zero with `(not_found)` warnings | Story references a sprint / epic file that doesn't exist | Either create the missing file or fix the story's `sprint:` / `epic:` frontmatter |
 | `preview` shows 500 SyntaxError on `/` | Stale `dist/` shipped with v0.6.0 shebang leak | Upgrade to v0.6.1+ — `npm install -g @koniverse/koni-docs@latest` |
 | `preview --watch` browser doesn't auto-reload | Browser cached page from before `--watch` was passed | Open DevTools, disable cache, reload once; afterwards SSE works |

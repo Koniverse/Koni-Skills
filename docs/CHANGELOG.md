@@ -16,6 +16,41 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.7.2] — 2026-05-28 — PRD heading convention: label-only + legacy-number fallback — v0.7.2
+
+Single shipped story — **US-4.29**. Aligns the Koni-Skills PRD heading style with the convention used by Koni-Finance-Final (label-only H2s) and removes a long-standing class of `sync` warnings caused by the prior hardcoded `## 8.` lookup. Patch bump (not minor) because the change is fully backwards-compatible: legacy numbered PRDs keep working via the new `legacyNumber` fallback.
+
+### Added — koni-docs library
+
+- **`findSectionByLabel(doc, label, { level?, legacyNumber? })`** in `packages/koni-docs/src/lib/markdown/sections.ts` (US-4.29). Locates an H2 by its clean label (e.g. `Functional Requirements`); when `legacyNumber` is supplied, falls back to a numeric-prefix scan (`## 8.`) so older PRDs continue to work without forced migration.
+- **`packages/koni-docs/src/lib/prd-constants.ts`** — new module exporting the canonical PRD section labels (`PRD_FUNCTIONAL_REQUIREMENTS_LABEL`, `PRD_EPICS_AND_STORIES_LABEL`) plus their legacy numbers (`8`, `11`). Replaces the magic-string `'## 8.'` literals previously sprinkled across `sync.ts` and `refs.ts`.
+
+### Changed — koni-docs library + CLI
+
+- **`cli/sync.ts`** now uses `findSectionByLabel(..., { legacyNumber: PRD_FUNCTIONAL_REQUIREMENTS_LEGACY_NUMBER })` for the FR-row section lookup. Warning text rewritten from `PRD §8 FR …: section "## 8." not found` to `PRD Functional Requirements FR …: section "## Functional Requirements" not found` (now references the canonical heading name).
+- **`lib/refs.ts` `validateFrRefs`** same migration as above.
+- **`cli/validate.ts`** help text + missing-FR output reworded (`in PRD §8` → `in PRD Functional Requirements`).
+
+### Changed — documentation convention
+
+- **`docs/PRD.md`** rewritten with label-only H2 headings: `## Executive Summary`, `## Success Criteria`, `## Product Scope`, `## User Journeys`, `## Personas`, `## Background & Strategic Decisions`, `## Domain-Specific Requirements`, `## Functional Requirements`, `## Non-Functional Requirements`, `## Glossary`, `## Epics & User Stories`. Internal `§N` references updated. Old numbered form is no longer canonical.
+- **`skills/koni-docs/references/templates/prd.md`** rewritten — adds a leading "Heading convention" section that documents the rule explicitly, replaces the embedded skeleton's numbered H2s with the label form, and ends with a "Migrating an older PRD with numbered headings" section.
+- **Active cross-references updated** to the new label form: `AGENTS.md`, `docs/README.md`, `docs/ARCHITECTURE.md` (5-layer table + AST table + L3 ID-graph table + sync sink graph + tree comment), `docs/SETUP.md`, `docs/LESSONS.md`, `docs/sprints/README.md`, `skills/koni-docs/SKILL.md` (rules table + activation table + 7.4 subcommand inventory + 7.7 library API + 7.8 troubleshooting), `skills/koni-docs/references/sprint-system.md` (also fixes pre-existing typos `PRD §7` and `PRD §4 FR` that referenced sections that never existed at those numbers).
+- Historic `§N` references inside `docs/CONTEXT.md` are intentionally left as-is — those are point-in-time decision records, not active cross-references.
+
+### Tests
+
+- New cases in `__tests__/lib/markdown/sections.test.ts` cover `findSectionByLabel`: exact-label match wins, legacy fallback resolves numbered headings (incl. the `(FR)` suffix), `legacyNumber` is opt-in (no fallback when omitted), missing on both axes returns `null`.
+- Fixture `__tests__/lib/_fixtures/build-fixture.ts` updated to emit label-only PRD headings.
+- `__tests__/lib/refs.test.ts` assertions updated to match the new wording.
+- Full suite passes (100/100).
+
+### Verified
+
+- `node packages/koni-docs/dist/cli/index.mjs sync --docs-path docs/ --dry-run` reports **0** `section "..." not found` warnings against `docs/PRD.md`. (Remaining warnings — `prd_ref: AD-N` rows missing from the FR table and the `sprint-2026-W19` archive-path issue — are unrelated pre-existing data problems and out of scope for this story.)
+
+---
+
 ## [0.7.0] — 2026-05-28 — Pillar F: viewer polish + CLI fixes + lib cleanup — v0.7.0
 
 Closes the v0.6.x deferred backlog. Nine shipped stories (US-4.20 through US-4.28) across four sub-clusters:

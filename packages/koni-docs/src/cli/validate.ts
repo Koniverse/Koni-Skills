@@ -12,7 +12,7 @@ export function registerValidate(program: Command): void {
     .command('validate')
     .description('Validate the L3 ID graph (epic/sprint/PRD references) — exits non-zero on error')
     .option('--json', 'machine-readable output', false)
-    .option('--include-warnings', 'include FR-refs that have no PRD §8 row (default: warnings = errors)', false)
+    .option('--include-warnings', 'include FR-refs that have no PRD Functional Requirements row (default: warnings = errors)', false)
     .action(function (this: Command, cmdOpts: ValidateFlags) {
       const opts = getGlobalOpts(this);
       const corpus = loadCorpus(opts.docsPath);
@@ -46,7 +46,7 @@ export function registerValidate(program: Command): void {
           if (frMissing.length > 0) {
             console.log(`  ✗ ${frMissing.length} FR-ref miss(es):`);
             for (const m of frMissing) {
-              console.log(`    - ${m.id} (${m.source}): missing ${m.missingFr.join(', ')} in PRD §8`);
+              console.log(`    - ${m.id} (${m.source}): missing ${m.missingFr.join(', ')} in PRD Functional Requirements`);
             }
           }
         }

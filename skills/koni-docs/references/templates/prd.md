@@ -5,10 +5,10 @@
 > **Use when**: User asks to create/update PRD, product spec, or after
 > BMad produces PRD artifacts that need standardization.
 >
-> **Source**: Maps from BMad `prd.md` + extracts §1 from `brief.md`. The
-> PRD is the canonical product specification — it absorbs the Brief's
-> executive summary and expands it with detailed requirements, personas,
-> and the epic/story index.
+> **Source**: Maps from BMad `prd.md` + extracts the Executive Summary
+> from `brief.md`. The PRD is the canonical product specification — it
+> absorbs the Brief's executive summary and expands it with detailed
+> requirements, personas, and the epic/story index.
 >
 > **Scope boundary**: This PRD contains business requirements only.
 > Implementation details (schema, framework names, API endpoint paths,
@@ -17,7 +17,29 @@
 
 ---
 
-## 1. Full template skeleton (§1–§11)
+## 1. Heading convention (canonical — must be followed)
+
+**H2 headings in `PRD.md` MUST use label-only form, not numeric prefixes.**
+
+| ✅ Use                          | ❌ Do not use                          |
+| ------------------------------- | -------------------------------------- |
+| `## Functional Requirements`    | `## 8. Functional Requirements (FR)`   |
+| `## Epics & User Stories`       | `## 11. Epics & User Stories`          |
+| `## Executive Summary`          | `## 1. Executive Summary`              |
+
+Rationale:
+- Labels are stable across reorderings — adding/removing a section
+  doesn't renumber every cross-reference downstream.
+- Tooling (`koni-docs sync`, `koni-docs validate`) locates sections by
+  label (e.g. `Functional Requirements`) and falls back to legacy
+  numbered headings only for backwards-compat. New PRDs MUST emit the
+  label form.
+- Cross-references in other docs use the label too:
+  `PRD Functional Requirements row FR-12`, not `PRD §8 FR-12`.
+
+---
+
+## 2. Full template skeleton
 
 ````markdown
 ---
@@ -48,7 +70,7 @@ editHistory:
 
 ---
 
-## 1. Executive Summary
+## Executive Summary
 
 ### Vision
 
@@ -92,7 +114,7 @@ advantages does this product have? Why this approach over others?]
 
 ---
 
-## 2. Success Criteria
+## Success Criteria
 
 ### User Success Metrics
 
@@ -124,7 +146,7 @@ advantages does this product have? Why this approach over others?]
 
 ---
 
-## 3. Product Scope
+## Product Scope
 
 ### Phase 1: MVP — {MVP theme / goal}
 
@@ -169,7 +191,7 @@ advantages does this product have? Why this approach over others?]
 
 ---
 
-## 4. User Journeys
+## User Journeys
 
 ### Journey 1: {Journey Name} ({Primary Persona})
 
@@ -187,23 +209,11 @@ advantages does this product have? Why this approach over others?]
 
 ### Journey 2: {Journey Name} ({Persona})
 
-**Persona:** {description}
-
-**Trigger:** {what prompts this}
-
-1. **{Step}:** {action}
-2. ...
-5. **Outcome:** {result}
-
-**Success Metric:** {quantified measure}
-
-### Journey 3: {Journey Name} ({Persona})
-
 [... repeat pattern for 3-7 journeys covering all major user flows]
 
 ---
 
-## 5. Personas
+## Personas
 
 ### P1 — {Primary persona name} ({user segment})
 - **Trigger**: {what prompts them to seek a solution}
@@ -219,7 +229,7 @@ advantages does this product have? Why this approach over others?]
 
 ---
 
-## 6. Background & Strategic Decisions
+## Background & Strategic Decisions
 
 [Key decisions that shaped the product direction. Each decision gets
 an ID, description, date, and rationale. Maps from BMad Architecture
@@ -232,7 +242,7 @@ ADs and CONTEXT.md entries.]
 
 ---
 
-## 7. Domain-Specific Requirements
+## Domain-Specific Requirements
 
 > **Note:** This section is **optional**. Include it ONLY when the product domain
 > has specific compliance, regulatory, or technical constraints (crypto, healthcare,
@@ -252,7 +262,7 @@ ADs and CONTEXT.md entries.]
 
 ---
 
-## 8. Functional Requirements (FR)
+## Functional Requirements
 
 | ID | Requirement | Priority | Status | Epic |
 |----|-------------|----------|--------|------|
@@ -263,7 +273,7 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 
 ---
 
-## 9. Non-Functional Requirements (NFR)
+## Non-Functional Requirements
 
 | ID | Requirement | Target | Status |
 |----|-------------|--------|--------|
@@ -271,7 +281,7 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 
 ---
 
-## 10. Glossary
+## Glossary
 
 > **Note:** This section is **optional**. Include it when the domain has specialized
 > terminology that both human stakeholders and AI agents need clarified.
@@ -283,7 +293,7 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 
 ---
 
-## 11. Epics & User Stories
+## Epics & User Stories
 
 ### EPIC-1: {Epic Title}
 
@@ -311,24 +321,26 @@ Status: `✅ shipped (vX.Y.Z)` / `🚧 in-progress` / `📋 backlog` / `⏪ reve
 
 ---
 
-## 2. Updating PRD.md
+## 3. Updating PRD.md
 
 - **When**: After BMad produces PRD artifacts, when scope changes, or when
   a new epic/story is added.
 - **How**: Edit the relevant section in-place. Update `lastEdited` and
   `editHistory` in frontmatter.
-- **Sections 1-6**: Updated during initial PRD creation from BMad output.
-  Rarely change after.
-- **Section 8 (FR)**: Updated every time a story ships or scope changes
-  (add rows, update status).
-- **Section 11 (epic/story index)**: Updated when stories are created,
-  status changes, or new epics are added.
-- **Cross-reference**: Link to BRIEF.md from §1 header. Link to
-  ARCHITECTURE.md from §6. Link to CONTEXT.md for individual decisions.
+- **Executive Summary / Success Criteria / Product Scope / User Journeys /
+  Personas / Background**: Updated during initial PRD creation from BMad
+  output. Rarely change after.
+- **Functional Requirements**: Updated every time a story ships or scope
+  changes (add rows, update status).
+- **Epics & User Stories**: Updated when stories are created, status
+  changes, or new epics are added.
+- **Cross-reference**: Link to `BRIEF.md` from the Executive Summary
+  header. Link to `ARCHITECTURE.md` from Background & Strategic Decisions.
+  Link to `CONTEXT.md` for individual decisions.
 
 ---
 
-## 3. FR table row (§8)
+## 4. Functional Requirements — row format
 
 ```markdown
 | FR-N | <Requirement description> | P0/P1/P2/P3 | 🚧 In progress / ✅ shipped (vX.Y.Z) / 📋 Backlog | EPIC-N |
@@ -338,7 +350,7 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ---
 
-## 4. Story entry in PRD §11
+## 5. Story entry in Epics & User Stories
 
 ```markdown
 ### US-X.Y — <Story title>
@@ -366,14 +378,14 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ---
 
-## 5. §11 Epics & Stories Index
+## 6. Epics & Stories Index
 
-This index lives in PRD §11. Each story entry links to its canonical
-story file in `docs/sprints/stories/`. The index is updated when stories
-are created or their status changes.
+This index lives in the `Epics & User Stories` section. Each story entry
+links to its canonical story file in `docs/sprints/stories/`. The index
+is updated when stories are created or their status changes.
 
 ```markdown
-## 11. Epics & User Stories
+## Epics & User Stories
 
 ### EPIC-1 — {Epic Title}
 | Story | Title | Status | Version |
@@ -387,17 +399,18 @@ are created or their status changes.
 | US-2.1 | {title} | 📋 Backlog | — |
 ```
 
-> **Sync rule**: When the `agile-sync-up.mjs` script runs, it propagates
-> story status changes to this index. The index is the single source of
-> truth for "what stories exist."
+> **Sync rule**: When `npx koni-docs sync` runs, it propagates story
+> status changes to this index and to the `Functional Requirements`
+> table. The index is the single source of truth for "what stories exist."
 
 ---
 
-## 6. Filled example (§1 + §11 snippet)
+## 7. Filled example (Executive Summary + Epics & User Stories snippet)
 
-> The full PRD spans 11 sections and grows to 1500+ lines on a mature
-> project. The snippet below shows the *shape* of §1 Executive Summary
-> and §11 Epics & User Stories — the two sections most often updated.
+> The full PRD spans the sections listed above and grows to 1500+ lines
+> on a mature project. The snippet below shows the *shape* of the
+> Executive Summary and the Epics & User Stories index — the two
+> sections most often updated.
 
 ```markdown
 # Koni-ERP-02 — Product Requirements Document
@@ -414,7 +427,7 @@ are created or their status changes.
 
 ---
 
-## 1. Executive Summary
+## Executive Summary
 
 **Koni ERP** = a self-serve AI data layer for tech teams under 1000
 employees — a chat box that answers business questions in plain English,
@@ -441,7 +454,7 @@ on top of ingested data, multi-tenant with Row-Level Security from day one.
 
 ---
 
-## 11. Epics & User Stories
+## Epics & User Stories
 
 ### EPIC-1 — Authentication, Workspaces, Permissions
 | Story | Title | Status | Version |
@@ -458,3 +471,21 @@ on top of ingested data, multi-tenant with Row-Level Security from day one.
 | US-3.7 | Per-pod project management view (Projects v2-style) | ✅ done | v0.45.1 |
 | US-3.10 | Project Table polish — full-width + group-by | ✅ done | v0.48.0 |
 ```
+
+---
+
+## 8. Migrating an older PRD with numbered headings
+
+`koni-docs sync` and `koni-docs validate` accept legacy numbered PRDs
+(`## 8. Functional Requirements (FR)`, `## 11. Epics & User Stories`)
+through a label-first / number-fallback lookup, so existing projects
+keep working. To migrate to the canonical label form:
+
+1. Strip the leading `N.` from every H2 in `docs/PRD.md`
+   (e.g. `## 8. Functional Requirements (FR)` → `## Functional Requirements`,
+   `## 11. Epics & User Stories` → `## Epics & User Stories`).
+2. Replace cross-references in sibling docs:
+   `PRD §8` → `PRD Functional Requirements`,
+   `PRD §11` → `PRD Epics & User Stories`.
+3. Re-run `npx koni-docs sync --docs-path docs/`. If warnings are gone,
+   the migration is clean.

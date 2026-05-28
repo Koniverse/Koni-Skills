@@ -12,7 +12,7 @@
  * common "update one cell" path). See packages/koni-docs/src/lib/markdown/tables.ts.
  */
 
-export const KONI_DOCS_LIB_VERSION = '0.7.0';
+export const KONI_DOCS_LIB_VERSION = '0.7.2';
 
 // Core types
 export type { Doc, MatterEntry, Corpus } from './types.ts';
@@ -30,10 +30,16 @@ export {
 
 // Markdown primitives
 export {
-  findSection, findSectionStartingWith, getSectionText, replaceSection, appendToSection,
-  removeSection, replaceSectionWithTable,
+  findSection, findSectionStartingWith, findSectionByLabel, getSectionText,
+  replaceSection, appendToSection, removeSection, replaceSectionWithTable,
 } from './markdown/sections.ts';
 export type { SectionMatch } from './markdown/sections.ts';
+
+// PRD canonical labels
+export {
+  PRD_FUNCTIONAL_REQUIREMENTS_LABEL, PRD_FUNCTIONAL_REQUIREMENTS_LEGACY_NUMBER,
+  PRD_EPICS_AND_STORIES_LABEL, PRD_EPICS_AND_STORIES_LEGACY_NUMBER,
+} from './prd-constants.ts';
 
 export {
   findTable, parseTable, findRow, updateCell, appendRow, removeRow,

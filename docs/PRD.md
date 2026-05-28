@@ -35,7 +35,7 @@ editHistory:
 
 ---
 
-## 1. Executive Summary
+## Executive Summary
 
 ### Vision
 
@@ -94,7 +94,7 @@ every Koniverse agent-supported workflow.
 
 ---
 
-## 2. Success Criteria
+## Success Criteria
 
 ### User Success Metrics
 
@@ -135,7 +135,7 @@ every Koniverse agent-supported workflow.
 
 ---
 
-## 3. Product Scope
+## Product Scope
 
 ### Phase 1: MVP — koni-docs core (v0.1.0, SHIPPED)
 
@@ -163,7 +163,7 @@ block + scripts work in a real project that is NOT a downstream consumer.
 
 | Area                      | Additions                                                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Repo docs                 | Full `docs/` scaffolding (PRD, ARCH, BRIEF, CONTEXT D1–D10, LESSONS §1–§4, SETUP, sprints subtree)                                                          |
+| Repo docs                 | Full `docs/` scaffolding (PRD, ARCH, BRIEF, CONTEXT D1–D10, LESSONS sections 1–4, SETUP, sprints subtree)                                                   |
 | CLAUDE.md / AGENTS.md     | Slim CLAUDE.md (28 lines) + AGENTS.md as canonical source-of-truth + Active Context Pattern B in `.active-context.md`                                       |
 | Root + docs/ artifacts    | `VERSION` at repo root (`0.2.0`) + `docs/CHANGELOG.md` (canonical per SKILL.md §0) with \[Unreleased] + \[0.2.0] + \[0.1.0] entries + real contributor data |
 | Skill additions in flight | Active Context Pattern B (US-1.2) · RULE-15 catalog 9→10 (US-1.3) · AGENTS-canonical convention §3.1 (US-1.4)                                               |
@@ -196,7 +196,7 @@ first non-docs Koniverse skill.
 
 ---
 
-## 4. User Journeys
+## User Journeys
 
 ### Journey 1: New Koniverse project adopts koni-docs (Primary persona)
 
@@ -255,7 +255,7 @@ consumer project, about to commit a story-shipping diff.
 
 ---
 
-## 5. Personas
+## Personas
 
 ### P1 — Koniverse engineer/PM (primary)
 
@@ -282,7 +282,7 @@ consumer project, about to commit a story-shipping diff.
 
 ---
 
-## 6. Background & Strategic Decisions
+## Background & Strategic Decisions
 
 Decisions that shaped this product. Full rationale lives in
 [CONTEXT.md](CONTEXT.md); the table here is the AD-N summary surfaced for
@@ -303,7 +303,7 @@ reviewers.
 
 ---
 
-## 7. Domain-Specific Requirements
+## Domain-Specific Requirements
 
 > Omitted — Koni-Skills has no domain-compliance constraints (no PII, no
 > regulated workflows). If a future skill operates in a regulated domain
@@ -312,7 +312,7 @@ reviewers.
 
 ---
 
-## 8. Functional Requirements (FR)
+## Functional Requirements
 
 | ID    | Requirement                                                                                                                                                                                                                        | Priority | Status                   | Epic            |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------ | --------------- |
@@ -339,7 +339,7 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ---
 
-## 9. Non-Functional Requirements (NFR)
+## Non-Functional Requirements
 
 | ID    | Requirement                                                  | Target         | Status                                               |
 | ----- | ------------------------------------------------------------ | -------------- | ---------------------------------------------------- |
@@ -351,7 +351,7 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ---
 
-## 10. Glossary
+## Glossary
 
 | Term                | Definition                                                                                                                                                                                                                             |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -359,11 +359,11 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 | Plugin skill        | A skill that extends another skill's rule set for a specific tech stack (e.g. `koni-supabase` extends `koni-docs`).                                                                                                                    |
 | BMad                | Upstream brainstorming + planning toolset; produces brief, PRD, ARCH, epics, stories that koni-docs standardizes.                                                                                                                      |
 | Active Context      | The 5-line block between `koni-docs:auto-update` markers that the agent refreshes at 7 trigger points. Lives inline in `CLAUDE.md` (Pattern A — solo dev) OR in a gitignored `.active-context.md` (Pattern B — recommended for teams). |
-| 5-layer consistency | Story / Epic / PRD §11 / PRD §8 FR / Sprint must all reflect the same story status.                                                                                                                                                    |
+| 5-layer consistency | Story / Epic / PRD Epics & User Stories / PRD Functional Requirements / Sprint must all reflect the same story status.                                                                                                                  |
 
 ---
 
-## 11. Epics & User Stories
+## Epics & User Stories
 
 ### EPIC-1 — Koni-docs skill (foundation + ongoing enhancements)
 

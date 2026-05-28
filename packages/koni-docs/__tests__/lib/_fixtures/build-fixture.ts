@@ -88,14 +88,14 @@ goal: "Ship foo + bar"
 
   writeFileSync(join(docs, 'PRD.md'), `# PRD
 
-## 8. Functional requirements
+## Functional Requirements
 
 | ID | Requirement | Priority | Status | Epic |
 |---|---|---|---|---|
 | FR-1 | Foo support | P0 | 📋 Backlog | EPIC-1 |
 | FR-2 | Bar support | P1 | 📋 Backlog | EPIC-1 |
 
-## 11. Epics & User Stories
+## Epics & User Stories
 
 ### EPIC-1 — Epic 1
 | Story | Title | Status | Version |

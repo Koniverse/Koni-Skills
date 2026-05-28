@@ -15,7 +15,7 @@ docs/
 ├── README.md            ← you are here (doc hub + pre-commit checklist)
 ├── SETUP.md             ← dev environment (clone → run tests)
 ├── BRIEF.md             ← product brief: vision, problem, solution, scope
-├── PRD.md               ← product spec: §1–§11 incl. FR table + epic index
+├── PRD.md               ← product spec (label-only H2 sections, FR table + epic index)
 ├── ARCHITECTURE.md      ← system architecture: skill anatomy, distribution
 ├── CHANGELOG.md         ← full release history (every version)
 ├── CONTEXT.md           ← decision log (append-only, never rewrite)
