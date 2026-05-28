@@ -282,45 +282,168 @@ Load these on demand based on user intent:
 
 ## 7. CLI tool — `@koniverse/koni-docs`
 
-This skill ships with a companion CLI binary published as `@koniverse/koni-docs` (v0.5.0+). Install once per consumer repo:
+This skill ships with a companion CLI binary published as `@koniverse/koni-docs` (current: **v0.7.0**). Provides 7 subcommands for the doc-maintenance work this skill prescribes, plus a reusable lib for programmatic use.
+
+> **Source of truth**: VERSION in this repo (`/Volumes/MacData/Workspace/AI/Koni-Skills/VERSION`) matches the latest npm version. When numbers diverge, the repo is the canonical pre-release; npm is the canonical published version.
+
+### 7.1 Install
+
+Pick the mode that fits the consumer repo:
+
+| Mode | Command | When to use |
+|---|---|---|
+| **devDep (recommended)** | `npm install --save-dev @koniverse/koni-docs` | Most consumer repos. Pinned in `package.json`, reproducible CI. Invoke via `npx koni-docs <cmd>`. |
+| **Global** | `npm install -g @koniverse/koni-docs` | Cross-project use, one-off audits, ad-hoc preview. Invoke via `koni-docs <cmd>` (no `npx`). |
+| **Local-tarball (pre-publish)** | From this repo: `cd packages/koni-docs && npm run build && npm pack` then `npm install -g ./koniverse-koni-docs-0.7.0.tgz` | Testing an unpublished version end-to-end, dogfooding a release candidate. Matches the v0.6.x / v0.7.0 ship workflow. |
+| **`npm link` (active development)** | From this repo: `cd packages/koni-docs && npm run build && npm link` | Iterating on the CLI itself with a global `koni-docs` bin that always tracks `dist/`. Re-run `npm run build` after each source edit. |
+
+> If a project's CLAUDE.md / AGENTS.md says the CLI is installed in a specific way (e.g. devDep with `npm run agile:status` aliases), match that — don't switch modes silently.
+
+### 7.2 Update
+
+| Install mode | Update command |
+|---|---|
+| devDep | `npm install --save-dev @koniverse/koni-docs@latest` (or pin a specific version) |
+| Global | `npm install -g @koniverse/koni-docs@latest` |
+| Local-tarball | Re-pack from this repo and re-install: `npm uninstall -g @koniverse/koni-docs && npm install -g ./koniverse-koni-docs-<v>.tgz` |
+| npm link | `git pull && npm run build` from `packages/koni-docs/` — the linked bin picks up the new `dist/`. |
+
+After upgrading, verify:
 
 ```bash
-npm install --save-dev @koniverse/koni-docs
+koni-docs --version        # global mode
+npx koni-docs --version    # devDep mode
 ```
 
-Then run subcommands via `npx koni-docs`:
+Should report the version you just installed. If `--version` shows an older number, the install didn't take — re-run install and re-check.
 
-```bash
-npx koni-docs <subcommand> --docs-path docs/
-```
+### 7.3 Global flags (every subcommand accepts these)
 
-All subcommands accept:
-
-- `--docs-path <path>` — override the default `docs/` root
+- `--docs-path <path>` — override the default `docs/` root (useful for monorepos)
 - `--dry-run` — preview changes without writing files
-- `--json` — machine-readable output
+- `--json` — machine-readable output (pipe to `jq`)
 - `--verbose` — extra logging
 
-### Subcommand inventory
+### 7.4 Subcommand inventory
 
-| Subcommand | Purpose | Example |
-|---|---|---|
-| `status` | Regenerate `STATUS.md` kanban from story frontmatter | `npx koni-docs status` |
-| `sync` | Propagate story status through 5 doc layers (column-by-NAME, W23 BLOCKER fix) | `npx koni-docs sync --story US-X.Y` |
-| `inject-tasks` | Regen `## Tasks` from `## Acceptance criteria` checkboxes | `npx koni-docs inject-tasks --story US-X.Y` |
-| `backfill-fields` | Add missing standard frontmatter keys via `STORY_DEFAULTS` | `npx koni-docs backfill-fields` |
-| `backfill-commits` | Fill `pending` commit SHAs in CHANGELOG via git history | `npx koni-docs backfill-commits` |
+| Subcommand | Since | Purpose | Example |
+|---|---|---|---|
+| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5) | `koni-docs status` |
+| `sync` | v0.4 | Propagate story status through 5 doc layers (Epic / PRD §11 / PRD §8 FR / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD §8 prefix lookup tolerates `(FR)` suffix variants (v0.7.0) | `koni-docs sync --story US-X.Y` |
+| `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
+| `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
+| `backfill-commits` | v0.4 | Replace `pending` commit SHAs in CHANGELOG with real SHAs from `git log` | `koni-docs backfill-commits` |
+| `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
+| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD §8). Exits non-zero on any error. | `koni-docs validate --json` |
 
-(`preview` subcommand — Astro SSR viewer — planned for v0.6.0.)
+### 7.5 Real-world usage — the four common loops
 
-### Library API for programmatic use
+**(A) After editing a story file** (start, close, change AC):
 
-Other Koniverse products can import the typed lib without the CLI:
-
-```ts
-import { loadCorpus, getStories, resolveById } from '@koniverse/koni-docs/lib';
-import { storySchema, validateStory } from '@koniverse/koni-docs/lib/schemas';
-import { findSection, updateCell, parseCheckboxes } from '@koniverse/koni-docs/lib/markdown';
+```bash
+koni-docs sync --story US-X.Y    # propagate status across 5 doc layers
+koni-docs status                  # regen STATUS.md (RULE-5)
 ```
 
-The lib has zero CLI dependencies. Composes `gray-matter` + `unified`/`remark-gfm` + `zod`.
+**(B) Pre-commit checklist** (full §3c sweep):
+
+```bash
+koni-docs inject-tasks --story US-X.Y   # only if AC changed
+koni-docs sync --story US-X.Y
+koni-docs status
+koni-docs validate                       # fails CI on broken refs
+git add docs/ && git commit -m "..."     # CHANGELOG SHA still "pending"
+koni-docs backfill-commits               # backfill SHA → write change
+git add docs/CHANGELOG.md && git commit -m "docs: backfill ..."
+```
+
+**(C) Doc audit on a new repo or after a long pause**:
+
+```bash
+koni-docs validate --include-warnings --json | jq        # find broken refs
+koni-docs backfill-fields --dry-run                       # see what's missing
+koni-docs backfill-fields                                 # fill defaults
+koni-docs status                                          # regen kanban
+```
+
+**(D) Browse the docs visually** (dashboard + per-doc + project tracker + live-reload):
+
+```bash
+koni-docs preview docs --watch     # opens http://localhost:4321/
+# /              dashboard (KPIs + epic grid)
+# /docs/<slug>   any markdown doc rendered with shiki + mermaid
+# /project       full story tracker (filter/group; needs v0.7.0+)
+```
+
+`--watch` watches `docs/**/*.md` (chokidar) and pushes SSE events to the browser; edit a story file and the open tab reloads automatically.
+
+### 7.6 When to use which subcommand (mapping from user intent)
+
+| User says... | Run |
+|---|---|
+| "regenerate STATUS" / "refresh kanban" | `koni-docs status` |
+| "sync US-X.Y" / "propagate story X status" | `koni-docs sync --story US-X.Y` |
+| "rebuild tasks for US-X.Y" | `koni-docs inject-tasks --story US-X.Y` |
+| "story X is missing fields" / "fix story frontmatter" | `koni-docs backfill-fields` (add `--dry-run` first to preview) |
+| "fill in commit SHAs" / "backfill changelog" | `koni-docs backfill-commits` |
+| "show me the docs in a browser" / "open docs viewer" | `koni-docs preview docs --watch` |
+| "check docs integrity" / "find broken refs" / "ID graph audit" | `koni-docs validate` |
+| "run doc checklist before commit" | full loop (B) above |
+| "audit this new repo's docs" | full loop (C) above |
+
+### 7.7 Library API for programmatic use
+
+Other Koniverse products can import the typed lib without the CLI. v0.7.0 surface:
+
+```ts
+// Corpus + I/O
+import {
+  loadCorpus, readDoc, writeDoc, parseDoc, serializeDoc, updateFrontmatter,
+  getStories, getEpics, getSprints, getActiveSprint, resolveById,
+} from '@koniverse/koni-docs/lib';
+
+// Markdown primitives
+import {
+  findSection, findSectionStartingWith,    // ← prefix matcher (v0.7.0)
+  replaceSection, appendToSection, removeSection,
+  findTable, parseTable, findRow, updateCell, appendRow, removeRow,
+  parseCheckboxes, setCheckboxState, appendCheckbox, replaceCheckboxes,
+} from '@koniverse/koni-docs/lib';
+
+// Schemas
+import { Schemas } from '@koniverse/koni-docs/lib';
+// → Schemas.storySchema, Schemas.epicSchema, Schemas.sprintSchema, Schemas.changelogEntrySchema
+
+// Validators
+import {
+  validateRefs,        // L3 ID graph (story→epic, story→sprint, story→PRD §11)
+  validateFrRefs,      // ← prd_ref reachability into PRD §8 (v0.7.0)
+} from '@koniverse/koni-docs/lib';
+
+// Changelog + git
+import {
+  parseChangelog, findEntryByVersion, formatVersionHeader, updateCommitSha,
+  isGitRepo, findCommitForVersion, findCommitByTag, listVersionBumps,
+} from '@koniverse/koni-docs/lib';
+```
+
+Subpath exports: `@koniverse/koni-docs/lib`, `@koniverse/koni-docs/lib/markdown`, `@koniverse/koni-docs/lib/schemas`.
+
+The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unified` / `remark-parse` / `remark-stringify` / `remark-gfm` (markdown AST) + `zod` (schemas). **Mutation contract**: every export is pure — functions starting with `update*` return a new value, never mutate inputs. Sole exception: `parseTable(...).node` returns a reference to the underlying mdast Table node (intentional, documented at call site).
+
+### 7.8 Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `koni-docs --version` reports an older number than `package.json` | Build/install drift after editing source | `cd packages/koni-docs && npm run build && npm pack && npm install -g ./koniverse-koni-docs-<v>.tgz` |
+| `sync` warns `PRD §8 FR <id>: section "## 8." not found` | PRD section heading missing or numbered differently | Check that PRD has a `## 8.` heading; the prefix lookup (v0.7.0) matches both `## 8. Functional Requirements` and `## 8. Functional Requirements (FR)` |
+| `validate` exits non-zero with `(not_found)` warnings | Story references a sprint / epic file that doesn't exist | Either create the missing file or fix the story's `sprint:` / `epic:` frontmatter |
+| `preview` shows 500 SyntaxError on `/` | Stale `dist/` shipped with v0.6.0 shebang leak | Upgrade to v0.6.1+ — `npm install -g @koniverse/koni-docs@latest` |
+| `preview --watch` browser doesn't auto-reload | Browser cached page from before `--watch` was passed | Open DevTools, disable cache, reload once; afterwards SSE works |
+| `writeDoc` adds/removes quotes in git diff | gray-matter normalization (fixed in v0.7.0 — preserves the original quote style per key) | Upgrade to v0.7.0+ |
+
+### 7.9 Skill ↔ CLI relationship
+
+This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, this §7 inventory is the authoritative reference — `references/sprint-system.md` mirrors only the agile-related subset (`status`, `sync`, `inject-tasks`, `backfill-fields`, `backfill-commits`).
+
+Skill files at `skills/koni-docs/` in this repo are the canonical source. Consumer projects link to this skill (preferred: symlink each agent's `.<agent>/skills/koni-docs/` → `../../skills/koni-docs`); the `skills-lock.json` `sourceType: "github"` mechanism is for projects that can't or won't host the file locally.

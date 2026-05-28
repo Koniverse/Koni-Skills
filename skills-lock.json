@@ -1,12 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "koni-docs": {
-      "source": "Koniverse/Koni-Skills",
-      "sourceType": "github",
-      "skillPath": "skills/koni-docs/SKILL.md",
-      "computedHash": "523871f94362e020ee6e6806fd8c9114589fde9014ab91df1230d669943d09c6"
-    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",

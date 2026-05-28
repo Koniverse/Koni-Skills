@@ -7,3 +7,6 @@ examples/
 # local copy avoids merge churn when multiple developers update active
 # stories in parallel.
 .active-context.md
+
+# EnterWorktree-managed isolated workspaces. Local-only; do not commit.
+.claude/worktrees/
