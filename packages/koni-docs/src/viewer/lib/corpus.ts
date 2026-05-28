@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import matter from 'gray-matter';
-import { loadCorpus, getStories, type Corpus } from '../../lib/index.ts';
+import { loadCorpus, getStories, type Corpus } from '@koniverse/koni-docs/lib';
 
 const DOCS_DIR = process.env.KONI_DOCS_DIR ?? path.resolve(process.cwd(), 'docs');
 

@@ -16,6 +16,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.6.1] — 2026-05-28 — Hotfix: viewer install-blocking import + tsup shebang leak — v0.6.1
+
+Fixes two bugs that prevented the v0.6.0 viewer from running after `npm install` / `npm link`.
+
+### Fixed
+- `src/viewer/lib/corpus.ts` imported from `../../lib/index.ts` — a TS source path not shipped in the npm tarball (`files` whitelist is `dist` + `src/viewer` + `README.md`). Repointed to the package's own subpath export `@koniverse/koni-docs/lib` so the viewer resolves to `dist/lib/index.mjs` whether running from a checkout or an installed copy.
+- `tsup.config.ts` applied the CLI shebang `#!/usr/bin/env node` to **every** ESM output via top-level `banner`, including `dist/lib/index.mjs`. Vite SSR parsing the lib entry as JavaScript threw `SyntaxError: Invalid or unexpected token` and rendered a 500 error page on `/`. Split the tsup config into two builds: the CLI entry keeps the shebang; the lib entries (`lib/index`, `lib/markdown/index`, `lib/schemas/index`) ship clean.
+
+### Verification
+- `npm run build` produces shebang only on `dist/cli/index.mjs`; lib entries start with plain `import {`.
+- `koni-docs preview docs --port 47330` returns HTTP 200, 187 KB rendered HTML.
+- 71/71 tests pass (`npm test`).
+
+### Consumer impact
+Anyone who installed v0.6.0 must upgrade — the viewer is unusable on that release. Reinstall via `npm link` (re-run from `packages/koni-docs`) or rebuild the tarball with `npm pack`.
+
+---
+
 ## [0.6.0] — 2026-05-28 — Pillar E ship: Astro SSR viewer + `preview` subcommand — v0.6.0
 
 Adds the Astro SSR docs viewer at `packages/koni-docs/src/viewer/` and a new `koni-docs preview` subcommand. Lifts the proven UI pattern from `Koni-Finance-Final/apps/docs/`, adapted for SSR + runtime DOCS_DIR + Pillar B lib reuse.

@@ -2,3 +2,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 .tmp/
+
+# npm pack output (for local install testing)
+*.tgz
+
+# Astro internal generated state (.astro/ inside the viewer)
+src/viewer/.astro/

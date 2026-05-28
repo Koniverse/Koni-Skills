@@ -1,8 +1,8 @@
 # Sprint Status
 
-> **AUTO-GENERATED** by `npm run agile:status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-05-27 07:40:10 UTC
-> Total stories: 14
+> **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
+> Last generated: 2026-05-28 02:50:04 UTC
+> Total stories: 28
 
 ## 📋 Backlog (1)
 
@@ -10,24 +10,24 @@
 |---|---|---|---|---|---|---|
 | US-3.1 | Define plugin-skill pattern (Supabase, Next.js) | EPIC-3 | P1 | 8 | — | — |
 
-## 🟢 Ready (4)
+## 🟢 Ready (0)
+
+_No stories_
+
+## 🟡 In Progress (2)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
-| US-4.1 | Scaffold packages/koni-docs-viewer + SSR migration | EPIC-4 | P0 | 5 | sprint-2026-W23 | saltict |
-| US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W23 | saltict |
-| US-4.3 | Schema-graceful fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W23 | saltict |
-| US-4.4 | Dogfood in Koni-Skills + publish @koniverse/docs-viewer v0.1.0 | EPIC-4 | P1 | 3 | sprint-2026-W23 | saltict |
+| US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
 
-## 🟡 In Progress (0)
+## 👀 Review (1)
 
-_No stories_
+| ID | Title | Epic | Pri | Points | Sprint | Assignee |
+|---|---|---|---|---|---|---|
+| US-4.17 | Publish @koniverse/koni-docs@0.5.0 to npm | EPIC-4 | P1 | 2 | sprint-2026-W25 | saltict |
 
-## 👀 Review (0)
-
-_No stories_
-
-## ✅ Done (9)
+## ✅ Done (24)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -40,6 +40,21 @@ _No stories_
 | US-2.2 | Wire koni-docs integration into CLAUDE.md + AGENTS.md (Pattern B) | EPIC-2 | P0 | 3 | sprint-2026-W22 | saltict |
 | US-2.3 | Seed VERSION + CHANGELOG.md from git history | EPIC-2 | P1 | 2 | sprint-2026-W22 | saltict |
 | US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W22 | saltict |
+| US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W26 | saltict |
+| US-4.5 | Lib core — corpus + doc module | EPIC-4 | P0 | 5 | sprint-2026-W24 | saltict |
+| US-4.6 | Lib core — sections + tables (column-by-NAME, W23 fix) | EPIC-4 | P0 | 5 | sprint-2026-W24 | saltict |
+| US-4.7 | Lib core — checkboxes + Zod schemas | EPIC-4 | P0 | 3 | sprint-2026-W24 | saltict |
+| US-4.8 | Lib core — refs (L3 ID graph validator) | EPIC-4 | P0 | 3 | sprint-2026-W24 | saltict |
+| US-4.9 | Lib core — changelog + git utilities | EPIC-4 | P0 | 3 | sprint-2026-W24 | saltict |
+| US-4.10 | CLI framework + global opts | EPIC-4 | P0 | 3 | sprint-2026-W25 | saltict |
+| US-4.11 | `koni-docs status` subcommand | EPIC-4 | P0 | 3 | sprint-2026-W25 | saltict |
+| US-4.12 | `koni-docs sync` subcommand (W23 BLOCKER fix) | EPIC-4 | P0 | 5 | sprint-2026-W25 | saltict |
+| US-4.13 | `koni-docs inject-tasks` subcommand | EPIC-4 | P0 | 3 | sprint-2026-W25 | saltict |
+| US-4.14 | `koni-docs backfill-fields` subcommand | EPIC-4 | P0 | 2 | sprint-2026-W25 | saltict |
+| US-4.15 | `koni-docs backfill-commits` subcommand | EPIC-4 | P0 | 3 | sprint-2026-W25 | saltict |
+| US-4.16 | Migration docs — rewrite agent-facing docs to point at CLI | EPIC-4 | P1 | 3 | sprint-2026-W25 | saltict |
+| US-4.18 | CLI polish — 5 minor fixes from Pillar C code review | EPIC-4 | P1 | 3 | sprint-2026-W25 | saltict |
+| US-4.19 | koni-docs preview subcommand | EPIC-4 | P0 | 3 | sprint-2026-W26 | saltict |
 
 ## 🚫 Blocked (0)
 
@@ -54,11 +69,11 @@ _No stories_
 ## Summary
 
 - 📋 **Backlog**: 1
-- 🟢 **Ready**: 4
-- 🟡 **In Progress**: 0
-- 👀 **Review**: 0
-- ✅ **Done**: 9
+- 🟢 **Ready**: 0
+- 🟡 **In Progress**: 2
+- 👀 **Review**: 1
+- ✅ **Done**: 24
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
-✓ WIP: 0/3 stories in-progress.
+✓ WIP: 2/3 stories in-progress.
