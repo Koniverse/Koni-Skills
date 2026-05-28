@@ -121,7 +121,63 @@ These 11 rules apply to ALL Koniverse projects. Full enforcement details in `ref
    - Flip `status:` → `in-progress`
    - Set `sprint:` to the active sprint id
    - If no story exists, create a stub using the full story template (`references/templates/story.md`) before starting.
+   - **Domain-skill consultation for sizing** (mandatory for non-engineering
+     projects — growth / marketing / sales-ops / content workspaces): before
+     assigning `points:`, invoke the domain-appropriate skill(s) to cross-check
+     the estimate. Skipping this leads to systematic 30-40% undersizing,
+     especially for work with external dependencies, multi-stakeholder review,
+     or repeat-batch output (validated by the koni-growth calibration analysis
+     2026-05-23 — see [§3a-bis](#3a-bis-story-sizing--calibration-scale)).
+     Routing:
+     - **B2B sales work** (proposals, sales kits, RFP/RFI, POC plans,
+       enterprise onboarding, IB / partner programs, agency partner kits) →
+       invoke `/sales-engineer`
+     - **Marketing ops work** (email sequences, CRM tagging, landing CRO,
+       content production, analytics tracking, paid ads, attribution) → invoke
+       `/marketing-ops`
+     - **Cross-domain** (e.g., payment integration + onboarding emails +
+       tracking) → invoke both
+     - **Pure engineering / product code / docs-only tooling** — skip
+       (gut-feel + Fibonacci is fine for these; consultation overhead is not
+       justified)
+   - Apply the sizing calibration scale (see §3a-bis below).
 4. **Update the sprint file** — ensure the story row exists in the active sprint scope table.
+
+### 3a-bis. Story sizing — calibration scale
+
+For 1 assignee / 1-week sprint, ~10-15 pt capacity baseline. Tune per-team
+when actuals stabilize.
+
+| Pts | Effort | Scope signal |
+|---|---|---|
+| 1 | ~½ day | Single doc, 1 stakeholder, no external dep |
+| 2 | 1 day | Single template/file, internal review only |
+| 3 | 2 days | Multi-doc bundle OR 1 internal integration |
+| 5 | 3-4 days | Production deliverable (HTML / video / email seq) OR 1 external system integration |
+| 8 | 1 week | Multi-system integration OR multi-asset sales kit OR content batch ≥3 items |
+| 13 | Multi-week | Cross-product, legal/compliance loop, unknown scope — **split if possible** |
+
+**Splitting rule** — if a story estimates > 8pt, split it. A 13pt single
+story is a planning anti-pattern: it blocks a whole sprint, hides milestone
+risk, and cannot be paused/handed-off mid-flight. Reference split pattern from
+koni-growth (CONTEXT D15): the original "Ship payment + recurring billing"
+(13pt) was split into US-1.1 "payment one-shot" (8pt) + US-1.6 "recurring +
+dunning state machine" (5pt), sequenced — first story unblocks revenue, second
+unblocks lifecycle automation.
+
+**External-dependency rule** — if a story waits on a third-party system,
+partner, or legal review, populate the `external_deps:` frontmatter field
+(see [story template](references/templates/story.md) §1.frontmatter). These
+stories are the most commonly undersized because dev-time excludes calendar
+wait time. Example values: `[payment_gateway, resend_api, legal_review,
+sales_navigator_license, partner_signature]`.
+
+**Done-story recalibration rule** — sprint assignment of a done-story is
+locked history (do not move done stories across sprints), but **points may be
+recalibrated** to reflect actual effort after the fact. This is the only way
+to build a real velocity baseline; leaving inflated-optimistic estimates in
+place mis-calibrates every future story. Recalibration must be paired with a
+CONTEXT.md decision entry naming the affected stories and reasoning.
 
 ### 3b. During implementation
 
@@ -223,7 +279,7 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template                                  | `templates/story.md`                       |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template. For retroactive/codebase-discovered stories, set `assignee` from the commit AUTHOR (`git log -1 --format=%an <sha>`), never the session user | `templates/story.md` §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                          | `sprint-system.md` §5-layer                |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |

@@ -49,14 +49,15 @@ title: "<Story title>"
 epic: EPIC-X
 status: backlog            # backlog | ready | in-progress | review | done | blocked | deprecated
 priority: P1               # P0 | P1 | P2 | P3
-points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
+points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md §3a-bis for scale + consult /sales-engineer or /marketing-ops on non-eng work
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
 prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs this story materializes
-assignee:                  # MANDATORY (RULE-15): GitHub login from `gh api user --jq .login` — never git user.name
+assignee:                  # MANDATORY (RULE-15): commit AUTHOR — `git log -1 --format=%an <sha>`, NOT the session user (`gh api user`)
 commit:                    # full SHA of landing commit (set at pre-commit). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+external_deps:             # optional list of third-party systems / partners / legal reviews this story waits on. Example: [payment_gateway, resend_api, legal_review, sales_navigator_license]. Populate when story waits on calendar-time outside dev control — these stories are the most commonly undersized (SKILL.md §3a-bis).
 ---
 
 ## Story refresh — YYYY-MM-DD *(optional, recurring)*
@@ -280,12 +281,33 @@ per file explaining what changed and why — not just what was added.>
   `version_shipped` only on `done` transition; never before.
 - `points`: Fibonacci only (1 / 2 / 3 / 5 / 8 / 13). A 13-pt story should
   almost always be split — large stories merge code without ever being
-  reviewed in full.
+  reviewed in full. **For non-engineering stories (sales / marketing /
+  content / ops), consult `/sales-engineer` or `/marketing-ops` before
+  sizing** — gut-feel + Fibonacci alone systematically undersizes ~30-40%
+  on these tracks (see SKILL.md §3a + §3a-bis for the routing matrix and
+  calibration scale).
 - `prd_ref`: the FR-N (and/or AD-N) this story materializes. Multiple IDs
   comma-separated. Stories with no FR-N are platform stories citing AD-N
   only.
 - `commit`: stays empty until the landing commit exists. Filled at
   pre-commit time (RULE-2). Never `pending`.
+- `assignee`: the person who **authored the work**, not whoever is writing
+  the doc. For a **retroactive / codebase-discovered** story, derive it from
+  the git author of the story's `commit` SHA — run
+  `git log -1 --format='%an <%ae>' <sha>` — and **never** default to the
+  current session's git user (that silently mis-credits another contributor).
+  When the story spans commits by multiple authors (e.g. main work by one
+  person + a follow-up fix by another), set `assignee` to the primary-work
+  author and credit the others explicitly in Background / Tasks next to their
+  SHA.
+- `external_deps` *(optional)*: list of third-party systems, partners, or
+  legal-review queues this story waits on. Populate when calendar wait time
+  (outside dev control) is in the critical path — e.g.
+  `[payment_gateway, resend_api, legal_review, sales_navigator_license,
+  partner_signature]`. These stories are the most commonly undersized;
+  surfacing the dep in frontmatter lets sprint planning account for the
+  buffer and lets STATUS dashboards flag blocking risk. Stories with no
+  external waits leave this field empty or omit it entirely.
 
 ### §2 Goal
 
