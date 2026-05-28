@@ -63,7 +63,7 @@ Closes the v0.6.x deferred backlog. Nine shipped stories (US-4.20 through US-4.2
 - Optional demotion of viewer-only deps (astro, @astrojs/node, marked, shiki, chokidar) from `dependencies` to `peerDependencies` to shrink the install for CLI-only consumers.
 - `npm publish @koniverse/koni-docs@0.7.0` — gated manual step (see Task 12 in the Pillar F plan).
 
-**Commit**: pending
+**Commit**: adc16ad
 
 ---
 
