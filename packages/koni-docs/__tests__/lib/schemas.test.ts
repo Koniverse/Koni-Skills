@@ -26,6 +26,33 @@ test('STORY_DEFAULTS: has every field listed', () => {
   assert.equal(STORY_DEFAULTS.points, '');
 });
 
+test('STORY_DEFAULTS: ID-list fields default to empty arrays (RULE-17 canonical form)', () => {
+  assert.deepEqual(STORY_DEFAULTS.prd_ref, []);
+  assert.deepEqual(STORY_DEFAULTS.arch_ref, []);
+  assert.deepEqual(STORY_DEFAULTS.depends_on, []);
+});
+
+test('storySchema: accepts arch_ref + depends_on as lists', () => {
+  const data = {
+    id: 'US-1.1', title: 'Foo', epic: 'EPIC-1', status: 'in-progress',
+    prd_ref: ['FR-1', 'FR-2'],
+    arch_ref: ['AD-06'],
+    depends_on: ['US-1.0'],
+  };
+  const r = validateStory(data);
+  assert.equal(r.ok, true);
+});
+
+test('storySchema: accepts arch_ref + depends_on as CSV strings (backwards-compat)', () => {
+  const data = {
+    id: 'US-1.1', title: 'Foo', epic: 'EPIC-1', status: 'backlog',
+    arch_ref: 'AD-06, AD-33',
+    depends_on: 'US-1.0',
+  };
+  const r = validateStory(data);
+  assert.equal(r.ok, true);
+});
+
 test('validateEpic: accepts a minimal valid epic', () => {
   const r = validateEpic({ id: 'EPIC-1', title: 'E', status: 'backlog' });
   assert.equal(r.ok, true);

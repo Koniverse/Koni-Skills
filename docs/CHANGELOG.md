@@ -16,6 +16,42 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.7.3] — 2026-05-28 — Frontmatter Reference Spec + RULE-17 + `arch_ref` / `depends_on` schema fields — v0.7.3
+
+Single shipped story — **US-4.30**. Promotes the per-field frontmatter contract diagnosed during US-4.29 cleanup into a written, normative spec that every Koniverse project must follow. The change is documentation-first; the koni-docs script remains backwards-compatible (still accepts CSV-string + array forms of `prd_ref`), so existing projects keep working while they migrate.
+
+### Added — authoritative spec
+
+- **`skills/koni-docs/references/frontmatter-spec.md`** — single source of truth for what every ID-typed frontmatter field on `stories/*.md`, `epics/*.md`, `sprints/*.md` may contain. Defines the four canonical ID namespaces (FR / NFR / AD / US), the canonical regex for each, the per-document field contract (story / epic / sprint), the YAML list-form preference, a five-item anti-pattern catalog (prose-in-`prd_ref`, dangling parenthetical, story-as-PRD-ref, slash-joined IDs, range syntax) with real broken values pulled from the Koni-Finance-Final corpus, and a step-by-step migration playbook + grep audit recipe.
+- **RULE-17 — Frontmatter ID fields are bare canonical IDs only, never prose** ([rules.md](skills/koni-docs/references/rules.md)). BLOCKER severity. Covers the failure modes that `koni-docs sync` cannot diagnose itself (lookup misses on garbage tokens), with grep checks that catch malformed `prd_ref` / `arch_ref` / `depends_on` before they hit sync. Rule count goes from 11 → 12.
+
+### Added — schema (additive, backwards-compatible)
+
+- **`arch_ref` and `depends_on`** on `storySchema` ([`src/lib/schemas/story.ts`](packages/koni-docs/src/lib/schemas/story.ts)) — both `z.union([z.string(), z.array(z.string())]).optional()`. `arch_ref` carries `AD-N` IDs (ARCHITECTURE.md Architecture Decisions); `depends_on` carries `US-X.Y` IDs (other stories whose artifacts this story consumes). The script currently does not sync these (no analog to FR-row update yet), but stories adopting them today are forward-compatible.
+- **`arch_ref`** on `epicSchema` ([`src/lib/schemas/epic.ts`](packages/koni-docs/src/lib/schemas/epic.ts)) — same shape.
+- **`STORY_DEFAULTS`** ([`src/lib/schemas/story.ts`](packages/koni-docs/src/lib/schemas/story.ts)) — `prd_ref` default changed from `''` to `[]`; `arch_ref` and `depends_on` added as `[]`. `koni-docs backfill-fields` now adds these three list fields to sparse story files. Existing stories that already declare `prd_ref:` as a string keep working — the default applies only when the key is absent.
+
+### Changed — templates
+
+- **`templates/story.md`** — §1 skeleton switched to `prd_ref: [FR-N]` list form; added `arch_ref: [AD-N]` and `depends_on: [US-X.Y]` rows with inline guidance pointing to `frontmatter-spec.md`. Per-section guidance rewritten to enforce the contract. Filled mini-example migrated: `prd_ref: AD-06, FR-93, FR-94` → `prd_ref: [FR-93, FR-94] / arch_ref: [AD-06]`.
+- **`templates/epic.md`** — §1 skeleton switched to YAML list form for `prd_ref`; added `arch_ref` row. Per-section guidance forbids range syntax (`FR-28 .. FR-45`) and mixed namespaces. Filled mini-example (`EPIC-3 Treasury Visibility`) migrated from `prd_ref: FR-28 .. FR-45, FR-82 .. FR-89, FR-114, FR-117 .. FR-120` to an enumerated YAML list.
+
+### Changed — SKILL.md cross-links
+
+- Rules table now shows 12 rules including RULE-17.
+- Reference-files table gains a row for `frontmatter-spec.md` with explicit "when to load" trigger.
+- Activation table gains a row for frontmatter-debugging intents ("fix prd_ref", "what goes in arch_ref / depends_on", "AD-N in story frontmatter", "sync warns row not found", "migrate frontmatter") routing to the spec + RULE-17.
+
+### Tests
+
+- `__tests__/lib/schemas.test.ts` — three new cases: `STORY_DEFAULTS` ID-list fields default to `[]`, `storySchema` accepts `arch_ref` + `depends_on` as lists, and as CSV strings (backwards-compat). Suite passes 103/103.
+
+### Migration note for downstream projects
+
+The spec ships unenforced for now — `koni-docs sync` / `validate` keep their current behaviour (silently skip non-FR-prefixed entries). A future minor bump will add a `koni-docs lint frontmatter` subcommand that fails fast on malformed values per RULE-17. Adopting the spec now (move AD-N to `arch_ref`, prose to body, switch to list form) future-proofs your repo and immediately removes the noisy "row not found" warnings from `sync`.
+
+---
+
 ## [0.7.2] — 2026-05-28 — PRD heading convention: label-only + legacy-number fallback — v0.7.2
 
 Single shipped story — **US-4.29**. Aligns the Koni-Skills PRD heading style with the convention used by Koni-Finance-Final (label-only H2s) and removes a long-standing class of `sync` warnings caused by the prior hardcoded `## 8.` lookup. Patch bump (not minor) because the change is fully backwards-compatible: legacy numbered PRDs keep working via the new `legacyNumber` fallback.

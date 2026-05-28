@@ -1,6 +1,7 @@
 /**
  * Canonical PRD section labels — the unnumbered, label-based form adopted as
- * of koni-docs v0.7.2. Older PRDs that still use numbered headings (e.g.
+ * of koni-docs v0.7.2 (formalized into a cross-document frontmatter contract
+ * in v0.7.3 — see references/frontmatter-spec.md). Older PRDs that still use numbered headings (e.g.
  * "## 8. Functional Requirements (FR)") continue to work via the
  * `legacyNumber` fallback on `findSectionByLabel`.
  */

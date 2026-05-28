@@ -52,7 +52,9 @@ priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md §3a-bis for scale + consult /sales-engineer or /marketing-ops on non-eng work
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
-prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs this story materializes
+prd_ref: [FR-N]            # PRD Functional Requirements this story materializes — list of bare IDs only (RULE-17). FR-N / NFR-N here; AD-N goes in arch_ref. See references/frontmatter-spec.md.
+arch_ref: [AD-N]           # OPTIONAL — ARCHITECTURE.md Architecture Decisions this story materializes (list of AD-N). Omit if none.
+depends_on: [US-X.Y]       # OPTIONAL — other stories whose artifacts this story consumes (list of US-X.Y). Omit if none. Cross-story narrative belongs in §7.
 assignee:                  # MANDATORY (RULE-15): commit AUTHOR — `git log -1 --format=%an <sha>`, NOT the session user (`gh api user`)
 commit:                    # full SHA of landing commit (set at pre-commit). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
@@ -286,9 +288,17 @@ per file explaining what changed and why — not just what was added.>
   sizing** — gut-feel + Fibonacci alone systematically undersizes ~30-40%
   on these tracks (see SKILL.md §3a + §3a-bis for the routing matrix and
   calibration scale).
-- `prd_ref`: the FR-N (and/or AD-N) this story materializes. Multiple IDs
-  comma-separated. Stories with no FR-N are platform stories citing AD-N
-  only.
+- `prd_ref` / `arch_ref` / `depends_on`: ID-typed list fields. Each
+  entry MUST be a bare canonical ID matching the regex for its namespace
+  (`^FR-\d+$` or `^NFR-\d+$` for `prd_ref`; `^AD-\d+$` for `arch_ref`;
+  `^US-\d+\.\d+$` for `depends_on`). **Use YAML list form**
+  (`prd_ref: [FR-04, FR-10]`) — the legacy CSV-string form invites
+  prose contamination that breaks `koni-docs sync`. Prose, qualifiers,
+  parenthetical scope notes, and ranges (`FR-28 .. FR-45`) all belong
+  in the body (Background, Cross-story dependencies, Architecture
+  constraints), NEVER in frontmatter. See RULE-17 and
+  [`frontmatter-spec.md`](../frontmatter-spec.md) for the full
+  contract and migration playbook.
 - `commit`: stays empty until the landing commit exists. Filled at
   pre-commit time (RULE-2). Never `pending`.
 - `assignee`: the person who **authored the work**, not whoever is writing
@@ -428,8 +438,9 @@ status: done
 priority: P1
 points: 2
 sprint: sprint-2026-W19
-version_shipped: v0.3.1
-prd_ref: AD-06, FR-93, FR-94
+version_shipped: 0.3.1
+prd_ref: [FR-93, FR-94]
+arch_ref: [AD-06]
 assignee: 
 commit: a1b2c3d4e5f6...
 created: 2026-05-09

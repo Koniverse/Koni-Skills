@@ -98,7 +98,7 @@ infix). The `.vi.md` files are:
 
 ## 2. Core rules (summary)
 
-These 11 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
+These 12 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
 
 | Rule    | Summary                                                       | Group      |
 | ------- | ------------------------------------------------------------- | ---------- |
@@ -113,6 +113,7 @@ These 11 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-14 | Commit prefix: feat:/fix:/chore:/docs:/style:/refactor:/test: | Pre-commit |
 | RULE-15 | `assignee:` is the GitHub login — never git user.name         | During     |
 | RULE-16 | `version_shipped:` is bare semver — never `v`-prefixed        | During     |
+| RULE-17 | Frontmatter ID fields = bare canonical IDs only, never prose  | During     |
 
 **Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
 
@@ -314,6 +315,7 @@ file matching the user's request.
 | "inject tasks from AC"                          | `npx koni-docs inject-tasks --docs-path docs/ --story US-X.Y`                             | `sprint-system.md` §Scripts                |
 | "backfill changelog SHAs"                       | `npx koni-docs backfill-commits --docs-path docs/`                                        | `sprint-system.md` §Scripts                |
 | "standardize output from [tool]"                | Map tool output to canonical docs/ structure                                              | §1 Pipeline                                |
+| "fix prd_ref" / "what goes in prd_ref / arch_ref / depends_on" / "AD-N in story frontmatter" / "sync warns row not found" / "migrate frontmatter" | Apply the per-field contract; move AD-N to `arch_ref`, US-X.Y to `depends_on`, prose to body | `frontmatter-spec.md` + `rules.md` RULE-17 |
 
 ---
 
@@ -323,7 +325,8 @@ Load these on demand based on user intent:
 
 | File                                  | When to load                                                             | Contents                                                          |
 | ------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| `references/rules.md`                 | User asks about rules, pre-commit check, or rule violation surfaces      | 9 core rules with severity, compliance steps, grep checks         |
+| `references/rules.md`                 | User asks about rules, pre-commit check, or rule violation surfaces      | 12 core rules with severity, compliance steps, grep checks        |
+| `references/frontmatter-spec.md`      | Authoring / migrating story / epic / sprint frontmatter; debugging `sync` row-not-found warnings | Authoritative per-field contract for `prd_ref` / `arch_ref` / `depends_on` / etc. Per-namespace regex, anti-pattern catalog with real broken values, migration playbook for projects carrying prose-stuffed ref fields. Pair with RULE-17. |
 | `references/templates.md`             | User asks "what templates exist?" or needs to navigate templates         | Thin index — names each template, when to use it, links to the canonical file. Also has quick frontmatter cheatsheet for Story/Epic/Sprint. |
 | `references/templates/changelog.md`   | Writing changelog entry / shipping a version                             | CHANGELOG entry template, rules (RULE-1/RULE-2), safe-insertion pattern (anchor on `[Unreleased]`), filled example |
 | `references/templates/context.md`     | Recording a decision or revision (append-only, RULE-7)                   | Phase header + decision entry + revision entry templates, anti-patterns table, filled example (D3 TAM pivot) |

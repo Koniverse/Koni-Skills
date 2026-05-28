@@ -100,6 +100,7 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.27](../stories/US-4.27-mutation-contract.md)             | Mutation-contract docblock on `lib/index.ts`                        | Documents pure-by-default convention; names the `parseTable(...).node` exception                                                                        | ✅ done | v0.7.0       |
 | [US-4.28](../stories/US-4.28-publish-v0.7.0.md)                | Publish `@koniverse/koni-docs@0.7.0` to npm                         | Successor to US-4.4; ships the full CLI + lib + viewer bundle under `@koniverse/koni-docs`                                                              | ✅ done | v0.7.0       |
 | [US-4.29](../stories/US-4.29-prd-label-only-headings.md)       | Label-only PRD heading convention + legacy-number fallback in sync  | Make `sync` / `validate` locate PRD sections by clean label (e.g. `Functional Requirements`) with optional numeric-prefix fallback; rewrite Koni-Skills PRD + template + cross-refs to the label form | ✅ done | v0.7.2       |
+| [US-4.30](../stories/US-4.30-frontmatter-spec-rule17.md)       | Frontmatter Reference Spec + RULE-17 + `arch_ref` / `depends_on`    | Author `references/frontmatter-spec.md` as the cross-doc canonical contract; add RULE-17 (frontmatter ID fields are bare canonical IDs, never prose); extend schema with `arch_ref` (AD-N) + `depends_on` (US-X.Y); rewrite story + epic templates to list form | ✅ done | v0.7.3       |
 
 ## Cross-cutting invariants
 

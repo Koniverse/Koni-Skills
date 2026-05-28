@@ -48,7 +48,11 @@ holds the line and an epic that quietly drifts.
 id: EPIC-X
 title: "<Epic title>"
 status: backlog            # backlog | in-progress | done
-prd_ref: FR-X.1 .. FR-X.N  # also list AD-N IDs if architecture-heavy
+prd_ref:                   # FR-N this epic OWNS (not just touches). Enumerate every entry (RULE-17 — no `..` range syntax, no AD-N here, no prose).
+  - FR-X
+  - FR-Y
+arch_ref:                  # OPTIONAL — AD-N this epic anchors. Enumerate; omit field entirely if none.
+  - AD-N
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -293,8 +297,13 @@ top-of-funnel checklist for "is the epic shippable".>
 ### §1 Frontmatter
 
 - `id` matches the filename: `EPIC-3.md` → `id: EPIC-3`.
-- `prd_ref` lists every FR-N this epic *owns* (not just touches). For
-  architecture-heavy epics, also list the AD-N range.
+- `prd_ref` is a **YAML list** of every FR-N this epic *owns* (not just
+  touches) — bare IDs only, enumerated (no `FR-28 .. FR-45` range
+  syntax, no parentheticals). Architecture-heavy epics list AD-N in a
+  separate `arch_ref` field, NOT mixed into `prd_ref`. See RULE-17 and
+  [`frontmatter-spec.md`](../frontmatter-spec.md) for the contract +
+  enumeration rationale. If the FR list grows beyond ~30 entries, the
+  epic is too broad — split it.
 - `status` transitions: `backlog → in-progress → done`. Set `in-progress`
   the moment the first story in the epic flips to `in-progress`; set
   `done` only after every story is `done` AND the epic-level ACs are
@@ -415,7 +424,19 @@ top-of-funnel checklist for "is the epic shippable".>
 id: EPIC-3
 title: "Treasury Visibility"
 status: in-progress
-prd_ref: FR-28 .. FR-45, FR-82 .. FR-89, FR-114, FR-117 .. FR-120
+prd_ref:
+  - FR-28
+  - FR-29
+  - FR-30
+  # ... enumerate every FR through FR-45
+  - FR-82
+  - FR-83
+  # ... through FR-89
+  - FR-114
+  - FR-117
+  - FR-118
+  - FR-119
+  - FR-120
 created: 2026-04-11
 updated: 2026-05-09
 ---

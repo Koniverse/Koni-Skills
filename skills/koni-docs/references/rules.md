@@ -1,6 +1,6 @@
 # Core Rules — Detailed Reference
 
-> These 9 rules apply to ALL Koniverse projects regardless of technology stack.
+> These 12 rules apply to ALL Koniverse projects regardless of technology stack.
 > Technology-specific rules live in plugin skills (koni-docs-supabase, koni-docs-nextjs, etc.)
 
 ## Rule Groups
@@ -247,6 +247,38 @@ The `v` prefix IS still used for narrative / convention surfaces:
 - CHANGELOG anchors: `grep -E '^## \[v' docs/CHANGELOG.md` → must return zero lines.
 
 **See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §template skeleton, [LESSONS §4](../../docs/LESSONS.md).
+
+---
+
+### RULE-17: Frontmatter ID fields are bare canonical IDs only — never prose
+
+**Severity**: BLOCKER
+
+**What**: Every frontmatter field that holds an ID the tooling will look up — `prd_ref`, `arch_ref`, `depends_on`, `epic`, `sprint`, `version_shipped`, `id` — MUST contain only bare canonical IDs matching the regex for that namespace ([`frontmatter-spec.md`](frontmatter-spec.md) §2). Parenthetical notes, scope qualifiers ("(partial — accept path)"), dependency narratives ("extends US-1.3 …"), version ranges ("FR-28 .. FR-45"), slash-joined IDs ("FR-93 / FR-94"), and cross-namespace mixing (putting `AD-N` into `prd_ref`) are all forbidden.
+
+The canonical YAML form is a **list of strings**: `prd_ref: [FR-04, FR-10]`. The legacy comma-string form (`prd_ref: FR-04, FR-10`) is still accepted by the parser but **must not contain anything except IDs and commas**.
+
+**Why**: `koni-docs sync` reads ID-typed fields, splits CSV strings on `,`, then looks each fragment up in a canonical table (FR row in PRD, story row in epic, etc.). A single qualifier like `FR-94 (shared with EPIC-5)` becomes the literal lookup key `FR-94 (shared with EPIC-5)` — guaranteed table miss, surfaced as a noisy "row not found" warning every sync run. A prose-stuffed value like `ARCH §External Services (Resend, MVP) — proposes AD-33 …` shatters into half-a-dozen junk tokens. This recurring class of bug was diagnosed during the US-4.29 PRD-label cleanup on Koni-Finance-Final's 204-story corpus.
+
+**How to comply**:
+1. Use **list form** for every ID-typed field: `prd_ref: [FR-04, FR-10]`.
+2. **One namespace per field**: `prd_ref` is FR / NFR only; `arch_ref` is AD only; `depends_on` is US only. See [`frontmatter-spec.md`](frontmatter-spec.md) §3 for the per-document contract.
+3. **Prose moves to the body** — Background / Cross-story dependencies / Architecture constraints / Implementation notes. Frontmatter is for tooling; bodies are for humans.
+4. **Enumerate ranges** — `[FR-28, FR-29, …, FR-45]`, never `FR-28 .. FR-45`. If the list is unwieldy, the owning epic / story is too broad — split it.
+5. When migrating an existing project, run the audit grep from [`frontmatter-spec.md`](frontmatter-spec.md) §6 to surface offenders, then fix per-epic.
+
+**Grep checks**:
+- Story `prd_ref` is well-formed (list, flow-list, or pure CSV of IDs):
+  ```bash
+  rg --no-heading -n '^prd_ref:' docs/sprints/stories | \
+    grep -vE '^[^:]+:\s*(\[[A-Z, 0-9-]+\]|\s*$|[A-Z]+-[0-9]+(,\s*[A-Z]+-[0-9]+)*)$'
+  ```
+  → must return zero matches.
+- Same for `arch_ref` and `depends_on` — substitute the field name.
+- `koni-docs sync --dry-run` → zero `section "..." not found` / `row with ID="<garbage>" not found` warnings.
+- `koni-docs validate` → exits 0.
+
+**See**: [`frontmatter-spec.md`](frontmatter-spec.md) (the authoritative spec — per-field contract, anti-pattern catalog, migration playbook), `templates/story.md` §1 Frontmatter, `templates/epic.md` §1 Frontmatter.
 
 ---
 

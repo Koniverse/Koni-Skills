@@ -12,7 +12,7 @@
  * common "update one cell" path). See packages/koni-docs/src/lib/markdown/tables.ts.
  */
 
-export const KONI_DOCS_LIB_VERSION = '0.7.2';
+export const KONI_DOCS_LIB_VERSION = '0.7.3';
 
 // Core types
 export type { Doc, MatterEntry, Corpus } from './types.ts';

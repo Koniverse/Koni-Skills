@@ -6,6 +6,7 @@ export const epicSchema = z.object({
   title: z.string(),
   status: z.enum(['backlog', 'in-progress', 'done']),
   prd_ref: z.union([z.string(), z.array(z.string())]).optional(),
+  arch_ref: z.union([z.string(), z.array(z.string())]).optional(),
   created: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   updated: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });

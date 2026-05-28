@@ -45,8 +45,9 @@ Stories are listed by ID; the `Pillar` column shows the natural execution group 
 | US-4.27 | Mutation-contract docblock on `lib/index.ts`            | EPIC-4 | P1  | 1      | ✅ done | F      | v0.7.0       | [stories/US-4.27-mutation-contract.md](stories/US-4.27-mutation-contract.md)                             |
 | US-4.28 | Publish `@koniverse/koni-docs@0.7.0` to npm             | EPIC-4 | P2  | 1      | ✅ done | F      | v0.7.0       | [stories/US-4.28-publish-v0.7.0.md](stories/US-4.28-publish-v0.7.0.md)                                   |
 | US-4.29 | Label-only PRD heading convention + legacy-number fallback in sync | EPIC-4 | P0  | 3      | ✅ done | F      | v0.7.2       | [stories/US-4.29-prd-label-only-headings.md](stories/US-4.29-prd-label-only-headings.md)                |
+| US-4.30 | Frontmatter Reference Spec + RULE-17 + arch_ref / depends_on schema | EPIC-4 | P0  | 3      | ✅ done | F      | v0.7.3       | [stories/US-4.30-frontmatter-spec-rule17.md](stories/US-4.30-frontmatter-spec-rule17.md)                 |
 
-**Total**: **29 stories / 102 points** — all shipped (28 at v0.7.0 + US-4.29 at v0.7.2). EPIC-1 closes at 100% via US-1.5 (5/5 stories, 27/27 pts cumulative including W21 + W19); EPIC-4 closes at 100% (29/29 stories, 94/94 pts).
+**Total**: **30 stories / 105 points** — all shipped (28 at v0.7.0 + US-4.29 at v0.7.2 + US-4.30 at v0.7.3). EPIC-1 closes at 100% via US-1.5 (5/5 stories, 27/27 pts cumulative including W21 + W19); EPIC-4 closes at 100% (30/30 stories, 97/97 pts).
 
 ## Sprint goal recap (post-mortem)
 
