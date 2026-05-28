@@ -61,6 +61,11 @@ function reapplyQuoting(serialized: string, quotedKeys: Map<string, '"' | "'">):
     if (!q) return line;
     if (/^(['"]).*\1$/.test(value)) return line;
     if (value === '' || value === 'null' || value === '~') return line;
+    // Skip YAML block-scalar indicators (`>`, `>-`, `>+`, `|`, `|-`, `|+`)
+    // emitted by js-yaml when a long string is dumped in folded/literal style.
+    // Quoting these would turn the indicator into a literal string and orphan
+    // the continuation lines below.
+    if (/^[>|][-+]?$/.test(value)) return line;
     const escaped = q === '"' ? value.replace(/"/g, '\\"') : value.replace(/'/g, "''");
     return `${key}: ${q}${escaped}${q}`;
   }).join('\n');

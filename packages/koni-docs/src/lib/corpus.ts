@@ -3,6 +3,15 @@ import { join, basename } from 'node:path';
 import matter from 'gray-matter';
 import type { Corpus, MatterEntry } from './types.ts';
 
+function parseMatterWithPath(raw: string, path: string): ReturnType<typeof matter> {
+  try {
+    return matter(raw);
+  } catch (e) {
+    const cause = (e as Error).message;
+    throw new Error(`Failed to parse frontmatter in ${path}: ${cause}`);
+  }
+}
+
 export function readFolderMatter(dir: string): MatterEntry[] {
   if (!existsSync(dir)) return [];
   const out: MatterEntry[] = [];
@@ -10,7 +19,7 @@ export function readFolderMatter(dir: string): MatterEntry[] {
     const full = join(dir, name);
     if (name.endsWith('.md')) {
       const raw = readFileSync(full, 'utf-8');
-      const parsed = matter(raw);
+      const parsed = parseMatterWithPath(raw, full);
       out.push({
         filename: name,
         path: full,
@@ -25,7 +34,7 @@ export function readFolderMatter(dir: string): MatterEntry[] {
 function readSingleton(path: string): MatterEntry | null {
   if (!existsSync(path)) return null;
   const raw = readFileSync(path, 'utf-8');
-  const parsed = matter(raw);
+  const parsed = parseMatterWithPath(raw, path);
   return {
     filename: basename(path),
     path,
@@ -46,7 +55,7 @@ export function loadCorpus(docsPath: string): Corpus {
         .map(n => {
           const full = join(sprintsDir, n);
           const raw = readFileSync(full, 'utf-8');
-          const parsed = matter(raw);
+          const parsed = parseMatterWithPath(raw, full);
           return {
             filename: n,
             path: full,

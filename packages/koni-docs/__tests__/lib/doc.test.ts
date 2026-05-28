@@ -102,3 +102,45 @@ Body.
   assert.match(out, /^status: ready$/m);
   assert.doesNotMatch(out, /^id: "US-2\.3"$/m);
 });
+
+test('writeDoc: long quoted value that js-yaml folds stays parseable on round-trip', () => {
+  // Regression: reapplyQuoting was wrapping the YAML folded-scalar indicator
+  // `>-` in quotes, producing `goal: ">-"` followed by orphaned continuation
+  // lines — corrupt frontmatter that fails to re-parse on the next sync.
+  const longGoal = 'Carry the open W21 strands to landing: US-4.29 EOA execute path (close out FSM + task-list rationalisation), US-7.7 accounting-sync security follow-up (OAuth + token-at-rest + live Xero/QuickBooks adapters per D42), US-9.8 web balance-dashboard migration.';
+  const raw = `---
+id: sprint-2026-W22
+status: planned
+goal: "${longGoal}"
+---
+
+Body.
+`;
+  const doc = parseDoc(raw, '/tmp/sprint.md');
+  const out = serializeDoc(doc);
+
+  // The output must NOT contain the bug signature `goal: ">-"`.
+  assert.doesNotMatch(out, /^goal: "[>|][-+]?"$/m,
+    'reapplyQuoting must not wrap a YAML block-scalar indicator in quotes');
+
+  // And the output must be re-parseable: a second round-trip recovers the
+  // same `goal` value.
+  const reparsed = parseDoc(out, '/tmp/sprint.md');
+  assert.equal(reparsed.frontmatter.goal, longGoal);
+});
+
+test('writeDoc: long single-quoted value also survives folded-style round-trip', () => {
+  const longValue = 'A very long single-quoted value that exceeds the default js-yaml lineWidth of 80 characters and will therefore be emitted in folded block-scalar style on serialize.';
+  const raw = `---
+id: x
+note: '${longValue}'
+---
+
+Body.
+`;
+  const doc = parseDoc(raw, '/tmp/x.md');
+  const out = serializeDoc(doc);
+  assert.doesNotMatch(out, /^note: '[>|][-+]?'$/m);
+  const reparsed = parseDoc(out, '/tmp/x.md');
+  assert.equal(reparsed.frontmatter.note, longValue);
+});

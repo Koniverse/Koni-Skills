@@ -1,6 +1,6 @@
 {
   "name": "@koniverse/koni-docs",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "type": "module",
   "description": "Koni-docs framework CLI + reusable lib for managing structured documentation",
   "license": "MIT",

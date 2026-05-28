@@ -16,6 +16,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.7.4] — 2026-05-28 — Lib resilience: surface YAML parse-failure paths + guard block-scalar quoting — v0.7.4
+
+Two small but load-bearing lib fixes that had been sitting in the working tree as in-flight WIP. Both ship as a single patch since each pairs source + regression test and neither changes the public API.
+
+### Fixed — corpus.ts
+
+- **YAML parse failures now name the offending file**. `loadCorpus`, `readFolderMatter`, and `readSingleton` all funnel `matter()` calls through a new `parseMatterWithPath(raw, path)` helper that catches gray-matter parse errors and rethrows as `Failed to parse frontmatter in <path>: <cause>`. Before this fix, a corrupt YAML block in any story / epic / sprint / singleton crashed the CLI with a raw js-yaml message and no file context — debuggers had to bisect the docs tree by hand. Regression coverage: two new tests in `__tests__/lib/corpus.test.ts` write deliberately broken frontmatter (the exact `goal: ">-"` + orphan-line corruption shape from the `reapplyQuoting` bug below) and assert the path appears in the thrown message for both the sprint scan path and the generic `readFolderMatter` path.
+
+### Fixed — doc.ts (`reapplyQuoting`)
+
+- **Stop wrapping YAML block-scalar indicators in quotes**. When js-yaml serializes a long string in folded (`>-`, `>`, `>+`) or literal (`|-`, `|`, `|+`) style, the value on the scalar line is just the indicator — the actual content lives in the indented continuation lines below. The prior `reapplyQuoting` heuristic wrapped *any* unquoted value of a previously-quoted key in quotes, which turned `goal: >-` into `goal: ">-"` and orphaned the continuation lines at column 1, corrupting the frontmatter. The fix is a single guard regex (`^[>|][-+]?$`) that skips the re-quote step when the value matches a block-scalar indicator. Regression coverage: two new tests in `__tests__/lib/doc.test.ts` exercise long double-quoted and single-quoted values through a full round-trip, asserting (a) the bug signature `goal: ">-"` does not appear in the output and (b) a second parse recovers the original value verbatim.
+
+### No public-API change
+
+`KONI_DOCS_LIB_VERSION` bumped to `0.7.4`; no exported symbol added, removed, or renamed. Test suite still 103/103 — the four regression tests covered by this patch were already passing against the in-tree source (they're the tests that locked the fixes in before commit).
+
+---
+
 ## [0.7.3] — 2026-05-28 — Frontmatter Reference Spec + RULE-17 + `arch_ref` / `depends_on` schema fields — v0.7.3
 
 Single shipped story — **US-4.30**. Promotes the per-field frontmatter contract diagnosed during US-4.29 cleanup into a written, normative spec that every Koniverse project must follow. The change is documentation-first; the koni-docs script remains backwards-compatible (still accepts CSV-string + array forms of `prd_ref`), so existing projects keep working while they migrate.
