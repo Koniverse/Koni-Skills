@@ -1,3 +1,17 @@
+/**
+ * @koniverse/koni-docs lib — Mutation contract
+ *
+ * All functions exported from this lib are PURE: they take a value and return
+ * a new value. Functions whose names start with `update*` (e.g. `updateCell`,
+ * `updateFrontmatter`, `updateCommitSha`) take a value and return the modified
+ * value — they do NOT mutate inputs.
+ *
+ * Exception: `parseTable(...).node` returns a reference to the underlying
+ * mdast Table node; mutating fields on that node mutates `doc.ast`. This is
+ * documented at the call site and intentional (avoids a deep clone for the
+ * common "update one cell" path). See packages/koni-docs/src/lib/markdown/tables.ts.
+ */
+
 export const KONI_DOCS_LIB_VERSION = '0.6.1';
 
 // Core types
@@ -45,7 +59,7 @@ export type { RefKind, RefValidationResult } from './refs.ts';
 // Changelog
 export {
   parseChangelog, findEntryByVersion, formatVersionHeader,
-  updateCommitSha, serializeChangelog,
+  updateCommitSha,
 } from './changelog.ts';
 export type { ChangelogEntryParsed } from './changelog.ts';
 
