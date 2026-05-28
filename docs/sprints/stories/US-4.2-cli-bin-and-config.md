@@ -2,11 +2,11 @@
 id: US-4.2
 title: "CLI bin + koni-docs.config.{json,mjs} support"
 epic: EPIC-4
-status: in-progress
+status: done
 priority: P0
 points: 5
 sprint: sprint-2026-W26
-version_shipped: ""
+version_shipped: "0.7.0"
 prd_ref: FR-16
 assignee: saltict
 commit:
@@ -25,13 +25,13 @@ Pillar E of the koni-docs CLI expansion (EPIC-4 v0.6.0). Shipped as part of the 
 ## Acceptance criteria
 
 - [x] **AC-1** — `koni-docs preview [path] --port <n> --host <h> --open` spawns Astro dev server with `KONI_DOCS_DIR` pointing at resolved docs path
-- [ ] **AC-2** — Optional `koni-docs.config.{json,mjs}` overrides title, ordering, hidden folders without crashing on malformed file (deferred to Pillar F)
+- [x] **AC-2** — Optional `koni-docs.config.{json,mjs}` overrides title, ordering, hidden folders without crashing on malformed file (shipped in v0.7.0 via [US-4.22](US-4.22-viewer-config.md))
 
 ## Tasks
 
 - [x] **TASK-4.2.1** — Add `preview` subcommand to CLI framework (`src/cli/preview.ts`)
 - [x] **TASK-4.2.2** — Wire `--port`, `--host`, `--open` flags; spawn Astro dev via `execa`
-- [ ] **TASK-4.2.3** — Implement `koni-docs.config.{json,mjs}` loader and schema (deferred to Pillar F)
+- [x] **TASK-4.2.3** — Implement `koni-docs.config.{json,mjs}` loader and schema (shipped in v0.7.0 via [US-4.22](US-4.22-viewer-config.md))
 
 ## Dev notes
 

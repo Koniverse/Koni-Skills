@@ -2,11 +2,11 @@
 id: US-4.3
 title: "Graceful schema fallback + chokidar/SSE live reload"
 epic: EPIC-4
-status: in-progress
+status: done
 priority: P0
 points: 5
 sprint: sprint-2026-W26
-version_shipped: ""
+version_shipped: "0.7.0"
 prd_ref: FR-17
 assignee: saltict
 commit:
@@ -25,13 +25,13 @@ Pillar E of the koni-docs CLI expansion (EPIC-4 v0.6.0). The graceful 404 / miss
 ## Acceptance criteria
 
 - [x] **AC-1** — Plain-mode landing page renders without throwing when `docs/sprints/` is absent (no epic grid, no KPIs — just file tree + README)
-- [ ] **AC-2** — `--watch` auto-reloads browser within 200 ms of a `.md` edit via chokidar + SSE (deferred to Pillar F)
+- [x] **AC-2** — `--watch` auto-reloads browser within ~300 ms of a `.md` edit via chokidar + SSE (shipped in v0.7.0 via [US-4.21](US-4.21-live-reload.md))
 
 ## Tasks
 
 - [x] **TASK-4.3.1** — `lib/corpus.ts` returns empty sprints/epics/stories arrays gracefully when subdirs are absent
 - [x] **TASK-4.3.2** — `pages/index.astro` conditionally renders KPI + epic grid only when sprint data is present
-- [ ] **TASK-4.3.3** — Wire chokidar watcher + SSE endpoint in `preview` subcommand (deferred to Pillar F)
+- [x] **TASK-4.3.3** — Wire chokidar watcher + SSE endpoint in `preview` subcommand (shipped in v0.7.0 via [US-4.21](US-4.21-live-reload.md))
 
 ## Dev notes
 

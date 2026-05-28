@@ -71,8 +71,8 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | ID | Title | Goal | Status | Version |
 |---|---|---|---|---|
 | [US-4.1](../stories/US-4.1-scaffold-and-ssr.md) | Scaffold `packages/koni-docs-viewer` + SSR migration | Set up the package, copy reference impl, switch from `getStaticPaths` to Astro Node SSR, decouple `DOCS_DIR` from monorepo paths | ✅ done | v0.6.0 |
-| [US-4.2](../stories/US-4.2-cli-bin-and-config.md) | CLI bin + `koni-docs.config.{json,mjs}` | `koni-docs-viewer [path] --port --host --open --watch --config`; optional config file overrides title and ordering | 🚧 in-progress | — |
-| [US-4.3](../stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | Detect sprint structure; plain landing page when absent; `--watch` auto-reloads browser on `.md` change | 🚧 in-progress | — |
+| [US-4.2](../stories/US-4.2-cli-bin-and-config.md) | CLI bin + `koni-docs.config.{json,mjs}` | `koni-docs-viewer [path] --port --host --open --watch --config`; optional config file overrides title and ordering | ✅ done | v0.7.0 |
+| [US-4.3](../stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | Detect sprint structure; plain landing page when absent; `--watch` auto-reloads browser on `.md` change | ✅ done | v0.7.0 |
 | [US-4.4](../stories/US-4.4-dogfood-and-publish.md) | Dogfood in Koni-Skills + publish v0.1.0 | Wire `npm run docs:preview`; publish `@koniverse/docs-viewer@0.1.0`; smoke-test against `Koni-Finance-Final` | 🟢 ready | — |
 | [US-4.19](../stories/US-4.19-cli-preview.md) | `koni-docs preview` subcommand | Spawn Astro dev with runtime DOCS_DIR; --port/--host/--open flags | ✅ done | v0.6.0 |
 | [US-4.5](../stories/US-4.5-lib-corpus-doc.md) | Lib core — corpus + doc module | Compose gray-matter + remark for typed Doc/Corpus value types | ✅ done | v0.4.0-dev.0 |
@@ -89,6 +89,15 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.16](../stories/US-4.16-cli-migration-docs.md) | Migration docs (SKILL.md / sprint-system.md / CLAUDE.md / SETUP.md) | Rewrite agent-facing docs to point at CLI; consumer migration table | ✅ done | v0.5.0 |
 | [US-4.17](../stories/US-4.17-cli-npm-publish.md) | Publish @koniverse/koni-docs@0.5.0 to npm | npm publish prep complete; actual publish DEFERRED awaiting npm credentials | 👀 review | — |
 | [US-4.18](../stories/US-4.18-cli-polish-fixes.md) | CLI polish — 5 minor fixes | inject-tasks dry-run; sync stderr; SyncStats fields; pre-release test; version skew | ✅ done | v0.5.0 |
+| [US-4.20](../stories/US-4.20-project-page.md) | Viewer `/project` page — User Stories Tracker port | Port 366-line tracker from Koni-Finance-Final; commit cell as mono plain text | ✅ done | v0.7.0 |
+| [US-4.21](../stories/US-4.21-live-reload.md) | Viewer `--watch` live-reload (chokidar + SSE) | Single watcher + 300 ms-debounced reload-bus + EventSource subscribe; flag no longer no-op | ✅ done | v0.7.0 |
+| [US-4.22](../stories/US-4.22-viewer-config.md) | `koni-docs.config.{json,mjs}` viewer config loader | Optional zod-validated title / folderOrder / topLevelOrder overrides; defaults preserved | ✅ done | v0.7.0 |
+| [US-4.23](../stories/US-4.23-section-prefix.md) | `findSectionStartingWith` + PRD §8 prefix lookup | Heading-prefix helper used by `sync.ts` for FR-row lookup; tolerant of casing variants | ✅ done | v0.7.0 |
+| [US-4.24](../stories/US-4.24-yaml-quoting.md) | YAML quoting preservation in parseDoc/writeDoc | `Doc.frontmatterQuoting` Map preserves `"` vs `'` across CLI write round-trips | ✅ done | v0.7.0 |
+| [US-4.25](../stories/US-4.25-cli-validate.md) | `koni-docs validate` subcommand + `validateFrRefs` | Read-only L3 ID-graph + FR-ref integrity check; `--json`, `--include-warnings`; exits non-zero on error | ✅ done | v0.7.0 |
+| [US-4.26](../stories/US-4.26-lib-cleanup.md) | Lib cleanup — drop dead code | `serializeChangelog` stub + `recursive` param + `unist-util-visit` dep gone; tsconfig excludes viewer | ✅ done | v0.7.0 |
+| [US-4.27](../stories/US-4.27-mutation-contract.md) | Mutation-contract docblock on `lib/index.ts` | Documents pure-by-default convention; names the `parseTable(...).node` exception | ✅ done | v0.7.0 |
+| [US-4.28](../stories/US-4.28-publish-v0.7.0.md) | Publish `@koniverse/koni-docs@0.7.0` to npm | Manual publish gate; awaits maintainer npm credentials | 🚧 in-progress | — |
 
 ## Cross-cutting invariants
 
