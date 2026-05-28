@@ -108,6 +108,47 @@ Run through every item before committing:
 [ ] CLAUDE.md Active Context block updated (T1-T7 as applicable)
 ```
 
+## Test artifacts
+
+Per-story Acceptance Criteria (`stories/US-X.Y-<slug>.md` §4) + Verification commands (§11) remain the source of truth for what each individual story must prove. Two additional artifact types capture what AC cannot:
+
+| Artifact | Location | Owns |
+|---|---|---|
+| Test cases | `docs/tests/test-cases/EPIC-N.md` (one per epic) | End-to-end scenarios spanning ≥2 stories; regression scenarios for cross-story invariants; smoke; coverage matrix (AC → TC) |
+| Test report — per-execution | `docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md` | Execution log: who ran which TCs in which env against which commit, pass/fail per TC, failure reproduction detail |
+| Test report — per-release | `docs/tests/test-reports/releases/vX.Y.Z.md` | Release-level aggregate of run files; outstanding risks; named ship-decision sign-off |
+
+**Promotion rule** — keep a scenario inside the story file unless one of:
+
+- it spans ≥2 stories in the same epic (E2E),
+- it guards an epic-level invariant or past bug (REG),
+- it runs on a different cadence than per-PR (smoke / nightly perf / security).
+
+**Test-cases file structure (audience: tester / reviewer)** — every `EPIC-N.md` file follows this 10-section skeleton (see [`templates/test-cases.md`](templates/test-cases.md) §2 Section index):
+
+1. Frontmatter — YAML metadata, no `status`
+2. Overview — Scope (paragraph + "Out of scope" bullets)
+3. Overview — Stories in scope (table `| Story | Short name | Status |` with emoji)
+4. Overview — Goals (3-5 bullets stating high-level invariants the suite proves)
+5. Overview — Environment & test data
+6. Overview — Cadence & ownership
+7. Quick reference — scenarios summary (table `| # | ID | Type | Priority | Short description | Stories | Mode |` — single-row scan of every TC)
+8. Test scenarios (H3 per TC with YAML + Gherkin + Preconditions + Test data + Notes)
+9. Coverage matrix (table `| Story | AC | AC description | Covered by | Type |` — Story column inlines short name, AC description distills story AC text in ≤80 chars)
+10. Open / deferred scenarios
+
+The Stories-in-scope / Goals / Quick-reference triad up front lets a tester understand scope + run sequence in ≤2 minutes without scrolling through Gherkin. The Coverage matrix's inline short name + AC description columns mean each row is self-explanatory — no story-file lookup needed.
+
+**Lifecycle (per-TC, implicit — no frontmatter status)** — `draft` until §Coverage matrix row + `maps_to.ac` are populated → `ready`. Execution state lives only in `test-reports/runs/*.md`. Deprecate by replacing the H3 body with `**Deprecated YYYY-MM-DD** — <reason>` and keeping the ID intact.
+
+**Append-only discipline (reports)** — never edit a past run's results; re-runs create new files (`-run2`, `-run3`, …). A release file's `ship_status` may flip `held → shipped` or `shipped → rolled-back`, recorded as a dated paragraph under §Ship decision. Reports are never deleted.
+
+**Templates**: [`test-cases.md`](templates/test-cases.md) · [`test-report.md`](templates/test-report.md) (two sub-templates: per-execution + per-release).
+
+**Folder READMEs**: [`docs/tests/test-cases/README.md`](../../../docs/tests/test-cases/README.md) · [`docs/tests/test-reports/README.md`](../../../docs/tests/test-reports/README.md).
+
+**Phase 1 is manual-only.** A sync script (`agile-sync-tests.mjs`), a RULE (epic must have test-cases before close), and a Playwright → markdown converter for CI are planned for phase 2 once the manual pattern stabilizes.
+
 ## How to set up in a new project
 
 1. Create `Docs/` directory structure per the orientation in SKILL.md §0

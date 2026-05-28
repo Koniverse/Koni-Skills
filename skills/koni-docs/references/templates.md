@@ -24,6 +24,8 @@
 | **SETUP.md + DEPLOY.md + .env.example** | [templates/setup.md](templates/setup.md) | Adding an env var (RULE-11 — all three files in same commit) |
 | **OKR — File-Native Quarterly Ledger** | [templates/okr.md](templates/okr.md) | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md` |
 | **CLAUDE.md + AGENTS.md integration blocks** | [templates/integration.md](templates/integration.md) | Wiring koni-docs into a new project, refreshing Active Context |
+| **Test Cases — per-epic scenarios** | [templates/test-cases.md](templates/test-cases.md) | Capturing end-to-end + regression + smoke scenarios at the EPIC level (complements per-story AC) |
+| **Test Report — per-execution + per-release** | [templates/test-report.md](templates/test-report.md) | Recording an execution run (`runs/`) or aggregating a release (`releases/`) |
 
 ---
 
@@ -61,6 +63,9 @@
 | "update setup for new env var"                  | [templates/setup.md](templates/setup.md)         |
 | "create OKR ledger" / "quarterly OKRs"          | [templates/okr.md](templates/okr.md)             |
 | "wire koni-docs into project" / "refresh Active Context" | [templates/integration.md](templates/integration.md) |
+| "create test-cases for EPIC-N"                  | [templates/test-cases.md](templates/test-cases.md) |
+| "record test run for EPIC-N"                    | [templates/test-report.md](templates/test-report.md) (per-execution sub-template) |
+| "create release test report"                    | [templates/test-report.md](templates/test-report.md) (per-release sub-template) |
 
 ---
 
@@ -111,5 +116,57 @@ status: planned            # planned | in-progress | closed
 start: YYYY-MM-DD
 end: YYYY-MM-DD
 goal: "<one sentence naming the deliverable, not the activity>"
+---
+```
+
+### Test cases (`docs/tests/test-cases/EPIC-N.md`)
+
+```yaml
+---
+id: EPIC-N-tests
+epic: EPIC-N
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+```
+
+Each TC inside the file carries its own YAML metadata block:
+
+```yaml
+id: TC-N.E2E-1
+type: e2e                  # smoke | regression | e2e | integration | unit | performance | security
+mode: manual               # manual | automated | hybrid
+priority: P0               # P0 | P1 | P2 | P3
+maps_to:
+  fr: [FR-N]
+  ac: [US-X.Y/AC-1, US-X.Z/AC-2]
+  ad: [AD-N]               # optional
+  rule: [RULE-N]           # optional
+```
+
+### Test report — per-execution (`docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md`)
+
+```yaml
+---
+epic: EPIC-N
+run_id: YYYY-MM-DD-EPIC-N-runN
+run_at: YYYY-MM-DDTHH:MM:SS+07:00
+env: staging               # local | staging | production
+version: vX.Y.Z
+commit: <full SHA>
+executor: <GitHub login | "CI">
+trigger: per-release       # per-PR | per-release | per-sprint | nightly | on-demand
+---
+```
+
+### Test report — per-release (`docs/tests/test-reports/releases/vX.Y.Z.md`)
+
+```yaml
+---
+version: vX.Y.Z
+released_at: YYYY-MM-DD
+commit: <SHA of the release commit>
+epics_covered: [EPIC-N, EPIC-M]
+ship_status: shipped       # shipped | held | rolled-back
 ---
 ```
