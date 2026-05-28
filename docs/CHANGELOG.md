@@ -16,6 +16,57 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.7.0] — 2026-05-28 — Pillar F: viewer polish + CLI fixes + lib cleanup — v0.7.0
+
+Closes the v0.6.x deferred backlog. Nine shipped stories (US-4.20 through US-4.28) across four sub-clusters:
+
+### Added — viewer polish (F.1)
+
+- **`/project` page** (US-4.20). Lifts the 366-line User Stories Tracker from `Koni-Finance-Final/apps/docs/src/pages/project.astro`, adapted for koni-docs (sync `loadDashboardData().stories` instead of async `extractAllUserStories`; commit SHA rendered as plain text since it isn't a URL). Closes the dead `/project` sidebar nav link that 404'd since v0.6.0. Provides table + search + sprint filter + group-by-{epic, sprint, assignee, shipped}.
+- **`--watch` live-reload** (US-4.21). `koni-docs preview --watch` now actually works (was a no-op declared in v0.6.0). chokidar singleton watches `KONI_DOCS_DIR` with `{ ignored: /(\/node_modules\/|\/\.git\/|\/\.astro\/)/, ignoreInitial: true }` feeding a 300 ms-debounced EventEmitter. New Astro API route at `/koni-docs-rt/reload` streams SSE (`data: reload\n\n`); Layout.astro subscribes via `EventSource` and calls `location.reload()` on event. Subscriber cleanup via `request.signal.addEventListener('abort', ...)` prevents leaks across tab churn.
+  - Note: route prefix is `/koni-docs-rt/` (not `/__koni-docs/`) because Astro excludes any `pages/_*` directory from routing.
+- **`koni-docs.config.{json,mjs}`** (US-4.22). Optional config file at the docs-tree root with zod-validated shape `{ title?: string; folderOrder?: string[]; topLevelOrder?: string[] }`. Overrides the hardcoded `TOP_LEVEL_ORDER` / `FOLDER_ORDER` constants in `viewer/lib/corpus.ts` and the page `<title>`. Missing file falls back to current defaults — opt-in only, no migration needed.
+- `commit: string` field added to `loadDashboardData().stories` (sourced from `frontmatter.commit ?? frontmatter.pr`) so the `/project` page can render per-row commit SHAs.
+
+### Added — CLI correctness (F.2)
+
+- **`findSectionStartingWith(doc, prefix)`** lib helper (US-4.23). Matches the first heading whose text starts with the given `## <num>.` prefix. `sync.ts` now uses it for PRD §8 FR-row lookups — real PRDs use `## 8. Functional Requirements (FR)`, the prior literal lookup couldn't match. Both casing variants (`Functional Requirements (FR)`, `Functional requirements`) now resolve through one call site.
+- **YAML quoting preservation in `parseDoc`/`writeDoc`** (US-4.24). `Doc.frontmatterQuoting?: Map<string, '"' | "'">` records which keys carried which quote style in the original raw frontmatter. On serialize, gray-matter's bare output is re-wrapped to match. Eliminates the v0.5.x–v0.6.x noisy git diffs where `version_shipped: "0.6.0"` became `version_shipped: 0.6.0` after every CLI write. Best-effort heuristic — plain scalar values only; multi-line and block scalars are not preserved (none used in the corpus).
+- **`koni-docs validate` subcommand** (US-4.25). Runs `validateRefs(corpus)` (L3 ID-graph integrity — already in the lib) plus the new `validateFrRefs(corpus)` (each story's `prd_ref` frontmatter resolves to a real FR-row in PRD §8). Flags: `--json`, `--include-warnings`. Exits non-zero on any error. Dogfooded against this repo's `docs/` — surfaces real ref errors (missing sprint files W24/W25/W26) where prior tooling silently glossed over.
+
+### Removed — lib cleanup (F.3)
+
+- `serializeChangelog` (US-4.26). The stub function in `lib/changelog.ts` that always threw `"not implemented in Pillar B"`. The re-export from `lib/index.ts` goes too. Unused import in `__tests__/lib/changelog.test.ts` removed.
+- `recursive` parameter from `readFolderMatter` signature (US-4.26). Never read; the trailing `// recursive walk omitted` comment also drops. Function body unchanged.
+- `unist-util-visit` dependency (US-4.26). Not imported anywhere under `src/` or `__tests__/`. Lockfile updates.
+
+### Added — lib documentation (F.3)
+
+- **Mutation-contract comment** at the top of `lib/index.ts` (US-4.27). Documents the convention: all exports are pure unless a call-site comment says otherwise; `update*` returns a new value, never mutates the input. The sole exception (`parseTable(...).node` mutates `doc.ast`) is called out explicitly.
+
+### Changed — build config
+
+- `tsconfig.json` `include` now scopes to `src/cli/**`, `src/lib/**`, `__tests__/**` and excludes `src/viewer`. The viewer has its own astro-strict tsconfig and the package-level typecheck was choking on TS2209 from the viewer's self-reference to `@koniverse/koni-docs/lib`. Astro's own check command continues to cover the viewer.
+
+### Verification
+
+- 71 → **92** tests pass (21 new across the 9 stories). `npm run typecheck` exits 0.
+- `koni-docs --version` reports `0.7.0` from a fresh global install. `koni-docs preview docs --watch` confirmed end-to-end: SSE event arrives within 1 s of editing a doc file.
+- `koni-docs validate ../../docs` runs cleanly against this repo (surfaces real-data issues already known and tracked).
+
+### Deferred (Pillar G)
+
+- Astro 6 upgrade.
+- Per-doc TOC scrollspy.
+- Cross-doc search (Fuse.js index or similar).
+- Plugin system (Supabase / Next.js per EPIC-3).
+- Optional demotion of viewer-only deps (astro, @astrojs/node, marked, shiki, chokidar) from `dependencies` to `peerDependencies` to shrink the install for CLI-only consumers.
+- `npm publish @koniverse/koni-docs@0.7.0` — gated manual step (see Task 12 in the Pillar F plan).
+
+**Commit**: pending
+
+---
+
 ## [0.6.1] — 2026-05-28 — Hotfix: viewer install-blocking import + tsup shebang leak — v0.6.1
 
 Fixes two bugs that prevented the v0.6.0 viewer from running after `npm install` / `npm link`.
