@@ -2,13 +2,13 @@
 id: US-4.28
 title: "Publish @koniverse/koni-docs@0.7.0 to npm"
 epic: EPIC-4
-status: in-progress
+status: done
 priority: P2
 points: 1
-sprint: sprint-2026-W26
-version_shipped: ""
+sprint: sprint-2026-W22
+version_shipped: "0.7.0"
 assignee: saltict
-commit: pending
+commit: adc16ad, 833b9be
 created: 2026-05-28
 updated: 2026-05-28
 ---

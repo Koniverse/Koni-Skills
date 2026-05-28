@@ -5,11 +5,11 @@ epic: EPIC-4
 status: done
 priority: P0
 points: 5
-sprint: sprint-2026-W26
+sprint: sprint-2026-W22
 version_shipped: "0.7.0"
 prd_ref: FR-17
 assignee: saltict
-commit:
+commit: acd5561
 created: 2026-05-27
 updated: 2026-05-28
 ---

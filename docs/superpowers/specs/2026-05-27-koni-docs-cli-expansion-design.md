@@ -1,13 +1,23 @@
 ---
-status: draft
+status: superseded-by-implementation
 date: 2026-05-27
 author: AnhMTV
-supersedes: docs/superpowers/specs/2026-05-27-koni-docs-viewer-design.md (in spirit — viewer design still ships unchanged as v0.1.0)
+supersedes: docs/superpowers/specs/2026-05-27-koni-docs-viewer-design.md (in spirit — viewer design shipped unchanged through v0.6.0..v0.7.0)
 epic: EPIC-4
-target_versions: v0.2.0 (lib core + CLI), v0.3.0+ (CRUD expansion)
+target_versions: v0.4.0-dev.0 → v0.7.0 (lib core + CLI + viewer all shipped)
 ---
 
 # koni-docs CLI expansion — design spec
+
+> **Post-hoc reality (2026-05-28):** The W23 / W24-W26 phasing described
+> below was compressed into one window — **all US-4.1..4.28 stories
+> landed in sprint-2026-W22**, spanning v0.4.0-dev.0 → v0.7.0. See
+> [sprint-2026-W22.md](../../sprints/sprint-2026-W22.md) and
+> [EPIC-4.md](../../sprints/epics/EPIC-4.md) for the actual ship history
+> grouped by Pillar B (lib) → C (CLI) → D (migration + polish) → E
+> (viewer scaffold + preview) → F (viewer polish + validate + cleanup).
+> The narrative below is preserved as the original design intent — sprint
+> names should be read as "Phase B/C/D/E/F" rather than calendar weeks.
 
 ## 1. Overview
 
@@ -18,8 +28,9 @@ the koni-docs document model. The five hand-rolled `.mjs` scripts under
 subcommands of a single binary (`koni-docs`), backed by a typed,
 reusable TypeScript library exported via subpath.
 
-The viewer scope already landing in sprint W23 (US-4.1..4.4) ships
-unchanged as v0.1.0. The expansion lands in v0.2.0 over sprints W24-W26.
+The viewer scope (US-4.1..4.3) originally targeted for sprint W23
+shipped through v0.6.0 → v0.7.0. The CLI expansion below was originally
+phased over sprints W24-W26 — in reality all of it landed in sprint-2026-W22.
 
 ## 2. Motivation
 
@@ -32,8 +43,8 @@ copy-pasted hand-rolled frontmatter parser and address table cells by
 
 Concrete problems this design closes:
 
-1. **BLOCKER on sprint W23** — `agile-sync-up.mjs` writes the status icon
-   into the `Carry` cell of `sprint-2026-W23.md` because Status is no
+1. **BLOCKER on sprint W22** — `agile-sync-up.mjs` writes the status icon
+   into the `Carry` cell of `sprint-2026-W22.md` because Status is no
    longer in the second-to-last position. Silent corruption, no warning.
 2. **Hand-rolled YAML parser** — does not handle YAML lists, comments,
    quote escapes, or numeric coercion. Will fail on real story files
@@ -60,7 +71,7 @@ A single CLI plus typed lib closes all five.
   primitives (per the ARCHITECTURE.md object inventory) so other
   Koniverse products can reuse them without depending on Astro or the
   CLI framework.
-- **G3**: Fix the W23 Carry-column BLOCKER by addressing table cells
+- **G3**: Fix the W22 Carry-column BLOCKER by addressing table cells
   by column name, not position.
 - **G4**: Lay foundation for future tier C (read commands) and tier D
   (write CRUD commands) without expanding the v0.2.0 user-facing
@@ -211,7 +222,7 @@ subcommand to regenerate STATUS.md sections.
 
 ### 5.4 `lib/markdown/tables.ts` — column-by-name addressing
 
-This module is where the W23 Carry bug is fixed. **All cell addressing
+This module is where the W22 Carry bug is fixed. **All cell addressing
 uses column names, not positions.**
 
 ```ts
@@ -372,7 +383,7 @@ PRD §8 FR row, sprint scope table). With `--story` syncs one; without,
 syncs all.
 
 Behavior: replaces `agile-sync-up.mjs`. Column-by-name addressing
-fixes W23 Carry bug.
+fixes W22 Carry bug.
 
 Exit codes: 0 on success; 1 on validation failure (e.g., story.epic
 points at a nonexistent EPIC file); 2 on partial success (some layers
@@ -420,7 +431,7 @@ Exit codes: 0 on success; 1 if no pending entries found.
 1. corpus = loadCorpus('docs/')
 2. story = resolveById(corpus, 'US-4.4')  // throws if not found
 3. validate(story.data) via storySchema   // exit 1 on failure
-4. for each target in [EPIC-4, PRD-§11, PRD-§8-FR, sprint-2026-W23]:
+4. for each target in [EPIC-4, PRD-§11, PRD-§8-FR, sprint-2026-W22]:
    4a. doc = readDoc(target.path)
    4b. tables.updateCell(doc, {
          tableLocator: { inSection: target.section },
@@ -504,8 +515,8 @@ Required template entry in the v0.2.0 CHANGELOG:
 
 ## 9. Story breakdown — EPIC-4 expansion
 
-Three new pillars added to EPIC-4. Existing US-4.1..4.4 (W23, viewer
-v0.1.0) are unchanged.
+Three new pillars added to EPIC-4 (B / C / D). Existing US-4.1..4.3 (originally
+planned for the viewer slice) shipped through v0.6.0 → v0.7.0 in sprint W22.
 
 | Pillar | Story | Pts | Goal |
 |---|---|---|---|
@@ -516,7 +527,7 @@ v0.1.0) are unchanged.
 |  | US-4.9 | 3 | `lib/changelog.ts` + `lib/git.ts` |
 | C — CLI subcommands | US-4.10 | 3 | CLI framework (commander) + `koni-docs preview` (wires US-4.1..4.3 viewer) |
 |  | US-4.11 | 3 | `koni-docs status` — delete `generate-status.mjs` |
-|  | US-4.12 | 5 | `koni-docs sync` + fix W23 Carry bug — delete `agile-sync-up.mjs` |
+|  | US-4.12 | 5 | `koni-docs sync` + fix W22 Carry bug — delete `agile-sync-up.mjs` |
 |  | US-4.13 | 3 | `koni-docs inject-tasks` — delete `agile-inject-tasks.mjs` |
 |  | US-4.14 | 2 | `koni-docs backfill-fields` — delete `agile-backfill-fields.mjs` |
 |  | US-4.15 | 3 | `koni-docs backfill-commits` — delete `changelog-backfill-commits.mjs` |
@@ -530,11 +541,11 @@ v0.1.0) are unchanged.
 | Sprint | Stories | Points | Goal |
 |---|---|---|---|
 | W24 | US-4.5, 4.6, 4.7 | 13 | Lib core (corpus + doc + markdown primitives + schemas) |
-| W25 | US-4.8, 4.9, 4.10, 4.11, 4.12 | 17 | Lib finish (refs + changelog + git) + first 3 CLI subcommands incl. W23 fix |
+| W25 | US-4.8, 4.9, 4.10, 4.11, 4.12 | 17 | Lib finish (refs + changelog + git) + first 3 CLI subcommands incl. W22 fix |
 | W26 | US-4.13, 4.14, 4.15, 4.16, 4.17 | 13 | Remaining 3 CLI subcommands + migration + publish |
 
 W25 is borderline (17 pts) — if velocity slips, US-4.12 (sync) carries
-to W26 since the W23 fix is no longer urgent by W25 (W23 is closed).
+to W26 since the W22 fix is no longer urgent by W25 (W23 is closed).
 
 ## 10. Tech stack
 
@@ -596,7 +607,7 @@ Each lib module has a paired `__tests__/lib/<module>.test.ts` using
 - Every subcommand against the existing 6-test fixture from
   `sync-test.mjs` (4-col EPIC, 5-col EPIC, 7-col sprint, 8-col sprint
   with Carry, PRD with both `### US-X.Y` and `## §11` formats)
-- New regression: 8-col sprint Status correctly updated (W23 bug fix)
+- New regression: 8-col sprint Status correctly updated (W22 bug fix)
 - `--dry-run` produces no file changes
 - `--json` output is parseable JSON
 - Exit codes match spec

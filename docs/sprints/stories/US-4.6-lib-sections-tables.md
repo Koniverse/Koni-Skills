@@ -1,22 +1,22 @@
 ---
 id: US-4.6
-title: "Lib core — sections + tables (column-by-NAME, W23 fix)"
+title: "Lib core — sections + tables (column-by-NAME, W22 fix)"
 epic: EPIC-4
 status: done
 priority: P0
 points: 5
-sprint: sprint-2026-W24
+sprint: sprint-2026-W22
 version_shipped: 0.4.0-dev.0
 prd_ref: FR-15
 assignee: saltict
-commit:
+commit: 314e52c, bcf0e2a, f38439f, 753834e
 created: 2026-05-27
 updated: 2026-05-27
 ---
 
 ## Goal
 
-Ship section + table primitives with column-name addressing, fixing the W23 BLOCKER where position-based table column access broke on column reorder. After this story, callers reference columns by name (`"Status"`) instead of index (2), eliminating the position-dependency root cause.
+Ship section + table primitives with column-name addressing, fixing the W22 BLOCKER where position-based table column access broke on column reorder. After this story, callers reference columns by name (`"Status"`) instead of index (2), eliminating the position-dependency root cause.
 
 ## Background
 

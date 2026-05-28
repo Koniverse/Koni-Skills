@@ -2,11 +2,10 @@
 id: EPIC-2
 title: "Dogfood koni-docs on Koni-Skills repo"
 status: done
-prd_ref: FR-6, FR-7, FR-8, FR-13
-created: 2026-05-27
-updated: 2026-05-27
+prd_ref: 'FR-6, FR-7, FR-8, FR-13'
+created: 2026-05-27T00:00:00.000Z
+updated: 2026-05-27T00:00:00.000Z
 ---
-
 ## Goal
 
 Apply the `koni-docs` skill to this repo (its own home) end-to-end:
@@ -37,11 +36,11 @@ EPIC-2 closes both risks before v0.2.0 ships.
 
 ### Feature pillars
 
-| # | Pillar | Stories | Purpose |
-|---|---|---|---|
-| 1 | **Docs scaffolding** | [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | Full `docs/` tree per koni-docs §0 orientation |
-| 2 | **Integration wiring** | [US-2.2](../stories/US-2.2-wire-integration-blocks.md) | Koni-Docs Integration + Active Context blocks in CLAUDE.md + AGENTS.md |
-| 3 | **Version + changelog seed** | [US-2.3](../stories/US-2.3-version-changelog-seed.md) | VERSION file + initial CHANGELOG entry covering all of EPIC-1's work |
+| # | Pillar                       | Stories                                                 | Purpose                                                                |
+| - | ---------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 1 | **Docs scaffolding**         | [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | Full `docs/` tree per koni-docs §0 orientation                         |
+| 2 | **Integration wiring**       | [US-2.2](../stories/US-2.2-wire-integration-blocks.md)  | Koni-Docs Integration + Active Context blocks in CLAUDE.md + AGENTS.md |
+| 3 | **Version + changelog seed** | [US-2.3](../stories/US-2.3-version-changelog-seed.md)   | VERSION file + initial CHANGELOG entry covering all of EPIC-1's work   |
 
 ### Out of scope
 
@@ -54,27 +53,27 @@ EPIC-2 closes both risks before v0.2.0 ships.
 
 ## FR Coverage
 
-| FR | Story | Status |
-|----|-------|--------|
-| FR-6 | [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | ✅ done (v0.2.0) |
-| FR-7 | [US-2.2](../stories/US-2.2-wire-integration-blocks.md) | ✅ done (v0.2.0) |
-| FR-8 | [US-2.3](../stories/US-2.3-version-changelog-seed.md) | ✅ done (v0.2.0) |
-| FR-13 (shared with EPIC-1) | [US-2.4](../stories/US-2.4-apply-agents-canonical.md) | ✅ done (v0.2.0) |
+| FR                         | Story                                                   | Status          |
+| -------------------------- | ------------------------------------------------------- | --------------- |
+| FR-6                       | [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | ✅ done (v0.2.0) |
+| FR-7                       | [US-2.2](../stories/US-2.2-wire-integration-blocks.md)  | ✅ done (v0.2.0) |
+| FR-8                       | [US-2.3](../stories/US-2.3-version-changelog-seed.md)   | ✅ done (v0.2.0) |
+| FR-13 (shared with EPIC-1) | [US-2.4](../stories/US-2.4-apply-agents-canonical.md)   | ✅ done (v0.2.0) |
 
 ## AD Coverage
 
-| AD | Title | Story |
-|----|-------|-------|
+| AD   | Title                                   | Story                                                   |
+| ---- | --------------------------------------- | ------------------------------------------------------- |
 | AD-6 | Dogfood `koni-docs` on this repo itself | [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) |
 
 ## Stories
 
-| ID | Title | Goal | Status | Version |
-|---|---|---|---|---|
-| [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | Bootstrap `docs/` scaffolding | Create all canonical files under `docs/` + sprint discipline directories | ✅ done | v0.2.0 |
-| [US-2.2](../stories/US-2.2-wire-integration-blocks.md) | Wire CLAUDE.md + AGENTS.md integration blocks | Add Koni-Docs Integration + Active Context to project agent guides | ✅ done | v0.2.0 |
-| [US-2.3](../stories/US-2.3-version-changelog-seed.md) | Seed VERSION + CHANGELOG | Add `VERSION` (`0.1.0`) and CHANGELOG.md initial release entry | ✅ done | v0.2.0 |
-| [US-2.4](../stories/US-2.4-apply-agents-canonical.md) | Apply AGENTS-canonical convention | Slim CLAUDE.md to pointer + integration block; beef AGENTS.md with preamble + Documentation section | ✅ done | v0.2.0 |
+| ID                                                      | Title                                         | Goal                                                                                                | Status | Version |
+| ------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------ | ------- |
+| [US-2.1](../stories/US-2.1-bootstrap-docs-structure.md) | Bootstrap `docs/` scaffolding                 | Create all canonical files under `docs/` + sprint discipline directories                            | ✅ done | v0.2.0  |
+| [US-2.2](../stories/US-2.2-wire-integration-blocks.md)  | Wire CLAUDE.md + AGENTS.md integration blocks | Add Koni-Docs Integration + Active Context to project agent guides                                  | ✅ done | v0.2.0  |
+| [US-2.3](../stories/US-2.3-version-changelog-seed.md)   | Seed VERSION + CHANGELOG                      | Add `VERSION` (`0.1.0`) and CHANGELOG.md initial release entry                                      | ✅ done | v0.2.0  |
+| [US-2.4](../stories/US-2.4-apply-agents-canonical.md)   | Apply AGENTS-canonical convention             | Slim CLAUDE.md to pointer + integration block; beef AGENTS.md with preamble + Documentation section | ✅ done | v0.2.0  |
 
 ## Cross-cutting invariants
 
@@ -83,8 +82,8 @@ EPIC-2 closes both risks before v0.2.0 ships.
 
 ## Cross-story testing requirements
 
-| Pattern | Stories | Shared infra |
-|---|---|---|
+| Pattern                                | Stories                | Shared infra                                                       |
+| -------------------------------------- | ---------------------- | ------------------------------------------------------------------ |
 | **5-layer consistency check on close** | US-2.1, US-2.2, US-2.3 | Manual: `agile-sync-up.mjs` exit 0 against this repo's own `docs/` |
 
 ## Acceptance criteria (propagated from stories)

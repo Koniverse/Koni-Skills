@@ -2,11 +2,10 @@
 id: EPIC-1
 title: "Koni-docs skill — foundation + ongoing enhancements"
 status: done
-prd_ref: FR-1, FR-2, FR-3, FR-4, FR-5, FR-11, FR-12, FR-13, FR-14
-created: 2026-05-06
-updated: 2026-05-27
+prd_ref: 'FR-1, FR-2, FR-3, FR-4, FR-5, FR-11, FR-12, FR-13, FR-14'
+created: 2026-05-06T00:00:00.000Z
+updated: 2026-05-27T00:00:00.000Z
 ---
-
 ## Goal
 
 Ship a usable, BMad-pipeline-compatible documentation-management skill
@@ -31,12 +30,12 @@ hosted skill marketplace — that is permanently out of scope.
 
 ### Feature pillars
 
-| # | Pillar | Stories | Purpose |
-|---|---|---|---|
-| 1 | **Core skill body + rules** | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | SKILL.md, 9 enforced rules, activation table, pipeline integration map |
-| 2 | **BMad-grade template library** | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | 13 per-type templates with section index + filled mini-examples |
-| 3 | **Bundled automation** | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | 5 scripts + self-contained regression test |
-| 4 | **Distribution** | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | `npx skills add` + lockfile, README install instructions |
+| # | Pillar                          | Stories                                                  | Purpose                                                                |
+| - | ------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 1 | **Core skill body + rules**     | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | SKILL.md, 9 enforced rules, activation table, pipeline integration map |
+| 2 | **BMad-grade template library** | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | 13 per-type templates with section index + filled mini-examples        |
+| 3 | **Bundled automation**          | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | 5 scripts + self-contained regression test                             |
+| 4 | **Distribution**                | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | `npx skills add` + lockfile, README install instructions               |
 
 ### Out of scope
 
@@ -46,37 +45,37 @@ hosted skill marketplace — that is permanently out of scope.
 
 ## FR Coverage
 
-| FR | Story | Status |
-|----|-------|--------|
-| FR-1 | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | ✅ done (v0.1.0) |
-| FR-2 | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | ✅ done (v0.1.0) |
-| FR-3 | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | ✅ done (v0.1.0) |
-| FR-4 | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | ✅ done (v0.1.0) |
-| FR-5 | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | ✅ done (v0.1.0) |
-| FR-11 | [US-1.2](../stories/US-1.2-active-context-split-pattern.md) | ✅ done (v0.2.0) |
-| FR-12 | [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md) | ✅ done (v0.2.0) |
-| FR-13 (shared with EPIC-2) | [US-1.4](../stories/US-1.4-agents-canonical-convention.md) | ✅ done (v0.2.0) |
-| FR-14 | [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | ✅ done (v0.3.0) |
+| FR                         | Story                                                           | Status          |
+| -------------------------- | --------------------------------------------------------------- | --------------- |
+| FR-1                       | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | ✅ done (v0.1.0) |
+| FR-2                       | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | ✅ done (v0.1.0) |
+| FR-3                       | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | ✅ done (v0.1.0) |
+| FR-4                       | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | ✅ done (v0.1.0) |
+| FR-5                       | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | ✅ done (v0.1.0) |
+| FR-11                      | [US-1.2](../stories/US-1.2-active-context-split-pattern.md)     | ✅ done (v0.2.0) |
+| FR-12                      | [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md)    | ✅ done (v0.2.0) |
+| FR-13 (shared with EPIC-2) | [US-1.4](../stories/US-1.4-agents-canonical-convention.md)      | ✅ done (v0.2.0) |
+| FR-14                      | [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | ✅ done (v0.3.0) |
 
 ## AD Coverage
 
-| AD | Title | Story |
-|----|-------|-------|
-| AD-1 | Skill = self-contained directory | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
+| AD   | Title                                    | Story                                                    |
+| ---- | ---------------------------------------- | -------------------------------------------------------- |
+| AD-1 | Skill = self-contained directory         | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
 | AD-2 | Distribution via `npx skills` + lockfile | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
-| AD-3 | 9 rules + plugin slot | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
-| AD-4 | Templates split one-file-per-type | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
-| AD-5 | Pipeline integration as standardizer | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
+| AD-3 | 9 rules + plugin slot                    | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
+| AD-4 | Templates split one-file-per-type        | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
+| AD-5 | Pipeline integration as standardizer     | [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) |
 
 ## Stories
 
-| ID | Title | Goal | Status | Version |
-|---|---|---|---|---|
-| [US-1.1](../stories/US-1.1-koni-docs-initial-release.md) | Koni-docs skill — initial release | Ship SKILL.md + 9 rules + 13 templates + 5 scripts + lockfile distribution | ✅ done | v0.1.0 |
-| [US-1.2](../stories/US-1.2-active-context-split-pattern.md) | Add file-extracted active-context pattern | Document Pattern B (file-extracted Active Context) in skill so teams avoid CLAUDE.md merge churn | ✅ done | v0.2.0 |
-| [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md) | Add RULE-15: assignee = GitHub login | Expand rule catalog from 9 to 10 rules; make `assignee:` MANDATORY-GitHub-login across the koni-docs framework | ✅ done | v0.2.0 |
-| [US-1.4](../stories/US-1.4-agents-canonical-convention.md) | Document AGENTS-canonical / CLAUDE-pointer convention | Add §3.1 to integration.md template — recommend AGENTS.md as single source of truth, CLAUDE.md as thin pointer | ✅ done | v0.2.0 |
-| [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | Fix BLOCKER regex-escape bug in agile-sync-up; add Carry column + 4 new sprint sections + multi-commit field + Story refresh block; adopt RULE-16 (bare semver); robustness against 198+266-story real-world repos | ✅ done | v0.3.0 |
+| ID                                                              | Title                                                                  | Goal                                                                                                                                                                                                               | Status | Version |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------- |
+| [US-1.1](../stories/US-1.1-koni-docs-initial-release.md)        | Koni-docs skill — initial release                                      | Ship SKILL.md + 9 rules + 13 templates + 5 scripts + lockfile distribution                                                                                                                                         | ✅ done | v0.1.0  |
+| [US-1.2](../stories/US-1.2-active-context-split-pattern.md)     | Add file-extracted active-context pattern                              | Document Pattern B (file-extracted Active Context) in skill so teams avoid CLAUDE.md merge churn                                                                                                                   | ✅ done | v0.2.0  |
+| [US-1.3](../stories/US-1.3-rule-15-assignee-github-login.md)    | Add RULE-15: assignee = GitHub login                                   | Expand rule catalog from 9 to 10 rules; make `assignee:` MANDATORY-GitHub-login across the koni-docs framework                                                                                                     | ✅ done | v0.2.0  |
+| [US-1.4](../stories/US-1.4-agents-canonical-convention.md)      | Document AGENTS-canonical / CLAUDE-pointer convention                  | Add §3.1 to integration.md template — recommend AGENTS.md as single source of truth, CLAUDE.md as thin pointer                                                                                                     | ✅ done | v0.2.0  |
+| [US-1.5](../stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti\_quant) | Fix BLOCKER regex-escape bug in agile-sync-up; add Carry column + 4 new sprint sections + multi-commit field + Story refresh block; adopt RULE-16 (bare semver); robustness against 198+266-story real-world repos | ✅ done | v0.3.0  |
 
 ## Cross-cutting invariants
 
@@ -86,8 +85,8 @@ hosted skill marketplace — that is permanently out of scope.
 
 ## Cross-story testing requirements
 
-| Pattern | Stories | Shared infra |
-|---|---|---|
+| Pattern                      | Stories             | Shared infra                                                                                                                    |
+| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | **5-script sync regression** | every script change | `skills/koni-docs/scripts/__tests__/sync-test.mjs` — builds its own fixture, exercises all 5 sync scripts, asserts cell-by-cell |
 
 ## Acceptance criteria (propagated from stories)

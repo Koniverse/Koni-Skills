@@ -32,7 +32,7 @@ Closes the v0.6.x deferred backlog. Nine shipped stories (US-4.20 through US-4.2
 
 - **`findSectionStartingWith(doc, prefix)`** lib helper (US-4.23). Matches the first heading whose text starts with the given `## <num>.` prefix. `sync.ts` now uses it for PRD §8 FR-row lookups — real PRDs use `## 8. Functional Requirements (FR)`, the prior literal lookup couldn't match. Both casing variants (`Functional Requirements (FR)`, `Functional requirements`) now resolve through one call site.
 - **YAML quoting preservation in `parseDoc`/`writeDoc`** (US-4.24). `Doc.frontmatterQuoting?: Map<string, '"' | "'">` records which keys carried which quote style in the original raw frontmatter. On serialize, gray-matter's bare output is re-wrapped to match. Eliminates the v0.5.x–v0.6.x noisy git diffs where `version_shipped: "0.6.0"` became `version_shipped: 0.6.0` after every CLI write. Best-effort heuristic — plain scalar values only; multi-line and block scalars are not preserved (none used in the corpus).
-- **`koni-docs validate` subcommand** (US-4.25). Runs `validateRefs(corpus)` (L3 ID-graph integrity — already in the lib) plus the new `validateFrRefs(corpus)` (each story's `prd_ref` frontmatter resolves to a real FR-row in PRD §8). Flags: `--json`, `--include-warnings`. Exits non-zero on any error. Dogfooded against this repo's `docs/` — surfaces real ref errors (missing sprint files W24/W25/W26) where prior tooling silently glossed over.
+- **`koni-docs validate` subcommand** (US-4.25). Runs `validateRefs(corpus)` (L3 ID-graph integrity — already in the lib) plus the new `validateFrRefs(corpus)` (each story's `prd_ref` frontmatter resolves to a real FR-row in PRD §8). Flags: `--json`, `--include-warnings`. Exits non-zero on any error. Dogfooded against this repo's `docs/` — surfaces dangling ID refs where prior tooling silently glossed over.
 
 ### Removed — lib cleanup (F.3)
 
@@ -144,11 +144,11 @@ Stable v0.5.0 release of `@koniverse/koni-docs`. Closes the CLI expansion epic w
 
 ## [0.5.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar C — v0.5.0-dev.0
 
-Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W23 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
+Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W22 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
 
 ### Added
 - `koni-docs status` — replaces `generate-status.mjs` (semver ID sort)
-- `koni-docs sync` — replaces `agile-sync-up.mjs`, column-by-NAME (W23 BLOCKER fix)
+- `koni-docs sync` — replaces `agile-sync-up.mjs`, column-by-NAME (W22 BLOCKER fix)
 - `koni-docs inject-tasks` — replaces `agile-inject-tasks.mjs`
 - `koni-docs backfill-fields` — replaces `agile-backfill-fields.mjs`
 - `koni-docs backfill-commits` — replaces `changelog-backfill-commits.mjs`
@@ -163,7 +163,7 @@ Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Dele
 - `skills/koni-docs/scripts/__tests__/sync-test.mjs`
 
 ### Fixed
-- **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
+- **W22 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W22.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
 
 ### Migration table (for consumer repos updating from < 0.4.0)
 
@@ -197,7 +197,7 @@ Ships `packages/koni-docs/src/lib/` — the reusable typed library that backs th
 ### Added
 - `@koniverse/koni-docs/lib` exports: corpus / doc / markdown / schemas / refs / changelog / git (9 modules)
 - Zod schemas for story, epic, sprint, changelog-entry
-- Column-by-NAME table addressing (foundation for the W23 Carry-bug fix to ship in Pillar C `sync`)
+- Column-by-NAME table addressing (foundation for the W22 Carry-bug fix to ship in Pillar C `sync`)
 - L3 ID-graph traversal: `listChildrenOf` / `listReferrersTo` / `validateRefs`
 - Thin git wrappers using `execFileSync` (no shell injection surface)
 

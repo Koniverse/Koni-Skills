@@ -9,7 +9,7 @@ sprint: sprint-2026-W22
 version_shipped: 0.3.0
 prd_ref: FR-14, AD-10
 assignee: saltict
-commit:
+commit: fe1b091, 7019b21
 created: 2026-05-27
 updated: 2026-05-27
 ---

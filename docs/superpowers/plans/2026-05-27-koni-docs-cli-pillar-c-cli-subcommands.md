@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship 5 first-class `koni-docs` CLI subcommands (`status` / `sync` / `inject-tasks` / `backfill-fields` / `backfill-commits`) backed by the Pillar B lib, and delete the 5 corresponding `.mjs` scripts from `skills/koni-docs/scripts/`. The W23 Carry-column BLOCKER fix lands in real user-facing behavior via `koni-docs sync`.
+**Goal:** Ship 5 first-class `koni-docs` CLI subcommands (`status` / `sync` / `inject-tasks` / `backfill-fields` / `backfill-commits`) backed by the Pillar B lib, and delete the 5 corresponding `.mjs` scripts from `skills/koni-docs/scripts/`. The W22 Carry-column BLOCKER fix lands in real user-facing behavior via `koni-docs sync`.
 
 **Architecture:** Thin command layer at `packages/koni-docs/src/cli/` composes Pillar B lib primitives. `commander` (already in tech stack) wires subcommands. Each subcommand is a separate ~50–150 line module — pure orchestration, zero parsing logic. Spawn-based integration tests under `__tests__/cli/` validate end-to-end behavior against the existing `buildFixture` test corpus. `preview` subcommand is deferred to Pillar D (alongside the Astro viewer build).
 
@@ -25,7 +25,7 @@ packages/koni-docs/
 │       ├── index.ts                 # commander entry, wires all 5 subcommands
 │       ├── global-opts.ts           # --docs-path / --dry-run / --json / --verbose handling
 │       ├── status.ts                # generates STATUS.md kanban
-│       ├── sync.ts                  # propagates status across 5 layers — column-by-NAME (W23 fix)
+│       ├── sync.ts                  # propagates status across 5 layers — column-by-NAME (W22 fix)
 │       ├── inject-tasks.ts          # regenerates Tasks from AC checkboxes
 │       ├── backfill-fields.ts       # adds missing frontmatter keys
 │       └── backfill-commits.ts      # replaces "pending" commit SHA in CHANGELOG
@@ -33,7 +33,7 @@ packages/koni-docs/
     └── cli/
         ├── _helpers.ts              # runCli() spawn helper
         ├── status.test.ts
-        ├── sync.test.ts             # CRITICAL: 8-col W23 fixture, Status not Carry
+        ├── sync.test.ts             # CRITICAL: 8-col W22 fixture, Status not Carry
         ├── inject-tasks.test.ts
         ├── backfill-fields.test.ts
         └── backfill-commits.test.ts
@@ -457,7 +457,7 @@ git commit -m "feat(koni-docs/cli): status subcommand; delete generate-status.mj
 
 ---
 
-## Task 3: `koni-docs sync` subcommand — column-by-NAME, W23 BLOCKER fix
+## Task 3: `koni-docs sync` subcommand — column-by-NAME, W22 BLOCKER fix
 
 **Files:**
 - Create: `packages/koni-docs/src/cli/sync.ts`
@@ -465,19 +465,19 @@ git commit -m "feat(koni-docs/cli): status subcommand; delete generate-status.mj
 - Modify: `packages/koni-docs/src/cli/index.ts` (register)
 - Delete: `skills/koni-docs/scripts/agile-sync-up.mjs`
 
-This is the highest-leverage task in Pillar C. The W23 BLOCKER regression test is the gate.
+This is the highest-leverage task in Pillar C. The W22 BLOCKER regression test is the gate.
 
 - [ ] **Step 1: Extend the test fixture with an 8-col W23 sprint file**
 
 Edit `__tests__/lib/_fixtures/build-fixture.ts` and APPEND a second sprint file (do not modify the existing `sprint-2026-W01.md`). Find the end of `buildFixture` (right before `return docs;`) and insert:
 
 ```ts
-  writeFileSync(join(docs, 'sprints', 'sprint-2026-W23.md'), `---
-id: sprint-2026-W23
+  writeFileSync(join(docs, 'sprints', 'sprint-2026-W22.md'), `---
+id: sprint-2026-W22
 status: in-progress
 start: 2026-05-27
 end: 2026-06-03
-goal: "8-column scope table for W23 BLOCKER fixture"
+goal: "8-column scope table for W22 BLOCKER fixture"
 ---
 
 ## Sprint scope
@@ -519,17 +519,17 @@ test('sync: single story — updates EPIC Stories table row', () => {
   assert.match(epic, /US-1\.1[\s\S]*✅ done[\s\S]*0\.1\.0/);
 });
 
-test('sync: W23 BLOCKER — Status updated by NAME, Carry left intact (8-col sprint)', () => {
+test('sync: W22 BLOCKER — Status updated by NAME, Carry left intact (8-col sprint)', () => {
   const docs = freshDocs();
   // Flip US-1.1's sprint to W23 so sync targets the 8-col table
   const storyPath = join(docs, 'sprints', 'stories', 'US-1.1-foo.md');
   const raw = readFileSync(storyPath, 'utf-8');
-  writeFileSync(storyPath, raw.replace('sprint: sprint-2026-W01', 'sprint: sprint-2026-W23'));
+  writeFileSync(storyPath, raw.replace('sprint: sprint-2026-W01', 'sprint: sprint-2026-W22'));
 
   const r = runCli(['sync', '--story', 'US-1.1', '--docs-path', docs]);
   assert.equal(r.status, 0, `stderr: ${r.stderr}`);
 
-  const sprint = readFileSync(join(docs, 'sprints', 'sprint-2026-W23.md'), 'utf-8');
+  const sprint = readFileSync(join(docs, 'sprints', 'sprint-2026-W22.md'), 'utf-8');
   // Expected: Status column updated to ✅ done, Carry column STILL "new" (NOT overwritten)
   assert.match(sprint, /US-1\.1[\s\S]*✅ done[\s\S]*new/);
   // Regression guard: Carry was NEVER set to ✅ done
@@ -772,13 +772,13 @@ import { registerSync } from './sync.ts';
 registerSync(program);
 ```
 
-- [ ] **Step 6: Run tests — expect pass (including W23 BLOCKER)**
+- [ ] **Step 6: Run tests — expect pass (including W22 BLOCKER)**
 
 ```bash
 npm test 2>&1 | tail -15
 ```
 
-Expected: 60 tests pass total. CRITICAL: the test `sync: W23 BLOCKER — Status updated by NAME, Carry left intact (8-col sprint)` must pass.
+Expected: 60 tests pass total. CRITICAL: the test `sync: W22 BLOCKER — Status updated by NAME, Carry left intact (8-col sprint)` must pass.
 
 - [ ] **Step 7: Typecheck**
 
@@ -798,7 +798,7 @@ git rm skills/koni-docs/scripts/agile-sync-up.mjs
 
 ```bash
 git add packages/koni-docs/src/cli/sync.ts packages/koni-docs/src/cli/index.ts packages/koni-docs/__tests__/cli/sync.test.ts packages/koni-docs/__tests__/lib/_fixtures/build-fixture.ts
-git commit -m "feat(koni-docs/cli): sync subcommand — column-by-NAME (W23 fix); delete agile-sync-up.mjs (US-4.12)"
+git commit -m "feat(koni-docs/cli): sync subcommand — column-by-NAME (W22 fix); delete agile-sync-up.mjs (US-4.12)"
 ```
 
 ---
@@ -1405,7 +1405,7 @@ epic: EPIC-4
 status: done
 priority: P0
 points: 3   # adjust per spec: 4.10=3, 4.11=3, 4.12=5, 4.13=3, 4.14=2, 4.15=3
-sprint: sprint-2026-W25
+sprint: sprint-2026-W22
 version_shipped: "0.5.0-dev.0"
 prd_ref: FR-15
 assignee: <github-login from active-context>
@@ -1440,7 +1440,7 @@ Open `docs/sprints/epics/EPIC-4.md`. Find the `## Stories` table and append afte
 ```
 | [US-4.10](../stories/US-4.10-cli-framework.md) | CLI framework + global opts | commander wiring, --docs-path/--dry-run/--json/--verbose, bin entry | ✅ done | v0.5.0-dev.0 |
 | [US-4.11](../stories/US-4.11-cli-status.md) | `koni-docs status` subcommand | Regenerate STATUS.md kanban; delete generate-status.mjs | ✅ done | v0.5.0-dev.0 |
-| [US-4.12](../stories/US-4.12-cli-sync.md) | `koni-docs sync` subcommand | 5-layer propagation, column-by-NAME (W23 BLOCKER fix); delete agile-sync-up.mjs | ✅ done | v0.5.0-dev.0 |
+| [US-4.12](../stories/US-4.12-cli-sync.md) | `koni-docs sync` subcommand | 5-layer propagation, column-by-NAME (W22 BLOCKER fix); delete agile-sync-up.mjs | ✅ done | v0.5.0-dev.0 |
 | [US-4.13](../stories/US-4.13-cli-inject-tasks.md) | `koni-docs inject-tasks` subcommand | Regen ## Tasks from AC checkboxes; delete agile-inject-tasks.mjs | ✅ done | v0.5.0-dev.0 |
 | [US-4.14](../stories/US-4.14-cli-backfill-fields.md) | `koni-docs backfill-fields` subcommand | Merge STORY_DEFAULTS for missing keys; delete agile-backfill-fields.mjs | ✅ done | v0.5.0-dev.0 |
 | [US-4.15](../stories/US-4.15-cli-backfill-commits.md) | `koni-docs backfill-commits` subcommand | Replace pending SHA via git; delete changelog-backfill-commits.mjs + sync-test.mjs | ✅ done | v0.5.0-dev.0 |
@@ -1459,11 +1459,11 @@ Insert AFTER `## [Unreleased]\n\n(empty...)\n\n---` block but BEFORE `## [0.4.0-
 ```markdown
 ## [0.5.0-dev.0] — 2026-05-27 — koni-docs CLI Pillar C — v0.5.0-dev.0
 
-Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W23 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
+Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Deletes the 5 legacy `.mjs` scripts and `sync-test.mjs`. The W22 Carry-column BLOCKER fix is now live for end-users via `koni-docs sync`. `preview` subcommand deferred to Pillar D alongside the Astro viewer build.
 
 ### Added
 - `koni-docs status` — replaces `generate-status.mjs` (semver ID sort)
-- `koni-docs sync` — replaces `agile-sync-up.mjs`, column-by-NAME (W23 BLOCKER fix)
+- `koni-docs sync` — replaces `agile-sync-up.mjs`, column-by-NAME (W22 BLOCKER fix)
 - `koni-docs inject-tasks` — replaces `agile-inject-tasks.mjs`
 - `koni-docs backfill-fields` — replaces `agile-backfill-fields.mjs`
 - `koni-docs backfill-commits` — replaces `changelog-backfill-commits.mjs`
@@ -1478,7 +1478,7 @@ Ships `koni-docs` CLI binary with 5 subcommands backed by the Pillar B lib. Dele
 - `skills/koni-docs/scripts/__tests__/sync-test.mjs`
 
 ### Fixed
-- **W23 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W23.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
+- **W22 BLOCKER** — `agile-sync-up.mjs` silently wrote status icons into the `Carry` column of `sprint-2026-W22.md` because cell addressing was by position. `koni-docs sync` now addresses by column NAME and throws clearly if the column is missing.
 
 **Commit**: pending
 ```
@@ -1514,7 +1514,7 @@ This is the **first time the new CLI dogfoods itself** — the freshly-built `ba
 ## Self-review checklist
 
 - [ ] All 5 subcommands have unit-level integration tests (spawn-based via `runCli`).
-- [ ] W23 BLOCKER regression test passes (Task 3, Step 6).
+- [ ] W22 BLOCKER regression test passes (Task 3, Step 6).
 - [ ] All 5 `.mjs` scripts deleted (verified by `ls skills/koni-docs/scripts/` empty or dir gone).
 - [ ] `sync-test.mjs` deleted alongside the last subcommand.
 - [ ] `package.json` `exports."."` is no longer dangling (CLI bundle exists at `dist/cli/index.mjs`).

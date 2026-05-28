@@ -2,14 +2,14 @@
 id: US-4.17
 title: "Publish @koniverse/koni-docs@0.5.0 to npm"
 epic: EPIC-4
-status: review
+status: done
 priority: P1
 points: 2
-sprint: sprint-2026-W25
-version_shipped: ""
+sprint: sprint-2026-W22
+version_shipped: "0.5.0"
 prd_ref: FR-15
 assignee: saltict
-commit:
+commit: 72c973f, 4a0fca5
 created: 2026-05-27
 updated: 2026-05-27
 ---

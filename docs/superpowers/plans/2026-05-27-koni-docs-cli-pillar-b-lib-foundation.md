@@ -1191,7 +1191,7 @@ git commit -m "feat(koni-docs/lib): replaceSection/appendToSection/removeSection
 - Create: `packages/koni-docs/src/lib/markdown/tables.ts`
 - Create: `packages/koni-docs/__tests__/lib/markdown/tables.test.ts`
 
-- [ ] **Step 1: Write failing tests covering the W23 Carry-column scenario**
+- [ ] **Step 1: Write failing tests covering the W22 Carry-column scenario**
 
 ```ts
 // __tests__/lib/markdown/tables.test.ts
@@ -1201,7 +1201,7 @@ import { parseDoc, serializeDoc } from '../../../src/lib/doc.ts';
 import { findTable, parseTable, findRow, updateCell } from '../../../src/lib/markdown/tables.ts';
 
 const sprintMd = `---
-id: sprint-2026-W23
+id: sprint-2026-W22
 ---
 
 ## Sprint scope
@@ -1235,7 +1235,7 @@ test('findRow: matches by column NAME, not position', () => {
   assert.equal(findRow(parsed, { column: 'US', value: 'US-9.9' }), -1);
 });
 
-test('updateCell: writes by column NAME — Status, not Carry (W23 BLOCKER fix)', () => {
+test('updateCell: writes by column NAME — Status, not Carry (W22 BLOCKER fix)', () => {
   const doc = parseDoc(sprintMd, '/sprint.md');
   const next = updateCell(doc, {
     tableLocator: { inSection: 'Sprint scope' },
@@ -1371,13 +1371,13 @@ export function updateCell(doc: Doc, opts: UpdateCellOpts): Doc {
 npm test
 ```
 
-Expected: 5 tables tests pass, including the W23 BLOCKER regression check.
+Expected: 5 tables tests pass, including the W22 BLOCKER regression check.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add packages/koni-docs/src/lib/markdown/tables.ts packages/koni-docs/__tests__/lib/markdown/tables.test.ts
-git commit -m "feat(koni-docs/lib): tables.findTable/parseTable/findRow/updateCell — column by NAME, fixes W23 BLOCKER (US-4.6)"
+git commit -m "feat(koni-docs/lib): tables.findTable/parseTable/findRow/updateCell — column by NAME, fixes W22 BLOCKER (US-4.6)"
 ```
 
 ---
@@ -1787,7 +1787,7 @@ test('validateEpic: accepts a minimal valid epic', () => {
 
 test('validateSprint: accepts a minimal valid sprint', () => {
   const r = validateSprint({
-    id: 'sprint-2026-W23', status: 'planned',
+    id: 'sprint-2026-W22', status: 'planned',
     start: '2026-05-27', end: '2026-06-03',
     goal: 'ship epic-4 viewer',
   });
@@ -2482,7 +2482,7 @@ epic: EPIC-4
 status: done
 priority: P0
 points: 5  # or 5, 3, 3, 3
-sprint: sprint-2026-W24  # or W24 / W25 depending on allocation
+sprint: sprint-2026-W22  # or W24 / W25 depending on allocation
 version_shipped: "0.4.0-dev.0"
 prd_ref: FR-15  # adjust per spec
 assignee: <github-login>
@@ -2524,7 +2524,7 @@ and position-based table addressing planned for deletion in Pillar D.
 ### Added
 - `@koniverse/koni-docs/lib` exports: corpus / doc / markdown / schemas / refs / changelog / git
 - Zod schemas for story, epic, sprint, changelog-entry
-- Column-by-NAME table addressing (foundation for W23 Carry bug fix)
+- Column-by-NAME table addressing (foundation for W22 Carry bug fix)
 
 **Commit**: pending
 ```
@@ -2563,7 +2563,7 @@ git commit -m "docs: backfill commit SHA for v0.4.0-dev.0"
 ## Self-review checklist (run after the plan is committed but before kick-off)
 
 - [ ] **Spec coverage**: Every spec §5.x lib module has at least one task — confirmed (Task 4-19).
-- [ ] **W23 BLOCKER fix**: Task 11 includes a regression test that asserts Status, not Carry, is updated.
+- [ ] **W22 BLOCKER fix**: Task 11 includes a regression test that asserts Status, not Carry, is updated.
 - [ ] **No placeholders**: No "TBD" / "implement later" markers in any task.
 - [ ] **Type consistency**: `Doc`, `Corpus`, `MatterEntry`, `Table`, `TableLocator`, `RowMatcher`, `CheckboxItem`, `RefValidationResult`, `ChangelogEntryParsed` are defined once and used consistently across tasks.
 - [ ] **Test fixture reuse**: `_fixtures/build-fixture.ts` is created in Task 6 and reused in Task 16 — no duplicate fixtures.

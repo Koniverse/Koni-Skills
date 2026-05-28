@@ -2,11 +2,10 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: backlog
-prd_ref: FR-9, FR-10
-created: 2026-05-27
-updated: 2026-05-27
+prd_ref: 'FR-9, FR-10'
+created: 2026-05-27T00:00:00.000Z
+updated: 2026-05-27T00:00:00.000Z
 ---
-
 ## Goal
 
 Move Koni-Skills beyond `koni-docs` alone. Define the plugin-skill
@@ -29,10 +28,10 @@ brainstorm + plan pass (likely a `/office-hours` session).
 
 ### Feature pillars
 
-| # | Pillar | Stories | Purpose |
-|---|---|---|---|
-| 1 | **Plugin pattern** | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define how a plugin skill extends koni-docs rules; reference implementation |
-| 2 | **First non-docs Koniverse skill** | TBD | Prove the catalog supports more than one skill type — candidate identified via brainstorm |
+| # | Pillar                             | Stories                                             | Purpose                                                                                   |
+| - | ---------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 1 | **Plugin pattern**                 | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define how a plugin skill extends koni-docs rules; reference implementation               |
+| 2 | **First non-docs Koniverse skill** | TBD                                                 | Prove the catalog supports more than one skill type — candidate identified via brainstorm |
 
 ### Out of scope
 
@@ -42,16 +41,16 @@ brainstorm + plan pass (likely a `/office-hours` session).
 
 ## FR Coverage
 
-| FR | Story | Status |
-|----|-------|--------|
-| FR-9 | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | 📋 backlog |
-| FR-10 | TBD | 📋 backlog |
+| FR    | Story                                               | Status     |
+| ----- | --------------------------------------------------- | ---------- |
+| FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | 📋 backlog |
+| FR-10 | TBD                                                 | 📋 backlog |
 
 ## Stories
 
-| ID | Title | Goal | Status | Version |
-|---|---|---|---|---|
-| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation | 📋 backlog | — |
+| ID                                                  | Title                       | Goal                                                                                                                      | Status     | Version |
+| --------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------- | ------- |
+| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation | 📋 backlog | —       |
 
 ## Cross-cutting invariants
 

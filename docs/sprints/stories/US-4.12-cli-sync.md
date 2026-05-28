@@ -1,22 +1,22 @@
 ---
 id: US-4.12
-title: "`koni-docs sync` subcommand (W23 BLOCKER fix)"
+title: "`koni-docs sync` subcommand (W22 BLOCKER fix)"
 epic: EPIC-4
 status: done
 priority: P0
 points: 5
-sprint: sprint-2026-W25
+sprint: sprint-2026-W22
 version_shipped: "0.5.0-dev.0"
 prd_ref: FR-15
 assignee: saltict
-commit:
+commit: 9f57780
 created: 2026-05-27
 updated: 2026-05-27
 ---
 
 ## Goal
 
-Deliver the `koni-docs sync` subcommand that propagates story status through 5 doc layers using column-by-NAME table addressing. This subcommand delivers the W23 BLOCKER fix to end-users: `agile-sync-up.mjs` silently wrote status icons into the wrong `Carry` column; `koni-docs sync` now addresses columns by name and throws clearly if a column is missing. The W23 BLOCKER regression test is locked in `__tests__/cli/sync.test.ts`.
+Deliver the `koni-docs sync` subcommand that propagates story status through 5 doc layers using column-by-NAME table addressing. This subcommand delivers the W22 BLOCKER fix to end-users: `agile-sync-up.mjs` silently wrote status icons into the wrong `Carry` column; `koni-docs sync` now addresses columns by name and throws clearly if a column is missing. The W22 BLOCKER regression test is locked in `__tests__/cli/sync.test.ts`.
 
 ## Background
 
@@ -25,7 +25,7 @@ Pillar C of the koni-docs CLI expansion (EPIC-4 v0.5.0-dev.0). Shipped as part o
 ## Acceptance criteria
 
 - [x] **AC-1** — `koni-docs sync` is registered in commander, callable via `npx koni-docs sync`.
-- [x] **AC-2** — Test coverage: unit/integration tests pass via `node --import tsx --test`, including the W23 BLOCKER regression test in `__tests__/cli/sync.test.ts`.
+- [x] **AC-2** — Test coverage: unit/integration tests pass via `node --import tsx --test`, including the W22 BLOCKER regression test in `__tests__/cli/sync.test.ts`.
 - [x] **AC-3** — Legacy `agile-sync-up.mjs` deleted from `skills/koni-docs/scripts/`.
 
 ## Tasks

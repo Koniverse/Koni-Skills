@@ -1,27 +1,31 @@
 ---
-stepsCompleted: ['brief', 'prd-v0.1', 'arch-v0.1']
+stepsCompleted:
+  - brief
+  - prd-v0.1
+  - arch-v0.1
 inputDocuments:
   - BRIEF.md
   - skills/koni-docs/SKILL.md
 classification:
-  projectType: 'Skill catalog / Developer tooling'
-  domain: 'AI agent skill distribution + documentation discipline'
-  complexity: 'Medium'
-  projectContext: 'Greenfield (skill catalog) + Brownfield (koni-docs already shipped)'
+  projectType: Skill catalog / Developer tooling
+  domain: AI agent skill distribution + documentation discipline
+  complexity: Medium
+  projectContext: Greenfield (skill catalog) + Brownfield (koni-docs already shipped)
 workflowType: 'prd'
 lastEdited: '2026-05-27'
 editHistory:
   - date: '2026-05-27'
-    changes: 'Initial PRD — codifies koni-docs v0.1.0 release + EPIC-2 dogfood scope + EPIC-3 catalog vision.'
+    changes: >-
+      Initial PRD — codifies koni-docs v0.1.0 release + EPIC-2 dogfood scope +
+      EPIC-3 catalog vision.
   - date: '2026-05-27'
-    changes: 'Add EPIC-4 (Docs preview tooling — koni-docs-viewer) + FR-15..FR-18.'
+    changes: Add EPIC-4 (Docs preview tooling — koni-docs-viewer) + FR-15..FR-18.
 ---
-
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.3.0 (see [VERSION](../VERSION) for the live value)
-**Date:** 2026-05-27
-**Status:** v0.1.0 + v0.2.0 + v0.3.0 shipped. EPIC-1 and EPIC-2 done at 100%. **EPIC-4 (Docs preview tooling) in-progress — sprint-2026-W23 open (4 stories, 18 pts, all `ready`).** EPIC-3 (catalog expansion: plugin pattern) remains backlog. Next release candidate: **v0.4.0** when EPIC-4 ships at W23 close.
+**Version:** 0.7.0 (see [VERSION](../VERSION) for the live value)
+**Date:** 2026-05-28
+**Status:** v0.1.0 → v0.7.0 all shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.7.0). EPIC-1, EPIC-2, EPIC-4 all done at 100%. **EPIC-3** (catalog expansion: plugin-skill pattern) remains backlog — **not assigned to any sprint** because no concrete execution plan is locked yet.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -37,8 +41,7 @@ editHistory:
 
 Koni-Skills is the **single source of truth for Koniverse-specific AI
 agent skills**: a versioned, lockfile-tracked catalog that any Koniverse
-product repo can consume via `npx skills add Koniverse/Koni-Skills
---skill <name>` and update via `npx skills update`. The catalog grows
+product repo can consume via `npx skills add Koniverse/Koni-Skills --skill <name>` and update via `npx skills update`. The catalog grows
 horizontally (more skills) without forcing consumer repos to refactor.
 
 **Positioning Statement:** Koni-Skills — one repo, one upgrade path, for
@@ -51,7 +54,7 @@ every Koniverse agent-supported workflow.
    Superpowers → Koni-docs), and tooling conventions. Generic skill
    libraries cannot.
 2. **Distribution via `npx skills`** — content-hashed lockfile,
-   experimental_install on a fresh clone, agent-agnostic activation.
+   experimental\_install on a fresh clone, agent-agnostic activation.
    No manual `git submodule`, no copy-paste decay.
 3. **Plugin-ready** — `koni-docs` declares a plugin slot
    (`koni-docs-plugins: [supabase, nextjs]`) so technology-specific
@@ -60,23 +63,23 @@ every Koniverse agent-supported workflow.
 
 ### Core Philosophies
 
-| # | Philosophy | Implication |
-|---|-----------|-------------|
-| 1 | **Skill = self-contained directory** | A skill bundles its own SKILL.md, scripts, references, assets; no cross-skill imports |
-| 2 | **Rules > tribal knowledge** | Every recurring "we always do X" gets codified into a numbered rule with a grep check |
+| # | Philosophy                               | Implication                                                                                               |
+| - | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 1 | **Skill = self-contained directory**     | A skill bundles its own SKILL.md, scripts, references, assets; no cross-skill imports                     |
+| 2 | **Rules > tribal knowledge**             | Every recurring "we always do X" gets codified into a numbered rule with a grep check                     |
 | 3 | **Templates carry tone, not just shape** | Every template ships a filled mini-example that demonstrates voice, depth, and cross-reference discipline |
-| 4 | **Pre-commit gate is the discipline** | Doc updates that defer to "follow-up commits" are RULE-1 violations |
-| 5 | **Dogfood first** | This repo's own docs MUST be managed by `koni-docs` itself |
+| 4 | **Pre-commit gate is the discipline**    | Doc updates that defer to "follow-up commits" are RULE-1 violations                                       |
+| 5 | **Dogfood first**                        | This repo's own docs MUST be managed by `koni-docs` itself                                                |
 
 ### Project Classification
 
-| Dimension | Value |
-|-----------|-------|
-| Project Type | Skill catalog / Developer tooling |
-| Domain | AI agent skill distribution + documentation discipline |
-| Complexity | Medium — moderate surface, high enforcement bar |
-| Context | Greenfield (catalog) + Brownfield (koni-docs already shipped) |
-| Target Users | Koniverse engineers/PMs + AI coding agents |
+| Dimension    | Value                                                         |
+| ------------ | ------------------------------------------------------------- |
+| Project Type | Skill catalog / Developer tooling                             |
+| Domain       | AI agent skill distribution + documentation discipline        |
+| Complexity   | Medium — moderate surface, high enforcement bar               |
+| Context      | Greenfield (catalog) + Brownfield (koni-docs already shipped) |
+| Target Users | Koniverse engineers/PMs + AI coding agents                    |
 
 ### Why Now
 
@@ -95,27 +98,27 @@ every Koniverse agent-supported workflow.
 
 ### User Success Metrics
 
-| ID | Metric | Target | Measurement |
-|----|--------|--------|-------------|
-| US-1 | Koniverse projects consuming `koni-docs` via `npx skills` | 3 in 3 months / 8 in 12 months | Manual audit of `skills-lock.json` across consumer repos |
-| US-2 | Time from "new project init" to "full docs scaffolding" | < 5 minutes | Stopwatch on a fresh clone |
-| US-3 | Engineer can locate the canonical template for any doc type without asking | 100% via SKILL.md §5 activation table | Onboarding walkthrough |
+| ID   | Metric                                                                     | Target                                | Measurement                                              |
+| ---- | -------------------------------------------------------------------------- | ------------------------------------- | -------------------------------------------------------- |
+| US-1 | Koniverse projects consuming `koni-docs` via `npx skills`                  | 3 in 3 months / 8 in 12 months        | Manual audit of `skills-lock.json` across consumer repos |
+| US-2 | Time from "new project init" to "full docs scaffolding"                    | < 5 minutes                           | Stopwatch on a fresh clone                               |
+| US-3 | Engineer can locate the canonical template for any doc type without asking | 100% via SKILL.md §5 activation table | Onboarding walkthrough                                   |
 
 ### Business Success Metrics
 
-| ID | Metric | Target | Measurement |
-|----|--------|--------|-------------|
-| BS-1 | Cross-project doc-layout divergence (audited quarterly) | 0 critical findings | Manual audit |
-| BS-2 | Re-implementations of sync scripts in consumer projects | 0 | Grep `consumer/scripts/agile-*.mjs` |
-| BS-3 | Skills published from this repo | 1 (v0.1) → 4+ (12 mo) | `npx skills list` count |
+| ID   | Metric                                                  | Target                | Measurement                         |
+| ---- | ------------------------------------------------------- | --------------------- | ----------------------------------- |
+| BS-1 | Cross-project doc-layout divergence (audited quarterly) | 0 critical findings   | Manual audit                        |
+| BS-2 | Re-implementations of sync scripts in consumer projects | 0                     | Grep `consumer/scripts/agile-*.mjs` |
+| BS-3 | Skills published from this repo                         | 1 (v0.1) → 4+ (12 mo) | `npx skills list` count             |
 
 ### Technical Success Metrics
 
-| ID | Metric | Target | Measurement |
-|----|--------|--------|-------------|
-| TS-1 | Sync-script regression test passes on every commit | 100% | `node skills/koni-docs/scripts/__tests__/sync-test.mjs` exit 0 |
-| TS-2 | Skill load size (SKILL.md core body) | ≤ 500 lines | `wc -l skills/koni-docs/SKILL.md` |
-| TS-3 | `koni-docs` 9 rules are individually grep-checkable | 100% | Each rule in `references/rules.md` has a grep example |
+| ID   | Metric                                              | Target      | Measurement                                                    |
+| ---- | --------------------------------------------------- | ----------- | -------------------------------------------------------------- |
+| TS-1 | Sync-script regression test passes on every commit  | 100%        | `node skills/koni-docs/scripts/__tests__/sync-test.mjs` exit 0 |
+| TS-2 | Skill load size (SKILL.md core body)                | ≤ 500 lines | `wc -l skills/koni-docs/SKILL.md`                              |
+| TS-3 | `koni-docs` 9 rules are individually grep-checkable | 100%        | Each rule in `references/rules.md` has a grep example          |
 
 ### Aha Moment Targets
 
@@ -139,15 +142,16 @@ every Koniverse agent-supported workflow.
 **Goal:** Ship a usable `koni-docs` skill that any Koniverse project can
 consume to standardize its docs.
 
-| Area | Included | Excluded |
-|------|----------|----------|
-| Rules | 9 project-agnostic rules with grep checks | Tech-stack-specific rules (deferred to plugins) |
-| Templates | 13 templates (brief, prd, arch, changelog, context, lessons, setup, epic, story, sprint, design-spec, okr, integration) | Project-specific templates (those live in consumer repos) |
-| Scripts | 5 bundled scripts: status, sync-up, inject-tasks, backfill-fields, changelog-backfill | A CI integration GitHub Action (deferred) |
-| Distribution | `npx skills add` + `experimental_install` + lockfile | Web UI / marketplace |
-| Pipeline integration | BMad / GStack / Superpowers mapping documented in SKILL.md | Auto-import of BMad artifacts (manual map for now) |
+| Area                 | Included                                                                                                                | Excluded                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Rules                | 9 project-agnostic rules with grep checks                                                                               | Tech-stack-specific rules (deferred to plugins)           |
+| Templates            | 13 templates (brief, prd, arch, changelog, context, lessons, setup, epic, story, sprint, design-spec, okr, integration) | Project-specific templates (those live in consumer repos) |
+| Scripts              | 5 bundled scripts: status, sync-up, inject-tasks, backfill-fields, changelog-backfill                                   | A CI integration GitHub Action (deferred)                 |
+| Distribution         | `npx skills add` + `experimental_install` + lockfile                                                                    | Web UI / marketplace                                      |
+| Pipeline integration | BMad / GStack / Superpowers mapping documented in SKILL.md                                                              | Auto-import of BMad artifacts (manual map for now)        |
 
 **MVP Exit Criteria** (met as of v0.1.0):
+
 - `skills/koni-docs/` directory complete with SKILL.md + references + scripts.
 - Self-contained sync-script regression test passes.
 - README.md documents `npx skills add` install path.
@@ -157,15 +161,16 @@ consume to standardize its docs.
 **Goal:** Apply `koni-docs` to this repo itself, prove the integration
 block + scripts work in a real project that is NOT a downstream consumer.
 
-| Area | Additions |
-|------|-----------|
-| Repo docs | Full `docs/` scaffolding (PRD, ARCH, BRIEF, CONTEXT D1–D10, LESSONS §1–§4, SETUP, sprints subtree) |
-| CLAUDE.md / AGENTS.md | Slim CLAUDE.md (28 lines) + AGENTS.md as canonical source-of-truth + Active Context Pattern B in `.active-context.md` |
-| Root + docs/ artifacts | `VERSION` at repo root (`0.2.0`) + `docs/CHANGELOG.md` (canonical per SKILL.md §0) with [Unreleased] + [0.2.0] + [0.1.0] entries + real contributor data |
-| Skill additions in flight | Active Context Pattern B (US-1.2) · RULE-15 catalog 9→10 (US-1.3) · AGENTS-canonical convention §3.1 (US-1.4) |
-| Sprint discipline | At least one active sprint file driven by EPIC-2 stories |
+| Area                      | Additions                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repo docs                 | Full `docs/` scaffolding (PRD, ARCH, BRIEF, CONTEXT D1–D10, LESSONS §1–§4, SETUP, sprints subtree)                                                          |
+| CLAUDE.md / AGENTS.md     | Slim CLAUDE.md (28 lines) + AGENTS.md as canonical source-of-truth + Active Context Pattern B in `.active-context.md`                                       |
+| Root + docs/ artifacts    | `VERSION` at repo root (`0.2.0`) + `docs/CHANGELOG.md` (canonical per SKILL.md §0) with \[Unreleased] + \[0.2.0] + \[0.1.0] entries + real contributor data |
+| Skill additions in flight | Active Context Pattern B (US-1.2) · RULE-15 catalog 9→10 (US-1.3) · AGENTS-canonical convention §3.1 (US-1.4)                                               |
+| Sprint discipline         | At least one active sprint file driven by EPIC-2 stories                                                                                                    |
 
 **Phase 2 Exit Criteria:**
+
 - `agile-sync-up.mjs --docs-path docs/` runs clean against this repo.
 - `STATUS.md` regenerates and accurately reflects EPIC-1 / EPIC-2 state.
 - CLAUDE.md `Active Context` block matches story reality.
@@ -175,15 +180,16 @@ block + scripts work in a real project that is NOT a downstream consumer.
 **Goal:** Move beyond `koni-docs` alone; ship plugin skills and the
 first non-docs Koniverse skill.
 
-| Area | Additions |
-|------|-----------|
-| Plugin skills | `koni-supabase`, `koni-nextjs` extending `koni-docs` rule set |
-| Domain skills | At least one non-docs Koniverse skill (TBD candidate during planning) |
-| Eval integration | `skill-creator` evals wired into CI for every skill in the catalog |
+| Area             | Additions                                                             |
+| ---------------- | --------------------------------------------------------------------- |
+| Plugin skills    | `koni-supabase`, `koni-nextjs` extending `koni-docs` rule set         |
+| Domain skills    | At least one non-docs Koniverse skill (TBD candidate during planning) |
+| Eval integration | `skill-creator` evals wired into CI for every skill in the catalog    |
 
 ### Scope Boundaries (All Phases)
 
 **Permanently Out of Scope:**
+
 - A hosted web UI for browsing skills — the GitHub repo + `npx skills list` is sufficient.
 - A cross-vendor skill marketplace — Koni-Skills is Koniverse-internal-first.
 - Auto-PR refactoring of consumer repos when a skill updates — opt-in pull, not push.
@@ -260,7 +266,7 @@ consumer project, about to commit a story-shipping diff.
 - **Uses the product:** runs `npx skills add` once, then relies on the
   agent + bundled scripts for all subsequent doc work.
 - **Won't pay if:** the install is more than 1 command; the integration
-  block is more than ~12 lines; the upgrade path requires merge gymnastics.
+  block is more than \~12 lines; the upgrade path requires merge gymnastics.
 
 ### P2 — AI coding agent (secondary)
 
@@ -282,18 +288,18 @@ Decisions that shaped this product. Full rationale lives in
 [CONTEXT.md](CONTEXT.md); the table here is the AD-N summary surfaced for
 reviewers.
 
-| ID | Decision | Date | Rationale |
-|----|----------|------|-----------|
-| AD-1 | Skill = self-contained directory with bundled scripts/references | 2026-05-06 | Lets `npx skills add` work with a single source-of-truth path; no cross-skill imports |
-| AD-2 | Distribution via `npx skills add` + lockfile (`skills-lock.json`) | 2026-05-07 | Content-hashed install matches the maturity of npm/pnpm; no submodule pain |
-| AD-3 | 9 project-agnostic rules + plugin slot for stack-specific rules | 2026-05-08 | Keeps the core rule set sharp; stack rules ship as their own skills |
-| AD-4 | Templates split one-file-per-type under `references/templates/` | 2026-05-22 | Lets agents load only the template matching the user's request (token efficiency) |
-| AD-5 | BMad pipeline integration (Koni-docs = output standardizer) | 2026-05-06 | Don't replace BMad's planning power — standardize what it produces |
-| AD-6 | This repo dogfoods its own skill (EPIC-2) | 2026-05-27 | If we can't run `koni-docs` on its own repo, consumer projects will hit the same gaps |
-| AD-7 | Active Context split: Pattern B (file-extracted) recommended for teams | 2026-05-27 | Inline CLAUDE.md Active Context creates merge conflicts on every parallel-branch sprint update; gitignored `.active-context.md` makes conflicts zero |
-| AD-8 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name | 2026-05-27 | git `user.name` is per-machine; GitHub login is the only identifier surviving across @-mentions, PR reviewers, `gh api users/<login>`, CODEOWNERS, audit attribution |
-| AD-9 | AGENTS-canonical / CLAUDE-pointer convention (recommended for consumers) | 2026-05-27 | AGENTS.md reaches Cursor/Gemini/Codex/Copilot natively; duplicating content in CLAUDE.md creates drift; slim CLAUDE.md = less merge churn (pairs with Active Context Pattern B from AD-7) |
-| AD-10 | Sync scripts MUST escape all dynamic input before regex construction | 2026-05-27 | Discovered when `agile-sync-up.mjs` crashed on Koni-Finance-Final US-1.34 (story title contained `[`, `]`, `(`, `.`); BLOCKER class — any script building `new RegExp()` from story content must treat that content as untrusted |
+| ID    | Decision                                                                 | Date       | Rationale                                                                                                                                                                                                                        |
+| ----- | ------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AD-1  | Skill = self-contained directory with bundled scripts/references         | 2026-05-06 | Lets `npx skills add` work with a single source-of-truth path; no cross-skill imports                                                                                                                                            |
+| AD-2  | Distribution via `npx skills add` + lockfile (`skills-lock.json`)        | 2026-05-07 | Content-hashed install matches the maturity of npm/pnpm; no submodule pain                                                                                                                                                       |
+| AD-3  | 9 project-agnostic rules + plugin slot for stack-specific rules          | 2026-05-08 | Keeps the core rule set sharp; stack rules ship as their own skills                                                                                                                                                              |
+| AD-4  | Templates split one-file-per-type under `references/templates/`          | 2026-05-22 | Lets agents load only the template matching the user's request (token efficiency)                                                                                                                                                |
+| AD-5  | BMad pipeline integration (Koni-docs = output standardizer)              | 2026-05-06 | Don't replace BMad's planning power — standardize what it produces                                                                                                                                                               |
+| AD-6  | This repo dogfoods its own skill (EPIC-2)                                | 2026-05-27 | If we can't run `koni-docs` on its own repo, consumer projects will hit the same gaps                                                                                                                                            |
+| AD-7  | Active Context split: Pattern B (file-extracted) recommended for teams   | 2026-05-27 | Inline CLAUDE.md Active Context creates merge conflicts on every parallel-branch sprint update; gitignored `.active-context.md` makes conflicts zero                                                                             |
+| AD-8  | Adopt RULE-15: `assignee:` is GitHub login, never git user.name          | 2026-05-27 | git `user.name` is per-machine; GitHub login is the only identifier surviving across @-mentions, PR reviewers, `gh api users/<login>`, CODEOWNERS, audit attribution                                                             |
+| AD-9  | AGENTS-canonical / CLAUDE-pointer convention (recommended for consumers) | 2026-05-27 | AGENTS.md reaches Cursor/Gemini/Codex/Copilot natively; duplicating content in CLAUDE.md creates drift; slim CLAUDE.md = less merge churn (pairs with Active Context Pattern B from AD-7)                                        |
+| AD-10 | Sync scripts MUST escape all dynamic input before regex construction     | 2026-05-27 | Discovered when `agile-sync-up.mjs` crashed on Koni-Finance-Final US-1.34 (story title contained `[`, `]`, `(`, `.`); BLOCKER class — any script building `new RegExp()` from story content must treat that content as untrusted |
 
 ---
 
@@ -308,26 +314,26 @@ reviewers.
 
 ## 8. Functional Requirements (FR)
 
-| ID | Requirement | Priority | Status | Epic |
-|----|-------------|----------|--------|------|
-| FR-1 | Ship `skills/koni-docs/SKILL.md` with 9 rules, activation table, pipeline map | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-2 | Provide 13 BMad-grade templates under `references/templates/` | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-3 | Bundle 5 automation scripts (`generate-status`, `agile-sync-up`, `agile-inject-tasks`, `agile-backfill-fields`, `changelog-backfill-commits`) | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-4 | Self-contained sync-script regression test that builds its own fixture | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-5 | Distribution via `npx skills add Koniverse/Koni-Skills --skill <name>` + lockfile | P0 | ✅ shipped (v0.1.0) | EPIC-1 |
-| FR-6 | Apply koni-docs to this repo itself — full `docs/` scaffolding | P0 | ✅ shipped (v0.2.0) | EPIC-2 |
-| FR-7 | Wire koni-docs `Active Context` block into CLAUDE.md + AGENTS.md | P0 | ✅ shipped (v0.2.0) | EPIC-2 |
-| FR-8 | Seed `VERSION` (repo root) + `docs/CHANGELOG.md` (per SKILL.md §0) from existing git history | P1 | ✅ shipped (v0.2.0) | EPIC-2 |
-| FR-9 | Define plugin-skill pattern (Supabase, Next.js) with extension hooks | P1 | 📋 Backlog | EPIC-3 |
-| FR-10 | Ship at least one non-docs Koniverse skill | P2 | 📋 backlog | EPIC-3 |
-| FR-11 | Document file-extracted Active Context pattern (Pattern B) so teams avoid CLAUDE.md merge churn | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
-| FR-12 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name (rule catalog 9 → 10) | P0 | ✅ shipped (v0.2.0) | EPIC-1 |
-| FR-13 | Document AGENTS-canonical / CLAUDE-pointer convention in skill + apply to this repo (CLAUDE.md slim, AGENTS.md canonical with absorbed Documentation section) | P1 | ✅ shipped (v0.2.0) | EPIC-1 + EPIC-2 |
-| FR-14 | Real-world template + script audit: fix regex-escape BLOCKER, add Carry/Why/Parked/Closed/Risks sprint sections, multi-commit field, RULE-16 (bare semver), `*.vi.md` convention; robustness against 198+266-story reference repos | P0 | ✅ shipped (v0.3.0) | EPIC-1 |
-| FR-15 | `packages/koni-docs-viewer/` scaffold + Astro Node SSR — runtime-configurable docs path, no monorepo coupling | P0 | 📋 Backlog | EPIC-4 |
-| FR-16 | `koni-docs-viewer` CLI bin with `--port/--host/--open/--watch/--config` + optional `koni-docs.config.{json,mjs}` | P0 | 📋 Backlog | EPIC-4 |
-| FR-17 | Schema-graceful behavior (plain mode when no `sprints/`) + chokidar+SSE live reload on `.md` change | P0 | 📋 Backlog | EPIC-4 |
-| FR-18 | Publish `@koniverse/docs-viewer@0.1.0` + dogfood `npm run docs:preview` in this repo | P1 | 📋 Backlog | EPIC-4 |
+| ID    | Requirement                                                                                                                                                                                                                        | Priority | Status                   | Epic            |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------ | --------------- |
+| FR-1  | Ship `skills/koni-docs/SKILL.md` with 9 rules, activation table, pipeline map                                                                                                                                                      | P0       | ✅ shipped (v0.1.0)       | EPIC-1          |
+| FR-2  | Provide 13 BMad-grade templates under `references/templates/`                                                                                                                                                                      | P0       | ✅ shipped (v0.1.0)       | EPIC-1          |
+| FR-3  | Bundle 5 automation scripts (`generate-status`, `agile-sync-up`, `agile-inject-tasks`, `agile-backfill-fields`, `changelog-backfill-commits`)                                                                                      | P0       | ✅ shipped (v0.1.0)       | EPIC-1          |
+| FR-4  | Self-contained sync-script regression test that builds its own fixture                                                                                                                                                             | P0       | ✅ shipped (v0.1.0)       | EPIC-1          |
+| FR-5  | Distribution via `npx skills add Koniverse/Koni-Skills --skill <name>` + lockfile                                                                                                                                                  | P0       | ✅ shipped (v0.1.0)       | EPIC-1          |
+| FR-6  | Apply koni-docs to this repo itself — full `docs/` scaffolding                                                                                                                                                                     | P0       | ✅ shipped (v0.2.0)       | EPIC-2          |
+| FR-7  | Wire koni-docs `Active Context` block into CLAUDE.md + AGENTS.md                                                                                                                                                                   | P0       | ✅ shipped (v0.2.0)       | EPIC-2          |
+| FR-8  | Seed `VERSION` (repo root) + `docs/CHANGELOG.md` (per SKILL.md §0) from existing git history                                                                                                                                       | P1       | ✅ shipped (v0.2.0)       | EPIC-2          |
+| FR-9  | Define plugin-skill pattern (Supabase, Next.js) with extension hooks                                                                                                                                                               | P1       | 📋 Backlog               | EPIC-3          |
+| FR-10 | Ship at least one non-docs Koniverse skill                                                                                                                                                                                         | P2       | 📋 backlog               | EPIC-3          |
+| FR-11 | Document file-extracted Active Context pattern (Pattern B) so teams avoid CLAUDE.md merge churn                                                                                                                                    | P0       | ✅ shipped (v0.2.0)       | EPIC-1          |
+| FR-12 | Adopt RULE-15: `assignee:` is GitHub login, never git user.name (rule catalog 9 → 10)                                                                                                                                              | P0       | ✅ shipped (v0.2.0)       | EPIC-1          |
+| FR-13 | Document AGENTS-canonical / CLAUDE-pointer convention in skill + apply to this repo (CLAUDE.md slim, AGENTS.md canonical with absorbed Documentation section)                                                                      | P1       | ✅ shipped (v0.2.0)       | EPIC-1 + EPIC-2 |
+| FR-14 | Real-world template + script audit: fix regex-escape BLOCKER, add Carry/Why/Parked/Closed/Risks sprint sections, multi-commit field, RULE-16 (bare semver), `*.vi.md` convention; robustness against 198+266-story reference repos | P0       | ✅ shipped (v0.3.0)       | EPIC-1          |
+| FR-15 | `packages/koni-docs-viewer/` scaffold + Astro Node SSR — runtime-configurable docs path, no monorepo coupling                                                                                                                      | P0       | ✅ shipped (v0.4.0-dev.0) | EPIC-4          |
+| FR-16 | `koni-docs-viewer` CLI bin with `--port/--host/--open/--watch/--config` + optional `koni-docs.config.{json,mjs}`                                                                                                                   | P0       | ✅ shipped (v0.7.0)       | EPIC-4          |
+| FR-17 | Schema-graceful behavior (plain mode when no `sprints/`) + chokidar+SSE live reload on `.md` change                                                                                                                                | P0       | ✅ shipped (v0.7.0)       | EPIC-4          |
+| FR-18 | Publish `@koniverse/docs-viewer@0.1.0` + dogfood `npm run docs:preview` in this repo                                                                                                                                               | P1       | 📋 Backlog               | EPIC-4          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -335,72 +341,79 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 ## 9. Non-Functional Requirements (NFR)
 
-| ID | Requirement | Target | Status |
-|----|-------------|--------|--------|
-| NFR-1 | `SKILL.md` body stays compact for on-demand loading | ≤ 500 lines | ✅ met (currently ~290 lines for koni-docs SKILL.md) |
-| NFR-2 | Each rule has a grep-style verification example | 10/10 | ✅ met (extends to RULE-15 in v0.2.0) |
-| NFR-3 | Sync scripts complete on a 100-story repo in < 5 s wall time | < 5 s | ✅ met (test fixture asserts) |
-| NFR-4 | English-only across code/comments/docs/commits (RULE-13) | 100% | ✅ enforced manually; lint TBD |
-| NFR-5 | Skill install is one command; upgrade is one command | 1 command each | ✅ met via `npx skills add` / `update` |
+| ID    | Requirement                                                  | Target         | Status                                               |
+| ----- | ------------------------------------------------------------ | -------------- | ---------------------------------------------------- |
+| NFR-1 | `SKILL.md` body stays compact for on-demand loading          | ≤ 500 lines    | ✅ met (currently \~290 lines for koni-docs SKILL.md) |
+| NFR-2 | Each rule has a grep-style verification example              | 10/10          | ✅ met (extends to RULE-15 in v0.2.0)                 |
+| NFR-3 | Sync scripts complete on a 100-story repo in < 5 s wall time | < 5 s          | ✅ met (test fixture asserts)                         |
+| NFR-4 | English-only across code/comments/docs/commits (RULE-13)     | 100%           | ✅ enforced manually; lint TBD                        |
+| NFR-5 | Skill install is one command; upgrade is one command         | 1 command each | ✅ met via `npx skills add` / `update`                |
 
 ---
 
 ## 10. Glossary
 
-| Term | Definition |
-|------|------------|
-| Skill | A self-contained directory with `SKILL.md` + bundled `scripts/` / `references/` / `assets/` that an agent loads at activation. |
-| Plugin skill | A skill that extends another skill's rule set for a specific tech stack (e.g. `koni-supabase` extends `koni-docs`). |
-| BMad | Upstream brainstorming + planning toolset; produces brief, PRD, ARCH, epics, stories that koni-docs standardizes. |
-| Active Context | The 5-line block between `koni-docs:auto-update` markers that the agent refreshes at 7 trigger points. Lives inline in `CLAUDE.md` (Pattern A — solo dev) OR in a gitignored `.active-context.md` (Pattern B — recommended for teams). |
-| 5-layer consistency | Story / Epic / PRD §11 / PRD §8 FR / Sprint must all reflect the same story status. |
+| Term                | Definition                                                                                                                                                                                                                             |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Skill               | A self-contained directory with `SKILL.md` + bundled `scripts/` / `references/` / `assets/` that an agent loads at activation.                                                                                                         |
+| Plugin skill        | A skill that extends another skill's rule set for a specific tech stack (e.g. `koni-supabase` extends `koni-docs`).                                                                                                                    |
+| BMad                | Upstream brainstorming + planning toolset; produces brief, PRD, ARCH, epics, stories that koni-docs standardizes.                                                                                                                      |
+| Active Context      | The 5-line block between `koni-docs:auto-update` markers that the agent refreshes at 7 trigger points. Lives inline in `CLAUDE.md` (Pattern A — solo dev) OR in a gitignored `.active-context.md` (Pattern B — recommended for teams). |
+| 5-layer consistency | Story / Epic / PRD §11 / PRD §8 FR / Sprint must all reflect the same story status.                                                                                                                                                    |
 
 ---
 
 ## 11. Epics & User Stories
 
 ### EPIC-1 — Koni-docs skill (foundation + ongoing enhancements)
+
 **Goal:** Ship and continuously evolve a usable, BMad-pipeline-compatible documentation skill that any Koniverse project can `npx skills add`.
 
 **Status:** 🚧 in-progress (v0.1.0 shipped; v0.2.0 in flight with US-1.2)
 
-| Story | Title | Status | Version |
-|-------|-------|--------|---------|
-| [US-1.1](sprints/stories/US-1.1-koni-docs-initial-release.md) | Koni-docs skill — initial release (v0.1.0) | ✅ done | v0.1.0 |
-| [US-1.2](sprints/stories/US-1.2-active-context-split-pattern.md) | Add file-extracted active-context pattern (Pattern B) | ✅ done | v0.2.0 |
-| [US-1.3](sprints/stories/US-1.3-rule-15-assignee-github-login.md) | Add RULE-15: assignee = GitHub login (catalog 9 → 10) | ✅ done | v0.2.0 |
-| [US-1.4](sprints/stories/US-1.4-agents-canonical-convention.md) | Document AGENTS-canonical / CLAUDE-pointer convention in skill | ✅ done | v0.2.0 |
-| [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti_quant) | ✅ done | v0.3.0 |
+| Story                                                                | Title                                                                  | Status | Version |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------ | ------- |
+| [US-1.1](sprints/stories/US-1.1-koni-docs-initial-release.md)        | Koni-docs skill — initial release (v0.1.0)                             | ✅ done | v0.1.0  |
+| [US-1.2](sprints/stories/US-1.2-active-context-split-pattern.md)     | Add file-extracted active-context pattern (Pattern B)                  | ✅ done | v0.2.0  |
+| [US-1.3](sprints/stories/US-1.3-rule-15-assignee-github-login.md)    | Add RULE-15: assignee = GitHub login (catalog 9 → 10)                  | ✅ done | v0.2.0  |
+| [US-1.4](sprints/stories/US-1.4-agents-canonical-convention.md)      | Document AGENTS-canonical / CLAUDE-pointer convention in skill         | ✅ done | v0.2.0  |
+| [US-1.5](sprints/stories/US-1.5-real-world-template-script-audit.md) | Real-world template + script audit (Koni-Finance-Final + senti\_quant) | ✅ done | v0.3.0  |
 
 ### EPIC-2 — Dogfood koni-docs on Koni-Skills repo
+
 **Goal:** Apply `koni-docs` to this repo itself so the meta-repo lives by the same rules it ships.
 
 **Status:** 🚧 in-progress (sprint-2026-W22)
 
-| Story | Title | Status | Version |
-|-------|-------|--------|---------|
-| [US-2.1](sprints/stories/US-2.1-bootstrap-docs-structure.md) | Bootstrap full `docs/` scaffolding on Koni-Skills | ✅ done | v0.2.0 |
-| [US-2.2](sprints/stories/US-2.2-wire-integration-blocks.md) | Wire koni-docs integration into CLAUDE.md + AGENTS.md | ✅ done | v0.2.0 |
-| [US-2.3](sprints/stories/US-2.3-version-changelog-seed.md) | Seed VERSION + CHANGELOG.md from git history | ✅ done | v0.2.0 |
-| [US-2.4](sprints/stories/US-2.4-apply-agents-canonical.md) | Apply AGENTS-canonical convention to this repo | ✅ done | v0.2.0 |
+| Story                                                        | Title                                                 | Status | Version |
+| ------------------------------------------------------------ | ----------------------------------------------------- | ------ | ------- |
+| [US-2.1](sprints/stories/US-2.1-bootstrap-docs-structure.md) | Bootstrap full `docs/` scaffolding on Koni-Skills     | ✅ done | v0.2.0  |
+| [US-2.2](sprints/stories/US-2.2-wire-integration-blocks.md)  | Wire koni-docs integration into CLAUDE.md + AGENTS.md | ✅ done | v0.2.0  |
+| [US-2.3](sprints/stories/US-2.3-version-changelog-seed.md)   | Seed VERSION + CHANGELOG.md from git history          | ✅ done | v0.2.0  |
+| [US-2.4](sprints/stories/US-2.4-apply-agents-canonical.md)   | Apply AGENTS-canonical convention to this repo        | ✅ done | v0.2.0  |
 
 ### EPIC-3 — Koniverse skill catalog expansion
+
 **Goal:** Move beyond `koni-docs` alone; ship plugin skills and the first non-docs Koniverse skill.
 
 **Status:** 📋 backlog
 
-| Story | Title | Status | Version |
-|-------|-------|--------|---------|
-| [US-3.1](sprints/stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern (Supabase, Next.js) | 📋 backlog | — |
+| Story                                                    | Title                                           | Status     | Version |
+| -------------------------------------------------------- | ----------------------------------------------- | ---------- | ------- |
+| [US-3.1](sprints/stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern (Supabase, Next.js) | 📋 backlog | —       |
 
-### EPIC-4 — Docs preview tooling (koni-docs-viewer)
-**Goal:** Ship `@koniverse/docs-viewer` — a globally-installable npm CLI that previews any koni-docs-shaped `docs/` folder, with schema-graceful fallback for non-Koni layouts. Companion artifact to the `koni-docs` skill.
+### EPIC-4 — Docs preview tooling (koni-docs CLI + Astro SSR viewer)
 
-**Status:** 🚧 in-progress (sprint-2026-W23; all 4 stories ready at sprint open; decisions logged as [D11](CONTEXT.md))
+**Goal:** Ship `@koniverse/koni-docs` — a globally-installable npm package combining a typed CLI (`status` / `sync` / `inject-tasks` / `backfill-fields` / `backfill-commits` / `preview` / `validate`) with an Astro SSR viewer that renders any koni-docs-shaped `docs/` folder. Schema-graceful fallback for non-Koni layouts.
 
-| Story | Title | Status | Version |
-|-------|-------|--------|---------|
-| [US-4.1](sprints/stories/US-4.1-scaffold-and-ssr.md) | Scaffold `packages/koni-docs-viewer` + Astro Node SSR migration | 🟢 ready | — |
-| [US-4.2](sprints/stories/US-4.2-cli-bin-and-config.md) | CLI bin (`--port/--host/--open/--watch`) + optional config file | 🟢 ready | — |
-| [US-4.3](sprints/stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload | 🟢 ready | — |
-| [US-4.4](sprints/stories/US-4.4-dogfood-and-publish.md) | Dogfood in Koni-Skills + publish `@koniverse/docs-viewer@0.1.0` | 🟢 ready | — |
+**Status:** ✅ done (sprint-2026-W22; 27/27 stories shipped across v0.4.0-dev.0 → v0.7.0; `@koniverse/koni-docs@0.7.0` published. Decisions logged as [D11](CONTEXT.md))
+
+See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 27-story breakdown organized by pillar (B = lib foundation, C = CLI subcommands, D = migration + polish, E = viewer scaffold + preview, F = viewer polish + validate + cleanup). Highlights:
+
+| Story                                                               | Title                                                           | Status | Version |
+| ------------------------------------------------------------------- | --------------------------------------------------------------- | ------ | ------- |
+| [US-4.1](sprints/stories/US-4.1-scaffold-and-ssr.md)                | Scaffold `packages/koni-docs/src/viewer` + Astro Node SSR       | ✅ done | v0.6.0  |
+| [US-4.2](sprints/stories/US-4.2-cli-bin-and-config.md)              | CLI bin (`--port/--host/--open/--watch`) + optional config file | ✅ done | v0.7.0  |
+| [US-4.3](sprints/stories/US-4.3-graceful-schema-and-live-reload.md) | Schema-graceful fallback + chokidar/SSE live reload             | ✅ done | v0.7.0  |
+| [US-4.25](sprints/stories/US-4.25-cli-validate.md)                  | `koni-docs validate` subcommand + `validateFrRefs`              | ✅ done | v0.7.0  |
+| [US-4.28](sprints/stories/US-4.28-publish-v0.7.0.md)                | Publish `@koniverse/koni-docs@0.7.0` to npm                     | ✅ done | v0.7.0  |
