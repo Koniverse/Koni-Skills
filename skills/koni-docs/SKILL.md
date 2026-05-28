@@ -233,7 +233,7 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template                                  | `templates/story.md`                       |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD §11, use full story template. For retroactive/codebase-discovered stories, set `assignee` from the commit AUTHOR (`git log -1 --format=%an <sha>`), never the session user | `templates/story.md` §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                          | `sprint-system.md` §5-layer                |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |

@@ -53,7 +53,7 @@ points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md 
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 version_shipped:           # set when status → done (e.g. v0.3.1)
 prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs this story materializes
-assignee:                  # GitHub login (optional)
+assignee:                  # commit AUTHOR — `git log -1 --format=%an <sha>`, NOT the session user
 commit:                    # full SHA of landing commit (set at pre-commit)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -274,6 +274,15 @@ per file explaining what changed and why — not just what was added.>
   only.
 - `commit`: stays empty until the landing commit exists. Filled at
   pre-commit time (RULE-2). Never `pending`.
+- `assignee`: the person who **authored the work**, not whoever is writing
+  the doc. For a **retroactive / codebase-discovered** story, derive it from
+  the git author of the story's `commit` SHA — run
+  `git log -1 --format='%an <%ae>' <sha>` — and **never** default to the
+  current session's git user (that silently mis-credits another contributor).
+  When the story spans commits by multiple authors (e.g. main work by one
+  person + a follow-up fix by another), set `assignee` to the primary-work
+  author and credit the others explicitly in Background / Tasks next to their
+  SHA.
 - `external_deps` *(optional)*: list of third-party systems, partners, or
   legal-review queues this story waits on. Populate when calendar wait time
   (outside dev control) is in the critical path — e.g.
