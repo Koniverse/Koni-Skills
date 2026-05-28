@@ -1,0 +1,16 @@
+# Trim viewer source — keep only what Astro needs at runtime.
+# Tarball must include dist/ + src/viewer/{components,layouts,lib,pages,public,styles,*.config.mjs,*.ts,*.css,*.json}
+# but exclude dev-only outputs and any leaked node_modules.
+
+src/viewer/node_modules/
+src/viewer/.astro/
+src/viewer/dist/
+
+# Don't ship test files
+__tests__/
+*.test.ts
+*.spec.ts
+
+# Don't ship build configs
+tsconfig.json
+tsup.config.ts

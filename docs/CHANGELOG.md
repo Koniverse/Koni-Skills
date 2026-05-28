@@ -32,6 +32,10 @@ Fixes two bugs that prevented the v0.6.0 viewer from running after `npm install`
 ### Consumer impact
 Anyone who installed v0.6.0 must upgrade — the viewer is unusable on that release. Reinstall via `npm link` (re-run from `packages/koni-docs`) or rebuild the tarball with `npm pack`.
 
+### Also in this hotfix
+- `KONI_DOCS_LIB_VERSION` constant synced to `0.6.1` (was still `0.6.0` because the prior version-triple step missed `src/lib/index.ts`). The triple sync is now: root `VERSION` + `packages/koni-docs/package.json` + `KONI_DOCS_LIB_VERSION`.
+- `package.json` `files` field tightened from `["dist", "src/viewer", "README.md"]` to explicit subpaths under `src/viewer/` (`components/**`, `layouts/**`, `lib/**`, `pages/**`, `public/**`, `styles/**` + the config files). v0.6.0 tarball included `src/viewer/node_modules/.vite/deps_temp_*/` and `src/viewer/.astro/` because the broad `src/viewer` glob caught dev-time caches. New tarball: 34 files (was 45).
+
 **Commit**: 7543e42
 
 ---

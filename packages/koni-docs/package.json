@@ -30,7 +30,16 @@
   },
   "files": [
     "dist",
-    "src/viewer",
+    "src/viewer/astro.config.mjs",
+    "src/viewer/postcss.config.mjs",
+    "src/viewer/tsconfig.json",
+    "src/viewer/env.d.ts",
+    "src/viewer/components/**",
+    "src/viewer/layouts/**",
+    "src/viewer/lib/**",
+    "src/viewer/pages/**",
+    "src/viewer/public/**",
+    "src/viewer/styles/**",
     "README.md"
   ],
   "scripts": {
