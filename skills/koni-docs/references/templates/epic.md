@@ -258,6 +258,13 @@ infrastructure in the right column must already exist.>
 |---|---|---|
 | **<Pattern name>** | [US-X.1](../stories/US-X.1-<slug>.md), [US-X.2](../stories/US-X.2-<slug>.md) | <path to fixture / helper / test file> |
 
+> **Cross-reference**: Executable scenarios for this epic live in
+> [`docs/tests/test-cases/EPIC-N.md`](../../../docs/tests/test-cases/) (see
+> [`templates/test-cases.md`](test-cases.md)). The patterns in the table
+> above declare the *harness*; the test-cases file owns the *scenarios*
+> that exercise it (E2E / regression / smoke) plus the AC coverage matrix.
+> Execution history lives in [`docs/tests/test-reports/`](../../../docs/tests/test-reports/).
+
 ## Performance budgets & invariants
 
 <Hard budgets the epic publishes so story implementations cannot quietly
