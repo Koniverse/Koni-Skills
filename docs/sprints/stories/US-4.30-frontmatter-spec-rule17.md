@@ -12,7 +12,7 @@ arch_ref: []
 depends_on:
   - US-4.29
 assignee: saltict
-commit: pending
+commit: 66f9327
 created: 2026-05-28
 updated: 2026-05-28
 ---
