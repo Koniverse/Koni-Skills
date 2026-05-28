@@ -53,8 +53,8 @@ export type { CheckboxItem } from './markdown/checkboxes.ts';
 export * as Schemas from './schemas/index.ts';
 
 // Refs
-export { validateRefs, listChildrenOf, listReferrersTo } from './refs.ts';
-export type { RefKind, RefValidationResult } from './refs.ts';
+export { validateRefs, validateFrRefs, listChildrenOf, listReferrersTo } from './refs.ts';
+export type { RefKind, RefValidationResult, FrRefMissing } from './refs.ts';
 
 // Changelog
 export {

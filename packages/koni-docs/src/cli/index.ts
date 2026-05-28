@@ -30,6 +30,9 @@ registerBackfillCommits(program);
 import { registerPreview } from './preview.ts';
 registerPreview(program);
 
+import { registerValidate } from './validate.ts';
+registerValidate(program);
+
 program.on('command:*', () => {
   console.error('error: unknown command');
   process.exit(1);

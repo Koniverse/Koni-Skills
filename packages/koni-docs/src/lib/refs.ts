@@ -1,5 +1,8 @@
 import type { Corpus, MatterEntry } from './types.ts';
 import { getStories, resolveById } from './corpus.ts';
+import { readDoc } from './doc.ts';
+import { findSectionStartingWith } from './markdown/sections.ts';
+import { parseTable } from './markdown/tables.ts';
 
 export type RefKind = 'epic' | 'sprint' | 'prd_ref' | 'sibling';
 
@@ -55,7 +58,83 @@ export function validateRefs(corpus: Corpus): RefValidationResult[] {
       } else if (r.kind === 'sprint') {
         if (!resolveById(corpus, r.ref)) out.push({ source: s.path, ref: r.ref, kind: r.kind, error: 'not_found' });
       }
-      // FR refs validated against PRD §8 — deferred (Pillar C may extend)
+      // FR refs validated against PRD §8 — see validateFrRefs
+    }
+  }
+  return out;
+}
+
+export interface FrRefMissing {
+  /** Story id (e.g. "US-4.1"). */
+  id: string;
+  /** Story file path. */
+  source: string;
+  /** FR refs the story claims that PRD §8 table does not contain. */
+  missingFr: string[];
+}
+
+// Used only by the early-return branch when §8 cannot be located.
+function storyFrRefsAll(s: MatterEntry): FrRefMissing | null {
+  const refs = refsFromStory(s).filter(r => r.kind === 'prd_ref').map(r => r.ref);
+  const missing = refs.filter(r => /^FR-/.test(r));
+  if (missing.length === 0) return null;
+  return {
+    id: String(s.frontmatter.id ?? ''),
+    source: s.path,
+    missingFr: missing,
+  };
+}
+
+/**
+ * For each story with a `prd_ref:` frontmatter value, verify each `FR-N` ref
+ * is present as a row in PRD §8's table (`## 8. ...`). Returns the list of
+ * stories with at least one missing FR ref. An empty list means every story's
+ * FR refs resolve. Stories without `prd_ref` are skipped entirely.
+ *
+ * If PRD.md is missing or §8 has no table, every FR ref counts as missing
+ * (better-safe-than-silent).
+ */
+export function validateFrRefs(corpus: Corpus): FrRefMissing[] {
+  const prdEntry = corpus.singletons.prd;
+  if (!prdEntry) {
+    return getStories(corpus)
+      .map(storyFrRefsAll)
+      .filter((x): x is FrRefMissing => x !== null);
+  }
+  const prdDoc = readDoc(prdEntry.path);
+  const section8 = findSectionStartingWith(prdDoc, '## 8.');
+  if (!section8) {
+    return getStories(corpus)
+      .map(storyFrRefsAll)
+      .filter((x): x is FrRefMissing => x !== null);
+  }
+  // Find the first table inside §8 body.
+  const tableNode = section8.body.find(n => n.type === 'table');
+  if (!tableNode || tableNode.type !== 'table') {
+    return getStories(corpus)
+      .map(storyFrRefsAll)
+      .filter((x): x is FrRefMissing => x !== null);
+  }
+  const parsed = parseTable(tableNode);
+  const idCol = parsed.headers.indexOf('ID');
+  const validIds = new Set<string>();
+  if (idCol >= 0) {
+    for (const row of parsed.rows) {
+      const v = row[idCol];
+      if (v) validIds.add(v);
+    }
+  }
+
+  const out: FrRefMissing[] = [];
+  for (const s of getStories(corpus)) {
+    const refs = refsFromStory(s).filter(r => r.kind === 'prd_ref').map(r => r.ref);
+    const missing = refs.filter(r => /^FR-/.test(r) && !validIds.has(r));
+    if (missing.length > 0) {
+      out.push({
+        id: String(s.frontmatter.id ?? ''),
+        source: s.path,
+        missingFr: missing,
+      });
     }
   }
   return out;
