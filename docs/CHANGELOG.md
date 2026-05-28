@@ -32,6 +32,8 @@ Fixes two bugs that prevented the v0.6.0 viewer from running after `npm install`
 ### Consumer impact
 Anyone who installed v0.6.0 must upgrade — the viewer is unusable on that release. Reinstall via `npm link` (re-run from `packages/koni-docs`) or rebuild the tarball with `npm pack`.
 
+**Commit**: 7543e42
+
 ---
 
 ## [0.6.0] — 2026-05-28 — Pillar E ship: Astro SSR viewer + `preview` subcommand — v0.6.0
