@@ -11,6 +11,14 @@ export interface Doc {
   ast: Root;
   /** Original raw file content as read from disk. */
   raw: string;
+  /**
+   * Keys whose YAML values were quoted in the original raw frontmatter, mapped
+   * to the quote character (`"` or `'`) that was used. serializeDoc re-applies
+   * the same quote style around matching values in gray-matter's stringify
+   * output. Best-effort: covers plain scalar values; multi-line or block-scalar
+   * quoting is not preserved.
+   */
+  frontmatterQuoting?: Map<string, '"' | "'">;
 }
 
 export interface MatterEntry {

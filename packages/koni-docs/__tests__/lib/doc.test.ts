@@ -52,3 +52,53 @@ test('writeDoc: writes serialized doc to disk', () => {
   assert.match(onDisk, /status: done/);
   assert.match(onDisk, /# Hi/);
 });
+
+test('writeDoc: preserves quoted YAML values across round-trip', () => {
+  const raw = `---
+id: US-1.1
+title: "Foo bar"
+status: done
+version_shipped: "0.6.0"
+priority: "P1"
+points: 5
+---
+
+Body.
+`;
+  const doc = parseDoc(raw, '/tmp/story.md');
+  const out = serializeDoc(doc);
+  assert.match(out, /^title: "Foo bar"$/m);
+  assert.match(out, /^version_shipped: "0\.6\.0"$/m);
+  assert.match(out, /^priority: "P1"$/m);
+  assert.match(out, /^id: US-1\.1$/m);
+  assert.match(out, /^status: done$/m);
+  assert.match(out, /^points: 5$/m);
+});
+
+test('writeDoc: preserves single-quoted YAML values', () => {
+  const raw = `---
+title: 'Foo'
+status: done
+---
+
+Body.
+`;
+  const doc = parseDoc(raw, '/tmp/story.md');
+  const out = serializeDoc(doc);
+  assert.match(out, /^title: 'Foo'$/m);
+});
+
+test('writeDoc: does NOT add quotes to keys that were unquoted', () => {
+  const raw = `---
+id: US-2.3
+status: ready
+---
+
+Body.
+`;
+  const doc = parseDoc(raw, '/tmp/story.md');
+  const out = serializeDoc(doc);
+  assert.match(out, /^id: US-2\.3$/m);
+  assert.match(out, /^status: ready$/m);
+  assert.doesNotMatch(out, /^id: "US-2\.3"$/m);
+});
