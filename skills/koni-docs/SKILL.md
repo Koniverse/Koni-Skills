@@ -30,13 +30,20 @@ docs/
 ├── LESSONS.md         ← recurring traps + patterns
 ├── design/            ← per-story design specs (US-X.Y-<slug>-design.md)
 ├── okr/               ← (optional) file-native quarterly OKR ledgers (YYYY-QN.md)
-└── sprints/
-    ├── README.md      ← agile schema + workflow
-    ├── STATUS.md      ← AUTO-GENERATED kanban (never hand-edit)
-    ├── epics/         ← EPIC-N.md
-    ├── stories/       ← US-X.Y-<slug>.md (canonical task source)
-    ├── sprint-YYYY-WNN.md  ← active sprint
-    └── archive/       ← closed sprints
+├── sprints/
+│   ├── README.md      ← agile schema + workflow
+│   ├── STATUS.md      ← AUTO-GENERATED kanban (never hand-edit)
+│   ├── epics/         ← EPIC-N.md
+│   ├── stories/       ← US-X.Y-<slug>.md (canonical task source)
+│   ├── sprint-YYYY-WNN.md  ← active sprint
+│   └── archive/       ← closed sprints
+└── tests/
+    ├── test-cases/    ← EPIC-N.md (epic-level scenarios: E2E + REG + SMK + matrix)
+    │   └── README.md
+    └── test-reports/  ← execution history (append-only)
+        ├── README.md
+        ├── runs/      ← YYYY-MM-DD-EPIC-N-runN.md (per-execution detail)
+        └── releases/  ← vX.Y.Z.md (per-release aggregate)
 
 DEPLOY.md              ← production runbook (repo root)
 VERSION                ← current semver string (repo root)
@@ -292,6 +299,9 @@ file matching the user's request.
 | "create design spec for US-X.Y"                 | Use design spec template                                                                  | `templates/design-spec.md`                 |
 | "create an epic"                                | Use full epic template                                                                    | `templates/epic.md`                        |
 | "create sprint file"                            | Use sprint template                                                                       | `templates/sprint.md`                      |
+| "create / update test-cases for EPIC-N"         | Use test-cases template (10-section layout: Scope / Stories in scope / Goals / Env / Cadence / Quick reference / Detail / Coverage matrix / Open) | `templates/test-cases.md`                  |
+| "record a test run for EPIC-N"                  | Use per-execution sub-template — write to `runs/YYYY-MM-DD-EPIC-N-runN.md`                | `templates/test-report.md` §A              |
+| "create release test report for vX.Y.Z"         | Use per-release sub-template — write to `releases/vX.Y.Z.md`, link from CHANGELOG          | `templates/test-report.md` §B              |
 | "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | `templates/setup.md`                       |
 | "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | `templates/okr.md`                         |
 | "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md (+ `.active-context.md` for Pattern B) integration blocks | `templates/integration.md`        |
@@ -328,7 +338,9 @@ Load these on demand based on user intent:
 | `references/templates/setup.md`       | Adding an env var (RULE-11 — all three files in same commit)             | SETUP block format + .env.example format + DEPLOY env table + RULE-11 checklist, filled examples for all three |
 | `references/templates/okr.md`         | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md`                 | File-naming rule, YAML schema, KR formula rules (SELECT-only, end-exclusive boundaries), weekly notes, permissions, filled example (2026-Q2.md) |
 | `references/templates/integration.md` | Wiring koni-docs into a new project, refreshing Active Context           | CLAUDE.md `Koni-Docs Integration` block + AGENTS.md reference block + 7 trigger points for Active Context updates, filled example |
-| `references/sprint-system.md`         | User asks about sprints, agile workflow, scripts, or 5-layer consistency | Naming conventions, scripts, consistency check, setup guide       |
+| `references/templates/test-cases.md`  | Creating / updating per-epic test scenarios (`docs/tests/test-cases/EPIC-N.md`) | 10-section skeleton — Scope / Stories in scope (emoji status) / Goals / Env / Cadence / Quick reference summary / Detail (Gherkin) / Coverage matrix (with "AC description" column) / Open. Per-section guidance + filled EPIC-02 mini-example |
+| `references/templates/test-report.md` | Recording a test run or release-level report (`docs/tests/test-reports/{runs,releases}/...`) | Two sub-templates: A) per-execution detail (one file per run, append-only) — B) per-release master (aggregate linked from CHANGELOG). Result symbols, append-only discipline, cross-link contract |
+| `references/sprint-system.md`         | User asks about sprints, agile workflow, scripts, 5-layer consistency, or test artifacts | Naming conventions, scripts, consistency check, setup guide, **§Test artifacts** (10-section test-cases structure + reports lifecycle) |
 | `references/migration-from-bmad.md`   | User asks to migrate from BMad to koni-docs                              | Architecture comparison, artifact mapping, step-by-step procedure |
 | `references/bmad-template-analysis.md` | User asks about BMad template standards, or mapping BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
 
