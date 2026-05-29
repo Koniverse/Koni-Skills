@@ -192,8 +192,9 @@ US-4.21 covers that role).
 
 ### Commit
 
-`pending` — backfilled in a follow-up commit per the v0.7.3 / v0.7.2
-ship pattern.
+[`a213df9`](https://github.com/Koniverse/Koni-Skills/commit/a213df9) —
+ship commit. This entry's SHA backfilled in commit follow-up per the
+v0.7.3 / v0.7.2 ship pattern.
 
 ---
 
