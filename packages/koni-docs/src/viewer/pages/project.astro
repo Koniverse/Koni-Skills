@@ -175,6 +175,20 @@ const meta = {
       const meta = data.meta;
       const defaultMonth: string = data.defaultMonth;
 
+      // ===== lookup tables (declared early to avoid TDZ when render() runs) =====
+      const STORY_STATUS_ORDER = ['backlog','ready','in-progress','review','in-review','blocked','done','reverted','deprecated'];
+      const STATUS_RANK: Record<string, number> = Object.fromEntries(STORY_STATUS_ORDER.map((s, i) => [s, i]));
+      const PRIORITY_RANK: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
+      const BOARD_COLUMNS = [
+        { key: 'backlog', label: 'Backlog' },
+        { key: 'ready', label: 'Ready' },
+        { key: 'in-progress', label: 'In progress' },
+        { key: 'review', label: 'In review' },
+        { key: 'blocked', label: 'Blocked' },
+        { key: 'done', label: 'Done' },
+      ];
+      const MONTH_LABELS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
       // ===== state =====
       type View = 'table' | 'board' | 'calendar' | 'analysis' | 'warning';
       const VALID_VIEWS = new Set(['table', 'board', 'calendar', 'analysis', 'warning']);
@@ -354,11 +368,7 @@ const meta = {
         });
       }
 
-      // ===== sort (US-4.36) =====
-      const STORY_STATUS_ORDER = ['backlog','ready','in-progress','review','in-review','blocked','done','reverted','deprecated'];
-      const STATUS_RANK: Record<string, number> = Object.fromEntries(STORY_STATUS_ORDER.map((s, i) => [s, i]));
-      const PRIORITY_RANK: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
-
+      // ===== sort (US-4.36) — lookup tables hoisted to top of IIFE =====
       function statusRank(s: string): number { return STATUS_RANK[s] ?? STORY_STATUS_ORDER.length; }
       function priorityRank(p: string): number { return PRIORITY_RANK[p] ?? 99; }
 
@@ -425,16 +435,7 @@ const meta = {
         }
       }
 
-      // ===== Board view (US-4.31) =====
-      const BOARD_COLUMNS = [
-        { key: 'backlog', label: 'Backlog' },
-        { key: 'ready', label: 'Ready' },
-        { key: 'in-progress', label: 'In progress' },
-        { key: 'review', label: 'In review' },
-        { key: 'blocked', label: 'Blocked' },
-        { key: 'done', label: 'Done' },
-      ];
-
+      // ===== Board view (US-4.31) — BOARD_COLUMNS hoisted to top of IIFE =====
       function renderBoardView(list: any[]) {
         if (groupBy === 'none') {
           container!.innerHTML = `<div class="p-4">${renderBoardColumns(list)}</div>`;
@@ -503,9 +504,7 @@ const meta = {
         `;
       }
 
-      // ===== Calendar view (US-4.32) =====
-      const MONTH_LABELS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
+      // ===== Calendar view (US-4.32) — MONTH_LABELS hoisted to top of IIFE =====
       function renderCalendarView(filteredStories: any[]) {
         // Update month label
         if (monthLabel) monthLabel.textContent = `${MONTH_LABELS[monthCursor.month - 1]} ${monthCursor.year}`;
