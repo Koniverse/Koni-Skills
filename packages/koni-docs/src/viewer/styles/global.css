@@ -295,3 +295,126 @@
 .prose pre.mermaid svg {
   @apply h-auto max-w-full;
 }
+
+/* Click-to-zoom affordance for rendered Mermaid diagrams. */
+.prose pre.mermaid.koni-mermaid-zoomable {
+  @apply relative cursor-zoom-in rounded-md transition;
+}
+.prose pre.mermaid.koni-mermaid-zoomable:hover {
+  @apply bg-accent/20;
+  outline: 1px dashed hsl(var(--border));
+  outline-offset: 4px;
+}
+.prose pre.mermaid.koni-mermaid-zoomable:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 4px;
+}
+.prose pre.mermaid.koni-mermaid-zoomable::after {
+  content: '⤢';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: hsl(var(--background) / 0.7);
+  color: hsl(var(--muted-foreground));
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  pointer-events: none;
+}
+.prose pre.mermaid.koni-mermaid-zoomable:hover::after,
+.prose pre.mermaid.koni-mermaid-zoomable:focus-visible::after {
+  opacity: 1;
+}
+
+/* Fullscreen modal */
+.koni-mermaid-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: hsl(var(--background) / 0.92);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+.koni-mermaid-modal.is-open {
+  display: flex;
+}
+.koni-mermaid-stage {
+  position: absolute;
+  inset: 64px 24px 32px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.koni-mermaid-stage svg {
+  pointer-events: none;
+}
+.koni-mermaid-toolbar {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 4px 16px hsl(var(--background) / 0.4);
+  z-index: 2;
+}
+.koni-mermaid-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  cursor: pointer;
+  border: 0;
+  transition: background 120ms ease-out, color 120ms ease-out;
+}
+.koni-mermaid-btn:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
+}
+.koni-mermaid-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.koni-mermaid-close {
+  margin-left: 4px;
+  border-left: 1px solid hsl(var(--border));
+  padding-left: 6px;
+  border-radius: 0 6px 6px 0;
+}
+.koni-mermaid-zoom-label {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.koni-mermaid-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground) / 0.7);
+  pointer-events: none;
+}

@@ -16,6 +16,80 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.8.1] — 2026-05-29 — Viewer Mermaid diagrams: click-to-open fullscreen modal with zoom + pan — v0.8.1
+
+Reading docs with Mermaid diagrams on a high-density screen was painful:
+the rendered SVG honours its intrinsic size, but in an 800px column a
+12-node flow diagram becomes unreadable, and there was no way to enlarge
+it without zooming the whole browser viewport. This release adds a
+focused fullscreen viewer that pops over the rest of the page.
+
+### Added — fullscreen diagram modal
+
+- **Click affordance on every rendered Mermaid diagram**
+  ([`layouts/Layout.astro`](packages/koni-docs/src/viewer/layouts/Layout.astro)
+  attaches a click handler in `attachMermaidExpand()` after each
+  `mermaid.run()` pass). The `pre.mermaid` block picks up a
+  `cursor-zoom-in`, a hover outline + tint, a top-right `⤢` glyph,
+  `role="button"`, `tabindex="0"`, and keyboard-equivalent
+  Enter / Space activation. Text-selection inside the SVG still works —
+  the click handler bails when `window.getSelection().toString()` is
+  non-empty.
+- **Modal at the document root** with a separate clone of the SVG so the
+  in-flow diagram stays untouched. The clone has its `width` / `height`
+  attributes stripped + `width: 100%; height: 100%` to fit the stage.
+- **Toolbar (top-right)**: zoom out (–), live "100%" zoom label,
+  zoom in (+), reset, and a close button (separator + Esc-shortcut
+  tooltip).
+- **Backdrop** is `bg-background/92` + `backdrop-filter: blur(6px)` so
+  the surrounding doc text fades but the modal stays anchored to the
+  page context.
+- **Hint strip** at the bottom: "Scroll to zoom · drag to pan · Esc to
+  close".
+
+### Added — interactions
+
+- **Wheel zoom** centered on cursor (factor `1.1` per notch, clamped to
+  `[0.2, 6]`). The wheel handler is `passive: false` so the page does
+  not scroll behind the modal.
+- **Drag-to-pan** with Pointer Events + `setPointerCapture` so the drag
+  survives even if the cursor leaves the stage mid-drag. Cursor flips
+  to `grabbing` while dragging.
+- **Three close paths**: Esc key (only fires when `is-open` to avoid
+  swallowing the key elsewhere), backdrop click (`ev.target === modal`),
+  and the X button. Body scroll is locked via `overflow: hidden` while
+  the modal is open and restored on close.
+- **Toolbar buttons**: ± step 25%, Reset clears scale + translate back
+  to identity.
+
+### Implementation notes
+
+- **No extra JS dependency.** The whole feature is ~120 lines of inline
+  module script in `Layout.astro` and ~120 lines of CSS in `global.css`.
+  Mermaid itself is still loaded from the jsdelivr ESM bundle once per
+  page; the modal hooks live in the same `astro:page-load` listener
+  that already drives `renderMermaid()` so they survive Astro view
+  transitions.
+- **Idempotent decoration.** `attachMermaidExpand()` and
+  `setupMermaidModalControls()` each guard with a `dataset` flag
+  (`expandBound`, `bound`) so repeated `astro:page-load` events (theme
+  flip, SSE reload) don't pile up duplicate listeners.
+- **No state collision with theme toggle.** `koni:theme` triggers a
+  re-render of the underlying SVGs only; the modal itself caches no
+  reference to the old SVG (it always reads from the live `pre.mermaid`
+  at open time).
+
+### Changed — `VERSION`, `package.json`, `KONI_DOCS_LIB_VERSION`, smoke test
+
+- All bumped to `0.8.1`. Test suite still 121/121.
+
+### Commit
+
+`pending` — backfilled in a follow-up commit per the existing ship
+pattern.
+
+---
+
 ## [0.8.0] — 2026-05-29 — Viewer `/project` multi-view expansion: Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort — v0.8.0
 
 Pillar G of EPIC-4. Closes out the three disabled view tabs that have been

@@ -244,10 +244,194 @@ const currentPath = Astro.url.pathname;
         } catch (err) {
           console.warn('[mermaid]', err);
         }
+        attachMermaidExpand();
       }
 
-      document.addEventListener('astro:page-load', renderMermaid);
+      // Decorate each rendered `pre.mermaid` with a hover-revealed expand
+      // affordance. Clicking the diagram (or the affordance) opens the
+      // fullscreen modal defined below.
+      function attachMermaidExpand() {
+        document.querySelectorAll('pre.mermaid').forEach((node) => {
+          if (node.dataset.expandBound === '1') return;
+          node.dataset.expandBound = '1';
+          node.classList.add('koni-mermaid-zoomable');
+          // Cursor + title attribute hint at the affordance for keyboard users.
+          node.setAttribute('tabindex', '0');
+          node.setAttribute('role', 'button');
+          node.setAttribute('aria-label', 'Open diagram in fullscreen');
+          node.addEventListener('click', (ev) => {
+            // If user is selecting text inside the SVG, don't intercept.
+            const sel = window.getSelection?.();
+            if (sel && sel.toString().length > 0) return;
+            openMermaidModal(node);
+          });
+          node.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault();
+              openMermaidModal(node);
+            }
+          });
+        });
+      }
+
+      // ===== Mermaid fullscreen modal =====
+      function openMermaidModal(sourceNode) {
+        const svg = sourceNode.querySelector('svg');
+        if (!svg) return;
+
+        const modal = document.getElementById('koni-mermaid-modal');
+        const stage = document.getElementById('koni-mermaid-stage');
+        if (!modal || !stage) return;
+
+        // Clone the SVG so the original stays in-flow and untouched.
+        const clone = svg.cloneNode(true);
+        // Drop any width/height attrs so the SVG can scale to the stage.
+        clone.removeAttribute('width');
+        clone.removeAttribute('height');
+        clone.style.width = '100%';
+        clone.style.height = '100%';
+        clone.style.maxWidth = '100%';
+        clone.style.maxHeight = '100%';
+
+        stage.innerHTML = '';
+        stage.appendChild(clone);
+
+        modal.dataset.scale = '1';
+        modal.dataset.tx = '0';
+        modal.dataset.ty = '0';
+        applyMermaidTransform();
+
+        modal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMermaidModal() {
+        const modal = document.getElementById('koni-mermaid-modal');
+        const stage = document.getElementById('koni-mermaid-stage');
+        if (!modal || !stage) return;
+        modal.classList.remove('is-open');
+        stage.innerHTML = '';
+        document.body.style.overflow = '';
+      }
+
+      function applyMermaidTransform() {
+        const modal = document.getElementById('koni-mermaid-modal');
+        const stage = document.getElementById('koni-mermaid-stage');
+        if (!modal || !stage) return;
+        const s = parseFloat(modal.dataset.scale || '1') || 1;
+        const tx = parseFloat(modal.dataset.tx || '0') || 0;
+        const ty = parseFloat(modal.dataset.ty || '0') || 0;
+        const scaleLabel = document.getElementById('koni-mermaid-zoom-label');
+        if (scaleLabel) scaleLabel.textContent = `${Math.round(s * 100)}%`;
+        stage.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+      }
+
+      function setupMermaidModalControls() {
+        const modal = document.getElementById('koni-mermaid-modal');
+        if (!modal || modal.dataset.bound === '1') return;
+        modal.dataset.bound = '1';
+
+        const stage = document.getElementById('koni-mermaid-stage');
+        const closeBtn = document.getElementById('koni-mermaid-close');
+        const zoomIn = document.getElementById('koni-mermaid-zoom-in');
+        const zoomOut = document.getElementById('koni-mermaid-zoom-out');
+        const zoomReset = document.getElementById('koni-mermaid-zoom-reset');
+
+        closeBtn?.addEventListener('click', closeMermaidModal);
+
+        // Click backdrop (not the stage) to close.
+        modal.addEventListener('click', (ev) => {
+          if (ev.target === modal) closeMermaidModal();
+        });
+
+        // Esc to close.
+        document.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeMermaidModal();
+          }
+        });
+
+        function nudgeScale(delta) {
+          const cur = parseFloat(modal.dataset.scale || '1') || 1;
+          const next = Math.max(0.2, Math.min(6, cur + delta));
+          modal.dataset.scale = String(next);
+          applyMermaidTransform();
+        }
+
+        zoomIn?.addEventListener('click', () => nudgeScale(0.25));
+        zoomOut?.addEventListener('click', () => nudgeScale(-0.25));
+        zoomReset?.addEventListener('click', () => {
+          modal.dataset.scale = '1';
+          modal.dataset.tx = '0';
+          modal.dataset.ty = '0';
+          applyMermaidTransform();
+        });
+
+        // Wheel to zoom (centered on cursor for natural feel).
+        stage?.addEventListener('wheel', (ev) => {
+          if (!modal.classList.contains('is-open')) return;
+          ev.preventDefault();
+          const cur = parseFloat(modal.dataset.scale || '1') || 1;
+          const factor = ev.deltaY < 0 ? 1.1 : 1 / 1.1;
+          const next = Math.max(0.2, Math.min(6, cur * factor));
+          modal.dataset.scale = String(next);
+          applyMermaidTransform();
+        }, { passive: false });
+
+        // Drag-to-pan.
+        let dragging = false;
+        let startX = 0, startY = 0, baseTx = 0, baseTy = 0;
+        stage?.addEventListener('pointerdown', (ev) => {
+          dragging = true;
+          startX = ev.clientX;
+          startY = ev.clientY;
+          baseTx = parseFloat(modal.dataset.tx || '0') || 0;
+          baseTy = parseFloat(modal.dataset.ty || '0') || 0;
+          stage.setPointerCapture(ev.pointerId);
+          stage.style.cursor = 'grabbing';
+        });
+        stage?.addEventListener('pointermove', (ev) => {
+          if (!dragging) return;
+          modal.dataset.tx = String(baseTx + (ev.clientX - startX));
+          modal.dataset.ty = String(baseTy + (ev.clientY - startY));
+          applyMermaidTransform();
+        });
+        const endDrag = (ev) => {
+          if (!dragging) return;
+          dragging = false;
+          try { stage.releasePointerCapture(ev.pointerId); } catch { /* ignore */ }
+          stage.style.cursor = '';
+        };
+        stage?.addEventListener('pointerup', endDrag);
+        stage?.addEventListener('pointercancel', endDrag);
+      }
+
+      document.addEventListener('astro:page-load', () => {
+        renderMermaid();
+        setupMermaidModalControls();
+      });
       window.addEventListener('koni:theme', renderMermaid);
     </script>
+
+    <!-- Mermaid fullscreen modal (hidden by default) -->
+    <div id="koni-mermaid-modal" class="koni-mermaid-modal" role="dialog" aria-modal="true" aria-label="Diagram fullscreen view">
+      <div class="koni-mermaid-toolbar">
+        <button id="koni-mermaid-zoom-out" type="button" class="koni-mermaid-btn" title="Zoom out" aria-label="Zoom out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+        </button>
+        <span id="koni-mermaid-zoom-label" class="koni-mermaid-zoom-label">100%</span>
+        <button id="koni-mermaid-zoom-in" type="button" class="koni-mermaid-btn" title="Zoom in" aria-label="Zoom in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg>
+        </button>
+        <button id="koni-mermaid-zoom-reset" type="button" class="koni-mermaid-btn" title="Reset zoom" aria-label="Reset zoom">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        </button>
+        <button id="koni-mermaid-close" type="button" class="koni-mermaid-btn koni-mermaid-close" title="Close (Esc)" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="koni-mermaid-stage" class="koni-mermaid-stage"></div>
+      <div class="koni-mermaid-hint">Scroll to zoom · drag to pan · Esc to close</div>
+    </div>
   </body>
 </html>
