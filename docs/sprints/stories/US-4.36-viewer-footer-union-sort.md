@@ -2,17 +2,19 @@
 id: US-4.36
 title: "Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort"
 epic: EPIC-4
-status: ready
+status: done
 priority: P1
 points: 2
 sprint: sprint-2026-W22
+version_shipped: "0.8.0"
 prd_ref:
   - FR-19
 arch_ref: []
 depends_on: []
 assignee: saltict
+commit: pending
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 ## Goal
@@ -45,51 +47,51 @@ header, signalling "this epic exists, plan stories into it".
 
 ## Acceptance criteria
 
-- [ ] **AC-1** — A `<footer>` element renders below
+- [x] **AC-1** — A `<footer>` element renders below
   `#stories-view-container` on `/project`, showing
   `N of M stories · K epics · S file(s) skipped · Updated <relative>`.
   When no filter is active, `N` equals `M`. The relative time updates
   on view switch (re-read from `loadDashboardData().meta`).
-- [ ] **AC-2** — Implement `compareStories(a, b)` shared helper:
+- [x] **AC-2** — Implement `compareStories(a, b)` shared helper:
   - 1st key: `STORY_STATUS_ORDER` rank asc
   - 2nd key: priority rank asc (P0 → P3 → missing)
   - 3rd key: `updated` desc (newest first, missing last)
   - 4th key: `id` asc (stable tie-break)
-- [ ] **AC-3** — Table view applies `compareStories` to its filtered
+- [x] **AC-3** — Table view applies `compareStories` to its filtered
   list. Board view applies it within each column. Group-by buckets
   apply it inside each bucket's content.
-- [ ] **AC-4** — When `groupBy === 'epic'`, the bucket map is
+- [x] **AC-4** — When `groupBy === 'epic'`, the bucket map is
   initialised from `loadDashboardData().epics.map(e => e.id)` BEFORE
   stories are distributed. Epics with zero stories render as group
   headers with `0 stories · 0 pts · 0/0 done` and an empty body
   (collapsible like any other bucket).
-- [ ] **AC-5** — `(no epic)` / `(no sprint)` / `(unassigned)` /
+- [x] **AC-5** — `(no epic)` / `(no sprint)` / `(unassigned)` /
   `(unshipped)` placeholder buckets still sort last regardless of
   alphabetical position.
-- [ ] **AC-6** — Skipped-files count surfaced in the footer comes
+- [x] **AC-6** — Skipped-files count surfaced in the footer comes
   from the same `meta.skipped` field that
   `loadDashboardData()` already populates (no new parser changes
   needed).
-- [ ] **AC-7** — No regression on existing Table view: search,
+- [x] **AC-7** — No regression on existing Table view: search,
   filter, group-by, URL state all continue to work.
 
 ## Tasks
 
-- [ ] **TASK-4.36.1** — Add `<footer>` partial at the bottom of
+- [x] **TASK-4.36.1** — Add `<footer>` partial at the bottom of
   `/project` rendering the four metadata pills. Use a thin
   `formatRelativeTime(date)` helper inline. (AC: 1, 6)
-- [ ] **TASK-4.36.2** — Implement `compareStories(a, b)` as a shared
+- [x] **TASK-4.36.2** — Implement `compareStories(a, b)` as a shared
   helper in `project.astro` (or `viewer/lib/sort.ts` if extracted).
   (AC: 2)
-- [ ] **TASK-4.36.3** — Apply `compareStories` to the Table render
+- [x] **TASK-4.36.3** — Apply `compareStories` to the Table render
   fn input + each group bucket's content array. (AC: 3, 7)
-- [ ] **TASK-4.36.4** — Update `renderGrouped` (or its successor) to
+- [x] **TASK-4.36.4** — Update `renderGrouped` (or its successor) to
   seed `groups` from `loadDashboardData().epics` when `groupBy ===
   'epic'`. (AC: 4)
-- [ ] **TASK-4.36.5** — Confirm placeholder-last sort still holds
+- [x] **TASK-4.36.5** — Confirm placeholder-last sort still holds
   after UNION seeding (an empty `(no epic)` bucket sorted last is
   the expected behaviour). (AC: 5)
-- [ ] **TASK-4.36.6** — Smoke-test against this repo: add a temp
+- [x] **TASK-4.36.6** — Smoke-test against this repo: add a temp
   `EPIC-9.md` with no stories, group by epic, confirm it appears as
   an empty group header. Remove the temp file. (AC: 4)
 

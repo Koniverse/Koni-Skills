@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import matter from 'gray-matter';
-import { loadCorpus, getStories, type Corpus } from '@koniverse/koni-docs/lib';
+import { loadCorpus, getStories, getEpics, type Corpus } from '@koniverse/koni-docs/lib';
 import { loadViewerConfig } from './config.ts';
 
 const DOCS_DIR = process.env.KONI_DOCS_DIR ?? path.resolve(process.cwd(), 'docs');
@@ -123,38 +123,62 @@ export function buildFileTree(files: DocNode[]): TreeNode[] {
   return root.children ?? [];
 }
 
+export interface StoryRow {
+  id: string;
+  title: string;
+  epic: string;
+  status: string;
+  priority: string;
+  points: number;
+  sprint: string;
+  assignee: string;
+  version_shipped: string;
+  commit: string;
+  slug: string;
+  updated: string;
+}
+
+export interface EpicMeta {
+  id: string;
+  title: string;
+  status: string;
+}
+
+export interface EpicStat {
+  epic: string;
+  title: string;
+  status: string;
+  total: number;
+  done: number;
+  inProgress: number;
+  inReview: number;
+  blocked: number;
+  backlog: number;
+  totalPoints: number;
+  donePoints: number;
+  shippedVersions: string[];
+}
+
 export interface DashboardData {
   corpus: Corpus;
-  stories: Array<{
-    id: string;
-    title: string;
-    epic: string;
-    status: string;
-    priority: string;
-    points: number;
-    sprint: string;
-    assignee: string;
-    version_shipped: string;
-    commit: string;
-    slug: string;
-  }>;
-  epics: Array<{
-    epic: string;
-    total: number;
-    done: number;
-    inProgress: number;
-    inReview: number;
-    blocked: number;
-    backlog: number;
-    totalPoints: number;
-    donePoints: number;
-    shippedVersions: string[];
-  }>;
+  stories: StoryRow[];
+  epics: EpicStat[];
+  epicFiles: EpicMeta[];
+}
+
+function normaliseDate(v: unknown): string {
+  if (!v) return '';
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  const s = String(v).trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const parsed = new Date(s);
+  return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString().slice(0, 10);
 }
 
 export function loadDashboardData(): DashboardData {
   const corpus = loadCorpus(DOCS_DIR);
-  const allStories = getStories(corpus).map(s => {
+  const allStories: StoryRow[] = getStories(corpus).map(s => {
     const fm = s.frontmatter;
     return {
       id: String(fm.id ?? ''),
@@ -168,16 +192,34 @@ export function loadDashboardData(): DashboardData {
       version_shipped: String(fm.version_shipped ?? ''),
       commit: String(fm.commit ?? fm.pr ?? ''),
       slug: `sprints/stories/${s.filename.replace(/\.md$/, '')}`,
+      updated: normaliseDate(fm.updated),
     };
   }).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
 
-  const buckets = new Map<string, typeof allStories>();
+  // Load EPIC-N.md files for UNION semantics (parity with koni-erp-02 §4.3).
+  // Empty epics (no stories yet) still render as group headers.
+  const epicFiles: EpicMeta[] = getEpics(corpus).map(e => {
+    const fm = e.frontmatter;
+    return {
+      id: String(fm.id ?? e.filename.replace(/\.md$/, '')),
+      title: String(fm.title ?? ''),
+      status: String(fm.status ?? ''),
+    };
+  });
+  const epicMetaById = new Map(epicFiles.map(e => [e.id, e]));
+
+  // Seed buckets from epic files first, then distribute stories.
+  const buckets = new Map<string, StoryRow[]>();
+  for (const e of epicFiles) buckets.set(e.id, []);
   for (const s of allStories) {
-    const arr = buckets.get(s.epic) ?? [];
+    const key = s.epic && s.epic !== '—' ? s.epic : '';
+    if (!key) continue;
+    const arr = buckets.get(key) ?? [];
     arr.push(s);
-    buckets.set(s.epic, arr);
+    buckets.set(key, arr);
   }
-  const epics = [...buckets.entries()].map(([epic, list]) => {
+
+  const epics: EpicStat[] = [...buckets.entries()].map(([epic, list]) => {
     const counts = { done: 0, inProgress: 0, inReview: 0, blocked: 0, backlog: 0 };
     let totalPoints = 0, donePoints = 0;
     const versions = new Set<string>();
@@ -193,8 +235,18 @@ export function loadDashboardData(): DashboardData {
       }
       if (s.version_shipped) versions.add(s.version_shipped);
     }
-    return { epic, total: list.length, ...counts, totalPoints, donePoints, shippedVersions: [...versions].sort() };
+    const meta = epicMetaById.get(epic);
+    return {
+      epic,
+      title: meta?.title ?? '',
+      status: meta?.status ?? '',
+      total: list.length,
+      ...counts,
+      totalPoints,
+      donePoints,
+      shippedVersions: [...versions].sort(),
+    };
   }).sort((a, b) => a.epic.localeCompare(b.epic, undefined, { numeric: true }));
 
-  return { corpus, stories: allStories, epics: epics.filter(e => e.epic && e.epic !== '—') };
+  return { corpus, stories: allStories, epics, epicFiles };
 }

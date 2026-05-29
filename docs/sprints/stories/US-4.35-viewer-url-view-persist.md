@@ -2,17 +2,19 @@
 id: US-4.35
 title: "Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim"
 epic: EPIC-4
-status: ready
+status: done
 priority: P1
 points: 1
 sprint: sprint-2026-W22
+version_shipped: "0.8.0"
 prd_ref:
   - FR-19
 arch_ref: []
 depends_on: []
 assignee: saltict
+commit: pending
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 ## Goal
@@ -38,37 +40,37 @@ walking them through three clicks.
 
 ## Acceptance criteria
 
-- [ ] **AC-1** — `?view=` accepts values `table` (default), `board`,
+- [x] **AC-1** — `?view=` accepts values `table` (default), `board`,
   `calendar`, `analysis`, `warning`. Unknown values fall back to
   `table` (no crash, no console error).
-- [ ] **AC-2** — On `astro:page-load`, `readUrlParams` reads `?view=`
+- [x] **AC-2** — On `astro:page-load`, `readUrlParams` reads `?view=`
   and activates the matching tab (sets `data-active="true"` on the
   tab button, swaps view container).
-- [ ] **AC-3** — Clicking a tab calls `writeUrlParams` with the new
+- [x] **AC-3** — Clicking a tab calls `writeUrlParams` with the new
   view; the URL updates via `history.replaceState` (no navigation
   event, no scroll jump).
-- [ ] **AC-4** — Legacy `?warn=1` is recognised on load; the shim
+- [x] **AC-4** — Legacy `?warn=1` is recognised on load; the shim
   silently rewrites the URL to `?view=warning` (via
   `replaceState`) and activates the Warning tab. Both forms work
   for one minor version (v0.8.x); v0.9.0 may drop the shim.
-- [ ] **AC-5** — All other URL params (`search`, `sprint`, `group`,
+- [x] **AC-5** — All other URL params (`search`, `sprint`, `group`,
   `month`) are preserved unchanged when `?view=` is added / removed.
-- [ ] **AC-6** — Removing `?view=` from the URL (e.g. clearing the
+- [x] **AC-6** — Removing `?view=` from the URL (e.g. clearing the
   param manually) activates the default Table tab on next load.
 
 ## Tasks
 
-- [ ] **TASK-4.35.1** — Extend `readUrlParams()` to parse `?view=`
+- [x] **TASK-4.35.1** — Extend `readUrlParams()` to parse `?view=`
   and store in component state. (AC: 1, 2)
-- [ ] **TASK-4.35.2** — Extend `writeUrlParams()` to write `?view=`
+- [x] **TASK-4.35.2** — Extend `writeUrlParams()` to write `?view=`
   (omit when `view === 'table'` to keep URLs short by default).
   (AC: 3, 5)
-- [ ] **TASK-4.35.3** — Update tab-button click handlers to call
+- [x] **TASK-4.35.3** — Update tab-button click handlers to call
   `writeUrlParams` then re-render the active view. (AC: 3)
-- [ ] **TASK-4.35.4** — Add the `?warn=1` → `?view=warning` compat
+- [x] **TASK-4.35.4** — Add the `?warn=1` → `?view=warning` compat
   shim in `readUrlParams` (translate, then drop the legacy param via
   `replaceState`). (AC: 4)
-- [ ] **TASK-4.35.5** — Smoke-test: open
+- [x] **TASK-4.35.5** — Smoke-test: open
   `/project?view=board&group=epic`, reload — Board view by epic
   persists. Open `/project?warn=1`, observe URL silently becomes
   `/project?view=warning`. Open `/project?view=banana`, observe

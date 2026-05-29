@@ -2,17 +2,19 @@
 id: US-4.31
 title: "Viewer `/project` Board view — 6-column kanban + group-by"
 epic: EPIC-4
-status: ready
+status: done
 priority: P0
 points: 3
 sprint: sprint-2026-W22
+version_shipped: "0.8.0"
 prd_ref:
   - FR-19
 arch_ref: []
 depends_on: []
 assignee: saltict
+commit: pending
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 ## Goal
@@ -40,50 +42,50 @@ show without scrolling.
 
 ## Acceptance criteria
 
-- [ ] **AC-1** — **Given** a running `koni-docs preview`, **When** the
+- [x] **AC-1** — **Given** a running `koni-docs preview`, **When** the
   user clicks the Board tab, **Then** the tab loses its `disabled` /
   "Coming soon" state and the view container swaps from Table to
   Board within one frame.
-- [ ] **AC-2** — Six columns render in this order with header
+- [x] **AC-2** — Six columns render in this order with header
   `<label> · <count>`: `Backlog`, `Ready`, `In progress`, `Review`,
   `Blocked`, `Done`. Stories with `status: reverted` or `deprecated`
   do not appear on the Board (they remain in Table).
-- [ ] **AC-3** — Card content reads directly from frontmatter and
+- [x] **AC-3** — Card content reads directly from frontmatter and
   shows: title (linked to `/docs/<slug>`), priority chip (only if
   set), epic, sprint, assignee, commit short-SHA (each only when the
   field is present). Missing fields render nothing — no `—`
   placeholder.
-- [ ] **AC-4** — Within a column, cards sort by `compareStories`
+- [x] **AC-4** — Within a column, cards sort by `compareStories`
   (priority asc, then `updated` desc). When two stories share both,
   fall back to `id` asc for stable order.
-- [ ] **AC-5** — **Given** `group=epic|sprint|assignee|shipped`,
+- [x] **AC-5** — **Given** `group=epic|sprint|assignee|shipped`,
   **When** the Board renders, **Then** N stacked 6-column kanbans
   appear — one per bucket — each with a collapsible header matching
   the Table group-header style (`<label>: <key>` left, `N stories ·
   P pts · D/N done` right). Placeholder buckets (`(no epic)`,
   `(unassigned)`, etc.) sort last.
-- [ ] **AC-6** — Sprint filter and search filter both apply to Board
+- [x] **AC-6** — Sprint filter and search filter both apply to Board
   (same `tableBoardStories` semantics as Table). An empty column
   renders an "—" placeholder centred in the column body so the column
   outline doesn't collapse to zero width.
-- [ ] **AC-7** — Switching back to Table preserves filter / group /
+- [x] **AC-7** — Switching back to Table preserves filter / group /
   search state without re-running the data fetch.
 
 ## Tasks
 
-- [ ] **TASK-4.31.1** — Rename `#stories-table-wrapper` to
+- [x] **TASK-4.31.1** — Rename `#stories-table-wrapper` to
   `#stories-view-container` and update existing Table renderer to
   target it. (AC: 1)
-- [ ] **TASK-4.31.2** — Add `renderBoard(list, groupBy)` function in
+- [x] **TASK-4.31.2** — Add `renderBoard(list, groupBy)` function in
   the inline `<script>` of `project.astro`. (AC: 2, 3, 6)
-- [ ] **TASK-4.31.3** — Implement `compareStories(a, b)` helper
+- [x] **TASK-4.31.3** — Implement `compareStories(a, b)` helper
   (shared with US-4.36); apply inside each Board column. (AC: 4)
-- [ ] **TASK-4.31.4** — Extend the tab-click dispatcher: when
+- [x] **TASK-4.31.4** — Extend the tab-click dispatcher: when
   `view === 'board'`, route to `renderBoard`; remove the `disabled`
   attribute + "Coming soon" title from the Board tab button. (AC: 1)
-- [ ] **TASK-4.31.5** — Reuse the existing `wireAccordion()` for
+- [x] **TASK-4.31.5** — Reuse the existing `wireAccordion()` for
   collapsible stacked-kanban headers when `group !== 'none'`. (AC: 5)
-- [ ] **TASK-4.31.6** — Smoke-test via `npm run docs:preview` against
+- [x] **TASK-4.31.6** — Smoke-test via `npm run docs:preview` against
   this repo's corpus (≥36 stories across EPIC-1/2/3/4) and confirm:
   Backlog column non-empty for EPIC-3, Done column heavy for EPIC-4,
   Blocked column shows zero (or current real count). (AC: 1-6)

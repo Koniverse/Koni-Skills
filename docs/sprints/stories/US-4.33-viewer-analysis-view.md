@@ -2,10 +2,11 @@
 id: US-4.33
 title: "Viewer `/project` Analysis view — KPIs, status breakdown, commit heatmap, epic progress"
 epic: EPIC-4
-status: ready
+status: done
 priority: P0
 points: 5
 sprint: sprint-2026-W22
+version_shipped: "0.8.0"
 prd_ref:
   - FR-19
 arch_ref: []
@@ -13,8 +14,9 @@ depends_on:
   - US-4.9
   - US-4.32
 assignee: saltict
+commit: pending
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 ## Goal
@@ -41,64 +43,64 @@ Table or Board. Sprint filter still applies (a user filtering to
 
 ## Acceptance criteria
 
-- [ ] **AC-1** — Analysis tab on `/project` loses its `disabled` /
+- [x] **AC-1** — Analysis tab on `/project` loses its `disabled` /
   "Coming soon" state. Clicking it renders the five panels below in
   a responsive grid (1-col on narrow viewports, 2-col on ≥ 1024px).
-- [ ] **AC-2** — Hero KPIs row shows five cards: **Start Date**
+- [x] **AC-2** — Hero KPIs row shows five cards: **Start Date**
   (earliest sprint `start`), **Days Elapsed** (today − start),
   **Stories** (`N / M done`), **Completion** (percentage + filled
   progress bar), **Warnings** (count from `findStoryWarnings`,
   clicking opens `?view=warning`).
-- [ ] **AC-3** — Status breakdown card lists each `STORY_STATUS_ORDER`
+- [x] **AC-3** — Status breakdown card lists each `STORY_STATUS_ORDER`
   status with a horizontal bar whose width is proportional to count,
   count rendered as right-aligned label. Statuses with zero stories
   still render (length-zero bar) — same UNION rationale as epic
   progress.
-- [ ] **AC-4** — Stories-completed-last-30-days bar chart: one bar
+- [x] **AC-4** — Stories-completed-last-30-days bar chart: one bar
   per day for the trailing 30 days, height proportional to stories
   flipped to `status: done` on that day (proxy: `updated` field).
   X-axis labels every fifth day; empty days render a 0-height bar
   stub for visual continuity.
-- [ ] **AC-5** — 26-week commit-activity heatmap: rows = Sun-Sat,
+- [x] **AC-5** — 26-week commit-activity heatmap: rows = Sun-Sat,
   cols = week, intensity bucketed into 5 levels (none /  q1 / q2 /
   q3 / q4). Source: new `loadCommitActivity()` helper in
   `viewer/lib/calendar.ts` (or reuse `loadDailyCommits()` and
   bucket here). Hover tooltip per cell shows `<count> commits on
   <YYYY-MM-DD>`.
-- [ ] **AC-6** — Epic progress card lists every epic from
+- [x] **AC-6** — Epic progress card lists every epic from
   `loadDashboardData().epics` (UNION with `parseStories.epic` values
   — see US-4.36 implementation). Each row: ID, title, status badge,
   `done/total` count, progress bar. Sort: epic id ascending. Empty
   epics (zero stories) still render with `0/0` and an empty progress
   bar — they're real, the renderer must surface them.
-- [ ] **AC-7** — Sprint filter applies; search filter does NOT
+- [x] **AC-7** — Sprint filter applies; search filter does NOT
   (ERP §4.1 invariant). When sprint = `all`, panels reflect the full
   corpus.
-- [ ] **AC-8** — Schema-graceful: when there are zero stories,
+- [x] **AC-8** — Schema-graceful: when there are zero stories,
   zero sprints, or zero commits, each panel renders a polite empty-
   state (`< no <thing> recorded >`) instead of crashing.
 
 ## Tasks
 
-- [ ] **TASK-4.33.1** — Create `viewer/lib/analysis.ts` exporting
+- [x] **TASK-4.33.1** — Create `viewer/lib/analysis.ts` exporting
   `buildAnalysisStats({stories, epics, sprints, commits})` returning a
   typed `AnalysisStats` shape covering all five panels. (AC: 2-6)
-- [ ] **TASK-4.33.2** — Add `loadCommitActivity()` in
+- [x] **TASK-4.33.2** — Add `loadCommitActivity()` in
   `viewer/lib/calendar.ts` (reuse `loadDailyCommits()` from US-4.32
   if landed first; otherwise stand-alone using `lib/git`). (AC: 5)
-- [ ] **TASK-4.33.3** — Implement `renderAnalysis(stats)` inside
+- [x] **TASK-4.33.3** — Implement `renderAnalysis(stats)` inside
   `project.astro` inline `<script>`; emit one section per panel with
   inline SVG / divs. No charting library. (AC: 1-6)
-- [ ] **TASK-4.33.4** — Wire the Warnings KPI link to navigate to
+- [x] **TASK-4.33.4** — Wire the Warnings KPI link to navigate to
   `?view=warning` (depends on US-4.35 if landed; else fall back to
   legacy `?warn=1`). (AC: 2)
-- [ ] **TASK-4.33.5** — Remove `disabled` + "Coming soon" from the
+- [x] **TASK-4.33.5** — Remove `disabled` + "Coming soon" from the
   Analysis tab; extend dispatcher for `view === 'analysis'`. (AC: 1)
-- [ ] **TASK-4.33.6** — Implement search-unaffected behaviour by
+- [x] **TASK-4.33.6** — Implement search-unaffected behaviour by
   passing `sprintFiltered` (not `tableBoardStories`) to
   `buildAnalysisStats`. (AC: 7)
-- [ ] **TASK-4.33.7** — Empty-state handling per panel. (AC: 8)
-- [ ] **TASK-4.33.8** — Smoke-test against this repo's corpus:
+- [x] **TASK-4.33.7** — Empty-state handling per panel. (AC: 8)
+- [x] **TASK-4.33.8** — Smoke-test against this repo's corpus:
   Completion ≥ 80% expected (most EPIC-4 done); commit heatmap
   visible cluster in W22 column; Epic progress shows EPIC-3 with
   `0/1 done` (only US-3.1, backlog). (AC: 1-7)

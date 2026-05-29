@@ -2,18 +2,20 @@
 id: US-4.34
 title: "Viewer `/project` Warning view — required-field validator (replace filter-only impl)"
 epic: EPIC-4
-status: ready
+status: done
 priority: P0
 points: 3
 sprint: sprint-2026-W22
+version_shipped: "0.8.0"
 prd_ref:
   - FR-19
 arch_ref: []
 depends_on:
   - US-4.7
 assignee: saltict
+commit: pending
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 ## Goal
@@ -59,49 +61,49 @@ since it's optional, but if it were required, `[]` would miss).
 
 ## Acceptance criteria
 
-- [ ] **AC-1** — Warning tab no longer toggles a filter on top of
+- [x] **AC-1** — Warning tab no longer toggles a filter on top of
   the Table; clicking it swaps `#stories-view-container` to a
   dedicated `renderWarning(warnings)` output.
-- [ ] **AC-2** — New module `viewer/lib/warnings.ts` exports
+- [x] **AC-2** — New module `viewer/lib/warnings.ts` exports
   `findStoryWarnings(stories): StoryWarning[]` implementing the
   required-field-by-status logic above. Returns one
   `{ id, title, epic, status, missing: string[] }` per offending
   story.
-- [ ] **AC-3** — `isMissing(v)` predicate: `undefined`, `null`,
+- [x] **AC-3** — `isMissing(v)` predicate: `undefined`, `null`,
   whitespace-only string, OR `Array.isArray(v) && v.length === 0` →
   missing. `points: 0` → present (number type, value zero).
-- [ ] **AC-4** — Rendered columns: `ID · Title · Epic · Status ·
+- [x] **AC-4** — Rendered columns: `ID · Title · Epic · Status ·
   Missing fields`. Missing fields render as small red-tinted chips
   (one per field). Title links to `/docs/<slug>`.
-- [ ] **AC-5** — Sort: missing-count desc → `STORY_STATUS_ORDER`
+- [x] **AC-5** — Sort: missing-count desc → `STORY_STATUS_ORDER`
   rank asc → `id` asc. Stable.
-- [ ] **AC-6** — Warning view IGNORES the sprint filter (global
+- [x] **AC-6** — Warning view IGNORES the sprint filter (global
   visibility, ERP §4.8). Search filter still applies (matches
   `id`/`title`/`epic`/`assignee` substrings).
-- [ ] **AC-7** — Empty-state when `findStoryWarnings(stories)` is
+- [x] **AC-7** — Empty-state when `findStoryWarnings(stories)` is
   empty: render a single panel `✓ No warnings — all non-backlog
   stories have required fields.` instead of an empty table.
-- [ ] **AC-8** — Legacy `?warn=1` URL param continues to work for one
+- [x] **AC-8** — Legacy `?warn=1` URL param continues to work for one
   minor version: it routes to the new Warning view (handled by
   US-4.35's compat shim). No legacy behaviour preserved beyond
   routing.
 
 ## Tasks
 
-- [ ] **TASK-4.34.1** — Create `viewer/lib/warnings.ts` with
+- [x] **TASK-4.34.1** — Create `viewer/lib/warnings.ts` with
   `findStoryWarnings` + `isMissing` helpers; unit tests covering
   all status branches + `points: 0` edge case. (AC: 2, 3)
-- [ ] **TASK-4.34.2** — Add `renderWarning(warnings)` function in
+- [x] **TASK-4.34.2** — Add `renderWarning(warnings)` function in
   `project.astro` inline `<script>`. (AC: 1, 4, 7)
-- [ ] **TASK-4.34.3** — Implement sort comparator
+- [x] **TASK-4.34.3** — Implement sort comparator
   `(a, b) => b.missing.length - a.missing.length || statusRank(a) -
   statusRank(b) || a.id.localeCompare(b.id)`. (AC: 5)
-- [ ] **TASK-4.34.4** — Remove the existing `warnTab` click handler
+- [x] **TASK-4.34.4** — Remove the existing `warnTab` click handler
   that toggles `filters.warnOnly`; replace with the standard tab
   dispatcher routing to `renderWarning`. (AC: 1)
-- [ ] **TASK-4.34.5** — Decouple Warning view from sprint filter
+- [x] **TASK-4.34.5** — Decouple Warning view from sprint filter
   state (always reads `stories`, not `sprintFiltered`). (AC: 6)
-- [ ] **TASK-4.34.6** — Smoke-test against this repo: induce a
+- [x] **TASK-4.34.6** — Smoke-test against this repo: induce a
   warning by stripping a required field from a fixture story; assert
   the row appears in Warning with correct chips; restore the field.
   (AC: 1-7)

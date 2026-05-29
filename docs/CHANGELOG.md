@@ -16,6 +16,187 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.8.0] — 2026-05-29 — Viewer `/project` multi-view expansion: Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort — v0.8.0
+
+Pillar G of EPIC-4. Closes out the three disabled view tabs that have been
+sitting in the `/project` toolbar since US-4.20 ported the Stories Tracker
+from Koni-Finance-Final at v0.7.0, and replaces the misnamed "Warning"
+filter with the actual required-field-by-status validator from
+[koni-erp-02 `Docs/pod-project-screen.md`](https://github.com/Koniverse/koni-erp-02/blob/main/Docs/pod-project-screen.md).
+
+Six stories ship together — **US-4.31 … US-4.36** — under a single minor
+bump because each view shares the same data pipeline, sort comparator,
+URL state machine, and footer; splitting them across patch releases
+would have churned the same files four times without ever landing the
+user-visible promise of "Board / Calendar / Analysis / Warning all work."
+
+### Added — Board view (US-4.31)
+
+- **Six kanban columns** matching `STORY_STATUS_ORDER` minus `reverted`
+  and `deprecated`: `Backlog`, `Ready`, `In progress`, `In review`,
+  `Blocked`, `Done`. Within a column, cards sort by `compareStories`
+  (priority asc → updated desc → id asc).
+- **Card content reads directly from frontmatter** — title (linked to
+  `/docs/<slug>`), priority chip, epic, sprint, assignee, commit short-SHA.
+  Missing fields render nothing rather than a placeholder, so a card
+  with only `id + title` collapses cleanly.
+- **Group-by support**: `epic` / `sprint` / `assignee` / `shipped` each
+  render N stacked 6-column kanbans, one per bucket, each with a
+  collapsible header mirroring the Table group-header style.
+
+### Added — Calendar view (US-4.32)
+
+- **Month grid** (7 × 6) laid out by `updated` date for stories +
+  commits-per-day overlay from local `git log`. Each day cell shows two
+  chips (`Ns` stories + `Nc` commits) when non-zero; the cell body is
+  empty when both are zero.
+- **Click-to-expand day panel**: shows that day's stories as
+  `[US-X.Y] <title>` links and commits as `<sha7> <subject>` rows.
+  Toggleable per-day; multiple days can be expanded at once.
+- **Prev/next month navigation** via the new `?month=YYYY-MM` URL param;
+  default = today's month.
+- **`viewer/lib/calendar.ts`** — new helper module exporting
+  `loadDailyCommits()` (`Map<dateISO, CommitMeta[]>`),
+  `loadCommitActivity(weeks)` (for the heatmap), and `buildMonthGrid()`.
+  Wraps `lib/git`'s `isGitRepo` + raw `git log -n 2000 --date=short
+  --pretty=format:%H<US>%ad<US>%an<US>%s` (delimited with U+001F to
+  survive subjects containing pipes or colons). Module-cached for the
+  process lifetime; `--watch` (US-4.21) invalidates by restart.
+
+### Added — Analysis view (US-4.33)
+
+- **Hero KPI row**: start date (earliest sprint `start`), days elapsed,
+  `N / M done`, completion % with a filled progress bar, warning count
+  (the card itself links to `?view=warning`).
+- **Status breakdown card**: horizontal bars per `STORY_STATUS_ORDER`
+  value, count right-aligned. Statuses with zero stories still render
+  (length-zero bar) — same UNION rationale as the epic progress card.
+- **Stories completed (last 30 days)**: vertical bar chart, one bar per
+  day, height proportional to stories flipped to `status: done` that day
+  (proxy: `updated` field). Empty days render a 2 px stub for visual
+  continuity.
+- **Commit activity heatmap** — 26 weeks × 7 days, GitHub-style with 5
+  intensity buckets. Hover tooltip per cell shows `<count> commits on
+  <YYYY-MM-DD>`.
+- **Epic progress card** with UNION semantics: every epic from
+  `loadDashboardData().epics` (UNION of parsed `EPIC-N.md` files +
+  story-referenced ids) renders with title, status badge, `done/total`,
+  and progress bar — even when an epic has zero stories.
+- **Search-unaffected by design** (ERP §4.1): panel numbers stay stable
+  while a user types in the search box for Table/Board. Sprint filter
+  still applies.
+- **`viewer/lib/analysis.ts`** — new helper module exporting
+  `buildAnalysisStats({stories, epics, sprints})` returning the typed
+  `AnalysisStats` shape consumed by the inline renderer.
+
+### Changed — Warning view (US-4.34) — replaces US-4.20's filter-only impl
+
+- **Dedicated warning table**, not a status-filter on top of Table. The
+  tab now answers "what's actually broken" instead of "rows where status
+  happens to be `blocked` or `backlog`".
+- **`viewer/lib/warnings.ts`** — new helper module exporting
+  `findStoryWarnings(stories)` implementing the required-field-by-status
+  contract from koni-erp-02 §4.8:
+  - non-backlog (ready / in-progress / review / blocked / reverted /
+    deprecated): require `priority`, `points`, `sprint`, `assignee`
+  - `done`: additionally require `version_shipped`, `commit`
+  - `points: 0` is **present** (legit zero-point story); whitespace and
+    `—` placeholder are missing; empty arrays count as missing for
+    list-form fields.
+- **Columns**: `ID · Title · Epic · Status · Missing fields (chips)`.
+  Each missing field renders as a red-tinted chip. Sort: missing-count
+  desc → status order → id asc.
+- **Warning view ignores the sprint filter** (global visibility) so a
+  contributor can see all gaps at once regardless of the active sprint.
+  Search filter still applies.
+- **Empty-state panel** when `findStoryWarnings(stories)` returns zero:
+  `✓ No warnings — all non-backlog stories have required fields.`
+- **Warning-count chip in the toolbar tab** — a small destructive-tinted
+  badge with the live count, hidden when the count is zero.
+
+### Added — URL state (US-4.35)
+
+- **`?view=table|board|calendar|analysis|warning`** persists the active
+  view across reload and deep-link share. Default = `table`. Unknown
+  values fall back silently to `table` with no console error.
+- **Legacy `?warn=1` compat shim**: on `astro:page-load` we detect the
+  legacy param, rewrite the URL to `?view=warning` via
+  `history.replaceState`, and activate the Warning tab. Supported for
+  one minor version (v0.8.x); v0.9.0 may drop the shim.
+- **All other params preserved** unchanged when `?view=` is added or
+  removed: `?search`, `?sprint`, `?group`, `?month`.
+- **`?month=YYYY-MM`** added for Calendar month navigation; defaults to
+  today's month when absent.
+
+### Added — Footer + UNION buckets + default sort (US-4.36)
+
+- **Footer metadata strip** below `#stories-view-container`:
+  `<N> of <M> stories · <K> epics · <S> sprints · Updated <relative>`.
+  `<N>` reflects the current view's filtered count; `<M>` the corpus
+  total. Relative-time formatter rolls `seconds → m → h → d` ago.
+- **UNION-semantics epic buckets**: when `group=epic` is active, the
+  bucket map is seeded from `loadDashboardData().epicFiles` BEFORE
+  stories are distributed. Epics with zero stories render as group
+  headers with `0 stories · 0 pts · 0/0 done` and an empty body
+  (collapsible like any other bucket).
+- **`viewer/lib/sort.ts`** — new module exporting `STORY_STATUS_ORDER`,
+  `statusRank(s)`, `priorityRank(p)`, and `compareStories(a, b)`.
+  Applied in Table, Board (within column), and inside each group
+  bucket. Tie-break chain: status asc → priority asc → updated desc →
+  id asc (numeric collation).
+- **Placeholder buckets always sort last** regardless of alphabetical
+  position: `(no epic)`, `(no sprint)`, `(unassigned)`, `(unshipped)`.
+
+### Added — corpus + viewer lib infrastructure
+
+- **`viewer/lib/corpus.ts`** — `loadDashboardData()` now returns
+  `epicFiles: EpicMeta[]` alongside `stories` and `epics`. The `epics`
+  array gains `title` and `status` from the parsed `EPIC-N.md`
+  frontmatter (previously only stat-counts). Story shape gains the
+  `updated: string` field (normalised to `YYYY-MM-DD`) needed by the
+  sort comparator.
+
+### Added — tests
+
+- **`__tests__/viewer/sort.test.ts`** (8 cases) covers `statusRank`,
+  `priorityRank`, and the four-level `compareStories` tie-break chain.
+- **`__tests__/viewer/warnings.test.ts`** (10 cases) covers the full
+  required-field-by-status matrix: backlog never flags, non-backlog
+  flags 4 fields, done flags 6, `points: 0` is present, whitespace and
+  `—` are missing.
+- Test suite total: **121 / 121 pass** (was 103, +18 new).
+
+### Changed — VERSION + skill manifest
+
+- `VERSION` → `0.8.0`. `packages/koni-docs/package.json` → `0.8.0`.
+  `KONI_DOCS_LIB_VERSION` constant → `0.8.0`. Smoke test asserts new
+  value.
+
+### What's still TODO for v0.9
+
+- **Per-assignee Analysis panel** (koni-erp-02 §4.7 "people stats") —
+  deferred. The current Analysis dashboard intentionally omits this.
+- **Story-level commit links** on Board cards — currently the SHA short
+  hash is plain text. Link target needs configurable upstream remote.
+- **Test coverage for `calendar.ts` + `analysis.ts`** — both depend on
+  git, which is hard to mock. Currently covered by the live smoke test.
+
+### Reference design
+
+[koni-erp-02 `Docs/pod-project-screen.md`](https://github.com/Koniverse/koni-erp-02/blob/main/Docs/pod-project-screen.md)
+— the read-only Project screen that ships the same 5-view tracker
+against pod-attached GitHub repos. Our deltas from ERP (all intentional):
+no multi-repo aggregation, no DB-first caching, no OAuth fallback, no
+per-assignee people stats, no manual Refresh button (`--watch` from
+US-4.21 covers that role).
+
+### Commit
+
+`pending` — backfilled in a follow-up commit per the v0.7.3 / v0.7.2
+ship pattern.
+
+---
+
 ## [0.7.4] — 2026-05-28 — Lib resilience: surface YAML parse-failure paths + guard block-scalar quoting — v0.7.4
 
 Two small but load-bearing lib fixes that had been sitting in the working tree as in-flight WIP. Both ship as a single patch since each pairs source + regression test and neither changes the public API.

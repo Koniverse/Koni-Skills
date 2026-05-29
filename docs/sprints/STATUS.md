@@ -1,7 +1,7 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-05-28 10:31:37 UTC
+> Last generated: 2026-05-29 01:59:44 UTC
 > Total stories: 45
 
 ## 📋 Backlog (1)
@@ -10,16 +10,9 @@
 |---|---|---|---|---|---|---|
 | US-3.1 | Define plugin-skill pattern (Supabase, Next.js) | EPIC-3 | P1 | 8 | — | — |
 
-## 🟢 Ready (6)
+## 🟢 Ready (0)
 
-| ID | Title | Epic | Pri | Points | Sprint | Assignee |
-|---|---|---|---|---|---|---|
-| US-4.31 | Viewer `/project` Board view — 6-column kanban + group-by | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
-| US-4.32 | Viewer `/project` Calendar view — month grid + commits-per-day overlay | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
-| US-4.33 | Viewer `/project` Analysis view — KPIs, status breakdown, commit heatmap, epic progress | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
-| US-4.34 | Viewer `/project` Warning view — required-field validator (replace filter-only impl) | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
-| US-4.35 | Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim | EPIC-4 | P1 | 1 | sprint-2026-W22 | saltict |
-| US-4.36 | Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort | EPIC-4 | P1 | 2 | sprint-2026-W22 | saltict |
+_No stories_
 
 ## 🟡 In Progress (0)
 
@@ -29,7 +22,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (38)
+## ✅ Done (44)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -71,6 +64,12 @@ _No stories_
 | US-4.28 | Publish @koniverse/koni-docs@0.7.0 to npm | EPIC-4 | P2 | 1 | sprint-2026-W22 | saltict |
 | US-4.29 | Label-only PRD heading convention + legacy-number fallback in sync | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
 | US-4.30 | Frontmatter Reference Spec + RULE-17 + arch_ref / depends_on schema fields | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
+| US-4.31 | Viewer `/project` Board view — 6-column kanban + group-by | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
+| US-4.32 | Viewer `/project` Calendar view — month grid + commits-per-day overlay | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
+| US-4.33 | Viewer `/project` Analysis view — KPIs, status breakdown, commit heatmap, epic progress | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
+| US-4.34 | Viewer `/project` Warning view — required-field validator (replace filter-only impl) | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
+| US-4.35 | Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim | EPIC-4 | P1 | 1 | sprint-2026-W22 | saltict |
+| US-4.36 | Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort | EPIC-4 | P1 | 2 | sprint-2026-W22 | saltict |
 
 ## 🚫 Blocked (0)
 
@@ -85,10 +84,10 @@ _No stories_
 ## Summary
 
 - 📋 **Backlog**: 1
-- 🟢 **Ready**: 6
+- 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 38
+- ✅ **Done**: 44
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

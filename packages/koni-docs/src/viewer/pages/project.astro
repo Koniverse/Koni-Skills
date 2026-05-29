@@ -1,15 +1,42 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { scanDocFiles, buildFileTree, loadDashboardData } from '../lib/corpus.ts';
+import { loadDailyCommits } from '../lib/calendar.ts';
+import { buildAnalysisStats } from '../lib/analysis.ts';
+import { findStoryWarnings } from '../lib/warnings.ts';
+import { getSprints } from '@koniverse/koni-docs/lib';
 
 const allDocs = await scanDocFiles();
 const tree = buildFileTree(allDocs);
-const { stories } = loadDashboardData();
+const dashboard = loadDashboardData();
+const { stories, epics, epicFiles, corpus } = dashboard;
 
-const uniqueSprints = [...new Set(stories.map((s) => s.sprint))].filter((s) => s && s !== '—').sort() as string[];
-const uniqueEpics = [...new Set(stories.map((s) => s.epic))].filter((e) => e && e !== '—').sort() as string[];
-const uniqueAssignees = [...new Set(stories.map((s) => s.assignee))].filter((a) => a && a !== '—').sort() as string[];
-const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean).sort() as string[];
+const sprintsRaw = getSprints(corpus).map(s => ({
+  id: String(s.frontmatter.id ?? s.filename.replace(/\.md$/, '')),
+  start: typeof s.frontmatter.start === 'string' ? s.frontmatter.start : '',
+  end: typeof s.frontmatter.end === 'string' ? s.frontmatter.end : '',
+}));
+
+const dailyCommits = loadDailyCommits();
+const dailyCommitsObj: Record<string, Array<{ shortSha: string; subject: string; author: string }>> = {};
+for (const [date, list] of dailyCommits.entries()) {
+  dailyCommitsObj[date] = list.map(c => ({ shortSha: c.shortSha, subject: c.subject, author: c.author }));
+}
+
+const analysisStats = buildAnalysisStats(stories, epics, sprintsRaw);
+const warnings = findStoryWarnings(stories);
+
+const uniqueSprints = [...new Set(stories.map(s => s.sprint))].filter(s => s && s !== '—').sort() as string[];
+
+const today = new Date();
+const defaultMonth = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}`;
+
+const meta = {
+  totalStories: stories.length,
+  totalEpics: epicFiles.length,
+  totalSprints: sprintsRaw.length,
+  generatedAt: new Date().toISOString(),
+};
 ---
 
 <Layout title="Project Stories" tree={tree}>
@@ -31,95 +58,53 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
     <div class="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3 shadow-sm">
       <!-- View tabs -->
       <div class="flex items-center gap-1 font-mono text-xs uppercase tracking-wider">
-        <button
-          class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
-          data-view="table"
-          data-active="true"
-        >
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M3 9h18M3 15h18M9 3v18" />
-          </svg>
+        <button class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary text-muted-foreground hover:bg-accent" data-view="table" data-active="true">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M3 15h18M9 3v18" /></svg>
           Table
         </button>
-        <button
-          class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 text-muted-foreground transition hover:bg-accent disabled:opacity-50"
-          data-view="board"
-          disabled
-          title="Coming soon"
-        >
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="18" rx="1" />
-            <rect x="14" y="3" width="7" height="11" rx="1" />
-          </svg>
+        <button class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary text-muted-foreground hover:bg-accent" data-view="board">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="3" width="7" height="11" rx="1" /></svg>
           Board
         </button>
-        <button
-          class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 text-muted-foreground transition hover:bg-accent disabled:opacity-50"
-          data-view="calendar"
-          disabled
-          title="Coming soon"
-        >
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
+        <button class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary text-muted-foreground hover:bg-accent" data-view="calendar">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
           Calendar
         </button>
-        <button
-          class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 text-muted-foreground transition hover:bg-accent disabled:opacity-50"
-          data-view="analysis"
-          disabled
-          title="Coming soon"
-        >
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 3v18h18" />
-            <path d="m7 15 4-4 3 3 5-6" />
-          </svg>
+        <button class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary text-muted-foreground hover:bg-accent" data-view="analysis">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 15 4-4 3 3 5-6" /></svg>
           Analysis
         </button>
-        <button
-          class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 text-muted-foreground transition hover:bg-accent"
-          data-view="warning"
-          id="filter-blocked-tab"
-          title="Show blocked / no-status only"
-        >
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
-            <path d="M12 9v4M12 17h.01" />
-          </svg>
+        <button class="view-tab inline-flex items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 transition data-[active=true]:border-destructive data-[active=true]:bg-destructive/10 data-[active=true]:text-destructive text-muted-foreground hover:bg-accent" data-view="warning" title="Stories past backlog missing required fields">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" /><path d="M12 9v4M12 17h.01" /></svg>
           Warning
+          <span id="warning-count-chip" class="ml-1 hidden rounded-full bg-destructive/15 px-1.5 py-0 text-[10px] font-bold text-destructive"></span>
         </button>
       </div>
 
       <!-- Search -->
       <div class="relative ml-2 min-w-[200px] flex-1 md:max-w-[280px]">
-        <svg class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.3-4.3" />
-        </svg>
-        <input
-          type="text"
-          id="story-search"
-          placeholder="Search stories..."
-          class="h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
+        <svg class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+        <input type="text" id="story-search" placeholder="Search stories..." class="h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
       </div>
 
       <!-- Sprint filter -->
       <label class="flex items-center gap-1.5">
         <span class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Sprint:</span>
-        <select
-          id="filter-sprint"
-          class="h-8 rounded-md border border-input bg-background px-2 pr-7 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <select id="filter-sprint" class="h-8 rounded-md border border-input bg-background px-2 pr-7 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <option value="all">All sprints</option>
           {uniqueSprints.map((s) => <option value={s}>{s}</option>)}
         </select>
       </label>
 
+      <!-- Calendar month nav (visible only on Calendar view) -->
+      <div id="month-nav" class="hidden items-center gap-1.5">
+        <button id="month-prev" class="inline-flex size-7 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition hover:bg-accent hover:text-foreground" title="Previous month">‹</button>
+        <span id="month-label" class="min-w-[110px] text-center font-mono text-xs uppercase tracking-wider text-foreground"></span>
+        <button id="month-next" class="inline-flex size-7 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition hover:bg-accent hover:text-foreground" title="Next month">›</button>
+      </div>
+
       <!-- Group buttons -->
-      <div class="ml-auto flex items-center gap-1.5">
+      <div id="group-controls" class="ml-auto flex items-center gap-1.5">
         <span class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Group</span>
         <div class="inline-flex items-center gap-0.5 rounded-md border border-border bg-background p-0.5 font-mono text-[11px] uppercase tracking-wider">
           <button class="group-btn rounded-[5px] px-2.5 py-1 text-muted-foreground transition hover:text-foreground data-[active=true]:bg-primary/15 data-[active=true]:text-primary data-[active=true]:ring-1 data-[active=true]:ring-inset data-[active=true]:ring-primary" data-group="none" data-active="true">None</button>
@@ -129,46 +114,91 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
           <button class="group-btn rounded-[5px] px-2.5 py-1 text-muted-foreground transition hover:text-foreground data-[active=true]:bg-primary/15 data-[active=true]:text-primary data-[active=true]:ring-1 data-[active=true]:ring-inset data-[active=true]:ring-primary" data-group="version_shipped">Shipped</button>
         </div>
       </div>
-
-      <!-- Hidden helper selects (used by JS for grouping options) -->
-      <select id="filter-epic" class="hidden">
-        <option value="all">All</option>
-        {uniqueEpics.map((e) => <option value={e}>{e}</option>)}
-      </select>
-      <select id="filter-assignee" class="hidden">
-        <option value="all">All</option>
-        {uniqueAssignees.map((a) => <option value={a}>{a}</option>)}
-      </select>
-      <select id="filter-status" class="hidden">
-        <option value="all">All</option>
-        {uniqueStatuses.map((s) => <option value={s}>{s}</option>)}
-      </select>
     </div>
 
-    <!-- Table container -->
-    <div id="stories-table-wrapper" class="overflow-hidden rounded-xl border border-border bg-card shadow-sm"></div>
+    <!-- View container -->
+    <div id="stories-view-container" class="overflow-hidden rounded-xl border border-border bg-card shadow-sm"></div>
+
+    <!-- Footer metadata (US-4.36) -->
+    <footer id="project-footer" class="mt-3 flex flex-wrap items-center justify-between gap-3 px-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span><span id="footer-shown" class="text-foreground">0</span> of <span id="footer-total" class="text-foreground">0</span> stories</span>
+        <span class="text-muted-foreground/40">·</span>
+        <span><span id="footer-epics" class="text-foreground">0</span> epics</span>
+        <span class="text-muted-foreground/40">·</span>
+        <span><span id="footer-sprints" class="text-foreground">0</span> sprints</span>
+      </div>
+      <div>
+        Updated <span id="footer-updated" class="text-foreground">just now</span>
+      </div>
+    </footer>
   </div>
 
-  <script is:inline define:vars={{ initialStories: stories }}>
-    window.STORIES_DATA = initialStories;
+  <script is:inline define:vars={{
+    initialStories: stories,
+    initialEpics: epics,
+    initialEpicFiles: epicFiles,
+    initialSprints: sprintsRaw,
+    initialDailyCommits: dailyCommitsObj,
+    initialAnalysis: analysisStats,
+    initialWarnings: warnings,
+    initialMeta: meta,
+    initialMonth: defaultMonth,
+  }}>
+    window.PROJECT_DATA = {
+      stories: initialStories,
+      epics: initialEpics,
+      epicFiles: initialEpicFiles,
+      sprints: initialSprints,
+      dailyCommits: initialDailyCommits,
+      analysis: initialAnalysis,
+      warnings: initialWarnings,
+      meta: initialMeta,
+      defaultMonth: initialMonth,
+    };
   </script>
 
   <script>
     document.addEventListener('astro:page-load', () => {
-      const stories = (window as any).STORIES_DATA || [];
-      const container = document.getElementById('stories-table-wrapper');
+      const data = (window as any).PROJECT_DATA;
+      if (!data) return;
+      const container = document.getElementById('stories-view-container');
       if (!container) return;
 
-      let filters = { search: '', sprint: 'all', epic: 'all', assignee: 'all', status: 'all', warnOnly: false };
-      let groupBy = 'none';
+      const stories: any[] = data.stories;
+      const epics: any[] = data.epics;
+      const epicFiles: any[] = data.epicFiles;
+      const sprints: any[] = data.sprints;
+      const dailyCommits: Record<string, any[]> = data.dailyCommits;
+      const analysis: any = data.analysis;
+      const warningsAll: any[] = data.warnings;
+      const meta = data.meta;
+      const defaultMonth: string = data.defaultMonth;
 
+      // ===== state =====
+      type View = 'table' | 'board' | 'calendar' | 'analysis' | 'warning';
+      const VALID_VIEWS = new Set(['table', 'board', 'calendar', 'analysis', 'warning']);
+      const VALID_GROUPS = new Set(['none', 'epic', 'sprint', 'assignee', 'version_shipped']);
+
+      const filters = { search: '', sprint: 'all' };
+      let view: View = 'table';
+      let groupBy = 'none';
+      let monthCursor = parseMonth(defaultMonth) ?? { year: new Date().getUTCFullYear(), month: new Date().getUTCMonth() + 1 };
+      const expandedDays = new Set<string>();
+
+      // ===== DOM refs =====
       const searchInput = document.getElementById('story-search') as HTMLInputElement | null;
       const filterSprint = document.getElementById('filter-sprint') as HTMLSelectElement | null;
-      const groupButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.group-btn'));
       const viewTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.view-tab'));
-      const warnTab = document.getElementById('filter-blocked-tab') as HTMLButtonElement | null;
+      const groupButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.group-btn'));
+      const groupControls = document.getElementById('group-controls');
+      const monthNav = document.getElementById('month-nav');
+      const monthLabel = document.getElementById('month-label');
+      const monthPrev = document.getElementById('month-prev');
+      const monthNext = document.getElementById('month-next');
+      const warningChip = document.getElementById('warning-count-chip');
 
-      // Hydrate filter + group state from URL so reload preserves the view.
+      // ===== bootstrap =====
       readUrlParams();
 
       searchInput?.addEventListener('input', (e) => {
@@ -179,59 +209,122 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
         filters.sprint = (e.target as HTMLSelectElement).value;
         render();
       });
-
-      groupButtons.forEach((btn) => {
+      viewTabs.forEach((btn) => {
         btn.addEventListener('click', () => {
-          groupButtons.forEach((b) => b.setAttribute('data-active', 'false'));
-          btn.setAttribute('data-active', 'true');
-          groupBy = btn.getAttribute('data-group') || 'none';
+          const next = (btn.getAttribute('data-view') || 'table') as View;
+          if (!VALID_VIEWS.has(next)) return;
+          view = next;
+          applyTabActiveState();
+          applyToolbarVisibility();
           render();
         });
       });
-
-      warnTab?.addEventListener('click', () => {
-        filters.warnOnly = !filters.warnOnly;
-        warnTab.setAttribute('data-active', String(filters.warnOnly));
-        viewTabs.forEach((t) => {
-          if (t.dataset.view === 'table') t.setAttribute('data-active', String(!filters.warnOnly));
+      groupButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const next = btn.getAttribute('data-group') || 'none';
+          if (!VALID_GROUPS.has(next)) return;
+          groupBy = next;
+          applyGroupActiveState();
+          render();
         });
+      });
+      monthPrev?.addEventListener('click', () => {
+        monthCursor = shiftMonth(monthCursor.year, monthCursor.month, -1);
+        expandedDays.clear();
+        render();
+      });
+      monthNext?.addEventListener('click', () => {
+        monthCursor = shiftMonth(monthCursor.year, monthCursor.month, +1);
+        expandedDays.clear();
         render();
       });
 
+      // Initial warning-count chip
+      if (warningChip && warningsAll.length > 0) {
+        warningChip.textContent = String(warningsAll.length);
+        warningChip.classList.remove('hidden');
+      }
+
+      applyTabActiveState();
+      applyGroupActiveState();
+      applyToolbarVisibility();
       render();
 
+      // ===== URL state =====
       function readUrlParams() {
         const params = new URLSearchParams(window.location.search);
+
+        // Legacy `?warn=1` → `?view=warning`. Silently rewrite (US-4.35 AC-4).
+        const legacyWarn = params.get('warn') === '1';
+
+        const v = params.get('view') ?? (legacyWarn ? 'warning' : 'table');
+        view = VALID_VIEWS.has(v) ? (v as View) : 'table';
+
         filters.search = (params.get('search') ?? '').toLowerCase();
         filters.sprint = params.get('sprint') ?? 'all';
-        filters.warnOnly = params.get('warn') === '1';
-        groupBy = params.get('group') ?? 'none';
+
+        const g = params.get('group') ?? 'none';
+        groupBy = VALID_GROUPS.has(g) ? g : 'none';
+
+        const m = parseMonth(params.get('month') ?? '');
+        if (m) monthCursor = m;
 
         if (searchInput) searchInput.value = params.get('search') ?? '';
         if (filterSprint) filterSprint.value = filters.sprint;
-        groupButtons.forEach((b) => {
-          b.setAttribute('data-active', String((b.getAttribute('data-group') || 'none') === groupBy));
-        });
-        if (warnTab) warnTab.setAttribute('data-active', String(filters.warnOnly));
-        viewTabs.forEach((t) => {
-          if (t.dataset.view === 'table') t.setAttribute('data-active', String(!filters.warnOnly));
-        });
+
+        if (legacyWarn) {
+          params.delete('warn');
+          params.set('view', 'warning');
+          writeUrlParams();
+        }
       }
 
       function writeUrlParams() {
         const params = new URLSearchParams();
+        if (view !== 'table') params.set('view', view);
         if (filters.search) params.set('search', filters.search);
         if (filters.sprint !== 'all') params.set('sprint', filters.sprint);
         if (groupBy !== 'none') params.set('group', groupBy);
-        if (filters.warnOnly) params.set('warn', '1');
+        if (view === 'calendar') params.set('month', formatMonth(monthCursor));
         const qs = params.toString();
         const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
         window.history.replaceState(null, '', url);
       }
 
-      function render() {
-        writeUrlParams();
-        const filtered = stories.filter((story: any) => {
+      // ===== UI helpers =====
+      function applyTabActiveState() {
+        viewTabs.forEach((t) => t.setAttribute('data-active', String(t.getAttribute('data-view') === view)));
+      }
+
+      function applyGroupActiveState() {
+        groupButtons.forEach((b) => b.setAttribute('data-active', String((b.getAttribute('data-group') || 'none') === groupBy)));
+      }
+
+      function applyToolbarVisibility() {
+        // Group control only meaningful for Table + Board.
+        if (groupControls) {
+          const visible = view === 'table' || view === 'board';
+          groupControls.style.display = visible ? '' : 'none';
+        }
+        // Month nav only for Calendar.
+        if (monthNav) {
+          monthNav.style.display = view === 'calendar' ? 'inline-flex' : 'none';
+        }
+        // Search not useful on Analysis (search-unaffected per ERP §4.1).
+        if (searchInput) {
+          searchInput.parentElement!.style.opacity = view === 'analysis' ? '0.4' : '';
+          searchInput.disabled = view === 'analysis';
+        }
+        // Sprint filter not applicable on Warning (ignores sprint per ERP §4.8).
+        if (filterSprint) {
+          filterSprint.parentElement!.style.opacity = view === 'warning' ? '0.4' : '';
+          filterSprint.disabled = view === 'warning';
+        }
+      }
+
+      // ===== filter composition =====
+      function applyFilters(): any[] {
+        return stories.filter((story: any) => {
           if (filters.search) {
             const q = filters.search;
             const hits = [story.id, story.title, story.epic, story.assignee, story.sprint]
@@ -240,20 +333,465 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
             if (!hits) return false;
           }
           if (filters.sprint !== 'all' && story.sprint !== filters.sprint) return false;
-          if (filters.warnOnly) {
-            if (story.status !== 'blocked' && story.status !== 'backlog') return false;
-          }
           return true;
         });
+      }
 
-        if (groupBy === 'none') {
-          container!.innerHTML = renderTable(filtered);
+      function applySearchOnly(): any[] {
+        return stories.filter((story: any) => {
+          if (!filters.search) return true;
+          const q = filters.search;
+          return [story.id, story.title, story.epic, story.assignee]
+            .filter(Boolean)
+            .some((v: any) => String(v).toLowerCase().includes(q));
+        });
+      }
+
+      function applySprintOnly(): any[] {
+        return stories.filter((story: any) => {
+          if (filters.sprint !== 'all' && story.sprint !== filters.sprint) return false;
+          return true;
+        });
+      }
+
+      // ===== sort (US-4.36) =====
+      const STORY_STATUS_ORDER = ['backlog','ready','in-progress','review','in-review','blocked','done','reverted','deprecated'];
+      const STATUS_RANK: Record<string, number> = Object.fromEntries(STORY_STATUS_ORDER.map((s, i) => [s, i]));
+      const PRIORITY_RANK: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
+
+      function statusRank(s: string): number { return STATUS_RANK[s] ?? STORY_STATUS_ORDER.length; }
+      function priorityRank(p: string): number { return PRIORITY_RANK[p] ?? 99; }
+
+      function compareStories(a: any, b: any): number {
+        const ds = statusRank(a.status) - statusRank(b.status);
+        if (ds !== 0) return ds;
+        const dp = priorityRank(a.priority) - priorityRank(b.priority);
+        if (dp !== 0) return dp;
+        if (a.updated !== b.updated) {
+          if (!a.updated) return 1;
+          if (!b.updated) return -1;
+          return a.updated < b.updated ? 1 : -1;
+        }
+        return String(a.id).localeCompare(String(b.id), undefined, { numeric: true, sensitivity: 'base' });
+      }
+
+      // ===== render dispatch =====
+      function render() {
+        writeUrlParams();
+        let filtered: any[];
+        let shown: number;
+
+        if (view === 'warning') {
+          const visible = renderWarningView(applySearchOnly());
+          shown = visible;
+        } else if (view === 'analysis') {
+          renderAnalysisView();
+          shown = applySprintOnly().length;
+        } else if (view === 'calendar') {
+          filtered = applyFilters();
+          renderCalendarView(filtered);
+          shown = filtered.length;
+        } else if (view === 'board') {
+          filtered = applyFilters();
+          renderBoardView(filtered);
+          shown = filtered.length;
         } else {
-          container!.innerHTML = renderGrouped(filtered, groupBy);
+          filtered = applyFilters();
+          renderTableView(filtered);
+          shown = filtered.length;
+        }
+
+        // Footer
+        const totalEl = document.getElementById('footer-total');
+        const shownEl = document.getElementById('footer-shown');
+        const epicsEl = document.getElementById('footer-epics');
+        const sprintsEl = document.getElementById('footer-sprints');
+        const upEl = document.getElementById('footer-updated');
+        if (totalEl) totalEl.textContent = String(meta.totalStories);
+        if (shownEl) shownEl.textContent = String(shown);
+        if (epicsEl) epicsEl.textContent = String(meta.totalEpics);
+        if (sprintsEl) sprintsEl.textContent = String(meta.totalSprints);
+        if (upEl) upEl.textContent = formatRelative(meta.generatedAt);
+      }
+
+      // ===== Table view =====
+      function renderTableView(list: any[]) {
+        const sorted = [...list].sort(compareStories);
+        if (groupBy === 'none') {
+          container!.innerHTML = renderTable(sorted);
+        } else {
+          container!.innerHTML = renderGrouped(sorted, groupBy);
           wireAccordion();
         }
       }
 
+      // ===== Board view (US-4.31) =====
+      const BOARD_COLUMNS = [
+        { key: 'backlog', label: 'Backlog' },
+        { key: 'ready', label: 'Ready' },
+        { key: 'in-progress', label: 'In progress' },
+        { key: 'review', label: 'In review' },
+        { key: 'blocked', label: 'Blocked' },
+        { key: 'done', label: 'Done' },
+      ];
+
+      function renderBoardView(list: any[]) {
+        if (groupBy === 'none') {
+          container!.innerHTML = `<div class="p-4">${renderBoardColumns(list)}</div>`;
+        } else {
+          const buckets = bucketize(list, groupBy);
+          const html = buckets.map(b => `
+            <div class="group-section border-b border-border last:border-b-0">
+              ${groupHeader(b, groupBy)}
+              <div class="group-section-content p-4">${renderBoardColumns(b.items)}</div>
+            </div>
+          `).join('');
+          container!.innerHTML = html;
+          wireAccordion();
+        }
+      }
+
+      function renderBoardColumns(list: any[]): string {
+        const byStatus = new Map<string, any[]>();
+        for (const col of BOARD_COLUMNS) byStatus.set(col.key, []);
+        for (const s of list) {
+          // review and in-review are synonyms; route both to "review" column
+          const key = s.status === 'in-review' ? 'review' : s.status;
+          if (byStatus.has(key)) byStatus.get(key)!.push(s);
+        }
+        for (const arr of byStatus.values()) arr.sort(compareStories);
+
+        return `
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            ${BOARD_COLUMNS.map(col => {
+              const items = byStatus.get(col.key) ?? [];
+              return `
+                <div class="rounded-lg border border-border bg-background/40">
+                  <div class="flex items-center justify-between border-b border-border px-3 py-2">
+                    <span class="font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">${escapeHtml(col.label)}</span>
+                    <span class="rounded-full bg-muted px-1.5 py-0 font-mono text-[10px] text-foreground">${items.length}</span>
+                  </div>
+                  <div class="flex flex-col gap-2 p-2">
+                    ${items.length === 0
+                      ? `<div class="px-2 py-6 text-center font-mono text-[10px] uppercase tracking-wider text-muted-foreground/50">—</div>`
+                      : items.map(boardCard).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      function boardCard(s: any): string {
+        const parts: string[] = [];
+        if (s.priority && s.priority !== '—') {
+          parts.push(`<span class="rounded bg-primary/10 px-1.5 py-0 font-mono text-[10px] font-bold text-primary">${escapeHtml(s.priority)}</span>`);
+        }
+        if (s.epic && s.epic !== '—') parts.push(`<span class="font-mono text-[10px] text-muted-foreground">${escapeHtml(s.epic)}</span>`);
+        if (s.version_shipped) parts.push(`<span class="font-mono text-[10px] text-emerald-400">v${escapeHtml(s.version_shipped)}</span>`);
+        const sprint = s.sprint && s.sprint !== '—' ? `<span class="font-mono text-[10px] text-muted-foreground">${escapeHtml(s.sprint)}</span>` : '';
+        const assignee = s.assignee && s.assignee !== '—' ? `<span class="text-[10px] text-muted-foreground">@${escapeHtml(s.assignee)}</span>` : '';
+        const commit = s.commit ? `<span class="font-mono text-[10px] text-muted-foreground">${escapeHtml(String(s.commit).slice(0, 7))}</span>` : '';
+        const footerBits = [sprint, assignee, commit].filter(Boolean).join(' · ');
+        return `
+          <a href="/docs/${escapeHtml(s.slug)}" class="block rounded-md border border-border/60 bg-card p-2 transition hover:border-primary/40 hover:bg-accent/30">
+            <div class="mb-1 flex items-center gap-1.5">${parts.join(' ')}</div>
+            <div class="mb-1 text-sm text-foreground">${escapeHtml(s.title)}</div>
+            <div class="flex items-center gap-2 text-muted-foreground">${footerBits}</div>
+          </a>
+        `;
+      }
+
+      // ===== Calendar view (US-4.32) =====
+      const MONTH_LABELS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      function renderCalendarView(filteredStories: any[]) {
+        // Update month label
+        if (monthLabel) monthLabel.textContent = `${MONTH_LABELS[monthCursor.month - 1]} ${monthCursor.year}`;
+
+        const storyByDate = new Map<string, any[]>();
+        for (const s of filteredStories) {
+          if (!s.updated) continue;
+          const arr = storyByDate.get(s.updated) ?? [];
+          arr.push(s);
+          storyByDate.set(s.updated, arr);
+        }
+
+        const grid = buildMonthGrid(monthCursor.year, monthCursor.month);
+
+        const dayHeaders = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+        const headerHtml = dayHeaders.map(d => `<div class="px-2 py-1.5 text-center font-mono text-[10px] uppercase tracking-wider text-muted-foreground">${d}</div>`).join('');
+
+        const cellsHtml = grid.flat().map(cell => {
+          const stories = storyByDate.get(cell.date) ?? [];
+          const commits = dailyCommits[cell.date] ?? [];
+          const isToday = cell.date === todayIso();
+          const isExpanded = expandedDays.has(cell.date);
+          const dayNum = parseInt(cell.date.slice(-2), 10);
+
+          const chips: string[] = [];
+          if (stories.length > 0) chips.push(`<span class="rounded bg-primary/15 px-1 py-0 text-[9px] font-bold text-primary" title="${stories.length} stories updated">${stories.length}s</span>`);
+          if (commits.length > 0) chips.push(`<span class="rounded bg-emerald-500/15 px-1 py-0 text-[9px] font-bold text-emerald-400" title="${commits.length} commits">${commits.length}c</span>`);
+
+          return `
+            <button class="cal-day flex min-h-[64px] flex-col items-stretch gap-0.5 border border-border/40 p-1 text-left transition hover:bg-accent/40 ${cell.inMonth ? '' : 'opacity-30'} ${isToday ? 'ring-1 ring-inset ring-primary' : ''} ${isExpanded ? 'bg-accent/30' : ''}" data-date="${cell.date}">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] ${isToday ? 'text-primary font-bold' : 'text-foreground'}">${dayNum}</span>
+                <div class="flex gap-0.5">${chips.join('')}</div>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        let panelHtml = '';
+        for (const date of expandedDays) {
+          const s = storyByDate.get(date) ?? [];
+          const c = dailyCommits[date] ?? [];
+          panelHtml += renderDayPanel(date, s, c);
+        }
+
+        container!.innerHTML = `
+          <div class="p-3">
+            <div class="grid grid-cols-7 gap-0">${headerHtml}</div>
+            <div class="grid grid-cols-7 gap-0">${cellsHtml}</div>
+            ${panelHtml ? `<div class="mt-3 flex flex-col gap-3">${panelHtml}</div>` : ''}
+          </div>
+        `;
+
+        container!.querySelectorAll<HTMLButtonElement>('.cal-day').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const date = btn.getAttribute('data-date');
+            if (!date) return;
+            if (expandedDays.has(date)) expandedDays.delete(date);
+            else expandedDays.add(date);
+            renderCalendarView(filteredStories);
+          });
+        });
+      }
+
+      function renderDayPanel(date: string, storiesForDay: any[], commitsForDay: any[]): string {
+        const sList = storiesForDay.length === 0
+          ? `<div class="text-[11px] text-muted-foreground/60">No stories updated.</div>`
+          : storiesForDay.map((s) => `
+            <a href="/docs/${escapeHtml(s.slug)}" class="block text-[12px] hover:text-primary">
+              <span class="font-mono text-[11px] text-muted-foreground">[${escapeHtml(s.id)}]</span>
+              <span class="ml-2 text-foreground">${escapeHtml(s.title)}</span>
+            </a>`).join('');
+        const cList = commitsForDay.length === 0
+          ? `<div class="text-[11px] text-muted-foreground/60">No commits.</div>`
+          : commitsForDay.map((c) => `
+            <div class="flex items-baseline gap-2 text-[12px]">
+              <span class="font-mono text-[11px] text-emerald-400">${escapeHtml(c.shortSha)}</span>
+              <span class="text-foreground">${escapeHtml(truncate(c.subject, 90))}</span>
+              <span class="text-muted-foreground/70 text-[10px]">${escapeHtml(c.author)}</span>
+            </div>`).join('');
+        return `
+          <div class="rounded-md border border-border bg-background/40 p-3">
+            <div class="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">${escapeHtml(date)}</div>
+            <div class="grid gap-3 md:grid-cols-2">
+              <div><div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/60">Stories</div>${sList}</div>
+              <div><div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/60">Commits</div>${cList}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ===== Analysis view (US-4.33) =====
+      function renderAnalysisView() {
+        const hero = analysis.hero;
+        const breakdown = analysis.statusBreakdown;
+        const daily = analysis.dailyCompletion;
+        const heatmap = analysis.commitHeatmap;
+        const epicProgress = analysis.epicProgress;
+
+        const maxBreakdown = Math.max(1, ...breakdown.map((b: any) => b.count));
+        const maxDaily = Math.max(1, ...daily.map((d: any) => d.count));
+
+        const heroHtml = `
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-5">
+            ${kpiCard('Start date', hero.startDate || '—')}
+            ${kpiCard('Days elapsed', `${hero.daysElapsed} days`)}
+            ${kpiCard('Stories', `${hero.doneStories} / ${hero.totalStories} done`)}
+            ${kpiCard('Completion', `${hero.completionPct}%`, `<div class="mt-2 h-1 rounded-full bg-muted"><div class="h-1 rounded-full bg-emerald-500" style="width:${Math.min(100, hero.completionPct)}%"></div></div>`)}
+            ${kpiCardWarning('Warnings', hero.warningCount)}
+          </div>`;
+
+        const breakdownHtml = `
+          <div class="rounded-lg border border-border bg-background/40 p-4">
+            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Status breakdown</div>
+            <div class="flex flex-col gap-1.5">
+              ${breakdown.map((b: any) => `
+                <div class="grid grid-cols-[110px_1fr_40px] items-center gap-2 text-[12px]">
+                  <span class="font-mono text-muted-foreground">${escapeHtml(b.status)}</span>
+                  <div class="h-2 rounded bg-muted"><div class="h-2 rounded bg-primary/60" style="width:${(b.count / maxBreakdown) * 100}%"></div></div>
+                  <span class="text-right font-mono text-foreground">${b.count}</span>
+                </div>`).join('')}
+            </div>
+          </div>`;
+
+        const dailyHtml = `
+          <div class="rounded-lg border border-border bg-background/40 p-4">
+            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Stories completed (last 30 days)</div>
+            <div class="flex items-end gap-0.5" style="height:80px">
+              ${daily.map((d: any, i: number) => {
+                const h = d.count === 0 ? 2 : Math.max(4, (d.count / maxDaily) * 76);
+                const isFifth = i % 5 === 0;
+                return `<div class="flex flex-1 flex-col items-center justify-end gap-0.5" title="${d.date}: ${d.count} done">
+                  <div class="w-full rounded-sm bg-emerald-500/60" style="height:${h}px"></div>
+                  ${isFifth ? `<span class="font-mono text-[9px] text-muted-foreground/70">${d.date.slice(5)}</span>` : ''}
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`;
+
+        const heatHtml = renderCommitHeatmap(heatmap);
+
+        const epicHtml = `
+          <div class="rounded-lg border border-border bg-background/40 p-4 md:col-span-2">
+            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Epic progress (${epicProgress.length})</div>
+            <div class="flex flex-col gap-2">
+              ${epicProgress.length === 0
+                ? `<div class="text-[11px] text-muted-foreground/60">No epics recorded.</div>`
+                : epicProgress.map((e: any) => {
+                  const pct = e.total === 0 ? 0 : Math.round((e.done / e.total) * 100);
+                  return `
+                    <div class="grid grid-cols-[100px_1fr_60px_120px] items-center gap-2 text-[12px]">
+                      <span class="font-mono text-foreground">${escapeHtml(e.epic)}</span>
+                      <span class="truncate text-muted-foreground">${escapeHtml(e.title || '(no title)')}</span>
+                      <span class="rounded px-1.5 py-0 text-center font-mono text-[10px] ${statusBadgeClass(e.status)}">${escapeHtml(e.status || '—')}</span>
+                      <div class="flex items-center gap-2">
+                        <div class="h-2 flex-1 rounded bg-muted"><div class="h-2 rounded bg-emerald-500" style="width:${pct}%"></div></div>
+                        <span class="font-mono text-[10px] text-muted-foreground">${e.done}/${e.total}</span>
+                      </div>
+                    </div>`;
+                }).join('')}
+            </div>
+          </div>`;
+
+        container!.innerHTML = `
+          <div class="p-4">
+            ${heroHtml}
+            <div class="mt-3 grid gap-3 md:grid-cols-2">
+              ${breakdownHtml}
+              ${dailyHtml}
+              ${heatHtml}
+              ${epicHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCommitHeatmap(weeks: any[]): string {
+        const max = Math.max(1, ...weeks.flatMap((w: any) => w.days.map((d: any) => d.count)));
+        const levels = ['bg-muted', 'bg-emerald-900/60', 'bg-emerald-700/70', 'bg-emerald-500/80', 'bg-emerald-400/90'];
+        function bucket(n: number): string {
+          if (n === 0) return levels[0]!;
+          const r = n / max;
+          if (r < 0.25) return levels[1]!;
+          if (r < 0.5) return levels[2]!;
+          if (r < 0.75) return levels[3]!;
+          return levels[4]!;
+        }
+        const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        return `
+          <div class="rounded-lg border border-border bg-background/40 p-4">
+            <div class="mb-3 flex items-center justify-between">
+              <div class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Commit activity — last 26 weeks</div>
+            </div>
+            <div class="flex gap-1.5">
+              <div class="flex flex-col gap-0.5 pr-1">
+                ${dayHeaders.map(d => `<div class="h-2.5 font-mono text-[8px] leading-[10px] text-muted-foreground">${d}</div>`).join('')}
+              </div>
+              <div class="flex gap-0.5 overflow-x-auto">
+                ${weeks.map((w: any) => `
+                  <div class="flex flex-col gap-0.5">
+                    ${w.days.map((d: any) => `<div class="h-2.5 w-2.5 rounded-[2px] ${bucket(d.count)}" title="${d.date}: ${d.count} commits"></div>`).join('')}
+                  </div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function kpiCard(label: string, value: string, extra = ''): string {
+        return `
+          <div class="rounded-lg border border-border bg-background/40 p-3">
+            <div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">${escapeHtml(label)}</div>
+            <div class="text-lg font-bold text-foreground">${escapeHtml(value)}</div>
+            ${extra}
+          </div>`;
+      }
+
+      function kpiCardWarning(label: string, count: number): string {
+        const cls = count === 0 ? 'text-emerald-400' : 'text-destructive';
+        return `
+          <a href="?view=warning" class="block rounded-lg border border-border bg-background/40 p-3 transition hover:border-destructive/40 hover:bg-destructive/5">
+            <div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">${escapeHtml(label)}</div>
+            <div class="text-lg font-bold ${cls}">${count}</div>
+          </a>`;
+      }
+
+      function statusBadgeClass(s: string): string {
+        switch (s) {
+          case 'done': return 'bg-emerald-500/15 text-emerald-400';
+          case 'in-progress': return 'bg-amber-500/15 text-amber-400';
+          case 'blocked': return 'bg-destructive/15 text-destructive';
+          case 'ready': return 'bg-sky-500/15 text-sky-400';
+          default: return 'bg-muted text-muted-foreground';
+        }
+      }
+
+      // ===== Warning view (US-4.34) =====
+      function renderWarningView(searchFiltered: any[]): number {
+        const visibleIds = new Set(searchFiltered.map((s: any) => s.id));
+        const visible = warningsAll.filter((w: any) => visibleIds.has(w.id));
+        visible.sort((a: any, b: any) =>
+          (b.missing.length - a.missing.length)
+          || statusRank(a.status) - statusRank(b.status)
+          || String(a.id).localeCompare(String(b.id), undefined, { numeric: true })
+        );
+
+        if (visible.length === 0) {
+          container!.innerHTML = `
+            <div class="flex flex-col items-center justify-center gap-2 p-16 text-center">
+              <div class="text-2xl">✓</div>
+              <div class="font-mono text-xs uppercase tracking-wider text-emerald-400">No warnings</div>
+              <div class="text-sm text-muted-foreground">All non-backlog stories have required fields.</div>
+            </div>`;
+          return 0;
+        }
+
+        const rows = visible.map((w: any) => {
+          const chips = w.missing.map((m: string) => `<span class="rounded bg-destructive/15 px-1.5 py-0 font-mono text-[10px] text-destructive">${escapeHtml(m)}</span>`).join(' ');
+          return `
+            <tr class="border-b border-border/60 transition hover:bg-accent/40">
+              <td class="whitespace-nowrap px-4 py-2 font-mono text-[12px] text-foreground">${escapeHtml(w.id)}</td>
+              <td class="px-4 py-2"><a href="/docs/${escapeHtml(w.slug)}" class="text-foreground hover:text-primary">${escapeHtml(w.title)}</a></td>
+              <td class="px-4 py-2 font-mono text-[12px] text-muted-foreground">${escapeHtml(w.epic)}</td>
+              <td class="px-4 py-2"><span class="rounded px-1.5 py-0 font-mono text-[10px] ${statusBadgeClass(w.status)}">${escapeHtml(w.status)}</span></td>
+              <td class="px-4 py-2"><div class="flex flex-wrap gap-1">${chips}</div></td>
+            </tr>`;
+        }).join('');
+
+        container!.innerHTML = `
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-muted/30">
+                <tr class="border-b border-border text-left font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <th class="px-4 py-2.5 font-medium" style="width:88px">ID</th>
+                  <th class="px-4 py-2.5 font-medium">Title</th>
+                  <th class="px-4 py-2.5 font-medium" style="width:96px">Epic</th>
+                  <th class="px-4 py-2.5 font-medium" style="width:120px">Status</th>
+                  <th class="px-4 py-2.5 font-medium">Missing fields</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+        return visible.length;
+      }
+
+      // ===== Table render fns (shared with grouped) =====
       function statusLabel(s: string): string {
         switch (s) {
           case 'done': return 'Done';
@@ -263,6 +801,7 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
           case 'blocked': return 'Blocked';
           case 'cancelled': return 'Cancelled';
           case 'backlog': return 'Backlog';
+          case 'ready': return 'Ready';
           default: return s || 'Backlog';
         }
       }
@@ -276,13 +815,12 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
         const shipped = s.version_shipped ? escapeHtml(s.version_shipped) : '—';
         const pri = escapeHtml(s.priority || '—');
         const status = escapeHtml(s.status || 'backlog');
-        // commit is a SHA in our corpus (not a URL) — render as plain text, truncated to 7 chars.
         const commit = s.commit ? `<span class="font-mono text-muted-foreground">${escapeHtml(String(s.commit).slice(0, 7))}</span>` : '—';
         return `
           <tr class="border-b border-border/60 transition hover:bg-accent/40">
             <td class="whitespace-nowrap px-4 py-2 font-mono text-[12px] text-foreground">${id}</td>
             <td class="px-4 py-2"><a href="/docs/${escapeHtml(s.slug)}" class="text-foreground hover:text-primary">${title}</a></td>
-            <td class="px-4 py-2"><span class="badge badge-${status}">${escapeHtml(statusLabel(s.status))}</span></td>
+            <td class="px-4 py-2"><span class="rounded px-1.5 py-0 font-mono text-[10px] ${statusBadgeClass(s.status)}">${escapeHtml(statusLabel(s.status))}</span></td>
             <td class="px-4 py-2 font-mono text-[11px] text-muted-foreground">${pri}</td>
             <td class="px-4 py-2 font-mono text-[12px] text-muted-foreground">${epic}</td>
             <td class="px-4 py-2 font-mono text-[12px] text-muted-foreground">${sprint}</td>
@@ -291,13 +829,10 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
             <td class="px-4 py-2 font-mono text-[11px] text-muted-foreground">${commit}</td>
             <td class="px-4 py-2 text-right">
               <a href="/docs/${escapeHtml(s.slug)}" class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-primary" title="Open">
-                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M7 17 17 7M7 7h10v10" />
-                </svg>
+                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10" /></svg>
               </a>
             </td>
-          </tr>
-        `;
+          </tr>`;
       }
 
       function renderTable(list: any[]): string {
@@ -321,53 +856,83 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
                   <th class="px-4 py-2.5 font-medium" style="width:48px"></th>
                 </tr>
               </thead>
-              <tbody>
-                ${list.map(row).join('')}
-              </tbody>
+              <tbody>${list.map(row).join('')}</tbody>
             </table>
-          </div>
-        `;
+          </div>`;
+      }
+
+      // ===== Grouping helpers =====
+      function bucketize(list: any[], key: string): Array<{ key: string; items: any[] }> {
+        const map = new Map<string, any[]>();
+        // UNION semantics for epic: seed from epicFiles (US-4.36 AC-4).
+        if (key === 'epic') {
+          for (const e of epicFiles) map.set(e.id, []);
+        }
+        for (const item of list) {
+          let v = item[key] || '';
+          if (!v || v === '—') {
+            switch (key) {
+              case 'epic': v = '(no epic)'; break;
+              case 'sprint': v = '(no sprint)'; break;
+              case 'assignee': v = '(unassigned)'; break;
+              case 'version_shipped': v = '(unshipped)'; break;
+              default: v = '(none)';
+            }
+          }
+          const arr = map.get(v) ?? [];
+          arr.push(item);
+          map.set(v, arr);
+        }
+        const placeholders = new Set(['(no epic)', '(no sprint)', '(unassigned)', '(unshipped)', '(none)']);
+        const entries = [...map.entries()].map(([k, items]) => ({ key: k, items }));
+        entries.sort((a, b) => {
+          const ap = placeholders.has(a.key);
+          const bp = placeholders.has(b.key);
+          if (ap !== bp) return ap ? 1 : -1;
+          if (key === 'sprint') {
+            // Reverse-chrono for sprint id pattern
+            return b.key.localeCompare(a.key, undefined, { numeric: true, sensitivity: 'base' });
+          }
+          if (key === 'version_shipped') {
+            return b.key.localeCompare(a.key, undefined, { numeric: true, sensitivity: 'base' });
+          }
+          return a.key.localeCompare(b.key, undefined, { numeric: true, sensitivity: 'base' });
+        });
+        // Sort items within each bucket
+        for (const b of entries) b.items.sort(compareStories);
+        return entries;
+      }
+
+      function groupHeader(bucket: { key: string; items: any[] }, key: string): string {
+        const label = key === 'version_shipped' ? 'Shipped' : (key.charAt(0).toUpperCase() + key.slice(1));
+        const totalPts = bucket.items.reduce((s: number, c: any) => s + (c.points || 0), 0);
+        const doneCount = bucket.items.filter((s: any) => s.status === 'done').length;
+        return `
+          <button class="group-section-header flex w-full items-center justify-between gap-3 bg-muted/40 px-4 py-2 text-left transition hover:bg-muted/60">
+            <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider">
+              <svg class="arrow-icon size-3 text-muted-foreground transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+              <span class="text-muted-foreground">${escapeHtml(label)}:</span>
+              <span class="text-foreground">${escapeHtml(bucket.key)}</span>
+            </span>
+            <span class="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground">
+              <span><span class="text-foreground">${bucket.items.length}</span> stories</span>
+              <span><span class="text-foreground">${totalPts}</span> pts</span>
+              <span><span class="text-foreground">${doneCount}</span>/${bucket.items.length} done</span>
+            </span>
+          </button>`;
       }
 
       function renderGrouped(list: any[], key: string): string {
-        if (list.length === 0) {
+        if (list.length === 0 && !(key === 'epic' && epicFiles.length > 0)) {
           return `<div class="p-16 text-center font-mono text-xs uppercase tracking-wider text-muted-foreground">No stories match the current filters.</div>`;
         }
-        const groups: Record<string, any[]> = {};
-        list.forEach((item) => {
-          const v = item[key] || '—';
-          (groups[v] ||= []).push(item);
-        });
-        const sortedKeys = Object.keys(groups).sort((a, b) => {
-          if (a === '—' || a === '') return 1;
-          if (b === '—' || b === '') return -1;
-          return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-        });
-        const label = key === 'version_shipped' ? 'Shipped' : key.charAt(0).toUpperCase() + key.slice(1);
-        return sortedKeys.map((g) => {
-          const items = groups[g]!;
-          const gp = items.reduce((s, c) => s + (c.points || 0), 0);
-          const gd = items.filter((s) => s.status === 'done').length;
-          return `
-            <div class="group-section border-b border-border last:border-b-0">
-              <button class="group-section-header flex w-full items-center justify-between gap-3 bg-muted/40 px-4 py-2 text-left transition hover:bg-muted/60">
-                <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider">
-                  <svg class="arrow-icon size-3 text-muted-foreground transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                  <span class="text-muted-foreground">${escapeHtml(label)}:</span>
-                  <span class="text-foreground">${escapeHtml(g)}</span>
-                </span>
-                <span class="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground">
-                  <span><span class="text-foreground">${items.length}</span> stories</span>
-                  <span><span class="text-foreground">${gp}</span> pts</span>
-                  <span><span class="text-foreground">${gd}</span>/${items.length} done</span>
-                </span>
-              </button>
-              <div class="group-section-content">${renderTable(items)}</div>
-            </div>
-          `;
-        }).join('');
+        const buckets = bucketize(list, key);
+        return buckets.map(b => `
+          <div class="group-section border-b border-border last:border-b-0">
+            ${groupHeader(b, key)}
+            <div class="group-section-content">${renderTable(b.items)}</div>
+          </div>
+        `).join('');
       }
 
       function wireAccordion() {
@@ -385,6 +950,64 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
         });
       }
 
+      // ===== Month grid helpers (client) =====
+      function parseMonth(s: string): { year: number; month: number } | null {
+        const m = /^(\d{4})-(\d{2})$/.exec(s);
+        if (!m) return null;
+        const year = parseInt(m[1]!, 10);
+        const month = parseInt(m[2]!, 10);
+        if (Number.isNaN(year) || Number.isNaN(month) || month < 1 || month > 12) return null;
+        return { year, month };
+      }
+
+      function formatMonth(m: { year: number; month: number }): string {
+        return `${m.year}-${String(m.month).padStart(2, '0')}`;
+      }
+
+      function shiftMonth(year: number, month: number, delta: number): { year: number; month: number } {
+        let y = year;
+        let mm = month + delta;
+        while (mm < 1) { mm += 12; y -= 1; }
+        while (mm > 12) { mm -= 12; y += 1; }
+        return { year: y, month: mm };
+      }
+
+      function todayIso(): string {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function isoDate(year: number, month: number, day: number): string {
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
+
+      interface MonthCell { date: string; inMonth: boolean }
+      function buildMonthGrid(year: number, month: number): MonthCell[][] {
+        const firstDay = new Date(Date.UTC(year, month - 1, 1));
+        const startOffset = firstDay.getUTCDay();
+        const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        const cells: MonthCell[] = [];
+        const prev = shiftMonth(year, month, -1);
+        const prevDays = new Date(Date.UTC(prev.year, prev.month, 0)).getUTCDate();
+        for (let i = startOffset - 1; i >= 0; i--) {
+          cells.push({ date: isoDate(prev.year, prev.month, prevDays - i), inMonth: false });
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+          cells.push({ date: isoDate(year, month, d), inMonth: true });
+        }
+        const next = shiftMonth(year, month, 1);
+        let dn = 1;
+        while (cells.length % 7 !== 0) {
+          cells.push({ date: isoDate(next.year, next.month, dn++), inMonth: false });
+        }
+        while (cells.length < 42) {
+          cells.push({ date: isoDate(next.year, next.month, dn++), inMonth: false });
+        }
+        const weeks: MonthCell[][] = [];
+        for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+        return weeks;
+      }
+
+      // ===== formatting =====
       function escapeHtml(v: unknown): string {
         return String(v ?? '')
           .replace(/&/g, '&amp;')
@@ -392,6 +1015,20 @@ const uniqueStatuses = [...new Set(stories.map((s) => s.status))].filter(Boolean
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
+      }
+
+      function truncate(s: string, n: number): string {
+        return s.length > n ? `${s.slice(0, n - 1)}…` : s;
+      }
+
+      function formatRelative(iso: string): string {
+        const then = new Date(iso).getTime();
+        if (Number.isNaN(then)) return 'just now';
+        const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000));
+        if (seconds < 60) return 'just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+        return `${Math.floor(seconds / 86400)}d ago`;
       }
     });
   </script>

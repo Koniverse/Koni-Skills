@@ -23,9 +23,9 @@ editHistory:
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.7.0 (see [VERSION](../VERSION) for the live value)
-**Date:** 2026-05-28
-**Status:** v0.1.0 → v0.7.3 all shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.7.3). EPIC-1, EPIC-2 done at 100%. **EPIC-4 reopened 2026-05-28** for Pillar G (`/project` multi-view expansion — Board / Calendar / Analysis / Warning validator + URL `?view=` + footer/UNION/sort) targeting v0.8.0 inside the same sprint window (W22 extended to 2026-05-31). **EPIC-3** (catalog expansion: plugin-skill pattern) remains backlog — **not assigned to any sprint** because no concrete execution plan is locked yet.
+**Version:** 0.8.0 (see [VERSION](../VERSION) for the live value)
+**Date:** 2026-05-29
+**Status:** v0.1.0 → v0.8.0 all shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0). EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion: plugin-skill pattern) remains backlog — **not assigned to any sprint** because no concrete execution plan is locked yet.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -334,7 +334,7 @@ reviewers.
 | FR-16 | `koni-docs-viewer` CLI bin with `--port/--host/--open/--watch/--config` + optional `koni-docs.config.{json,mjs}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | P0       | ✅ shipped (v0.7.0)       | EPIC-4          |
 | FR-17 | Schema-graceful behavior (plain mode when no `sprints/`) + chokidar+SSE live reload on `.md` change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | P0       | ✅ shipped (v0.7.0)       | EPIC-4          |
 | FR-18 | Publish `@koniverse/docs-viewer@0.1.0` + dogfood `npm run docs:preview` in this repo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | P1       | 📋 Backlog               | EPIC-4          |
-| FR-19 | `/project` page multi-view expansion — wire Board (6-column kanban + group-by), Calendar (month grid + commits-per-day overlay via local `git log`), Analysis (KPIs, status breakdown, 30-day completion chart, 26-week commit heatmap, per-epic progress with UNION semantics), and Warning (replace US-4.20's filter-only impl with the koni-erp-02 §4.8 required-field-by-status validator). Add `?view=` URL persistence + legacy `?warn=1` compat shim + footer metadata strip + default sort (status → priority → updated). Reference design: koni-erp-02 `Docs/pod-project-screen.md`. | P0       | 📋 Backlog               | EPIC-4          |
+| FR-19 | `/project` page multi-view expansion — wire Board (6-column kanban + group-by), Calendar (month grid + commits-per-day overlay via local `git log`), Analysis (KPIs, status breakdown, 30-day completion chart, 26-week commit heatmap, per-epic progress with UNION semantics), and Warning (replace US-4.20's filter-only impl with the koni-erp-02 §4.8 required-field-by-status validator). Add `?view=` URL persistence + legacy `?warn=1` compat shim + footer metadata strip + default sort (status → priority → updated). Reference design: koni-erp-02 `Docs/pod-project-screen.md`. | P0       | ✅ shipped (v0.8.0)       | EPIC-4          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -407,9 +407,9 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 **Goal:** Ship `@koniverse/koni-docs` — a globally-installable npm package combining a typed CLI (`status` / `sync` / `inject-tasks` / `backfill-fields` / `backfill-commits` / `preview` / `validate`) with an Astro SSR viewer that renders any koni-docs-shaped `docs/` folder. Schema-graceful fallback for non-Koni layouts. Viewer's `/project` page exposes the full koni-erp-02 5-view tracker (Table / Board / Calendar / Analysis / Warning).
 
-**Status:** 🚧 in-progress (sprint-2026-W22; Pillars B–F shipped across v0.4.0-dev.0 → v0.7.3 with `@koniverse/koni-docs@0.7.0` published; Pillar G reopened 2026-05-28 with US-4.31..4.36 for v0.8.0. Decisions logged as [D11](CONTEXT.md))
+**Status:** ✅ done (sprint-2026-W22; 36/36 stories shipped across v0.4.0-dev.0 → v0.8.0 with `@koniverse/koni-docs@0.7.0` published and v0.8.0 ready to publish. Decisions logged as [D11](CONTEXT.md))
 
-See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 33-story breakdown organized by pillar (B = lib foundation, C = CLI subcommands, D = migration + polish, E = viewer scaffold + preview, F = viewer polish + validate + cleanup, **G = project page multi-view expansion**). Highlights:
+See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organized by pillar (B = lib foundation, C = CLI subcommands, D = migration + polish, E = viewer scaffold + preview, F = viewer polish + validate + cleanup, G = project page multi-view expansion). Highlights:
 
 | Story                                                               | Title                                                             | Status   | Version |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------- | -------- | ------- |
