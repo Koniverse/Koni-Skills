@@ -26,11 +26,18 @@ export interface DailyCompletion {
   count: number;
 }
 
+export interface PersonStat {
+  person: string;          // assignee handle or "(unassigned)"
+  stories: number;
+  done: number;
+}
+
 export interface AnalysisStats {
   hero: HeroKpis;
   statusBreakdown: StatusBreakdownEntry[];
   dailyCompletion: DailyCompletion[];   // last 30 days oldest → newest
   epicProgress: EpicStat[];             // UNION-seeded already by corpus
+  peopleStats: PersonStat[];            // bucketed by assignee, unassigned last
 }
 
 function todayIso(): string {
@@ -103,10 +110,29 @@ export function buildAnalysisStats(
     dailyCompletion.push({ date: iso, count: completionMap.get(iso) ?? 0 });
   }
 
+  // People stats — bucket by assignee, unassigned last.
+  const byPerson = new Map<string, { stories: number; done: number }>();
+  for (const s of stories) {
+    const person = s.assignee && s.assignee !== '—' ? s.assignee : '(unassigned)';
+    const entry = byPerson.get(person) ?? { stories: 0, done: 0 };
+    entry.stories += 1;
+    if (s.status === 'done') entry.done += 1;
+    byPerson.set(person, entry);
+  }
+  const peopleStats: PersonStat[] = [...byPerson.entries()]
+    .map(([person, c]) => ({ person, ...c }))
+    .sort((a, b) => {
+      if (a.person === '(unassigned)') return 1;
+      if (b.person === '(unassigned)') return -1;
+      if (b.stories !== a.stories) return b.stories - a.stories;
+      return a.person.localeCompare(b.person);
+    });
+
   return {
     hero,
     statusBreakdown,
     dailyCompletion,
     epicProgress: epics,
+    peopleStats,
   };
 }

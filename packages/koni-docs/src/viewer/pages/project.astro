@@ -604,103 +604,268 @@ const meta = {
         `;
       }
 
-      // ===== Analysis view (US-4.33) =====
+      // ===== Analysis view (US-4.33) — koni-erp-02 §4.7 parity =====
       function renderAnalysisView() {
         const hero = analysis.hero;
         const breakdown = analysis.statusBreakdown;
         const daily = analysis.dailyCompletion;
         const epicProgress = analysis.epicProgress;
+        const peopleStats = analysis.peopleStats || [];
 
-        const maxBreakdown = Math.max(1, ...breakdown.map((b: any) => b.count));
-        const maxDaily = Math.max(1, ...daily.map((d: any) => d.count));
-
-        const heroHtml = `
-          <div class="grid grid-cols-2 gap-3 md:grid-cols-5">
-            ${kpiCard('Start date', hero.startDate || '—')}
-            ${kpiCard('Days elapsed', `${hero.daysElapsed} days`)}
-            ${kpiCard('Stories', `${hero.doneStories} / ${hero.totalStories} done`)}
-            ${kpiCard('Completion', `${hero.completionPct}%`, `<div class="mt-2 h-1 rounded-full bg-muted"><div class="h-1 rounded-full bg-emerald-500" style="width:${Math.min(100, hero.completionPct)}%"></div></div>`)}
-            ${kpiCardWarning('Warnings', hero.warningCount)}
-          </div>`;
-
-        const breakdownHtml = `
-          <div class="rounded-lg border border-border bg-background/40 p-4">
-            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Status breakdown</div>
-            <div class="flex flex-col gap-1.5">
-              ${breakdown.map((b: any) => `
-                <div class="grid grid-cols-[110px_1fr_40px] items-center gap-2 text-[12px]">
-                  <span class="font-mono text-muted-foreground">${escapeHtml(b.status)}</span>
-                  <div class="h-2 rounded bg-muted"><div class="h-2 rounded bg-primary/60" style="width:${(b.count / maxBreakdown) * 100}%"></div></div>
-                  <span class="text-right font-mono text-foreground">${b.count}</span>
-                </div>`).join('')}
-            </div>
-          </div>`;
-
-        const dailyHtml = `
-          <div class="rounded-lg border border-border bg-background/40 p-4">
-            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Stories completed (last 30 days)</div>
-            <div class="flex items-end gap-px" style="height:96px">
-              ${daily.map((d: any, i: number) => {
-                const h = d.count === 0 ? 2 : Math.max(6, (d.count / maxDaily) * 80);
-                const isFifth = i % 5 === 0;
-                return `<div class="flex flex-1 flex-col items-center justify-end gap-1" title="${d.date}: ${d.count} done">
-                  <div class="w-full rounded-sm bg-emerald-500/60" style="height:${h}px"></div>
-                  ${isFifth ? `<span class="font-mono text-[8.5px] leading-none text-muted-foreground/70">${d.date.slice(5)}</span>` : `<span class="font-mono text-[8.5px] leading-none">&nbsp;</span>`}
-                </div>`;
-              }).join('')}
-            </div>
-          </div>`;
-
-        const epicHtml = `
-          <div class="rounded-lg border border-border bg-background/40 p-4 md:col-span-2">
-            <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Epic progress (${epicProgress.length})</div>
-            <div class="flex flex-col gap-2">
-              ${epicProgress.length === 0
-                ? `<div class="text-[11px] text-muted-foreground/60">No epics recorded.</div>`
-                : epicProgress.map((e: any) => {
-                  const pct = e.total === 0 ? 0 : Math.round((e.done / e.total) * 100);
-                  return `
-                    <div class="grid grid-cols-[80px_1fr_92px_160px] items-center gap-2 text-[12px]">
-                      <span class="font-mono text-foreground">${escapeHtml(e.epic)}</span>
-                      <span class="truncate text-muted-foreground">${escapeHtml(e.title || '(no title)')}</span>
-                      <span class="whitespace-nowrap rounded px-1.5 py-0.5 text-center font-mono text-[10px] ${statusBadgeClass(e.status)}">${escapeHtml(e.status || '—')}</span>
-                      <div class="flex items-center gap-2">
-                        <div class="h-2 flex-1 rounded bg-muted"><div class="h-2 rounded bg-emerald-500" style="width:${pct}%"></div></div>
-                        <span class="whitespace-nowrap font-mono text-[10px] text-muted-foreground">${e.done}/${e.total}</span>
-                      </div>
-                    </div>`;
-                }).join('')}
-            </div>
-          </div>`;
+        const heroHtml = renderHeroKpis(hero);
+        const breakdownHtml = renderStatusBreakdown(breakdown);
+        const dailyHtml = renderDailyChart(daily, hero);
+        const epicHtml = renderEpicTable(epicProgress);
+        const peopleHtml = renderPeopleTable(peopleStats);
 
         container!.innerHTML = `
-          <div class="p-4">
+          <div class="flex flex-col gap-3 p-3">
             ${heroHtml}
-            <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="grid gap-3 md:grid-cols-2">
               ${breakdownHtml}
               ${dailyHtml}
-              ${epicHtml}
             </div>
+            ${epicHtml}
+            ${peopleHtml}
           </div>
         `;
       }
 
-      function kpiCard(label: string, value: string, extra = ''): string {
-        return `
-          <div class="rounded-lg border border-border bg-background/40 p-3">
-            <div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">${escapeHtml(label)}</div>
-            <div class="text-lg font-bold text-foreground">${escapeHtml(value)}</div>
+      function renderHeroKpis(hero: any): string {
+        const completionBar = `<div class="mt-3 h-1.5 rounded-full bg-muted"><div class="h-1.5 rounded-full bg-emerald-500" style="width:${Math.min(100, hero.completionPct)}%"></div></div>`;
+        const warnIcon = `
+          <svg class="size-3.5 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/>
+            <path d="M12 9v4M12 17h.01"/>
+          </svg>`;
+        const arrowIcon = `
+          <svg class="size-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 5l7 7-7 7"/>
+          </svg>`;
+
+        const card = (label: string, value: string, extra = '') => `
+          <div class="rounded-xl border border-border bg-background/40 px-4 py-3">
+            <div class="mb-2 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">${escapeHtml(label)}</div>
+            <div class="text-2xl font-bold tracking-tight text-foreground">${value}</div>
             ${extra}
+          </div>`;
+
+        const warnCount = hero.warningCount;
+        const warnCard = `
+          <a href="?view=warning" class="group flex items-start justify-between rounded-xl border border-border bg-background/40 px-4 py-3 transition hover:border-destructive/40 hover:bg-destructive/5">
+            <div class="flex-1">
+              <div class="mb-2 flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">
+                ${warnIcon}
+                <span>Warnings</span>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-bold tracking-tight ${warnCount === 0 ? 'text-emerald-400' : 'text-destructive'}">${warnCount}</span>
+                <span class="text-[11px] text-muted-foreground">off standard</span>
+              </div>
+            </div>
+            <div class="opacity-60 transition group-hover:opacity-100">${arrowIcon}</div>
+          </a>`;
+
+        const startVal = hero.startDate ? `<span class="text-xl font-bold tracking-tight text-foreground">${escapeHtml(hero.startDate)}</span>` : `<span class="text-2xl font-bold tracking-tight text-muted-foreground">—</span>`;
+
+        return `
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-5">
+            <div class="rounded-xl border border-border bg-background/40 px-4 py-3">
+              <div class="mb-2 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">Start Date</div>
+              <div>${startVal}</div>
+            </div>
+            ${card('Days Elapsed', `${hero.daysElapsed}<span class="ml-1.5 text-sm font-normal text-muted-foreground">days</span>`)}
+            ${card('Stories', `${hero.doneStories} / ${hero.totalStories}<span class="ml-1.5 text-sm font-normal text-muted-foreground">done</span>`)}
+            ${card('Completion', `${hero.completionPct}%`, completionBar)}
+            ${warnCard}
           </div>`;
       }
 
-      function kpiCardWarning(label: string, count: number): string {
-        const cls = count === 0 ? 'text-emerald-400' : 'text-destructive';
+      function statusColorBar(status: string): string {
+        switch (status) {
+          case 'backlog': return 'bg-muted-foreground/50';
+          case 'ready': return 'bg-sky-500/70';
+          case 'in-progress': return 'bg-amber-500';
+          case 'review':
+          case 'in-review': return 'bg-indigo-500/70';
+          case 'blocked': return 'bg-destructive';
+          case 'done': return 'bg-emerald-500';
+          case 'reverted':
+          case 'deprecated': return 'bg-muted-foreground/30';
+          default: return 'bg-muted';
+        }
+      }
+
+      function renderStatusBreakdown(breakdown: any[]): string {
+        const nonZero = breakdown.filter((b: any) => b.count > 0).length;
+        const total = breakdown.reduce((s: number, b: any) => s + b.count, 0);
+        const max = Math.max(1, ...breakdown.map((b: any) => b.count));
         return `
-          <a href="?view=warning" class="block rounded-lg border border-border bg-background/40 p-3 transition hover:border-destructive/40 hover:bg-destructive/5">
-            <div class="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">${escapeHtml(label)}</div>
-            <div class="text-lg font-bold ${cls}">${count}</div>
-          </a>`;
+          <div class="rounded-xl border border-border bg-background/40 p-4">
+            <div class="mb-1 text-sm font-semibold text-foreground">Status breakdown</div>
+            <div class="mb-3 text-[11px] text-muted-foreground">${total} stories across ${nonZero} status state${nonZero === 1 ? '' : 's'}.</div>
+            <div class="flex flex-col gap-2">
+              ${breakdown.map((b: any) => {
+                const w = (b.count / max) * 100;
+                return `
+                <div class="grid grid-cols-[110px_1fr_40px] items-center gap-2 text-[12px]">
+                  <span class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">${escapeHtml(b.status)}</span>
+                  <div class="h-2.5 rounded bg-muted/40"><div class="h-2.5 rounded ${statusColorBar(b.status)}" style="width:${w}%"></div></div>
+                  <span class="text-right font-mono text-foreground">${b.count}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`;
+      }
+
+      function renderDailyChart(daily: any[], hero: any): string {
+        const max = Math.max(1, ...daily.map((d: any) => d.count));
+        // Y-axis ticks — pick a round nice scale.
+        const niceMax = niceScale(max);
+        const ticks = [0, Math.round(niceMax / 4), Math.round(niceMax / 2), Math.round(niceMax * 3 / 4), niceMax];
+        const chartHeight = 110;
+
+        const yAxisHtml = ticks.slice().reverse().map((t) => `
+          <div class="flex items-center justify-end" style="height:${chartHeight / 4}px">
+            <span class="font-mono text-[9px] text-muted-foreground">${t}</span>
+          </div>`).join('');
+
+        const gridHtml = ticks.map(() => `<div class="border-t border-border/30" style="height:${chartHeight / 4}px"></div>`).join('');
+
+        const barsHtml = daily.map((d: any, i: number) => {
+          const h = d.count === 0 ? 0 : Math.max(2, (d.count / niceMax) * chartHeight);
+          return `<div class="group flex flex-1 items-end" style="height:${chartHeight}px" title="${d.date}: ${d.count} done">
+            <div class="w-full rounded-t-sm bg-emerald-500/80 transition group-hover:bg-emerald-400" style="height:${h}px"></div>
+          </div>`;
+        }).join('');
+
+        // X-axis labels every 2 days (or every 3 if too many)
+        const labelEvery = daily.length > 18 ? 2 : 1;
+        const xAxisHtml = daily.map((d: any, i: number) => {
+          const show = i % labelEvery === 0;
+          return `<div class="flex-1 text-center">
+            <span class="font-mono text-[9px] text-muted-foreground/80">${show ? d.date.slice(5) : '&nbsp;'}</span>
+          </div>`;
+        }).join('');
+
+        return `
+          <div class="rounded-xl border border-border bg-background/40 p-4">
+            <div class="mb-1 text-sm font-semibold text-foreground">Stories completed (last 30 days)</div>
+            <div class="mb-3 text-[11px] text-muted-foreground">${hero.doneStories} stories flipped to done.</div>
+            <div class="flex gap-2">
+              <div class="flex flex-col-reverse justify-between" style="height:${chartHeight}px;width:24px">${yAxisHtml}</div>
+              <div class="relative flex-1">
+                <div class="pointer-events-none absolute inset-0 flex flex-col justify-between">${gridHtml}</div>
+                <div class="relative flex items-end gap-px" style="height:${chartHeight}px">${barsHtml}</div>
+              </div>
+            </div>
+            <div class="mt-1 flex gap-px pl-7">${xAxisHtml}</div>
+          </div>`;
+      }
+
+      function niceScale(max: number): number {
+        if (max <= 0) return 4;
+        if (max <= 4) return 4;
+        if (max <= 8) return 8;
+        if (max <= 14) return 14;
+        if (max <= 21) return 21;
+        if (max <= 28) return 28;
+        if (max <= 40) return 40;
+        const pow = Math.pow(10, Math.floor(Math.log10(max)));
+        const f = max / pow;
+        const nice = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+        return nice * pow;
+      }
+
+      function sortIcon(): string {
+        return `<svg class="ml-1 size-3 text-muted-foreground/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>`;
+      }
+
+      function renderEpicTable(epicProgress: any[]): string {
+        const doneEpics = epicProgress.filter((e: any) => e.status === 'done').length;
+        return `
+          <div class="rounded-xl border border-border bg-background/40 p-4">
+            <div class="mb-1 text-sm font-semibold text-foreground">Epic progress</div>
+            <div class="mb-3 text-[11px] text-muted-foreground">${epicProgress.length} epic${epicProgress.length === 1 ? '' : 's'} · ${doneEpics} done.</div>
+            ${epicProgress.length === 0
+              ? `<div class="text-[11px] text-muted-foreground/60">No epics recorded.</div>`
+              : `<table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-border text-left font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Epic ${sortIcon()}</div></th>
+                    <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Title ${sortIcon()}</div></th>
+                    <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Status ${sortIcon()}</div></th>
+                    <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Progress ${sortIcon()}</div></th>
+                    <th class="py-2 font-medium"><div class="inline-flex items-center">Days ${sortIcon()}</div></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${epicProgress.map((e: any) => {
+                    const pct = e.total === 0 ? 0 : Math.round((e.done / e.total) * 100);
+                    return `
+                    <tr class="border-b border-border/60 last:border-b-0 transition hover:bg-accent/30">
+                      <td class="py-2 pr-4 font-mono text-[12px] text-foreground">${escapeHtml(e.epic)}</td>
+                      <td class="py-2 pr-4 text-muted-foreground">${escapeHtml(e.title || '(no title)')}</td>
+                      <td class="py-2 pr-4"><span class="whitespace-nowrap rounded px-2 py-0.5 text-center font-mono text-[10.5px] ${statusBadgeClass(e.status)}">${escapeHtml(e.status || '—')}</span></td>
+                      <td class="py-2 pr-4">
+                        <div class="flex items-center gap-2">
+                          <span class="whitespace-nowrap font-mono text-[11px] text-foreground" style="width:48px">${e.done}/${e.total}</span>
+                          <div class="h-2 flex-1 rounded bg-muted/40" style="max-width:180px"><div class="h-2 rounded bg-emerald-500" style="width:${pct}%"></div></div>
+                          <span class="whitespace-nowrap font-mono text-[10.5px] text-muted-foreground" style="width:36px">${pct}%</span>
+                        </div>
+                      </td>
+                      <td class="py-2 font-mono text-[12px] text-muted-foreground">—</td>
+                    </tr>`;
+                  }).join('')}
+                </tbody>
+              </table>`
+            }
+          </div>`;
+      }
+
+      function renderPeopleTable(people: any[]): string {
+        if (!people || people.length === 0) {
+          return `
+            <div class="rounded-xl border border-border bg-background/40 p-4">
+              <div class="mb-1 text-sm font-semibold text-foreground">People</div>
+              <div class="text-[11px] text-muted-foreground">No assignees recorded.</div>
+            </div>`;
+        }
+        const totalStories = people.reduce((s: number, p: any) => s + p.stories, 0);
+        return `
+          <div class="rounded-xl border border-border bg-background/40 p-4">
+            <div class="mb-1 text-sm font-semibold text-foreground">People</div>
+            <div class="mb-3 text-[11px] text-muted-foreground">${people.length} ${people.length === 1 ? 'person' : 'people'} · ${totalStories} stories.</div>
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-border text-left font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Person ${sortIcon()}</div></th>
+                  <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Stories ${sortIcon()}</div></th>
+                  <th class="py-2 pr-4 font-medium"><div class="inline-flex items-center">Done ${sortIcon()}</div></th>
+                  <th class="py-2 font-medium"><div class="inline-flex items-center">Progress ${sortIcon()}</div></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${people.map((p: any) => {
+                  const pct = p.stories === 0 ? 0 : Math.round((p.done / p.stories) * 100);
+                  const isUnassigned = p.person === '(unassigned)';
+                  const nameCls = isUnassigned ? 'italic text-muted-foreground/70' : 'text-foreground';
+                  return `
+                  <tr class="border-b border-border/60 last:border-b-0 transition hover:bg-accent/30">
+                    <td class="py-2 pr-4 ${nameCls}">${escapeHtml(p.person)}</td>
+                    <td class="py-2 pr-4 font-mono text-[12px] text-foreground">${p.stories}</td>
+                    <td class="py-2 pr-4 font-mono text-[12px] text-foreground">${p.done}</td>
+                    <td class="py-2">
+                      <div class="flex items-center gap-2">
+                        <div class="h-2 flex-1 rounded bg-muted/40" style="max-width:240px"><div class="h-2 rounded bg-emerald-500" style="width:${pct}%"></div></div>
+                        <span class="whitespace-nowrap font-mono text-[10.5px] text-muted-foreground" style="width:36px">${pct}%</span>
+                      </div>
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>`;
       }
 
       function statusBadgeClass(s: string): string {
