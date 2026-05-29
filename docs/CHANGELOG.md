@@ -85,7 +85,7 @@ focused fullscreen viewer that pops over the rest of the page.
 
 ### Commit
 
-`pending` — backfilled in a follow-up commit per the existing ship
+[`23b3fa2`](https://github.com/Koniverse/Koni-Skills/commit/23b3fa2) — ship commit. This entry's SHA backfilled in a follow-up per the existing ship
 pattern.
 
 ---
