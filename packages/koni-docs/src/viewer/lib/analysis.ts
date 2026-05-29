@@ -4,9 +4,7 @@
 // Search-unaffected — feeds on sprint-filtered stories per ERP §4.1.
 
 import type { StoryRow, EpicStat } from './corpus.ts';
-import type { ActivityWeek } from './calendar.ts';
 import { findStoryWarnings } from './warnings.ts';
-import { loadCommitActivity } from './calendar.ts';
 import { STORY_STATUS_ORDER } from './sort.ts';
 
 export interface HeroKpis {
@@ -32,7 +30,6 @@ export interface AnalysisStats {
   hero: HeroKpis;
   statusBreakdown: StatusBreakdownEntry[];
   dailyCompletion: DailyCompletion[];   // last 30 days oldest → newest
-  commitHeatmap: ActivityWeek[];        // last 26 weeks
   epicProgress: EpicStat[];             // UNION-seeded already by corpus
 }
 
@@ -106,13 +103,10 @@ export function buildAnalysisStats(
     dailyCompletion.push({ date: iso, count: completionMap.get(iso) ?? 0 });
   }
 
-  const commitHeatmap = loadCommitActivity(26);
-
   return {
     hero,
     statusBreakdown,
     dailyCompletion,
-    commitHeatmap,
     epicProgress: epics,
   };
 }

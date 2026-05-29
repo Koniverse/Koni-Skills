@@ -11,10 +11,18 @@ const tree = buildFileTree(allDocs);
 const dashboard = loadDashboardData();
 const { stories, epics, epicFiles, corpus } = dashboard;
 
+function toIsoDate(v: unknown): string {
+  if (!v) return '';
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  const s = String(v).trim();
+  if (!s) return '';
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : (new Date(s).toISOString().slice(0, 10) || '');
+}
+
 const sprintsRaw = getSprints(corpus).map(s => ({
   id: String(s.frontmatter.id ?? s.filename.replace(/\.md$/, '')),
-  start: typeof s.frontmatter.start === 'string' ? s.frontmatter.start : '',
-  end: typeof s.frontmatter.end === 'string' ? s.frontmatter.end : '',
+  start: toIsoDate(s.frontmatter.start),
+  end: toIsoDate(s.frontmatter.end),
 }));
 
 const dailyCommits = loadDailyCommits();
@@ -601,7 +609,6 @@ const meta = {
         const hero = analysis.hero;
         const breakdown = analysis.statusBreakdown;
         const daily = analysis.dailyCompletion;
-        const heatmap = analysis.commitHeatmap;
         const epicProgress = analysis.epicProgress;
 
         const maxBreakdown = Math.max(1, ...breakdown.map((b: any) => b.count));
@@ -632,19 +639,17 @@ const meta = {
         const dailyHtml = `
           <div class="rounded-lg border border-border bg-background/40 p-4">
             <div class="mb-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Stories completed (last 30 days)</div>
-            <div class="flex items-end gap-0.5" style="height:80px">
+            <div class="flex items-end gap-px" style="height:96px">
               ${daily.map((d: any, i: number) => {
-                const h = d.count === 0 ? 2 : Math.max(4, (d.count / maxDaily) * 76);
+                const h = d.count === 0 ? 2 : Math.max(6, (d.count / maxDaily) * 80);
                 const isFifth = i % 5 === 0;
-                return `<div class="flex flex-1 flex-col items-center justify-end gap-0.5" title="${d.date}: ${d.count} done">
+                return `<div class="flex flex-1 flex-col items-center justify-end gap-1" title="${d.date}: ${d.count} done">
                   <div class="w-full rounded-sm bg-emerald-500/60" style="height:${h}px"></div>
-                  ${isFifth ? `<span class="font-mono text-[9px] text-muted-foreground/70">${d.date.slice(5)}</span>` : ''}
+                  ${isFifth ? `<span class="font-mono text-[8.5px] leading-none text-muted-foreground/70">${d.date.slice(5)}</span>` : `<span class="font-mono text-[8.5px] leading-none">&nbsp;</span>`}
                 </div>`;
               }).join('')}
             </div>
           </div>`;
-
-        const heatHtml = renderCommitHeatmap(heatmap);
 
         const epicHtml = `
           <div class="rounded-lg border border-border bg-background/40 p-4 md:col-span-2">
@@ -655,13 +660,13 @@ const meta = {
                 : epicProgress.map((e: any) => {
                   const pct = e.total === 0 ? 0 : Math.round((e.done / e.total) * 100);
                   return `
-                    <div class="grid grid-cols-[100px_1fr_60px_120px] items-center gap-2 text-[12px]">
+                    <div class="grid grid-cols-[80px_1fr_92px_160px] items-center gap-2 text-[12px]">
                       <span class="font-mono text-foreground">${escapeHtml(e.epic)}</span>
                       <span class="truncate text-muted-foreground">${escapeHtml(e.title || '(no title)')}</span>
-                      <span class="rounded px-1.5 py-0 text-center font-mono text-[10px] ${statusBadgeClass(e.status)}">${escapeHtml(e.status || '—')}</span>
+                      <span class="whitespace-nowrap rounded px-1.5 py-0.5 text-center font-mono text-[10px] ${statusBadgeClass(e.status)}">${escapeHtml(e.status || '—')}</span>
                       <div class="flex items-center gap-2">
                         <div class="h-2 flex-1 rounded bg-muted"><div class="h-2 rounded bg-emerald-500" style="width:${pct}%"></div></div>
-                        <span class="font-mono text-[10px] text-muted-foreground">${e.done}/${e.total}</span>
+                        <span class="whitespace-nowrap font-mono text-[10px] text-muted-foreground">${e.done}/${e.total}</span>
                       </div>
                     </div>`;
                 }).join('')}
@@ -674,42 +679,10 @@ const meta = {
             <div class="mt-3 grid gap-3 md:grid-cols-2">
               ${breakdownHtml}
               ${dailyHtml}
-              ${heatHtml}
               ${epicHtml}
             </div>
           </div>
         `;
-      }
-
-      function renderCommitHeatmap(weeks: any[]): string {
-        const max = Math.max(1, ...weeks.flatMap((w: any) => w.days.map((d: any) => d.count)));
-        const levels = ['bg-muted', 'bg-emerald-900/60', 'bg-emerald-700/70', 'bg-emerald-500/80', 'bg-emerald-400/90'];
-        function bucket(n: number): string {
-          if (n === 0) return levels[0]!;
-          const r = n / max;
-          if (r < 0.25) return levels[1]!;
-          if (r < 0.5) return levels[2]!;
-          if (r < 0.75) return levels[3]!;
-          return levels[4]!;
-        }
-        const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        return `
-          <div class="rounded-lg border border-border bg-background/40 p-4">
-            <div class="mb-3 flex items-center justify-between">
-              <div class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Commit activity — last 26 weeks</div>
-            </div>
-            <div class="flex gap-1.5">
-              <div class="flex flex-col gap-0.5 pr-1">
-                ${dayHeaders.map(d => `<div class="h-2.5 font-mono text-[8px] leading-[10px] text-muted-foreground">${d}</div>`).join('')}
-              </div>
-              <div class="flex gap-0.5 overflow-x-auto">
-                ${weeks.map((w: any) => `
-                  <div class="flex flex-col gap-0.5">
-                    ${w.days.map((d: any) => `<div class="h-2.5 w-2.5 rounded-[2px] ${bucket(d.count)}" title="${d.date}: ${d.count} commits"></div>`).join('')}
-                  </div>`).join('')}
-              </div>
-            </div>
-          </div>`;
       }
 
       function kpiCard(label: string, value: string, extra = ''): string {
@@ -902,14 +875,14 @@ const meta = {
         return entries;
       }
 
-      function groupHeader(bucket: { key: string; items: any[] }, key: string): string {
+      function groupHeader(bucket: { key: string; items: any[] }, key: string, arrowStyle = ''): string {
         const label = key === 'version_shipped' ? 'Shipped' : (key.charAt(0).toUpperCase() + key.slice(1));
         const totalPts = bucket.items.reduce((s: number, c: any) => s + (c.points || 0), 0);
         const doneCount = bucket.items.filter((s: any) => s.status === 'done').length;
         return `
           <button class="group-section-header flex w-full items-center justify-between gap-3 bg-muted/40 px-4 py-2 text-left transition hover:bg-muted/60">
             <span class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider">
-              <svg class="arrow-icon size-3 text-muted-foreground transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+              <svg class="arrow-icon size-3 text-muted-foreground transition-transform" style="${arrowStyle}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
               <span class="text-muted-foreground">${escapeHtml(label)}:</span>
               <span class="text-foreground">${escapeHtml(bucket.key)}</span>
             </span>
@@ -926,12 +899,20 @@ const meta = {
           return `<div class="p-16 text-center font-mono text-xs uppercase tracking-wider text-muted-foreground">No stories match the current filters.</div>`;
         }
         const buckets = bucketize(list, key);
-        return buckets.map(b => `
-          <div class="group-section border-b border-border last:border-b-0">
-            ${groupHeader(b, key)}
-            <div class="group-section-content">${renderTable(b.items)}</div>
+        // Empty buckets render collapsed by default: header-only, no body taking
+        // vertical space. Keeps UNION semantics visible without clutter.
+        return buckets.map(b => {
+          const empty = b.items.length === 0;
+          const sectionClass = empty ? 'group-section collapsed' : 'group-section';
+          const contentStyle = empty ? 'display:none' : '';
+          const arrowStyle = empty ? 'transform:rotate(-90deg)' : '';
+          return `
+          <div class="${sectionClass} border-b border-border last:border-b-0" data-empty="${empty}">
+            ${groupHeader(b, key, arrowStyle)}
+            <div class="group-section-content" style="${contentStyle}">${renderTable(b.items)}</div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
 
       function wireAccordion() {
