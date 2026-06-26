@@ -14,7 +14,7 @@ arch_ref: []
 depends_on:
   - US-3.1
 assignee: jindo9986
-commit: pending
+commit: f3b8c34
 created: 2026-06-26
 updated: 2026-06-26
 ---
