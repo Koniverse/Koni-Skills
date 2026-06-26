@@ -13,7 +13,7 @@ This file holds only the Claude-Code activation surface for the
 koni-docs:
   plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W22     # closed 2026-05-25 → 2026-05-31 (Pillars B–G shipped through v0.8.0; EPIC-4 closes 100% 36/36 with US-4.31..4.36 Pillar G — /project multi-view: Board + Calendar + Analysis + Warning validator + URL ?view= + footer/UNION/sort)
+  active_sprint: sprint-2026-W26     # active 2026-06-22 → 2026-06-28 (EPIC-3 opens — US-3.2 ships koni-setup v0.9.0: first non-docs Koniverse skill, day-0 bootstrapper/onboarder that delegates doc bodies to koni-docs; closes FR-10, adds FR-20)
   version_file: VERSION              # path to semver file
 
 > **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.

@@ -1,10 +1,10 @@
 ---
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
-status: backlog
-prd_ref: 'FR-9, FR-10'
+status: in-progress
+prd_ref: 'FR-9, FR-10, FR-20'
 created: 2026-05-27T00:00:00.000Z
-updated: 2026-05-27T00:00:00.000Z
+updated: 2026-06-26T00:00:00.000Z
 ---
 ## Goal
 
@@ -22,16 +22,17 @@ The PRD and ARCHITECTURE both reserve a plugin slot
 written yet, and no skill exists in this repo other than `koni-docs`.
 EPIC-3 is the bridge from "we shipped one skill" to "we run a catalog."
 
-This epic is **backlog** in v0.2.0 — work begins after EPIC-2 closes and
-v0.2.0 is tagged. Stories within EPIC-3 will be drafted in a future
-brainstorm + plan pass (likely a `/office-hours` session).
+This epic is now **in-progress** (sprint-2026-W26): pillar 2 ("first non-docs
+Koniverse skill") is delivered by US-3.2 `koni-setup` at v0.9.0. Pillar 1
+(plugin-skill pattern, US-3.1) remains backlog pending a future brainstorm +
+plan pass.
 
 ### Feature pillars
 
-| # | Pillar                             | Stories                                             | Purpose                                                                                   |
-| - | ---------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 1 | **Plugin pattern**                 | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define how a plugin skill extends koni-docs rules; reference implementation               |
-| 2 | **First non-docs Koniverse skill** | TBD                                                 | Prove the catalog supports more than one skill type — candidate identified via brainstorm |
+| # | Pillar                             | Stories                                                  | Purpose                                                                             |
+| - | ---------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 1 | **Plugin pattern**                 | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)      | Define how a plugin skill extends koni-docs rules; reference implementation         |
+| 2 | **First non-docs Koniverse skill** | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) ✅ | `koni-setup` — day-0 project bootstrapper/onboarder; proves the multi-skill catalog |
 
 ### Out of scope
 
@@ -41,16 +42,18 @@ brainstorm + plan pass (likely a `/office-hours` session).
 
 ## FR Coverage
 
-| FR    | Story                                               | Status     |
-| ----- | --------------------------------------------------- | ---------- |
-| FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | 📋 backlog |
-| FR-10 | TBD                                                 | 📋 backlog |
+| FR    | Story                                                  | Status             |
+| ----- | ------------------------------------------------------ | ------------------ |
+| FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)    | 📋 backlog         |
+| FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) | ✅ shipped (v0.9.0) |
+| FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) | ✅ shipped (v0.9.0) |
 
 ## Stories
 
-| ID                                                  | Title                       | Goal                                                                                                                      | Status     | Version |
-| --------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------- | ------- |
-| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation | 📋 backlog | —       |
+| ID                                                     | Title                       | Goal                                                                                                                                                   | Status     | Version |
+| ------------------------------------------------------ | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------- |
+| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)    | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation                              | 📋 backlog | —       |
+| [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) | koni-setup bootstrapper     | Ship the first non-docs Koniverse skill: detect repo profile + scaffold/wire/onboard a repo to the shared standard, delegating doc bodies to koni-docs | ✅ done     | v0.9.0  |
 
 ## Cross-cutting invariants
 
@@ -61,4 +64,4 @@ brainstorm + plan pass (likely a `/office-hours` session).
 
 - [ ] Plugin-skill pattern documented (where the directory lives, how the agent discovers it, how it composes with koni-docs rules) (US-3.1)
 - [ ] At least one plugin skill implemented as reference (`koni-supabase` OR `koni-nextjs`) (US-3.1)
-- [ ] At least one non-docs Koniverse skill identified + scoped (TBD story)
+- [x] At least one non-docs Koniverse skill identified + scoped + shipped — `koni-setup` (US-3.2, v0.9.0)

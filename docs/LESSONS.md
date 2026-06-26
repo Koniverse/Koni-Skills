@@ -186,3 +186,71 @@ regex literal invalid at construction time, and the script aborts.
 **Cross-references**:
 - See [CONTEXT D11](CONTEXT.md) — to be appended when the v0.3.0 ship lands and the team agrees on the regex-escape contract for future scripts.
 - See [LESSONS §1](#1-sync-script-story-row-matcher-must-use-word-boundaries-not-prefix-matching) for the W19 trap that motivated the regression-test discipline. §5 is the second sync-script bug caught by exercising real-world data; both share the lesson "small in-repo fixtures don't cover real-world edges".
+
+---
+
+## 6. A scaffold skill's copy-paste command MUST match its own tree diagram — verify with a sandboxed dry run
+
+**What happened (v0.9.0, surfaced 2026-06-26 while building `koni-setup`)**:
+The first draft of `koni-setup` shipped a `create-tree` bash command next to a
+directory-tree diagram in the same reference file. A sandboxed sanity test —
+two independent subagents, one running the bootstrap path and one the onboard
+path against throwaway dirs — independently flagged that the command **did not
+create several files the tree promised**: `docs/README.md`,
+`docs/sprints/README.md`, the first `sprint-YYYY-WNN.md`, and
+`docs/tests/test-cases/README.md`. A literal executor would have produced a
+visibly incomplete scaffold while believing it had followed the skill.
+
+The same dry run surfaced a cluster of sibling defects, all of the same family
+("the instructions look right but break when executed verbatim"):
+
+- **CHANGELOG double-handling** — a generic stub loop wrote `docs/CHANGELOG.md`,
+  then a separate seed block tried to write it again; the `[Unreleased]` anchor
+  the seed intended never landed if the loop ran first.
+- **Empty leaf dirs vanish on commit** — `epics/`, `stories/`, `archive/`,
+  `design/`, the test-report dirs were created empty with no `.gitkeep`; git
+  drops them, breaking the "structure validates" promise.
+- **Onboard append-vs-overwrite dead-end** — "never overwrite CLAUDE.md"
+  contradicted "CLAUDE.md must carry the integration block" for the most common
+  onboard case (existing CLAUDE.md, no block). The skill never said appending is
+  allowed.
+- **Missing `git init`** — bootstrap referenced `.gitignore` / commits but never
+  initialised the repo.
+- **Profile/command mismatch** — the stub loop created `PRD.md` + `ARCHITECTURE.md`
+  unconditionally while the prose said "skip them for content repos."
+- **Doubly-specified version pin** — `^0.8.1` hardcoded in one place, "pin to
+  `Koni-Skills/VERSION`" in another; the two drift apart silently.
+
+**Why**: a skill that bundles an executable command alongside a human-readable
+diagram has *two sources of truth that can disagree*. Prose is forgiving — a
+human fills gaps; a literal command is not — it does exactly what it says. When
+the two are authored separately and never run end-to-end, the command quietly
+diverges from the diagram it's supposed to realise.
+
+**How to avoid**:
+
+- **Dry-run every scaffold/codegen skill in a sandbox before shipping it.**
+  Spawn an independent agent (one with no authoring context) to follow the skill
+  verbatim against a throwaway dir, and diff what it produced against what the
+  skill *claims* it produces. Authoring context hides gaps; a cold executor
+  exposes them. Two agents on the two main paths (here: bootstrap + onboard)
+  caught everything.
+- **One source of truth per artifact.** If a command and a diagram both describe
+  the tree, make the command generate the tree the diagram shows (or generate
+  the diagram from the command). Don't maintain them in parallel by hand.
+- **Make the unhappy path explicit.** "Don't overwrite" needs its complement
+  spelled out — *appending a missing section is allowed*; only destroying
+  content is forbidden. Silence on the boundary is where executors stall.
+- **Scaffolds must account for git's quirks**: `.gitkeep` for intentional empty
+  dirs, `git init` for genuinely-new repos.
+
+**Codified as**:
+- Story [US-3.2](sprints/stories/US-3.2-koni-setup-bootstrapper.md) TASK-3.2.4
+- [CONTEXT D12](CONTEXT.md) — the koni-setup ↔ koni-docs boundary this skill operates within
+- Fixes applied across `skills/koni-setup/references/{scaffold-checklist,onboarding-audit,skill-wiring}.md` + `SKILL.md`
+
+**Cross-references**:
+- Mirrors the §1 / §5 lesson ("small in-repo fixtures don't cover real-world
+  edges") one level up: here the gap is between a skill's *instructions* and its
+  *execution*, caught the same way — by running it against data/throwaway dirs
+  the author didn't hand-curate.

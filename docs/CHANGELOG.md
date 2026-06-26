@@ -16,6 +16,61 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.9.0] — 2026-06-26 — koni-setup: first non-docs Koniverse skill (project bootstrapper & onboarder) — v0.9.0
+
+Until now Koni-Skills shipped exactly one skill — `koni-docs`. EPIC-3 ("move
+beyond koni-docs alone") opens here with `koni-setup`, the first **non-docs**
+Koniverse skill and the catalog's proof that the repo is a multi-skill home.
+It captures the previously-tribal "stand up a new Koni repo" procedure —
+reverse-engineered from six live repos (`koni-devops`, `Koni-ERP-02`,
+`koni-growth`, `koni-landing`, `koni-training`, `Senti-Quant`) — as a reusable,
+profile-aware, idempotent skill. Closes FR-10, adds FR-20.
+
+### Added — `skills/koni-setup/`
+
+- **SKILL.md** — the day-0 orchestrator: `detect → (bootstrap | onboard/audit)
+  → verify`. Two modes (new repo vs. existing repo), three repo profiles
+  (**code / devops / content**, hybrid-aware). The defining constraint, and the
+  reason it never conflicts with koni-docs, is that it **delegates all
+  documentation-body templates to koni-docs** rather than duplicating them (see
+  [CONTEXT D12](CONTEXT.md)).
+- **references/repo-types.md** — common-core + per-profile expected file sets,
+  each tied to the reference repo to copy the pattern from.
+- **references/scaffold-checklist.md** — one profile-aware, re-runnable
+  `create-tree` command that matches its own tree diagram, runs `git init`,
+  seeds `VERSION` + CHANGELOG `[Unreleased]` anchor, and keeps empty leaf dirs
+  in git with `.gitkeep`.
+- **references/skill-inventory.md** — *which* AI skills to install and from
+  *which* source/mechanism: the ~40-skill BMAD pack via `npx bmad-method
+  install`, koni-docs wired per-repo, **gstack confirmed global (never
+  per-repo)**, plus profile extras (shadcn for UI code, the Anthropic doc/design
+  skills for content repos).
+- **references/skill-wiring.md** — the `.claude` → `.agents` → shared
+  `Koni-Skills/skills` symlink chain, dangling-link repair, and the `agile:*`
+  npm scripts + `@koniverse/koni-docs` devDep block.
+- **references/onboarding-audit.md** — present/missing audit matrix that an
+  onboard run emits *before* writing, filling only gaps and never overwriting
+  populated files (appending the integration block to an existing CLAUDE.md is
+  explicitly allowed).
+- **Wiring**: `koni-setup` is itself installed into this repo at
+  `.claude/skills/koni-setup` + `.agents/skills/koni-setup` (mirrors koni-docs).
+
+### Validation
+
+Sandboxed sanity test — two independent subagents ran a bootstrap (new code
+repo) and an onboard (existing content repo). They converged on a cluster of
+real first-draft defects (scaffold command not matching its own tree, CHANGELOG
+double-handling, empty-dir `.gitkeep`, onboard CLAUDE.md append-vs-overwrite,
+missing `git init`, `active_sprint` default, doubly-specified version pin), all
+fixed before ship. Captured as [LESSONS §6](LESSONS.md).
+
+### Docs
+
+- US-3.2 story + sprint-2026-W26 opened; EPIC-3 flips backlog → in-progress;
+  PRD FR-10 marked shipped + FR-20 added; CLAUDE.md `active_sprint` → W26.
+
+---
+
 ## [0.8.1] — 2026-05-29 — Viewer Mermaid diagrams: click-to-open fullscreen modal with zoom + pan — v0.8.1
 
 Reading docs with Mermaid diagrams on a high-density screen was painful:

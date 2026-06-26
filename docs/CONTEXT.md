@@ -612,3 +612,66 @@ This decision bundles three sub-decisions, all logged together:
 **Date**: 2026-05-27
 **Version**: pending (v0.3.0 candidate when EPIC-4 ships)
 **Reference**: [spec](superpowers/specs/2026-05-27-koni-docs-viewer-design.md), [plan](superpowers/plans/2026-05-27-koni-docs-viewer-implementation.md), [EPIC-4](sprints/epics/EPIC-4.md).
+
+---
+
+### D12. `koni-setup` is a sibling skill that DELEGATES doc bodies to koni-docs (independence boundary)
+
+**Context**: The user wanted a reusable skill to set up new Koniverse projects
+fast, reusing the patterns already established across the six live repos
+(`koni-devops`, `Koni-ERP-02`, `koni-growth`, `koni-landing`, `koni-training`,
+`Senti-Quant`). The explicit ask was to build it "theo đúng chuẩn koni-docs …
+nhưng khởi tạo để không xung đột với koni-docs và độc lập nhất có thể" — i.e.
+follow the koni-docs standard, but keep the new skill independent and
+non-conflicting. The open design question: where is the line between "setup"
+and "docs management", given both touch the same `docs/` surface.
+
+**Decision**: Ship `koni-setup` as a **day-0 orchestrator** that owns
+scaffolding + skill wiring + skill-set install + repo-type detection +
+onboard/audit, and **delegates every documentation-body need to koni-docs**
+(the 12 rules, the PRD / story / epic / CHANGELOG / sprint templates, the
+pre-commit doc checklist). koni-setup writes *empty scaffolds and the
+integration surface*; koni-docs writes *content*. The skill states this
+boundary at the top of SKILL.md and repeats it as a closing reminder, and never
+reproduces a koni-docs template. File it under **EPIC-3** (catalog expansion) as
+the realization of FR-10 ("first non-docs Koniverse skill"), plus a new FR-20
+for the specific deliverable.
+
+**Rationale**:
+
+- **No duplication = no drift = no conflict.** The single biggest failure mode
+  for two skills over the same `docs/` tree is divergent copies of the same
+  template. By making koni-docs the sole owner of doc bodies, koni-setup can
+  never disagree with it — there is nothing to disagree about.
+- **Matches the EPIC-3 cross-cutting invariant** already on the books: "sibling
+  skills MUST NOT duplicate koni-docs core; they extend or specialize." D12 is
+  that invariant applied to a concrete skill.
+- **Clean mental model**: koni-setup gets a repo to the starting line; koni-docs
+  runs the race. Bootstrap vs. lifecycle.
+- **Independent wiring**: koni-setup installs into `.claude/skills/` +
+  `.agents/skills/` exactly like koni-docs (mirrored symlink), so the two are
+  peers, neither importing the other's files — only invoking across the boundary.
+
+**Alternatives considered**:
+
+- **Fold setup into koni-docs as a new mode/subcommand.** Rejected — bloats the
+  koni-docs SKILL.md past its ≤500-line budget and couples two concerns
+  (one-time bootstrap vs. continuous doc discipline) that have different
+  triggers and lifecycles.
+- **Make koni-setup self-contained (copy the doc templates in).** Rejected —
+  exactly the duplication/drift this decision exists to prevent; would also
+  re-state the 12 rules in two places.
+- **A new EPIC-5 for koni-setup.** Rejected — EPIC-3/FR-10 already reserved
+  "first non-docs Koniverse skill"; koni-setup *is* that deliverable, so it
+  belongs under EPIC-3, not a new epic.
+
+**Impact**:
+
+- New skill `skills/koni-setup/` (SKILL.md + 5 references) + repo wiring.
+- US-3.2 + sprint-2026-W26; EPIC-3 backlog → in-progress; FR-10 shipped + FR-20
+  added; VERSION 0.8.1 → 0.9.0; CLAUDE.md `active_sprint` → W26.
+- Establishes the reusable boundary contract any future sibling skill follows.
+
+**Date**: 2026-06-26
+**Version**: 0.9.0
+**Reference**: [US-3.2](sprints/stories/US-3.2-koni-setup-bootstrapper.md), [skills/koni-setup/SKILL.md](../skills/koni-setup/SKILL.md), [LESSONS §6](LESSONS.md).
