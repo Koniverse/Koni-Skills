@@ -104,6 +104,20 @@ The full stage-by-stage drive, the per-tier stage sets, the portable
 (Gemini/Codex/Cursor) fallback, resumability, and the `loop.sh` command
 reference are in [`references/loop-runner.md`](references/loop-runner.md).
 
+## Load session context
+
+The **context-loader** emits a concise, deterministic digest of the repo's
+context layers (VERSION + active_sprint, the live `.active-context` snapshot,
+decision/lesson title indexes, canonical pointers) to stdout — a digest, not a
+dump. Reads only; missing layers become graceful notes:
+
+```sh
+sh .koni-harness/context-load.sh
+```
+
+Defaults to the git toplevel and `docs/`; override with `--root` / `--docs`.
+Full details in [`references/context-load.md`](references/context-load.md).
+
 ## Hard invariant
 
 **Additive-only / non-destructive.** Adopting the harness MUST NOT overwrite,
@@ -124,3 +138,4 @@ Load on demand based on what you're doing:
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
+| [`references/context-load.md`](references/context-load.md) | Emitting the session-context digest with `context-load.sh` (what it emits, CLI flags/defaults, graceful degradation, P3b wiring) |
