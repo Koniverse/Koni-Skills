@@ -20,6 +20,18 @@ cp "$SRC"/checks/*.sh .koni-harness/checks/
 chmod +x .koni-harness/gate-runner.sh .koni-harness/checks/*.sh
 [ -f .koni-harness/gates.conf ] || cp "$SRC/gates.conf" .koni-harness/gates.conf
 
+# vendor the loop-runner helper alongside the gate
+cp "$SRC/loop.sh" .koni-harness/loop.sh
+chmod +x .koni-harness/loop.sh
+
+# gitignore the ephemeral loop-state (additive, marker-bounded, idempotent)
+gi=.gitignore
+gbegin='# >>> koni-harness >>>'
+gend='# <<< koni-harness <<<'
+if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
+  printf '%s\n.koni-harness/loop-state\n%s\n' "$gbegin" "$gend" >> "$gi"
+fi
+
 # 2. chain a git hook behind a marker block, preserving any existing content
 chain_hook() {  # $1 hookname  $2 phase
   hook="$hooks/$1"

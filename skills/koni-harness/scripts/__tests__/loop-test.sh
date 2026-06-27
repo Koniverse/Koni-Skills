@@ -77,4 +77,18 @@ test_gate_complete() {
 }
 test_gate_complete
 
+test_install_loop() {
+  INS="$HERE/../install-gate.sh"; SRC="$HERE/.."
+  d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  [ -f "$d/.koni-harness/loop.sh" ] && ok "install: vendors loop.sh" || no "install: vendors loop.sh"
+  grep -q '.koni-harness/loop-state' "$d/.gitignore" && ok "install: gitignores loop-state" || no "install: gitignores loop-state"
+  # idempotent: re-run keeps a single gitignore marker block
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  n=$(grep -c '>>> koni-harness >>>' "$d/.gitignore")
+  [ "$n" -eq 1 ] && ok "install: gitignore marker idempotent" || no "install: gitignore marker idempotent (got $n)"
+  rm -rf "$d"
+}
+test_install_loop
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
