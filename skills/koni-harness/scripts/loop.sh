@@ -69,6 +69,10 @@ do_enter() {
   ni=$(idx_of "$stage")
   [ "$ni" -gt 0 ] || { echo "loop enter: unknown stage '$stage' (one of: $STAGES)" >&2; exit 2; }
   cur=$(kv_get stage "$STATE"); ci=$(idx_of "$cur")
+  if [ "$cur" = complete ]; then
+    echo "loop WARN: loop is already complete; run 'loop.sh start' to begin a new one (not entering '$stage')" >&2
+    exit 0
+  fi
   tier=$(kv_get tier "$STATE"); entered=$(kv_get entered "$STATE")
   [ "$ni" -lt "$ci" ] && echo "loop WARN: entering '$stage' is before current '$cur' (going backward)" >&2
   if [ "$stage" = commit ] && [ "${tier:-2}" -ge 1 ]; then

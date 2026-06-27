@@ -152,4 +152,17 @@ test_gate_fallback_runner() {
 }
 test_gate_fallback_runner
 
+test_complete_is_terminal() {
+  # after complete, 'enter' must warn (WARN+complete), exit 0, and NOT clobber stage
+  st=$(newstate)
+  sh "$LOOP" start US-7 --state "$st" >/dev/null
+  sh "$LOOP" complete --state "$st" >/dev/null
+  err=$(sh "$LOOP" enter frame --state "$st" 2>&1 >/dev/null); rc=$?
+  case "$err" in *WARN*complete*) ok "complete-guard: warns WARN+complete" ;; *) no "complete-guard: warns WARN+complete (got: $err)" ;; esac
+  [ "$rc" -eq 0 ] && ok "complete-guard: exits 0" || no "complete-guard: exits 0 (got $rc)"
+  grep -q '^stage=complete$' "$st" && ok "complete-guard: stage not clobbered" || no "complete-guard: stage not clobbered"
+  rm -rf "$(dirname "$st")"
+}
+test_complete_is_terminal
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

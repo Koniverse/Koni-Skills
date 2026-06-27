@@ -47,6 +47,9 @@ harness" only if its core is tool-neutral and its adapter is thin). Full text:
 Stand in the **target repo root** (cwd = the repo you're installing into), then
 invoke the installer by its real path. It defaults `--source` to its own
 directory, so no `--source` is needed when called by that path:
+Passing `--source <path-to>/skills/koni-harness/scripts` explicitly is
+equivalent to the default, so the no-arg form and that explicit `--source`
+produce the same install.
 
 ```sh
 # cwd = the TARGET repo root
