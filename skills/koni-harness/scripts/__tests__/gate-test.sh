@@ -79,6 +79,23 @@ test_changelog_anchor() {
 }
 test_changelog_anchor
 
+test_credential_scan() {
+  CH="$SCRIPTS/checks/credential-scan.sh"
+  # clean staged change → pass
+  d=$(newrepo); ( cd "$d" && echo "const x = 1" > a.js && git add a.js )
+  assert_exit 0 "credential-scan: clean diff passes" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  # AWS key id in added line → block
+  d=$(newrepo); ( cd "$d" && echo 'key = "AKIAIOSFODNN7EXAMPLE"' > a.txt && git add a.txt )
+  assert_exit 1 "credential-scan: AWS key blocks" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  # PEM private key → block
+  d=$(newrepo); ( cd "$d" && printf -- '-----BEGIN RSA PRIVATE KEY-----\n' > k.pem && git add k.pem )
+  assert_exit 1 "credential-scan: PEM private key blocks" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+}
+test_credential_scan
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
