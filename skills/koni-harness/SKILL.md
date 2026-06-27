@@ -44,13 +44,15 @@ harness" only if its core is tool-neutral and its adapter is thin). Full text:
 
 ## Install the gate
 
-From the **target repo root**, run the installer (source it from this skill's
-`scripts/`, or from the vendored `.koni-harness/` once present):
+Stand in the **target repo root** (cwd = the repo you're installing into), then
+invoke the installer by its real path. It defaults `--source` to its own
+directory, so no `--source` is needed when called by that path:
 
 ```sh
-sh scripts/install-gate.sh                 # from skills/koni-harness/scripts
-# or, with an explicit source:
-sh /path/to/skills/koni-harness/scripts/install-gate.sh --source /path/to/skills/koni-harness/scripts
+# cwd = the TARGET repo root
+sh /path/to/Koni-Skills/skills/koni-harness/scripts/install-gate.sh
+# override the vendored source only if needed:
+sh /path/to/Koni-Skills/skills/koni-harness/scripts/install-gate.sh --source <dir>
 ```
 
 It is **additive**: it vendors `gate-runner.sh` + checks + `gates.conf` into the

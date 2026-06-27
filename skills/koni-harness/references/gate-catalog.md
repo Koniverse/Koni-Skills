@@ -36,6 +36,37 @@ code.
 
 ---
 
+## Invoking the release-commit phase
+
+The git hooks installed by `install-gate.sh` only ever run two phases:
+`pre-commit` runs `--phase work-commit` and `pre-push` runs `--phase pre-push`.
+**Nothing in the installed hooks runs `--phase release-commit`.** That is by
+design — `release-commit` is a heavier gate meant to be run *explicitly* by your
+release process or CI, right before you bump `VERSION` / tag a release:
+
+```sh
+sh .koni-harness/gate-runner.sh --phase release-commit
+```
+
+What that means for what fires automatically on a normal `git commit`:
+
+| Check | Phases | Runs on every commit? |
+|---|---|---|
+| `version-phase` | `work-commit`, `release-commit` | **Yes** — both phases |
+| `credential-scan` | `work-commit`, `pre-push` | **Yes** — on commit and on push |
+| `changelog-anchor` | `release-commit` | No — release-commit only |
+| `story-status` | `release-commit` | No — release-commit only |
+| `koni-docs-validate` | `release-commit` | No — release-commit only |
+
+So `version-phase` — the critical 2-phase versioning gate — **does** run on
+every commit through the `pre-commit` hook. The three release-commit-only checks
+(`changelog-anchor`, `story-status`, `koni-docs-validate`) do **not** fire from
+an ordinary commit; they are opt-in at release time, run only when you (or CI)
+invoke `--phase release-commit`. Installing the hooks does not, on its own,
+enforce release-time checks.
+
+---
+
 ## The six built-in checks
 
 ### `version-phase`
@@ -104,12 +135,16 @@ code.
 
 ### `koni-docs-validate`
 
-- **What it asserts**: when the `koni-docs` package is locally available, runs
+- **What it asserts**: when `koni-docs` is resolvable, runs
   `npx --no-install koni-docs validate --docs-path docs/` (ID graph + FR refs).
   It **skip-passes** (exit 0, no block) when any of these is true: there is no
-  `docs/` directory, `npx` is unavailable, or the `koni-docs` package is not
-  installed (probed via `npx --no-install koni-docs --version`). It never
-  triggers a network install.
+  `docs/` directory, `npx` is unavailable, or `koni-docs` is resolvable
+  **neither locally nor globally/ambiently**. Note that the probe
+  (`npx --no-install koni-docs --version`) resolves *up* the directory tree and
+  to *global* installs, so a repo with no `koni-docs` dependency of its own can
+  still resolve an ambient/global `koni-docs` — and if any ambient `koni-docs`
+  is on `PATH` or otherwise resolvable, the check runs against it rather than
+  skip-passing. It never triggers a network install.
 - **Phase(s)**: `release-commit`
 - **Default severity**: `warn` (warn first; a repo opts into `block` once its
   docs validate clean)

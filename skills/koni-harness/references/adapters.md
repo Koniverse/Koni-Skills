@@ -25,6 +25,11 @@ sh "$(git rev-parse --show-toplevel)/.koni-harness/gate-runner.sh" --phase work-
 
 (the `pre-push` hook is identical except `--phase pre-push`.)
 
+> **Note:** the installed git hooks only run `--phase work-commit` (pre-commit)
+> and `--phase pre-push`; the `release-commit` phase is never run automatically.
+> Run it explicitly at release time — see
+> [gate-catalog.md → Invoking the release-commit phase](gate-catalog.md#invoking-the-release-commit-phase).
+
 Install behavior:
 
 - If the hook does **not** exist, the installer creates it with a `#!/bin/sh`
