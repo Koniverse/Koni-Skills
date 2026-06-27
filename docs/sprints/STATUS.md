@@ -1,14 +1,12 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-06-27 18:09:46 UTC
+> Last generated: 2026-06-27 18:40:26 UTC
 > Total stories: 51
 
-## 📋 Backlog (1)
+## 📋 Backlog (0)
 
-| ID | Title | Epic | Pri | Points | Sprint | Assignee |
-|---|---|---|---|---|---|---|
-| US-3.1 | Define plugin-skill pattern (Supabase, Next.js) | EPIC-3 | P1 | 8 | — | — |
+_No stories_
 
 ## 🟢 Ready (0)
 
@@ -22,7 +20,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (50)
+## ✅ Done (51)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -35,6 +33,7 @@ _No stories_
 | US-2.2 | Wire koni-docs integration into CLAUDE.md + AGENTS.md (Pattern B) | EPIC-2 | P0 | 3 | sprint-2026-W21 | saltict |
 | US-2.3 | Seed VERSION + CHANGELOG.md from git history | EPIC-2 | P1 | 2 | sprint-2026-W21 | saltict |
 | US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W21 | saltict |
+| US-3.1 | Define plugin-skill pattern + ship koni-nextjs reference | EPIC-3 | P1 | 3 | sprint-2026-W26 | jindo9986 |
 | US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder skill (first non-docs skill) | EPIC-3 | P1 | 5 | sprint-2026-W26 | jindo9986 |
 | US-3.3 | koni-harness — Koni Agentic Loop standard + portable pre-commit gate (Phase 1) | EPIC-3 | P1 | 5 | sprint-2026-W26 | jindo9986 |
 | US-3.4 | koni-harness Phase 2 — single-story loop-runner (loop.sh spine + loop-runner brain) | EPIC-3 | P1 | 3 | sprint-2026-W26 | jindo9986 |
@@ -89,11 +88,11 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 1
+- 📋 **Backlog**: 0
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 50
+- ✅ **Done**: 51
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

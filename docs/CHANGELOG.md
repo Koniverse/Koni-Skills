@@ -16,6 +16,52 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.15.0] — 2026-06-28 — Plugin-skill pattern + koni-nextjs reference (EPIC-3 plugin pillar) — v0.15.0
+
+Closes **FR-9** and the last open EPIC-3 pillar. koni-docs always *mentioned*
+plugins but never defined or demonstrated the pattern; this ships both — the
+contract and a worked example — so the catalog has a documented, repeatable way
+to extend koni-docs per tech stack.
+
+### Added
+
+- **`skills/koni-docs/references/plugin-pattern.md`** — the plugin-skill pattern:
+  what a plugin is, where it lives (`skills/koni-<tech>/`, self-contained AD-1),
+  discovery (a project declares `plugins: [<tech>]` under its CLAUDE.md
+  `koni-docs:` block), the composition contract (extend-never-duplicate the 12
+  core rules; namespaced rules `NX-`/`SB-`; may reference the koni-harness gate
+  rather than build its own), and an authoring checklist.
+- **`skills/koni-nextjs/`** — the reference plugin (Next.js rules extending
+  koni-docs, namespace `NX-`): **NX-1** ship gate runs `next build`, not just
+  `tsc --noEmit` (the documented koni-docs LESSON), wired as a koni-harness
+  `gates.conf` `passthrough` row at `pre-push`; **NX-2** only `NEXT_PUBLIC_*`
+  reaches the client, no secret in a client component (composes with the gate's
+  `credential-scan` + RULE-11); **NX-3** App Router server-components-by-default;
+  **NX-4** env-var sync into `.env.example` (specializes RULE-11). Wired via
+  mirrored `.claude` / `.agents` symlinks.
+
+### Changed
+
+- **koni-docs `SKILL.md`** — two additive one-line pointers (§2, §6) to
+  `plugin-pattern.md`; no core-rule text changed, no renumbering.
+
+### Validation
+
+Docs-only (no scripts → no test suite). Author-blind review APPROVED: the pattern
+doc is complete and coherent, koni-nextjs follows it and **does not duplicate any
+of the 12 core rules** (grep-verified — every `RULE-n` is a reference), the
+discovery key + NX-1 gate row are accurate against the real koni-docs SKILL.md
+and koni-harness gate-catalog. One follow-up fix applied: the literal discovery
+key is the nested `plugins:` under `koni-docs:` (`koni-docs-plugins` is prose
+shorthand only).
+
+### Docs
+
+- US-3.1 flipped to done; PRD FR-9 → shipped; EPIC-3 fully delivered for its
+  shipped pillars; sprint-2026-W26 (now 7 stories / 24 pts).
+
+---
+
 ## [0.14.0] — 2026-06-28 — koni-harness P3b: multi-tool session adapters (roadmap complete) — v0.14.0
 
 P3b — the final koni-harness roadmap piece. P3a produces a context digest, P2.5

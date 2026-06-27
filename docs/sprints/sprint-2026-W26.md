@@ -27,11 +27,12 @@ duplicating it.
 | US-3.5 | koni-harness P3a — context-loader (session digest)      | EPIC-3 | P1  | 3      | ✅ done | v0.12.0 | [stories/US-3.5-koni-harness-context-loader.md](stories/US-3.5-koni-harness-context-loader.md)     |
 | US-3.6 | koni-harness P2.5 — sprint-sequencer                    | EPIC-3 | P1  | 3      | ✅ done | v0.13.0 | [stories/US-3.6-koni-harness-sprint-sequencer.md](stories/US-3.6-koni-harness-sprint-sequencer.md) |
 | US-3.7 | koni-harness P3b — multi-tool session adapters          | EPIC-3 | P1  | 2      | ✅ done | v0.14.0 | [stories/US-3.7-koni-harness-session-adapters.md](stories/US-3.7-koni-harness-session-adapters.md) |
+| US-3.1 | Plugin-skill pattern + koni-nextjs reference            | EPIC-3 | P1  | 3      | ✅ done | v0.15.0 | [stories/US-3.1-plugin-skill-pattern.md](stories/US-3.1-plugin-skill-pattern.md)                   |
 
-**Total**: **6 stories / 21 points** — shipped v0.9.0 (koni-setup) + v0.10.0–v0.14.0
-(koni-harness P1 / P2 / P3a / P2.5 / P3b). EPIC-3 in-progress: the **koni-harness
-roadmap is complete** (gate + loop-runner + context-loader + sprint-sequencer +
-session adapters); only US-3.1 plugin-skill pattern remains backlog.
+**Total**: **7 stories / 24 points** — shipped v0.9.0 (koni-setup) + v0.10.0–v0.14.0
+(koni-harness P1 / P2 / P3a / P2.5 / P3b) + v0.15.0 (plugin pattern + koni-nextjs).
+**EPIC-3 fully delivered**: koni-setup + the complete koni-harness roadmap + the
+plugin-skill pattern with the koni-nextjs reference. All EPIC-3 FRs shipped.
 
 ## Sprint goal recap
 
