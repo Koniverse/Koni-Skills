@@ -29,6 +29,7 @@ gi=.gitignore
 gbegin='# >>> koni-harness >>>'
 gend='# <<< koni-harness <<<'
 if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
+  if [ -s "$gi" ] && [ -n "$(tail -c1 "$gi")" ]; then printf '\n' >> "$gi"; fi
   printf '%s\n.koni-harness/loop-state\n%s\n' "$gbegin" "$gend" >> "$gi"
 fi
 

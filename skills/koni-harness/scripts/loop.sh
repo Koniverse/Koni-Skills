@@ -14,11 +14,9 @@ kv_get() { # key file
 }
 kv_set() { # key value file
   f=$3; tmp="$f.tmp.$$"
-  if [ -f "$f" ] && grep -q "^$1=" "$f"; then
-    sed "s|^$1=.*|$1=$2|" "$f" > "$tmp" && mv "$tmp" "$f"
-  else
-    printf '%s=%s\n' "$1" "$2" >> "$f"
-  fi
+  if [ -f "$f" ]; then grep -v "^$1=" "$f" > "$tmp" || true; else : > "$tmp"; fi
+  printf '%s=%s\n' "$1" "$2" >> "$tmp"
+  mv "$tmp" "$f"
 }
 idx_of() { # stage -> 1-based index, 0 if unknown
   i=0; for s in $STAGES; do i=$((i+1)); [ "$s" = "$1" ] && { echo "$i"; return; }; done; echo 0
@@ -33,6 +31,7 @@ do_start() {
     *) story=$1; shift ;;
   esac; done
   [ -n "$story" ] || { echo "loop start: <story-id> required" >&2; exit 2; }
+  case "$tier" in ''|*[!0-9]*) echo "loop start: --tier must be an integer (got '$tier')" >&2; exit 2 ;; esac
   mkdir -p "$(dirname "$STATE")"; : > "$STATE"
   kv_set story "$story" "$STATE"; kv_set tier "$tier" "$STATE"
   kv_set stage frame "$STATE"; kv_set entered frame "$STATE"; kv_set updated "$(now)" "$STATE"

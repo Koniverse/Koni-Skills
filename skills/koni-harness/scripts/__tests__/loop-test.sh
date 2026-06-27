@@ -91,4 +91,65 @@ test_install_loop() {
 }
 test_install_loop
 
+test_kv_delimiter_safe() {
+  st=$(newstate); d=$(dirname "$st")
+  sh "$LOOP" start US-1 --tier 1 --state "$st" >/dev/null
+  # vendor loop.sh + a passing stub gate-runner so gate resolves via $SELF_DIR
+  mkdir -p "$d/.koni-harness"
+  cp "$LOOP" "$d/.koni-harness/loop.sh"; chmod +x "$d/.koni-harness/loop.sh"
+  VLOOP="$d/.koni-harness/loop.sh"
+  printf '#!/bin/sh\nexit 0\n' > "$d/.koni-harness/gate-runner.sh"; chmod +x "$d/.koni-harness/gate-runner.sh"
+  # a phase containing a '|' must not error out or corrupt the state file
+  if ( cd "$d" && sh "$VLOOP" gate 'a|b' --state "$st" >/dev/null 2>&1 ); then
+    ok "kv_set: pipe-bearing value does not error"
+  else
+    no "kv_set: pipe-bearing value does not error"
+  fi
+  grep -q '^story=US-1$' "$st" && ok "kv_set: state uncorrupted after pipe value" || no "kv_set: state uncorrupted after pipe value"
+  grep -q '^gate_a|b=pass$' "$st" && ok "kv_set: writes pipe value literally" || no "kv_set: writes pipe value literally"
+  rm -rf "$d"
+}
+test_kv_delimiter_safe
+
+test_gitignore_no_trailing_newline() {
+  INS="$HERE/../install-gate.sh"; SRC="$HERE/.."
+  d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  printf 'node_modules' > "$d/.gitignore"   # NO trailing newline
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  grep -q '^node_modules$' "$d/.gitignore" && ok "gitignore: original line intact on its own line" || no "gitignore: original line intact on its own line"
+  grep -q '.koni-harness/loop-state' "$d/.gitignore" && ok "gitignore: marker appended" || no "gitignore: marker appended"
+  rm -rf "$d"
+}
+test_gitignore_no_trailing_newline
+
+test_tier_validation() {
+  st=$(newstate)
+  if sh "$LOOP" start US-2 --tier abc --state "$st" >/dev/null 2>&1; then
+    no "tier: non-integer rejected"
+  else
+    [ "$?" -eq 2 ] && ok "tier: non-integer rejected (exit 2)" || no "tier: non-integer wrong exit"
+  fi
+  rm -rf "$(dirname "$st")"
+}
+test_tier_validation
+
+test_gate_fallback_runner() {
+  # $SELF_DIR/gate-runner.sh absent, but ./.koni-harness/gate-runner.sh present → fallback used
+  st=$(newstate); d=$(dirname "$st")
+  sh "$LOOP" start US-3 --tier 1 --state "$st" >/dev/null
+  # vendor loop.sh into a SELF_DIR that has NO sibling gate-runner.sh
+  mkdir -p "$d/bin" "$d/.koni-harness"
+  cp "$LOOP" "$d/bin/loop.sh"; chmod +x "$d/bin/loop.sh"
+  VLOOP="$d/bin/loop.sh"
+  # fallback location (cwd-relative) has the passing runner
+  printf '#!/bin/sh\nexit 0\n' > "$d/.koni-harness/gate-runner.sh"; chmod +x "$d/.koni-harness/gate-runner.sh"
+  if ( cd "$d" && sh "$VLOOP" gate work-commit --state "$st" >/dev/null 2>&1 ); then
+    ok "gate: falls back to ./.koni-harness/gate-runner.sh"
+  else
+    no "gate: falls back to ./.koni-harness/gate-runner.sh"
+  fi
+  rm -rf "$d"
+}
+test_gate_fallback_runner
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
