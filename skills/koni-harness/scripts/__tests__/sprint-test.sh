@@ -57,10 +57,26 @@ test_none_ready() {
   # only story is planned and depends on a missing story
   printf -- '---\nid: US-1\ntitle: "x"\nstatus: planned\npriority: P1\npoints: 1\nsprint: sprint-Z\ndepends_on:\n  - US-0\ncreated: 2026-06-27\n---\n' > "$st/US-1.md"
   out=$(sh "$SP" next --root "$d")
-  have "No ready stories" "$out" "next: none-ready message"
+  have "all remaining are blocked" "$out" "next: blocked-branch message"
   rm -rf "$d"
 }
 test_none_ready
+
+test_sprint_complete() {
+  d=$(mktemp -d); st="$d/docs/sprints/stories"; mkdir -p "$st"
+  printf 'koni-docs:\n  active_sprint: sprint-C\n' > "$d/CLAUDE.md"
+  # every story is done -> sprint complete
+  i=1
+  for s in 1 2 3; do
+    printf -- '---\nid: US-%s\ntitle: "x"\nstatus: done\npriority: P1\npoints: 1\nsprint: sprint-C\ndepends_on: []\ncreated: 2026-06-27\n---\n' "$s" > "$st/US-$s.md"
+    i=$((i+1))
+  done
+  out=$(sh "$SP" next --root "$d")
+  have "is complete" "$out" "next: all-done says sprint complete"
+  hasnt "blocked" "$out" "next: all-done not a blocked message"
+  rm -rf "$d"
+}
+test_sprint_complete
 
 test_install() {
   INS="$HERE/../install-gate.sh"; SRC="$HERE/.."

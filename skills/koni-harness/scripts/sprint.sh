@@ -44,17 +44,13 @@ status_of_id() { # id -> status of the story whose id matches (empty if none)
     [ "$(field id "$f")" = "$1" ] && { field status "$f"; return; }
   done
 }
-in_sprint_files() { # echo story files whose sprint == $SPRINT
+do_next() {
+  ready=''; notdone=0
   for f in "$STORIES"/*.md; do
     [ -e "$f" ] || continue
-    [ "$(field sprint "$f")" = "$SPRINT" ] && echo "$f"
-  done
-}
-
-do_next() {
-  ready=''
-  for f in $(in_sprint_files); do
+    [ "$(field sprint "$f")" = "$SPRINT" ] || continue
     [ "$(field status "$f")" = done ] && continue
+    notdone=$((notdone+1))
     id=$(field id "$f"); title=$(field title "$f"); pr=$(field priority "$f")
     blocked=0
     for d in $(deps_of "$f"); do
@@ -63,7 +59,11 @@ do_next() {
     [ "$blocked" -eq 0 ] && ready=$(printf '%s\n%s|%s|%s' "$ready" "$(prio_rank "$pr")" "$id" "$title")
   done
   if [ -z "$ready" ]; then
-    echo "No ready stories in $SPRINT. Run 'sprint.sh status' to see blockers."
+    if [ "$notdone" -eq 0 ]; then
+      echo "Sprint $SPRINT is complete — all stories done."
+    else
+      echo "No ready stories in $SPRINT (all remaining are blocked). Run 'sprint.sh status' to see blockers."
+    fi
     return 0
   fi
   sorted=$(printf '%s\n' "$ready" | sed '/^$/d' | sort -t'|' -k1,1n -k2,2)
@@ -76,7 +76,9 @@ do_next() {
 
 do_status() {
   d=0; ip=0; pl=0; bl=0; ot=0; total=0; ptot=0; pdone=0; blist=''
-  for f in $(in_sprint_files); do
+  for f in "$STORIES"/*.md; do
+    [ -e "$f" ] || continue
+    [ "$(field sprint "$f")" = "$SPRINT" ] || continue
     total=$((total+1))
     st=$(field status "$f"); id=$(field id "$f"); pts=$(field points "$f")
     case "$pts" in ''|*[!0-9]*) pts=0 ;; esac
