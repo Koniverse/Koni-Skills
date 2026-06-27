@@ -117,6 +117,14 @@ test_story_status() {
 }
 test_story_status
 
+test_passthrough() {
+  CH="$SCRIPTS/checks/passthrough.sh"
+  assert_exit 0 "passthrough: true command passes" sh "$CH" "true"
+  assert_exit 1 "passthrough: false command fails" sh "$CH" "false"
+  assert_exit 0 "passthrough: empty command no-ops" sh "$CH" ""
+}
+test_passthrough
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
