@@ -44,4 +44,34 @@ test_full() {
 }
 test_full
 
+test_fallback_claude() {
+  d=$(mktemp -d)
+  ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  printf '0.1.0\n' > "$d/VERSION"
+  # no .active-context.md; Pattern-A block lives in CLAUDE.md
+  cat > "$d/CLAUDE.md" <<EOF
+## Active Context <!-- koni-docs:auto-update -->
+- Sprint: sprint-2026-W26
+- Active Stories: US-1.1 inline
+<!-- /koni-docs:auto-update -->
+EOF
+  out=$(sh "$CL" --root "$d")
+  have "US-1.1 inline" "$out" "fallback: uses CLAUDE.md Pattern-A block"
+  rm -rf "$d"
+}
+test_fallback_claude
+
+test_missing_layers() {
+  d=$(mktemp -d)
+  ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  printf '0.1.0\n' > "$d/VERSION"   # no CLAUDE.md, no .active-context, no docs/
+  out=$(sh "$CL" --root "$d" 2>&1) && rc=0 || rc=$?
+  [ "$rc" -eq 0 ] && ok "missing: exits 0" || no "missing: exits 0 (got $rc)"
+  have "no active-context snapshot" "$out" "missing: live-state note"
+  have "docs/CONTEXT.md not found" "$out" "missing: CONTEXT note"
+  have "docs/LESSONS.md not found" "$out" "missing: LESSONS note"
+  rm -rf "$d"
+}
+test_missing_layers
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
