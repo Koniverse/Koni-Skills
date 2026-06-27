@@ -22,7 +22,7 @@ fi
 
 trim() { printf '%s' "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'; }
 fail=0
-while IFS='|' read -r name script phases severity arg; do
+while IFS='|' read -r name script phases severity arg || [ -n "$name" ]; do
   name=$(trim "${name:-}")
   case "$name" in ''|\#*) continue ;; esac
   script=$(trim "${script:-}")
@@ -33,11 +33,11 @@ while IFS='|' read -r name script phases severity arg; do
   case "$script" in /*) cmd="$script" ;; *) cmd="$SELF_DIR/$script" ;; esac
   if [ "$DRY" -eq 1 ]; then echo "DRY [$severity] $name -> $cmd ${arg}"; continue; fi
   if sh "$cmd" "$arg"; then
-    echo "✓ $name"
+    echo "PASS: $name"
   elif [ "$severity" = block ]; then
-    echo "✗ BLOCK: $name" >&2; fail=1
+    echo "BLOCK: $name" >&2; fail=1
   else
-    echo "⚠ warn: $name" >&2
+    echo "WARN: $name" >&2
   fi
 done < "$CONFIG"
 exit "$fail"

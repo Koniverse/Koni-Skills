@@ -9,7 +9,9 @@ while [ $# -gt 0 ]; do
   esac
 done
 [ -n "$SRC" ] || SRC=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-[ -d .git ] || { echo "install-gate: run from a git repo root" >&2; exit 2; }
+git rev-parse --git-dir >/dev/null 2>&1 || { echo "install-gate: run from inside a git repo" >&2; exit 2; }
+hooks=$(git rev-parse --git-path hooks)
+mkdir -p "$hooks"
 
 # 1. vendor runner + checks + config (copy; do not overwrite an existing gates.conf)
 mkdir -p .koni-harness/checks
@@ -20,7 +22,7 @@ chmod +x .koni-harness/gate-runner.sh .koni-harness/checks/*.sh
 
 # 2. chain a git hook behind a marker block, preserving any existing content
 chain_hook() {  # $1 hookname  $2 phase
-  hook=".git/hooks/$1"
+  hook="$hooks/$1"
   begin='# >>> koni-harness >>>'
   end='# <<< koni-harness <<<'
   block="$begin
@@ -31,7 +33,16 @@ $end"
   elif grep -q "$begin" "$hook"; then
     :   # already installed → idempotent no-op
   else
-    printf '\n%s\n' "$block" >> "$hook"
+    # Only chain onto an existing POSIX-shell hook; never inject an sh block
+    # into a hook written in another language (python, ruby, node, …).
+    first=$(head -n 1 "$hook")
+    case "$first" in
+      '#!/bin/sh'|'#!/usr/bin/env sh'|'#!/bin/bash'|'#!/usr/bin/env bash')
+        printf '\n%s\n' "$block" >> "$hook" ;;
+      *)
+        echo "install-gate: existing $1 is not a POSIX-shell hook; chain the gate manually: sh \$(git rev-parse --show-toplevel)/.koni-harness/gate-runner.sh --phase $2" >&2
+        return 0 ;;
+    esac
   fi
   chmod +x "$hook"
 }

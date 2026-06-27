@@ -8,7 +8,7 @@ newver=$(git show :VERSION 2>/dev/null | tr -d '[:space:]' || true)
 printf '%s\n' "$staged" | grep -q 'CHANGELOG.md' || {
   echo "version-phase: VERSION bumped to $newver but no CHANGELOG.md staged"; exit 1; }
 for f in docs/CHANGELOG.md CHANGELOG.md; do
-  git show ":$f" 2>/dev/null | grep -q "\[$newver\]" && exit 0
+  git show ":$f" 2>/dev/null | grep -Fq "[$newver]" && exit 0
 done
 echo "version-phase: staged CHANGELOG has no '## [$newver]' section"
 exit 1

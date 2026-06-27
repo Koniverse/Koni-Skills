@@ -65,6 +65,12 @@ test_version_phase() {
     && printf '## [0.2.0]\n' > docs/CHANGELOG.md && git add VERSION docs/CHANGELOG.md )
   assert_exit 0 "version-phase: VERSION bump with matching CHANGELOG passes" sh -c "cd '$d' && sh '$CH'"
   rm -rf "$d"
+  # (d) fixed-string match: '.' must not act as a BRE wildcard ([0a2a0] != 0.2.0) → block
+  d=$(newrepo)
+  ( cd "$d" && echo 0.2.0 > VERSION && mkdir -p docs \
+    && printf '## [0a2a0]\n' > docs/CHANGELOG.md && git add VERSION docs/CHANGELOG.md )
+  assert_exit 1 "version-phase: dot is literal, not a wildcard" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
 }
 test_version_phase
 
@@ -93,6 +99,17 @@ test_credential_scan() {
   d=$(newrepo); ( cd "$d" && printf -- '-----BEGIN RSA PRIVATE KEY-----\n' > k.pem && git add k.pem )
   assert_exit 1 "credential-scan: PEM private key blocks" sh -c "cd '$d' && sh '$CH'"
   rm -rf "$d"
+  # generic api_key assignment with a long fake value → block
+  d=$(newrepo); ( cd "$d" && printf 'api_key = "AKIAFAKEFAKE0000DEADBEEFCAFE1234"\n' > cfg.txt && git add cfg.txt )
+  assert_exit 1 "credential-scan: generic api_key assignment blocks" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  # same diff, but the fake token is allowlisted → pass
+  d=$(newrepo)
+  ( cd "$d" && mkdir -p .koni-harness \
+    && printf 'AKIAFAKEFAKE0000DEADBEEFCAFE1234\n' > .koni-harness/secret-allow \
+    && printf 'api_key = "AKIAFAKEFAKE0000DEADBEEFCAFE1234"\n' > cfg.txt && git add cfg.txt )
+  assert_exit 0 "credential-scan: allowlisted token passes" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
 }
 test_credential_scan
 
@@ -113,6 +130,10 @@ test_story_status() {
   # done story with an unchecked AC → warn-fail (exit 1)
   printf -- 'status: done\n## Acceptance criteria\n- [ ] AC-1\n' > "$d/docs/sprints/stories/US-2.md"
   assert_exit 1 "story-status: done + unchecked AC fails" sh -c "cd '$d' && sh '$CH'"
+  rm -f "$d/docs/sprints/stories/US-2.md"
+  # markdown **Status:** Done form + unchecked AC → warn-fail (exit 1)
+  printf -- '**Status:** Done\n## Acceptance criteria\n- [ ] AC-1\n' > "$d/docs/sprints/stories/US-3.md"
+  assert_exit 1 "story-status: **Status:** Done + unchecked AC fails" sh -c "cd '$d' && sh '$CH'"
   rm -rf "$d"
 }
 test_story_status
@@ -138,6 +159,9 @@ test_install_nondestructive() {
   # koni-harness marker added
   grep -q '>>> koni-harness >>>' "$d/.git/hooks/pre-commit" \
     && ok "install: koni-harness marker block added" || no "install: koni-harness marker block added"
+  # pre-push hook also got a marker block
+  grep -q '>>> koni-harness >>>' "$d/.git/hooks/pre-push" \
+    && ok "install: pre-push marker block added" || no "install: pre-push marker block added"
   # runner vendored
   [ -f "$d/.koni-harness/gate-runner.sh" ] \
     && ok "install: runner vendored" || no "install: runner vendored"
@@ -148,6 +172,45 @@ test_install_nondestructive() {
   rm -rf "$d"
 }
 test_install_nondestructive
+
+test_install_nonshell_hook() {
+  INS="$SCRIPTS/install-gate.sh"
+  d=$(newrepo)
+  mkdir -p "$d/.git/hooks"
+  printf '#!/usr/bin/env python3\nprint("py hook")\n' > "$d/.git/hooks/pre-commit"
+  chmod +x "$d/.git/hooks/pre-commit"
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  # python hook is NOT modified (no marker appended)
+  grep -q '>>> koni-harness >>>' "$d/.git/hooks/pre-commit" \
+    && no "install: python pre-commit left untouched" \
+    || ok "install: python pre-commit left untouched"
+  # original python content still intact
+  grep -q 'py hook' "$d/.git/hooks/pre-commit" \
+    && ok "install: python hook content preserved" || no "install: python hook content preserved"
+  # install still vendored the runner
+  [ -f "$d/.koni-harness/gate-runner.sh" ] \
+    && ok "install: runner vendored despite non-shell hook" || no "install: runner vendored despite non-shell hook"
+  rm -rf "$d"
+}
+test_install_nonshell_hook
+
+test_runner_dry_run() {
+  d=$(newrepo)
+  mkdir -p "$d/.koni-harness/checks"
+  cp "$SCRIPTS/gate-runner.sh" "$d/.koni-harness/gate-runner.sh"
+  printf '#!/bin/sh\nexit 1\n' > "$d/.koni-harness/checks/failer.sh"
+  cat > "$d/.koni-harness/gates.conf" <<EOF
+bad-check | checks/failer.sh | work-commit | block |
+EOF
+  # --dry-run: exits 0 even though the block check would fail, and runs no check
+  assert_exit 0 "runner: --dry-run skips checks (exit 0)" \
+    sh "$d/.koni-harness/gate-runner.sh" --phase work-commit --config "$d/.koni-harness/gates.conf" --dry-run
+  out=$(sh "$d/.koni-harness/gate-runner.sh" --phase work-commit --config "$d/.koni-harness/gates.conf" --dry-run)
+  printf '%s\n' "$out" | grep -q '^DRY ' \
+    && ok "runner: --dry-run prints a DRY line" || no "runner: --dry-run prints a DRY line"
+  rm -rf "$d"
+}
+test_runner_dry_run
 
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"

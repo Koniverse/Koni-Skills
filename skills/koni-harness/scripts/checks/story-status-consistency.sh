@@ -6,7 +6,7 @@ dir=docs/sprints/stories
 rc=0
 for f in "$dir"/*.md; do
   [ -e "$f" ] || continue
-  grep -Eq '^status:[[:space:]]*done' "$f" || continue
+  grep -Eiq '^[*_ ]*status:?[*_ ]*[[:space:]]*done\b' "$f" || continue
   if grep -q '^- \[ \]' "$f"; then
     echo "story-status: $f is done but has unchecked AC/tasks"
     rc=1
