@@ -104,6 +104,22 @@ The full stage-by-stage drive, the per-tier stage sets, the portable
 (Gemini/Codex/Cursor) fallback, resumability, and the `loop.sh` command
 reference are in [`references/loop-runner.md`](references/loop-runner.md).
 
+## Pick the next story
+
+The **sprint-sequencer** answers, read-only, which story to start next and where
+the sprint stands — `next` lists the dependency-ready stories in priority order
+and suggests `loop.sh start <id>`; `status` shows counts, points, and the
+dependency-blocked list. It reads koni-docs story frontmatter and never writes:
+
+```sh
+sh .koni-harness/sprint.sh next
+sh .koni-harness/sprint.sh status
+```
+
+Defaults sprint from `CLAUDE.md` `active_sprint`, root to the git toplevel, docs
+to `docs/`. Full behavior, flags, and limits in
+[`references/sprint-sequencer.md`](references/sprint-sequencer.md).
+
 ## Load session context
 
 The **context-loader** emits a concise, deterministic digest of the repo's
@@ -138,4 +154,5 @@ Load on demand based on what you're doing:
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
+| [`references/sprint-sequencer.md`](references/sprint-sequencer.md) | Picking the next dependency-ready story or reading sprint status with `sprint.sh` (`next`/`status`, readiness + ordering, CLI flags/defaults, exit codes, limits) |
 | [`references/context-load.md`](references/context-load.md) | Emitting the session-context digest with `context-load.sh` (what it emits, CLI flags/defaults, graceful degradation, P3b wiring) |
