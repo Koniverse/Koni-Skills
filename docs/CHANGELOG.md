@@ -16,6 +16,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.11.1] — 2026-06-27 — docs hygiene: resolve the last validate warning — v0.11.1
+
+Moved `docs/sprints/sprint-2026-W19.md` out of `archive/` back to the
+`docs/sprints/` root, matching the other closed sprints (W21, W22) which live
+there. `koni-docs validate` resolves sprint references in the root only, so
+US-1.1's `sprint: sprint-2026-W19` was the one lingering `(not_found)` warning;
+`validate` is now fully green ("all references resolve"). No content change to
+the sprint or the story — purely a relocation for consistency.
+
+---
+
 ## [0.11.0] — 2026-06-27 — koni-harness Phase 2: single-story loop-runner — v0.11.0
 
 Phase 2 of koni-harness adds the **runner**: a repeatable, tier-aware way to
