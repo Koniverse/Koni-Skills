@@ -675,3 +675,75 @@ for the specific deliverable.
 **Date**: 2026-06-26
 **Version**: 0.9.0
 **Reference**: [US-3.2](sprints/stories/US-3.2-koni-setup-bootstrapper.md), [skills/koni-setup/SKILL.md](../skills/koni-setup/SKILL.md), [LESSONS §6](LESSONS.md).
+
+---
+
+### D13. `koni-harness` composes the existing toolchain + delegates; the gate is the one new primitive
+
+**Context**: Research into "Harness Engineering" and "Agentic loops" for Koni
+projects (referencing `Koni-ERP-02`, `Senti-Quant`, `koni-devops`) asked for a
+**portable, standardized** harness (priority B) plus **orchestration** of the
+agentic loop (priority D), running Claude-Code-first but compatible with
+Gemini/Codex, **hybrid** (compose existing tools + add a few primitives), and —
+the user's explicit constraint — organized so it **does not affect existing
+data**. The audit showed Koni already owns every loop stage (BMAD / Superpowers /
+gstack / koni-docs / koni-setup); the gap is the connective tissue + a portable
+verification gate. The open design question: how does a new harness skill sit
+over the same `docs/` + repo surface without conflicting with — or duplicating —
+those tools.
+
+**Decision**: Ship `koni-harness` as a **hybrid** skill that (1) *composes* the
+existing toolchain via a tool-neutral **standard** (the six loop stages + the
+gates between them), and (2) adds exactly **one new primitive** — a portable,
+dependency-free POSIX pre-commit gate. It **delegates**: doc bodies → koni-docs,
+scaffold → koni-setup, plan → BMAD, execute → Superpowers, review → gstack. It
+reproduces none of them. Phase 1 (this decision) ships the standard + gate;
+Phases 2 (loop orchestrator) and 3 (context-loader + multi-tool adapters + DAG)
+are roadmap. Filed under EPIC-3 as FR-21 (a second non-docs Koniverse skill).
+
+Two sub-decisions locked:
+
+| # | Sub-decision | Choice | Why |
+|---|---|---|---|
+| D13.a | Gate config format | line-format `gates.conf`, not YAML | zero parser dependency (no `yq`) → genuinely portable to any tool/host; resolves the spec §9 open question |
+| D13.b | Gate distribution | **vendored** into the consumer repo's `.koni-harness/` | self-contained, survives without the central checkout, works under Gemini/Codex on any machine |
+
+**Rationale**:
+
+- **Compose-don't-reinvent keeps the two skills conflict-free.** The gate calls
+  `koni-docs validate`; it never re-implements koni-docs rules. Same boundary
+  pattern as D12 (koni-setup) — sibling skills extend/orchestrate, never
+  duplicate (the EPIC-3 cross-cutting invariant).
+- **Additive-only is a hard invariant, by user mandate.** Adoption chains/wraps/
+  merges behind reversible marker blocks and refuses to touch a foreign hook —
+  never clobbers existing data. This is enforced in `install-gate.sh` and proven
+  by an author-blind non-destructive verification (foreign hook left byte-intact;
+  `settings.json` untouched; idempotent).
+- **Portable core, thin adapter** satisfies "Claude-first but compatible": the
+  gate-runner + config + checks are POSIX/plain-text; Claude `settings.json`
+  hooks, git hooks, and a Gemini/Codex one-liner are all thin shims over the same
+  runner.
+
+**Alternatives considered**:
+
+- **Fold the harness into koni-docs.** Rejected — couples one-time/continuous
+  concerns and blows the koni-docs SKILL.md budget.
+- **Build a full orchestrator / gate DSL now (option ② / ③ from brainstorm).**
+  Deferred — B (portability) was the stated priority and the gate must exist
+  before the loop that depends on it; a YAML DSL would add a `yq` dependency that
+  breaks tool-neutrality. Orchestration is Phase 2.
+- **Symlink the gate from the central repo instead of vendoring.** Rejected —
+  breaks portability to machines/tools without the central checkout.
+
+**Impact**:
+
+- New skill `skills/koni-harness/` (SKILL.md + 4 references + gate-runner + 6
+  checks + installer + 34-test harness) + repo wiring.
+- US-3.3 + EPIC-3 FR-21; sprint-2026-W26 now 2 stories / 10 pts; VERSION
+  0.9.0 → 0.10.0. Spec + Phase-1 plan under `docs/superpowers/`.
+- Establishes the portable-gate primitive other repos (ERP-02, devops) can adopt
+  additively, and the loop standard Phases 2–3 build on.
+
+**Date**: 2026-06-27
+**Version**: 0.10.0
+**Reference**: [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md), [spec](superpowers/specs/2026-06-27-koni-harness-agentic-loop-design.md), [plan](superpowers/plans/2026-06-27-koni-harness-phase1.md), [D12](#d12-koni-setup-is-a-sibling-skill-that-delegates-doc-bodies-to-koni-docs-independence-boundary).

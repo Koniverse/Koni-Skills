@@ -16,6 +16,64 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.10.0] — 2026-06-27 — koni-harness: Koni Agentic Loop standard + portable pre-commit gate (Phase 1) — v0.10.0
+
+The second non-docs Koniverse skill, and the **connective tissue** of the
+agentic loop. Koni already owned every loop *stage* (BMAD plan, Superpowers
+execute, gstack review, koni-docs doc/version gate, koni-setup bootstrap) but
+each repo wired them — and its verification gates — ad-hoc. `koni-harness`
+standardizes the loop and ships a portable gate that catches agent mistakes
+before they land. Reverse-engineered from `Koni-ERP-02`, `Senti-Quant`, and
+`koni-devops`. Closes FR-21.
+
+### Added — `skills/koni-harness/`
+
+- **The Koni Agentic Loop standard** ([`references/agentic-loop-standard.md`](../skills/koni-harness/references/agentic-loop-standard.md))
+  — tool-neutral: the six loop stages + the entry gate between each, the context
+  layer load order (`AGENTS.md → CLAUDE.md → LESSONS → CONTEXT → .active-context`),
+  the portability contract (portable core vs. thin tool adapter), and the
+  harness-engineering principles. Composes the existing toolchain; reproduces
+  none of it (see [CONTEXT D13](CONTEXT.md)).
+- **Portable pre-commit gate** — a self-locating POSIX [`gate-runner.sh`](../skills/koni-harness/scripts/gate-runner.sh)
+  reading a line-format `gates.conf` (no YAML/`yq` dependency), dispatching
+  checks by *phase* (`work-commit` / `release-commit` / `pre-push`) and *severity*
+  (`block` → non-zero exit, `warn` → never blocks). Six built-in checks, each
+  judging the **staged** state: `version-phase` (2-phase versioning, generalized
+  from Senti-Quant), `changelog-anchor`, `credential-scan` (PEM / AWS / quoted
+  secrets, with a `.koni-harness/secret-allow` escape hatch), `koni-docs-validate`
+  (skip-passes when koni-docs is unresolvable; never network-installs),
+  `story-status-consistency`, `passthrough`.
+- **Additive (non-destructive) installer** ([`install-gate.sh`](../skills/koni-harness/scripts/install-gate.sh))
+  — vendors the runner + checks into the consumer repo's `.koni-harness/`, chains
+  git `pre-commit`/`pre-push` behind reversible `# >>> koni-harness >>>` marker
+  blocks **preserving any existing hook**, is idempotent, **skips a non-POSIX-shell
+  hook with a manual-chain warning rather than corrupting it**, never overwrites an
+  existing `gates.conf`, and is worktree/submodule-safe.
+- **Adapters** ([`references/adapters.md`](../skills/koni-harness/references/adapters.md))
+  — git hook, Claude Code `settings.json` (documented as a manual *merge*), and a
+  Gemini/Codex/Cursor one-liner, all calling the same vendored runner.
+- **Wiring**: installed into this repo at `.claude/skills/koni-harness` +
+  `.agents/skills/koni-harness` (mirrors koni-docs / koni-setup).
+
+### Validation
+
+34-assertion self-contained POSIX test harness (green under `sh` and `dash`).
+Two-stage review (spec compliance + code quality) caught and fixed real
+correctness/portability holes before ship: a config line without a trailing
+newline being silently dropped, a BRE dot over-matching the CHANGELOG version,
+the installer corrupting a non-`sh` hook, a fragile npm-error-string match that
+blocked instead of skip-passing on modern npm, and a non-POSIX `\b` in the
+story-status pattern. Two author-blind sandbox verifications (bootstrap: four
+gate scenarios + dry-run; adopt: A–E non-destructive guarantees incl. a
+byte-intact foreign hook) both passed.
+
+### Docs
+
+- US-3.3 story + EPIC-3 (FR-21) + sprint-2026-W26 (2 stories / 10 pts);
+  spec + Phase-1 plan under `docs/superpowers/`; CONTEXT D13.
+
+---
+
 ## [0.9.0] — 2026-06-26 — koni-setup: first non-docs Koniverse skill (project bootstrapper & onboarder) — v0.9.0
 
 Until now Koni-Skills shipped exactly one skill — `koni-docs`. EPIC-3 ("move

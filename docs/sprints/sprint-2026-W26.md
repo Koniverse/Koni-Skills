@@ -8,7 +8,9 @@ goal: >-
   delivery: ship `koni-setup` (v0.9.0) — the first non-docs Koniverse skill, a
   day-0 project bootstrapper/onboarder that scaffolds + wires a repo to the
   shared standard while delegating all doc-body templates to koni-docs. Closes
-  FR-10 and adds FR-20. 1 story / 5 pts / 1 contributor.
+  FR-10 and adds FR-20. Then ship `koni-harness` (v0.10.0, US-3.3) — the Koni
+  Agentic Loop standard + portable pre-commit gate (FR-21). 2 stories / 10 pts /
+  1 contributor.
 ---
 ## Sprint scope
 
@@ -16,13 +18,14 @@ First sprint after the W22 EPIC-4 push. Scope is intentionally narrow: prove
 EPIC-3 can ship a non-docs skill that coexists with koni-docs without
 duplicating it.
 
-| US     | Title                                                   | Epic   | Pri | Points | Status | Ship   | Story file                                                                             |
-| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------ | -------------------------------------------------------------------------------------- |
-| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0 | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md) |
+| US     | Title                                                   | Epic   | Pri | Points | Status | Ship    | Story file                                                                                 |
+| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------ |
+| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0  | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)     |
+| US-3.3 | koni-harness — Agentic Loop standard + portable gate    | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
 
-**Total**: **1 story / 5 points** — shipped at v0.9.0. EPIC-3 flips from
-backlog → in-progress (1/2 pillars delivered: the first non-docs skill;
-US-3.1 plugin-skill pattern remains backlog).
+**Total**: **2 stories / 10 points** — shipped at v0.9.0 (koni-setup) + v0.10.0
+(koni-harness). EPIC-3 in-progress: both non-docs-skill deliverables landed
+(koni-setup + koni-harness); only US-3.1 plugin-skill pattern remains backlog.
 
 ## Sprint goal recap
 
