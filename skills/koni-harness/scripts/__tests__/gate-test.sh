@@ -68,6 +68,17 @@ test_version_phase() {
 }
 test_version_phase
 
+test_changelog_anchor() {
+  CH="$SCRIPTS/checks/changelog-anchor.sh"
+  d=$(newrepo); ( cd "$d" && mkdir -p docs && printf '# Changelog\n## [Unreleased]\n' > docs/CHANGELOG.md )
+  assert_exit 0 "changelog-anchor: present passes" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  d=$(newrepo); ( cd "$d" && mkdir -p docs && printf '# Changelog\n' > docs/CHANGELOG.md )
+  assert_exit 1 "changelog-anchor: missing anchor blocks" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+}
+test_changelog_anchor
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
