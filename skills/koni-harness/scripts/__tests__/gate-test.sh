@@ -125,6 +125,30 @@ test_passthrough() {
 }
 test_passthrough
 
+test_install_nondestructive() {
+  INS="$SCRIPTS/install-gate.sh"
+  d=$(newrepo)
+  mkdir -p "$d/.git/hooks"
+  printf '#!/bin/sh\necho ORIGINAL_HOOK\n' > "$d/.git/hooks/pre-commit"
+  chmod +x "$d/.git/hooks/pre-commit"
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  # original hook content preserved
+  grep -q 'ORIGINAL_HOOK' "$d/.git/hooks/pre-commit" \
+    && ok "install: original pre-commit preserved" || no "install: original pre-commit preserved"
+  # koni-harness marker added
+  grep -q '>>> koni-harness >>>' "$d/.git/hooks/pre-commit" \
+    && ok "install: koni-harness marker block added" || no "install: koni-harness marker block added"
+  # runner vendored
+  [ -f "$d/.koni-harness/gate-runner.sh" ] \
+    && ok "install: runner vendored" || no "install: runner vendored"
+  # re-run is idempotent (no duplicate marker)
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  n=$(grep -c '>>> koni-harness >>>' "$d/.git/hooks/pre-commit")
+  [ "$n" -eq 1 ] && ok "install: idempotent (single marker)" || no "install: idempotent (got $n markers)"
+  rm -rf "$d"
+}
+test_install_nondestructive
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
