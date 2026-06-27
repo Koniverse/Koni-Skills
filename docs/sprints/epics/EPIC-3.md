@@ -2,7 +2,7 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: in-progress
-prd_ref: 'FR-9, FR-10, FR-20, FR-21'
+prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22'
 created: 2026-05-27T00:00:00.000Z
 updated: 2026-06-27T00:00:00.000Z
 ---
@@ -48,14 +48,16 @@ remains backlog pending a future brainstorm + plan pass.
 | FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | ✅ shipped (v0.9.0)  |
 | FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | ✅ shipped (v0.9.0)  |
 | FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.10.0) |
+| FR-22 | [US-3.4](../stories/US-3.4-koni-harness-loop-runner.md)  | ✅ shipped (v0.11.0) |
 
 ## Stories
 
-| ID                                                       | Title                       | Goal                                                                                                                                                   | Status     | Version |
-| -------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------- |
-| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)      | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation                              | 📋 backlog | —       |
-| [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | koni-setup bootstrapper     | Ship the first non-docs Koniverse skill: detect repo profile + scaffold/wire/onboard a repo to the shared standard, delegating doc bodies to koni-docs | ✅ done     | v0.9.0  |
-| [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | koni-harness Phase 1        | Ship the Koni Agentic Loop standard + a portable, additive POSIX pre-commit gate; compose BMAD/Superpowers/gstack/koni-docs without reproducing them   | ✅ done     | v0.10.0 |
+| ID                                                       | Title                       | Goal                                                                                                                                                    | Status     | Version |
+| -------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------- |
+| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)      | Define plugin-skill pattern | Document how plugin skills (`koni-supabase`, `koni-nextjs`) extend koni-docs rules + provide one reference implementation                               | 📋 backlog | —       |
+| [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | koni-setup bootstrapper     | Ship the first non-docs Koniverse skill: detect repo profile + scaffold/wire/onboard a repo to the shared standard, delegating doc bodies to koni-docs  | ✅ done     | v0.9.0  |
+| [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | koni-harness Phase 1        | Ship the Koni Agentic Loop standard + a portable, additive POSIX pre-commit gate; compose BMAD/Superpowers/gstack/koni-docs without reproducing them    | ✅ done     | v0.10.0 |
+| [US-3.4](../stories/US-3.4-koni-harness-loop-runner.md)  | koni-harness Phase 2        | Tier-aware single-story loop-runner: loop.sh state spine + loop-runner brain driving one story through the six stages, Claude-first + portable fallback | ✅ done     | v0.11.0 |
 
 ## Cross-cutting invariants
 

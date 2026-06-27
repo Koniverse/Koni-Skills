@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-06-27 05:31:26 UTC
-> Total stories: 47
+> Last generated: 2026-06-27 16:09:26 UTC
+> Total stories: 48
 
 ## 📋 Backlog (1)
 
@@ -22,7 +22,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (46)
+## ✅ Done (47)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -37,6 +37,7 @@ _No stories_
 | US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W21 | saltict |
 | US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder skill (first non-docs skill) | EPIC-3 | P1 | 5 | sprint-2026-W26 | jindo9986 |
 | US-3.3 | koni-harness — Koni Agentic Loop standard + portable pre-commit gate (Phase 1) | EPIC-3 | P1 | 5 | sprint-2026-W26 | jindo9986 |
+| US-3.4 | koni-harness Phase 2 — single-story loop-runner (loop.sh spine + loop-runner brain) | EPIC-3 | P1 | 3 | sprint-2026-W26 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -89,7 +90,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 46
+- ✅ **Done**: 47
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

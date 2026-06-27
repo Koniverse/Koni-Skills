@@ -9,8 +9,9 @@ goal: >-
   day-0 project bootstrapper/onboarder that scaffolds + wires a repo to the
   shared standard while delegating all doc-body templates to koni-docs. Closes
   FR-10 and adds FR-20. Then ship `koni-harness` (v0.10.0, US-3.3) — the Koni
-  Agentic Loop standard + portable pre-commit gate (FR-21). 2 stories / 10 pts /
-  1 contributor.
+  Agentic Loop standard + portable pre-commit gate (FR-21), then `koni-harness`
+  Phase 2 (v0.11.0, US-3.4) — the single-story loop-runner (FR-22). 3 stories /
+  13 pts / 1 contributor.
 ---
 ## Sprint scope
 
@@ -21,11 +22,13 @@ duplicating it.
 | US     | Title                                                   | Epic   | Pri | Points | Status | Ship    | Story file                                                                                 |
 | ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------ |
 | US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0  | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)     |
-| US-3.3 | koni-harness — Agentic Loop standard + portable gate    | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
+| US-3.3 | koni-harness Phase 1 — Agentic Loop standard + gate     | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
+| US-3.4 | koni-harness Phase 2 — single-story loop-runner         | EPIC-3 | P1  | 3      | ✅ done | v0.11.0 | [stories/US-3.4-koni-harness-loop-runner.md](stories/US-3.4-koni-harness-loop-runner.md)   |
 
-**Total**: **2 stories / 10 points** — shipped at v0.9.0 (koni-setup) + v0.10.0
-(koni-harness). EPIC-3 in-progress: both non-docs-skill deliverables landed
-(koni-setup + koni-harness); only US-3.1 plugin-skill pattern remains backlog.
+**Total**: **3 stories / 13 points** — shipped at v0.9.0 (koni-setup) + v0.10.0
+(koni-harness Phase 1) + v0.11.0 (koni-harness Phase 2). EPIC-3 in-progress:
+both non-docs skills landed and koni-harness reached its loop-runner phase; only
+US-3.1 plugin-skill pattern remains backlog.
 
 ## Sprint goal recap
 

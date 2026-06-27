@@ -16,6 +16,50 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.11.0] — 2026-06-27 — koni-harness Phase 2: single-story loop-runner — v0.11.0
+
+Phase 2 of koni-harness adds the **runner**: a repeatable, tier-aware way to
+drive one story through the six-stage Koni Agentic Loop. Phase 1 gave the loop a
+*standard* and a *gate*; Phase 2 gives it a *spine* and a *brain*. Closes FR-22.
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/loop.sh`** — a dependency-free POSIX loop-state helper, the loop's
+  deterministic, tool-neutral spine. Five subcommands: `start <id> [--tier N]`,
+  `status`, `enter <stage>`, `gate <phase>`, `complete` (+ a `--state <path>`
+  override). State lives in the gitignored `.koni-harness/loop-state` as line
+  `key=value`. `enter` warns (never hard-blocks) on a backward move or on
+  committing at tier ≥ 1 without `self-verify`; `complete` is terminal and can't
+  be clobbered. `gate` shells to the Phase-1 `gate-runner.sh` and passes its exit
+  code through.
+- **`references/loop-runner.md`** — the orchestration brain: the six-stage drive
+  (with the exact `loop.sh` call per stage), tier-awareness (process stages scale
+  to the tier; the gate runs at every tier), the portable fallback (Claude drives
+  via Task/subagents, other tools run stages manually but call the same
+  `loop.sh`), resumability (an interrupted loop resumes from `loop.sh status`),
+  and the command reference.
+- **`SKILL.md`** — a "Run a story through the loop" section + quickstart.
+- **Installer** — `install-gate.sh` now additively vendors `loop.sh` and
+  gitignores `.koni-harness/loop-state` behind a marker block (idempotent,
+  newline-safe, non-clobbering).
+
+### Validation
+
+31-assertion `loop-test.sh` (green under `sh` and `dash`); Phase-1 `gate-test.sh`
+still 34/0 (no regression). Two-stage review caught and fixed real issues before
+ship: a `.gitignore` append that corrupted a file lacking a trailing newline, a
+`kv_set` that broke on `|`/`&` in values (now delimiter-safe via
+delete-then-append), unvalidated `--tier`, and — found by author-blind sandbox
+verification — `enter` silently clobbering a completed loop (now `complete` is
+terminal).
+
+### Docs
+
+- US-3.4 story + EPIC-3 (FR-22) + sprint-2026-W26 (now 3 stories / 13 pts);
+  spec + Phase-2 plan under `docs/superpowers/`.
+
+---
+
 ## [0.10.1] — 2026-06-27 — koni-harness: "Right-sizing the loop" tiers in the Standard — v0.10.1
 
 Adds a **Right-sizing the loop** section to the Koni Agentic Loop standard
