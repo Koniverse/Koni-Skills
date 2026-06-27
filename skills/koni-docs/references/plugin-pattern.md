@@ -86,16 +86,22 @@ Checklist for a new `koni-<tech>` plugin:
 3. **Namespaced rule table** — columns `Rule | Asserts | Why | How to check`,
    one row per rule, using the plugin's prefix (`NX-`, `SB-`, …). Each rule's
    "how to check" is a concrete, grep-able or review-able step.
-4. **"Composes with koni-docs" section** — state the discovery key
-   (`koni-docs-plugins: [<tech>]`), affirm it extends and never duplicates the
+4. **"Composes with koni-docs" section** — state the discovery key by declaring
+   `plugins: [<tech>]` under the repo's `koni-docs:` block in CLAUDE.md (the
+   `koni-docs-plugins` declaration), affirm it extends and never duplicates the
    12 core rules, and name any koni-harness gate row the plugin relies on.
 5. **When-to-use triggers** — the stack signals that should activate the
    skill (e.g. "Next.js work in a Koni repo").
 6. **Wiring** — mirror the existing skills' symlinks
    (`.agents/skills/koni-<tech>` → `../../skills/koni-<tech>`, then
    `.claude/skills/koni-<tech>` → `../../.agents/skills/koni-<tech>`), and have
-   the consuming project declare `koni-docs-plugins: [<tech>]` in its
-   CLAUDE.md.
+   the consuming project declare `plugins: [<tech>]` under its CLAUDE.md
+   `koni-docs:` block (the `koni-docs-plugins` declaration):
+
+   ```yaml
+   koni-docs:
+     plugins: [<tech>]
+   ```
 
 ---
 
