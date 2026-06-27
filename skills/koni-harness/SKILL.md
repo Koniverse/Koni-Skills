@@ -134,6 +134,19 @@ sh .koni-harness/context-load.sh
 Defaults to the git toplevel and `docs/`; override with `--root` / `--docs`.
 Full details in [`references/context-load.md`](references/context-load.md).
 
+## Brief a new session
+
+The **session briefing** composes the context digest and the next-story
+suggestion into one read-only command to run at the start of a session — the
+P3a digest followed by a `## Next` section:
+
+```sh
+sh .koni-harness/session-start.sh
+```
+
+Per-tool wiring (Claude `SessionStart` merge snippet; Gemini/Codex/Cursor) is in
+[`references/session-adapters.md`](references/session-adapters.md).
+
 ## Hard invariant
 
 **Additive-only / non-destructive.** Adopting the harness MUST NOT overwrite,
@@ -156,3 +169,4 @@ Load on demand based on what you're doing:
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
 | [`references/sprint-sequencer.md`](references/sprint-sequencer.md) | Picking the next dependency-ready story or reading sprint status with `sprint.sh` (`next`/`status`, readiness + ordering, CLI flags/defaults, exit codes, limits) |
 | [`references/context-load.md`](references/context-load.md) | Emitting the session-context digest with `context-load.sh` (what it emits, CLI flags/defaults, graceful degradation, P3b wiring) |
+| [`references/session-adapters.md`](references/session-adapters.md) | Wiring the session briefing (`session-start.sh`) into a tool's session start (what the briefing contains, Claude `SessionStart` merge snippet, Gemini/Codex/Cursor, composition) |
