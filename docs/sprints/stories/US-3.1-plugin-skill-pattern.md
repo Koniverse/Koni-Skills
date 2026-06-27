@@ -12,7 +12,7 @@ prd_ref:
 arch_ref: []
 depends_on: []
 assignee: jindo9986
-commit: pending
+commit: 504ed8b
 created: 2026-05-27
 updated: 2026-06-28
 ---
