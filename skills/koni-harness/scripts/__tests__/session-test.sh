@@ -53,4 +53,18 @@ test_install() {
 }
 test_install
 
+test_space_path() {
+  # C1: root path WITH A SPACE must not word-split the forwarded flags
+  d=$(mktemp -d "${TMPDIR:-/tmp}/koni space.XXXXXX")
+  st="$d/docs/sprints/stories"; mkdir -p "$st"
+  printf '0.0.2\n' > "$d/VERSION"
+  printf 'koni-docs:\n  active_sprint: sprint-S  # active\n' > "$d/CLAUDE.md"
+  printf -- '---\nid: US-S\ntitle: "x"\nstatus: planned\npriority: P0\npoints: 1\nsprint: sprint-S\ndepends_on: []\ncreated: 2026-06-27\n---\n' > "$st/US-S.md"
+  out=$(sh "$SS" --root "$d")
+  have "VERSION: 0.0.2" "$out" "space-path: digest VERSION line survives space in --root"
+  have "## Next" "$out" "space-path: Next section survives space in --root"
+  rm -rf "$d"
+}
+test_space_path
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

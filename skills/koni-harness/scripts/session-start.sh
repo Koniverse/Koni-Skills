@@ -19,19 +19,19 @@ resolve() { # name -> path ("" if not found)
   elif [ -f ".koni-harness/$1" ]; then printf '%s' ".koni-harness/$1"
   fi
 }
-common=""
-[ -n "$ROOT" ] && common="$common --root $ROOT"
-[ -n "$DOCS" ] && common="$common --docs $DOCS"
+set --
+[ -n "$ROOT" ] && set -- "$@" --root "$ROOT"
+[ -n "$DOCS" ] && set -- "$@" --docs "$DOCS"
 
 cl=$(resolve context-load.sh)
-if [ -n "$cl" ]; then sh "$cl" $common || true; else echo "_(context-load.sh not found)_"; fi
+if [ -n "$cl" ]; then sh "$cl" "$@" || true; else echo "_(context-load.sh not found)_"; fi
 echo
 echo "## Next"
 echo
 sp=$(resolve sprint.sh)
 if [ -n "$sp" ]; then
-  if [ -n "$SPRINT" ]; then sh "$sp" next $common --sprint "$SPRINT" || true
-  else sh "$sp" next $common || true; fi
+  if [ -n "$SPRINT" ]; then sh "$sp" next "$@" --sprint "$SPRINT" || true
+  else sh "$sp" next "$@" || true; fi
 else
   echo "_(sprint.sh not found)_"
 fi
