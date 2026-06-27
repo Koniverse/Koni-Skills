@@ -80,6 +80,27 @@ grammar, and how to add your own are in
 runner into git / Claude Code / Gemini / Codex / Cursor is in
 [`references/adapters.md`](references/adapters.md).
 
+## Run a story through the loop
+
+The **loop-runner** drives a single story end-to-end through the six stages
+(`frame → execute → self-verify → review → doc-gate → commit`). It is
+tier-aware (process stages scale to risk × size; the gate runs at every tier),
+with `loop.sh` as the deterministic, tool-neutral spine that tracks loop
+position in a gitignored `.koni-harness/loop-state`, and the Phase-1 gate as the
+commit backbone:
+
+```sh
+sh .koni-harness/loop.sh start US-X.Y --tier 2
+sh .koni-harness/loop.sh status
+sh .koni-harness/loop.sh enter execute      # …self-verify, review, doc-gate, commit
+sh .koni-harness/loop.sh gate work-commit
+sh .koni-harness/loop.sh complete
+```
+
+The full stage-by-stage drive, the per-tier stage sets, the portable
+(Gemini/Codex/Cursor) fallback, resumability, and the `loop.sh` command
+reference are in [`references/loop-runner.md`](references/loop-runner.md).
+
 ## Hard invariant
 
 **Additive-only / non-destructive.** Adopting the harness MUST NOT overwrite,
@@ -96,6 +117,7 @@ Load on demand based on what you're doing:
 | File | When to load |
 |---|---|
 | [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
+| [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
