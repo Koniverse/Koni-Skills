@@ -24,6 +24,10 @@ chmod +x .koni-harness/gate-runner.sh .koni-harness/checks/*.sh
 cp "$SRC/loop.sh" .koni-harness/loop.sh
 chmod +x .koni-harness/loop.sh
 
+# vendor the context-loader alongside the gate + loop helpers
+cp "$SRC/context-load.sh" .koni-harness/context-load.sh
+chmod +x .koni-harness/context-load.sh
+
 # gitignore the ephemeral loop-state (additive, marker-bounded, idempotent)
 gi=.gitignore
 gbegin='# >>> koni-harness >>>'

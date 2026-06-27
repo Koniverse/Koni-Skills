@@ -74,4 +74,14 @@ test_missing_layers() {
 }
 test_missing_layers
 
+test_install() {
+  INS="$HERE/../install-gate.sh"; SRC="$HERE/.."
+  d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  [ -f "$d/.koni-harness/context-load.sh" ] && ok "install: vendors context-load.sh" || no "install: vendors context-load.sh"
+  [ -x "$d/.koni-harness/context-load.sh" ] && ok "install: context-load.sh executable" || no "install: context-load.sh executable"
+  rm -rf "$d"
+}
+test_install
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
