@@ -19,17 +19,18 @@ First sprint after the W22 EPIC-4 push. Scope is intentionally narrow: prove
 EPIC-3 can ship a non-docs skill that coexists with koni-docs without
 duplicating it.
 
-| US     | Title                                                   | Epic   | Pri | Points | Status | Ship    | Story file                                                                                     |
-| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | ---------------------------------------------------------------------------------------------- |
-| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0  | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)         |
-| US-3.3 | koni-harness Phase 1 — Agentic Loop standard + gate     | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md)     |
-| US-3.4 | koni-harness Phase 2 — single-story loop-runner         | EPIC-3 | P1  | 3      | ✅ done | v0.11.0 | [stories/US-3.4-koni-harness-loop-runner.md](stories/US-3.4-koni-harness-loop-runner.md)       |
-| US-3.5 | koni-harness P3a — context-loader (session digest)      | EPIC-3 | P1  | 3      | ✅ done | v0.12.0 | [stories/US-3.5-koni-harness-context-loader.md](stories/US-3.5-koni-harness-context-loader.md) |
+| US     | Title                                                   | Epic   | Pri | Points | Status | Ship    | Story file                                                                                         |
+| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | -------------------------------------------------------------------------------------------------- |
+| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0  | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)             |
+| US-3.3 | koni-harness Phase 1 — Agentic Loop standard + gate     | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md)         |
+| US-3.4 | koni-harness Phase 2 — single-story loop-runner         | EPIC-3 | P1  | 3      | ✅ done | v0.11.0 | [stories/US-3.4-koni-harness-loop-runner.md](stories/US-3.4-koni-harness-loop-runner.md)           |
+| US-3.5 | koni-harness P3a — context-loader (session digest)      | EPIC-3 | P1  | 3      | ✅ done | v0.12.0 | [stories/US-3.5-koni-harness-context-loader.md](stories/US-3.5-koni-harness-context-loader.md)     |
+| US-3.6 | koni-harness P2.5 — sprint-sequencer                    | EPIC-3 | P1  | 3      | ✅ done | v0.13.0 | [stories/US-3.6-koni-harness-sprint-sequencer.md](stories/US-3.6-koni-harness-sprint-sequencer.md) |
 
-**Total**: **4 stories / 16 points** — shipped at v0.9.0 (koni-setup) + v0.10.0
-(koni-harness P1) + v0.11.0 (koni-harness P2) + v0.12.0 (koni-harness P3a).
-EPIC-3 in-progress: both non-docs skills landed and koni-harness reached its
-context-loader phase; only US-3.1 plugin-skill pattern remains backlog.
+**Total**: **5 stories / 19 points** — shipped v0.9.0 (koni-setup) + v0.10.0–v0.13.0
+(koni-harness P1 / P2 / P3a / P2.5). EPIC-3 in-progress: both non-docs skills
+landed and koni-harness has its gate + loop-runner + context-loader +
+sprint-sequencer; only US-3.1 plugin-skill pattern remains backlog.
 
 ## Sprint goal recap
 

@@ -16,6 +16,49 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.13.0] — 2026-06-27 — koni-harness P2.5: sprint-sequencer — v0.13.0
+
+P2.5 of the koni-harness roadmap: dependency-ordered story selection at the
+sprint level — the cross-story complement to the per-story loop-runner. The
+loop-runner answers "run this story"; the sprint-sequencer answers "which story
+next?". Closes FR-24. (The original Phase 2.5 "parallel fan-out" was dropped as
+non-portable / YAGNI; this ships the portable, valuable core.)
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/sprint.sh`** — a dependency-free, **read-only** POSIX helper over
+  koni-docs story frontmatter. `sprint.sh next` lists the **ready** stories in the
+  active sprint (not-`done` and every `depends_on` resolves to a `done` story),
+  ordered by priority then id, and suggests `loop.sh start <id>`; it distinguishes
+  a **complete** sprint from one where all remaining work is **blocked**.
+  `sprint.sh status` reports counts by status, points done/total, and a blocked
+  list naming each story's unmet dependency ids. Flags `--sprint` / `--docs` /
+  `--root`; active sprint falls back to `CLAUDE.md active_sprint:`. Reads only;
+  never writes (koni-docs owns status). Deterministic extraction (a `set -e`-safe
+  `field()` pipeline + a `depends_on` awk that stops at the next top-level key);
+  space-safe story iteration.
+- **`references/sprint-sequencer.md`** — what it computes, usage, how it fits the
+  loop, and limits.
+- **`SKILL.md`** — a "Pick the next story" pointer.
+- **Installer** — `install-gate.sh` now additively vendors `sprint.sh` alongside
+  the gate / `loop.sh` / `context-load.sh`.
+
+### Validation
+
+13-assertion `sprint-test.sh` (green under `sh` and `dash`); the other three
+suites (context 15, loop 31, gate 34) still green. Combined spec + code-quality
+review APPROVED; three plan-vs-implementation bugs were caught and fixed during
+build (test-fixture arity, and command-substitution stripping trailing newlines
+in the `next`/`status` accumulators), plus space-safe iteration and
+complete-vs-blocked wording. Validated against this repo.
+
+### Docs
+
+- US-3.6 story + EPIC-3 (FR-24) + sprint-2026-W26 (now 5 stories / 19 pts);
+  spec + plan under `docs/superpowers/`.
+
+---
+
 ## [0.12.0] — 2026-06-27 — koni-harness P3a: context-loader (session digest) — v0.12.0
 
 P3a of the koni-harness roadmap: a portable context-loader that automates the
