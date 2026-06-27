@@ -1,0 +1,118 @@
+# The Koni Agentic Loop — Standard (tool-neutral)
+
+This is the portable, tool-neutral definition of how a Koniverse repo runs an
+agentic development loop. It is plain Markdown describing a loop, a set of
+gates, a context-load order, and a portability contract. Nothing here is
+specific to Claude Code, Gemini, Codex, or Cursor — the adapter that wires this
+into a given tool is documented separately in
+[`adapters.md`](adapters.md), and the gate that enforces it is documented in
+[`gate-catalog.md`](gate-catalog.md).
+
+Koni already owns every *stage* of the loop (BMAD plans, Superpowers executes,
+gstack reviews, koni-docs gates docs + version, koni-setup bootstraps). What
+this Standard adds is the **connective tissue**: a shared name for the loop and
+a deterministic gate between its stages.
+
+---
+
+## The six stages
+
+| # | Stage | Owned by | Entry gate (must be true to enter) |
+|---|---|---|---|
+| 1 | **Frame / Plan** | BMAD | A story exists in `docs/sprints/stories/` with status `in-progress` |
+| 2 | **Execute** | Superpowers (TDD) | Plan approved; LESSONS skimmed; DESIGN read if UI |
+| 3 | **Self-verify** | the agent | Code compiles; new tests written and green |
+| 4 | **Review / QA** | gstack | Self-verify passed; diff is reviewable |
+| 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
+| 6 | **Commit / Release** | git + gate-runner | The gate passes |
+
+The stages themselves are not the contribution — they are existing tools that
+every Koni repo already runs. **The value is the gates *between* the stages**:
+the entry/exit criteria that decide when work may advance from one stage to the
+next. Naming those gates, and making the commit/release gate a deterministic
+script with an exit code, is what this Standard adds.
+
+---
+
+## Context layers and load order
+
+At session start an agent should read the repo's context layers in this order,
+each one narrowing from project-canonical down to the live working state:
+
+`AGENTS.md` → `CLAUDE.md` → `LESSONS.md` → `CONTEXT.md` → `.active-context.md`
+
+- **`AGENTS.md`** — the single canonical source of truth for project structure,
+  conventions, skill catalog, commit discipline, and behavioral guidelines.
+- **`CLAUDE.md`** — a thin pointer to AGENTS.md plus the Koni-Docs Integration
+  config block (`docs_path` / `active_sprint` / `version_file`) and the Active
+  Context pointer. Authoritative only for the Claude-Code activation surface.
+- **`LESSONS.md`** — accumulated, hard-won lessons; authoritative for "mistakes
+  we already made, don't repeat them."
+- **`CONTEXT.md`** — durable architectural/decision context (the D-numbered
+  decisions); authoritative for *why* the system is shaped the way it is.
+- **`.active-context.md`** — the live working state: active sprint, in-progress
+  stories, recent decisions, and the per-developer block. Authoritative for
+  "what is happening right now." Gitignored on purpose.
+
+Phase 1 only **documents** this order; *automating* the load (assembling these
+layers into the agent's session context at startup) is Phase 3 and out of scope
+for the current harness.
+
+---
+
+## Portability contract
+
+A capability is only "in the harness" if its **core is tool-neutral** and its
+**adapter is thin**. The core is plain Markdown + POSIX shell; the adapter is
+the small amount of per-tool glue that invokes that core. If a capability can
+only run inside one tool, it is not yet in the harness.
+
+| Element | Portable core | Tool adapter |
+|---|---|---|
+| **Loop definition** | This document (Markdown) — the six stages, gates, and context order | — (no adapter; agents read it directly) |
+| **The gate** | `gate-runner.sh` + `gates.conf` (POSIX shell + a line-format config any tool can read or invoke) | git `pre-commit` / `pre-push` hook · Claude Code `settings.json` hook · Gemini / Codex / Cursor one-liner `sh .koni-harness/gate-runner.sh --phase <phase>` |
+| **Context load** | The layer files themselves (`AGENTS.md` → … → `.active-context.md`) | Each tool's session-start mechanism that reads them (Phase 3) |
+
+The rule restated: the gate's brain (`gate-runner.sh` + the checks + the
+config) is identical everywhere; the only thing that changes per tool is the
+thin shim that calls it. The runner is the contract; the adapter is replaceable.
+
+---
+
+## Harness engineering principles
+
+Practitioner guidance, derived from the harness's first principles:
+
+1. **Compose, don't reinvent.** Every loop stage maps to a tool that already
+   exists. The harness is glue + convention + a thin verification backbone — it
+   *invokes* BMAD / Superpowers / gstack / koni-docs, it never re-implements
+   them.
+
+2. **Add a gate only for a mistake that has actually bitten you.** A gate earns
+   its place by catching a class of agent error before it lands (a bad version
+   bump, a missing changelog anchor, a leaked secret, a broken doc ref). Don't
+   add speculative checks; generalize a real failure from a real repo.
+
+3. **Keep checks deterministic and grep-able.** A gate is a script with an exit
+   code, not a paragraph of advice. If a rule matters, make it grep-checkable:
+   read the staged state (`git diff --cached` / `git show :<path>`), exit `0`
+   for pass and `1` for fail, and print a one-line message naming the check and
+   how to fix it. No vibes, no LLM-in-the-loop for a deterministic rule.
+
+4. **Fail loud, at commit/push time.** The gate's job is to make agent mistakes
+   *impossible to miss* at the moment of committing or pushing — not to advise
+   after the fact. A `block` check that fails stops the commit; a `warn` check
+   prints and lets it through (repos opt into `block` once they are clean).
+
+5. **Additive-only / non-destructive.** Adopting the harness in any repo MUST
+   NOT overwrite, rewrite, or delete existing hooks, settings, docs, or configs.
+   It chains, wraps, and merges behind reversible
+   `# >>> koni-harness >>>` / `# <<< koni-harness <<<` marker blocks. Every
+   install action is idempotent — safe to re-run, detects what exists, and
+   no-ops or extends. (See [`adoption.md`](adoption.md).)
+
+6. **Degrade Claude-first features to a portable fallback.** Claude Code's
+   `settings.json` hooks are the *fast path*, not the only path. Anything that
+   runs as a Claude hook must also be invokable as the bare POSIX one-liner so
+   Gemini / Codex / Cursor (which share no hook spec) get the same gate. If a
+   feature can't degrade to the portable core, it isn't in the harness yet.
