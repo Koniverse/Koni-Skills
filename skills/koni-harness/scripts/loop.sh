@@ -82,10 +82,35 @@ do_enter() {
   echo "loop: entered $stage"
 }
 
+do_gate() {
+  phase=""
+  while [ $# -gt 0 ]; do case "$1" in
+    --state) STATE=$2; shift 2 ;;
+    -*) echo "loop gate: unknown $1" >&2; exit 2 ;;
+    *) phase=$1; shift ;;
+  esac; done
+  [ -n "$phase" ] || { echo "loop gate: <phase> required" >&2; exit 2; }
+  runner="$SELF_DIR/gate-runner.sh"
+  [ -f "$runner" ] || runner=".koni-harness/gate-runner.sh"
+  [ -f "$runner" ] || { echo "loop gate: gate-runner.sh not found" >&2; exit 2; }
+  if sh "$runner" --phase "$phase"; then rc=0; res=pass; else rc=$?; res=block; fi
+  [ -f "$STATE" ] && kv_set "gate_$phase" "$res" "$STATE"
+  exit "$rc"
+}
+
+do_complete() {
+  while [ $# -gt 0 ]; do case "$1" in --state) STATE=$2; shift 2 ;; *) shift ;; esac; done
+  [ -f "$STATE" ] || { echo "loop complete: no active loop" >&2; exit 2; }
+  kv_set stage complete "$STATE"; kv_set updated "$(now)" "$STATE"
+  echo "loop: complete"
+}
+
 cmd=${1:-}; [ $# -gt 0 ] && shift || true
 case "$cmd" in
   start)    do_start "$@" ;;
   status)   do_status "$@" ;;
   enter)    do_enter "$@" ;;
+  gate)     do_gate "$@" ;;
+  complete) do_complete "$@" ;;
   *) echo "usage: loop.sh {start|status|enter|gate|complete} [--state PATH] ..." >&2; exit 2 ;;
 esac

@@ -53,4 +53,28 @@ test_enter() {
 }
 test_enter
 
+test_gate_complete() {
+  st=$(newstate); d=$(dirname "$st")
+  sh "$LOOP" start US-9.6 --tier 1 --state "$st" >/dev/null
+  # stub a gate-runner next to loop.sh's resolution path: vendor loop.sh into a local
+  # .koni-harness alongside a stub gate-runner so loop.sh resolves the stub via $SELF_DIR
+  mkdir -p "$d/.koni-harness"
+  cp "$LOOP" "$d/.koni-harness/loop.sh"; chmod +x "$d/.koni-harness/loop.sh"
+  VLOOP="$d/.koni-harness/loop.sh"
+  printf '#!/bin/sh\nexit 0\n' > "$d/.koni-harness/gate-runner.sh"; chmod +x "$d/.koni-harness/gate-runner.sh"
+  # run from $d so the vendored loop.sh resolves its sibling gate-runner.sh stub
+  ( cd "$d" && sh "$VLOOP" gate work-commit --state "$st" >/dev/null ) \
+    && ok "gate: pass exits 0" || no "gate: pass exits 0"
+  grep -q '^gate_work-commit=pass$' "$st" && ok "gate: records pass" || no "gate: records pass"
+  # failing gate → exit 1, records block
+  printf '#!/bin/sh\nexit 1\n' > "$d/.koni-harness/gate-runner.sh"
+  if ( cd "$d" && sh "$VLOOP" gate work-commit --state "$st" >/dev/null 2>&1 ); then no "gate: block exits non-zero"; else ok "gate: block exits non-zero"; fi
+  grep -q '^gate_work-commit=block$' "$st" && ok "gate: records block" || no "gate: records block"
+  # complete
+  sh "$LOOP" complete --state "$st" >/dev/null
+  grep -q '^stage=complete$' "$st" && ok "complete: stage=complete" || no "complete: stage=complete"
+  rm -rf "$d"
+}
+test_gate_complete
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
