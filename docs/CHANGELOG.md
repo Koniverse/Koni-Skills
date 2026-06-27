@@ -16,6 +16,55 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.14.0] — 2026-06-28 — koni-harness P3b: multi-tool session adapters (roadmap complete) — v0.14.0
+
+P3b — the final koni-harness roadmap piece. P3a produces a context digest, P2.5
+picks the next story; P3b wires them into a tool's session start so a fresh
+session is briefed automatically. Closes FR-25. With this, the harness roadmap
+is complete: **gate (P1) + loop-runner (P2) + context-loader (P3a) +
+sprint-sequencer (P2.5) + session adapters (P3b)**.
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/session-start.sh`** — a dependency-free, **read-only** POSIX
+  briefing that composes `context-load.sh` (the digest) with `sprint.sh next`
+  (a `## Next` section) into one command. Resolves the sub-scripts from its own
+  dir then `.koni-harness/`; **space-safe** flag forwarding (positional `set --`
+  + quoted pass-through); graceful per-section notes; flags `--root`/`--docs`
+  (both) + `--sprint` (sprint only).
+- **`references/session-adapters.md`** — per-tool session-start wiring, all
+  calling the same vendored `session-start.sh`: a Claude Code `SessionStart` hook
+  as a **valid, manual-merge** `settings.json` snippet (never auto-written), and
+  Gemini / Codex / Cursor equivalents or a manual one-liner.
+- **`SKILL.md`** — a "Brief a new session" pointer.
+- **Installer** — `install-gate.sh` now additively vendors `session-start.sh`
+  alongside the gate / `loop.sh` / `context-load.sh` / `sprint.sh`.
+
+### Fixed
+
+- **`sprint.sh deps_of()` phantom `--` dependency** (latent since P2.5, surfaced
+  by P3b fixtures): a story with inline `depends_on: []`, or a multiline list
+  terminated directly by the closing `---`, was wrongly reported blocked-by `--`
+  (and excluded from `next`). The `deps_of` awk now enters collection only on an
+  empty `depends_on:` value and ends the block on YAML doc markers (`---`/`...`).
+  Real koni-docs stories (which carry keys after `depends_on`) never triggered
+  it, but a freshly `koni-setup`-bootstrapped story could.
+
+### Validation
+
+12-assertion `session-test.sh` incl. a space-path fixture (green under `sh` and
+`dash`); the other four suites green (sprint now 18 with the two new `deps_of`
+cases; context 15, loop 31, gate 34). Combined spec + code-quality review
+APPROVED after two blocking fixes (space-safe forwarding, `deps_of`); briefing
+validated against this repo and the Claude `SessionStart` JSON snippet parses.
+
+### Docs
+
+- US-3.7 story + EPIC-3 (FR-25) + sprint-2026-W26 (now 6 stories / 21 pts);
+  spec + plan under `docs/superpowers/`.
+
+---
+
 ## [0.13.0] — 2026-06-27 — koni-harness P2.5: sprint-sequencer — v0.13.0
 
 P2.5 of the koni-harness roadmap: dependency-ordered story selection at the

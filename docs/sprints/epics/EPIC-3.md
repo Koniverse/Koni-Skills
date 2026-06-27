@@ -2,9 +2,9 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: in-progress
-prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24'
+prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25'
 created: 2026-05-27T00:00:00.000Z
-updated: 2026-06-27T00:00:00.000Z
+updated: 2026-06-28T00:00:00.000Z
 ---
 ## Goal
 
@@ -51,6 +51,7 @@ remains backlog pending a future brainstorm + plan pass.
 | FR-22 | [US-3.4](../stories/US-3.4-koni-harness-loop-runner.md)      | ✅ shipped (v0.11.0) |
 | FR-23 | [US-3.5](../stories/US-3.5-koni-harness-context-loader.md)   | ✅ shipped (v0.12.0) |
 | FR-24 | [US-3.6](../stories/US-3.6-koni-harness-sprint-sequencer.md) | ✅ shipped (v0.13.0) |
+| FR-25 | [US-3.7](../stories/US-3.7-koni-harness-session-adapters.md) | ✅ shipped (v0.14.0) |
 
 ## Stories
 
@@ -62,6 +63,7 @@ remains backlog pending a future brainstorm + plan pass.
 | [US-3.4](../stories/US-3.4-koni-harness-loop-runner.md)      | koni-harness Phase 2        | Tier-aware single-story loop-runner: loop.sh state spine + loop-runner brain driving one story through the six stages, Claude-first + portable fallback | ✅ done     | v0.11.0 |
 | [US-3.5](../stories/US-3.5-koni-harness-context-loader.md)   | koni-harness P3a            | Portable read-only context-load.sh emitting a concise session digest of the context layers (live snapshot + decision/lesson indexes + pointers)         | ✅ done     | v0.12.0 |
 | [US-3.6](../stories/US-3.6-koni-harness-sprint-sequencer.md) | koni-harness P2.5           | Portable read-only sprint.sh: dependency-ready story selection (next) + sprint status/blocked-reasons, over koni-docs story frontmatter                 | ✅ done     | v0.13.0 |
+| [US-3.7](../stories/US-3.7-koni-harness-session-adapters.md) | koni-harness P3b            | Portable session-start.sh briefing (digest + next) + session-adapters.md per-tool wiring; completes the harness roadmap                                 | ✅ done     | v0.14.0 |
 
 ## Cross-cutting invariants
 
