@@ -42,4 +42,24 @@ test_next() {
 }
 test_next
 
+test_status() {
+  d=$(mkfix)
+  out=$(sh "$SP" status --root "$d")
+  have "1/4 done" "$out" "status: done/total count"
+  have "US-C blocked by: US-B" "$out" "status: blocked names unmet dep"
+  rm -rf "$d"
+}
+test_status
+
+test_none_ready() {
+  d=$(mktemp -d); st="$d/docs/sprints/stories"; mkdir -p "$st"
+  printf 'koni-docs:\n  active_sprint: sprint-Z\n' > "$d/CLAUDE.md"
+  # only story is planned and depends on a missing story
+  printf -- '---\nid: US-1\ntitle: "x"\nstatus: planned\npriority: P1\npoints: 1\nsprint: sprint-Z\ndepends_on:\n  - US-0\ncreated: 2026-06-27\n---\n' > "$st/US-1.md"
+  out=$(sh "$SP" next --root "$d")
+  have "No ready stories" "$out" "next: none-ready message"
+  rm -rf "$d"
+}
+test_none_ready
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

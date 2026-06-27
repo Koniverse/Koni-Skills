@@ -74,7 +74,37 @@ do_next() {
   echo "→ start: loop.sh start $first"
 }
 
+do_status() {
+  d=0; ip=0; pl=0; bl=0; ot=0; total=0; ptot=0; pdone=0; blist=''
+  for f in $(in_sprint_files); do
+    total=$((total+1))
+    st=$(field status "$f"); id=$(field id "$f"); pts=$(field points "$f")
+    case "$pts" in ''|*[!0-9]*) pts=0 ;; esac
+    ptot=$((ptot+pts))
+    case "$st" in
+      done) d=$((d+1)); pdone=$((pdone+pts)) ;;
+      in-progress) ip=$((ip+1)) ;;
+      planned) pl=$((pl+1)) ;;
+      blocked) bl=$((bl+1)) ;;
+      *) ot=$((ot+1)) ;;
+    esac
+    if [ "$st" != done ]; then
+      unmet=''
+      for dep in $(deps_of "$f"); do
+        [ "$(status_of_id "$dep")" = done ] || unmet="$unmet $dep"
+      done
+      [ -n "$unmet" ] && blist=$(printf '%s\n- %s blocked by:%s' "$blist" "$id" "$unmet")
+    fi
+  done
+  echo "Sprint $SPRINT — $d/$total done, $pdone/$ptot pts"
+  echo "  in-progress: $ip · planned: $pl · blocked(status): $bl · other: $ot"
+  if [ -n "$blist" ]; then
+    echo; echo "Blocked by unmet dependencies:"; printf '%s\n' "$blist" | sed '/^$/d'
+  fi
+}
+
 case "$cmd" in
   next) do_next ;;
+  status) do_status ;;
   *) echo "usage: sprint.sh {next|status} [--sprint <id>] [--docs <dir>] [--root <dir>]" >&2; exit 2 ;;
 esac
