@@ -104,6 +104,19 @@ test_koni_docs_validate() {
 }
 test_koni_docs_validate
 
+test_story_status() {
+  CH="$SCRIPTS/checks/story-status-consistency.sh"
+  d=$(newrepo); ( cd "$d" && mkdir -p docs/sprints/stories )
+  # done story, all AC checked → pass
+  printf -- 'status: done\n## Acceptance criteria\n- [x] AC-1\n' > "$d/docs/sprints/stories/US-1.md"
+  assert_exit 0 "story-status: done + all AC checked passes" sh -c "cd '$d' && sh '$CH'"
+  # done story with an unchecked AC → warn-fail (exit 1)
+  printf -- 'status: done\n## Acceptance criteria\n- [ ] AC-1\n' > "$d/docs/sprints/stories/US-2.md"
+  assert_exit 1 "story-status: done + unchecked AC fails" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+}
+test_story_status
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
