@@ -29,4 +29,28 @@ test_start_status() {
 }
 test_start_status
 
+test_enter() {
+  st=$(newstate); sh "$LOOP" start US-9.9 --tier 2 --state "$st" >/dev/null
+  # in-order enter is silent on stderr and updates stage
+  err=$(sh "$LOOP" enter execute --state "$st" 2>&1 >/dev/null || true)
+  [ -z "$err" ] && ok "enter: in-order is silent" || no "enter: in-order silent (got: $err)"
+  grep -q '^stage=execute$' "$st" && ok "enter: updates stage" || no "enter: updates stage"
+  case "$(kv=$(sed -n 's/^entered=//p' "$st"); echo "$kv")" in *execute*) ok "enter: appends entered" ;; *) no "enter: appends entered" ;; esac
+  # backward enter warns
+  err=$(sh "$LOOP" enter frame --state "$st" 2>&1 >/dev/null || true)
+  case "$err" in *WARN*backward*) ok "enter: backward warns" ;; *) no "enter: backward warns (got: $err)" ;; esac
+  # commit without self-verify at tier 2 warns
+  st2=$(newstate); sh "$LOOP" start US-9.8 --tier 2 --state "$st2" >/dev/null
+  sh "$LOOP" enter execute --state "$st2" >/dev/null
+  err=$(sh "$LOOP" enter commit --state "$st2" 2>&1 >/dev/null || true)
+  case "$err" in *WARN*self-verify*) ok "enter: commit-without-self-verify warns" ;; *) no "enter: commit warn (got: $err)" ;; esac
+  # tier 0 commit without self-verify is silent
+  st3=$(newstate); sh "$LOOP" start US-9.7 --tier 0 --state "$st3" >/dev/null
+  sh "$LOOP" enter execute --state "$st3" >/dev/null
+  err=$(sh "$LOOP" enter commit --state "$st3" 2>&1 >/dev/null || true)
+  [ -z "$err" ] && ok "enter: tier0 commit silent" || no "enter: tier0 commit silent (got: $err)"
+  rm -rf "$(dirname "$st")" "$(dirname "$st2")" "$(dirname "$st3")"
+}
+test_enter
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

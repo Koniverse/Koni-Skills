@@ -58,9 +58,34 @@ do_status() {
   fi
 }
 
+do_enter() {
+  stage=""
+  while [ $# -gt 0 ]; do case "$1" in
+    --state) STATE=$2; shift 2 ;;
+    -*) echo "loop enter: unknown $1" >&2; exit 2 ;;
+    *) stage=$1; shift ;;
+  esac; done
+  [ -n "$stage" ] || { echo "loop enter: <stage> required" >&2; exit 2; }
+  [ -f "$STATE" ] || { echo "loop enter: no active loop; run 'loop.sh start' first" >&2; exit 2; }
+  ni=$(idx_of "$stage")
+  [ "$ni" -gt 0 ] || { echo "loop enter: unknown stage '$stage' (one of: $STAGES)" >&2; exit 2; }
+  cur=$(kv_get stage "$STATE"); ci=$(idx_of "$cur")
+  tier=$(kv_get tier "$STATE"); entered=$(kv_get entered "$STATE")
+  [ "$ni" -lt "$ci" ] && echo "loop WARN: entering '$stage' is before current '$cur' (going backward)" >&2
+  if [ "$stage" = commit ] && [ "${tier:-2}" -ge 1 ]; then
+    echo ",$entered," | grep -q ",self-verify," || \
+      echo "loop WARN: entering 'commit' without 'self-verify' (tier $tier)" >&2
+  fi
+  kv_set stage "$stage" "$STATE"
+  echo ",$entered," | grep -q ",$stage," || kv_set entered "$entered,$stage" "$STATE"
+  kv_set updated "$(now)" "$STATE"
+  echo "loop: entered $stage"
+}
+
 cmd=${1:-}; [ $# -gt 0 ] && shift || true
 case "$cmd" in
   start)    do_start "$@" ;;
   status)   do_status "$@" ;;
+  enter)    do_enter "$@" ;;
   *) echo "usage: loop.sh {start|status|enter|gate|complete} [--state PATH] ..." >&2; exit 2 ;;
 esac
