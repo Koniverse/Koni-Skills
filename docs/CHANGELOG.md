@@ -16,6 +16,45 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.12.0] — 2026-06-27 — koni-harness P3a: context-loader (session digest) — v0.12.0
+
+P3a of the koni-harness roadmap: a portable context-loader that automates the
+context-layer load the Standard documents. Phase 1 gave the loop a standard +
+gate, Phase 2 a runner; P3a gives a session **a digest of where the project is**.
+Closes FR-23.
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/context-load.sh`** — a dependency-free, **read-only** POSIX script
+  emitting a concise Markdown session digest to stdout: header (VERSION +
+  `active_sprint` from the CLAUDE.md koni-docs block), **Live state** (the
+  `.active-context.md` snapshot verbatim, with a CLAUDE.md Pattern-A fallback and
+  a `_(no active-context snapshot)_` note for a fresh clone), a **Decisions**
+  index (`D<n>` titles), a **Lessons** index (`<n>` titles), and **Canonical
+  references**. Digest-not-dump: the big bodies are pointed to, never inlined;
+  extraction is deterministic (grep/sed), not LLM-summarized. `--root` / `--docs`
+  flags; graceful `_(... not found)_` notes for any missing layer (never crashes).
+- **`references/context-load.md`** — what it emits, usage, graceful degradation,
+  and the P3b wiring note.
+- **`SKILL.md`** — a "Load session context" pointer.
+- **Installer** — `install-gate.sh` now additively vendors `context-load.sh`
+  alongside the gate + `loop.sh`.
+
+### Validation
+
+15-assertion `context-test.sh` (green under `sh` and `dash`); `loop-test.sh`
+(31) + `gate-test.sh` (34) still green. Combined spec + code-quality review
+APPROVED — read-only invariant (writes nothing), POSIX correctness, `set -e`
+grep guards on empty indexes, `active_sprint` comment-strip, and marker-line
+stripping all verified; the digest was validated against this very repo.
+
+### Docs
+
+- US-3.5 story + EPIC-3 (FR-23) + sprint-2026-W26 (now 4 stories / 16 pts);
+  spec + plan under `docs/superpowers/`.
+
+---
+
 ## [0.11.1] — 2026-06-27 — docs hygiene: resolve the last validate warning — v0.11.1
 
 Moved `docs/sprints/sprint-2026-W19.md` out of `archive/` back to the

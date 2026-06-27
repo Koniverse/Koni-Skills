@@ -32,12 +32,16 @@ editHistory:
     changes: >-
       Add FR-22 (koni-harness Phase 2 — single-story loop-runner); US-3.4 ships
       koni-harness v0.11.0 in sprint-2026-W26.
+  - date: '2026-06-27'
+    changes: >-
+      Add FR-23 (koni-harness P3a — context-loader); US-3.5 ships koni-harness
+      v0.12.0 in sprint-2026-W26.
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.11.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.12.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-27
-**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is now **in-progress**: v0.9.0 ships `koni-setup` (US-3.2, day-0 bootstrapper/onboarder, FR-10 + FR-20) v0.10.0 ships `koni-harness` Phase 1 (US-3.3, Agentic Loop standard + portable gate, FR-21), and v0.11.0 ships `koni-harness` Phase 2 (US-3.4, single-story loop-runner, FR-22) — two non-docs Koniverse skills; the plugin-skill pattern (US-3.1 / FR-9) remains backlog.
+**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is now **in-progress**: v0.9.0 ships `koni-setup` (US-3.2, day-0 bootstrapper/onboarder, FR-10 + FR-20) v0.10.0 ships `koni-harness` Phase 1 (US-3.3, Agentic Loop standard + portable gate, FR-21), v0.11.0 ships `koni-harness` Phase 2 (US-3.4, single-story loop-runner, FR-22), and v0.12.0 ships `koni-harness` P3a (US-3.5, context-loader, FR-23) — two non-docs Koniverse skills; the plugin-skill pattern (US-3.1 / FR-9) remains backlog.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -350,6 +354,7 @@ reviewers.
 | FR-20 | Ship `koni-setup` — a day-0 project bootstrapper/onboarder skill: detect repo profile (code / devops / content), scaffold the canonical skeleton + wire `.claude`/`.agents` skills + CLAUDE.md/AGENTS.md/`.active-context` integration + agile npm scripts + install the shared skill set (BMAD pack / gstack / koni-docs / profile extras), with an onboard/audit path for existing repos. Delegates all documentation-body templates to koni-docs (no duplication).                                                                                                                               | P1       | ✅ shipped (v0.9.0)       | EPIC-3          |
 | FR-21 | Ship `koni-harness` (Phase 1) — the tool-neutral Koni Agentic Loop standard (6 stages + gates + context layers + portability contract) and a portable, dependency-free POSIX pre-commit/pre-push gate: a self-locating `gate-runner` + line-format `gates.conf` + 6 built-in checks (version-phase / changelog-anchor / credential-scan / koni-docs-validate / story-status / passthrough), installed **additively** (chain/merge behind marker blocks, never clobber). Claude-Code-first, tool-neutral core portable to Gemini/Codex. Composes BMAD/Superpowers/gstack/koni-docs; reproduces none. | P1       | ✅ shipped (v0.10.0)      | EPIC-3          |
 | FR-22 | Ship `koni-harness` Phase 2 — a tier-aware **single-story loop-runner**: a dependency-free POSIX `loop.sh` state spine (`start`/`status`/`enter`/`gate`/`complete`, gitignored `.koni-harness/loop-state`) + an instruction brain (`loop-runner.md`) that drives one story through the six stages, Claude-first via subagents with a portable manual fallback; the Phase-1 gate is the commit backbone. Additive install (vendors `loop.sh`, gitignores loop-state).                                                                                                                                | P1       | ✅ shipped (v0.11.0)      | EPIC-3          |
+| FR-23 | Ship `koni-harness` P3a — a **context-loader**: a portable, read-only POSIX `context-load.sh` emitting a concise session digest of the context layers (verbatim `.active-context` snapshot + VERSION/active\_sprint + `D<n>`/`<n>` decision & lesson title indexes + canonical pointers). Digest-not-dump, deterministic extraction, graceful on missing layers. Additive install (vendors `context-load.sh`); tool session-start wiring is P3b.                                                                                                                                                    | P1       | ✅ shipped (v0.12.0)      | EPIC-3          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -412,14 +417,15 @@ Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-
 
 **Goal:** Move beyond `koni-docs` alone; ship plugin skills and the first non-docs Koniverse skill.
 
-**Status:** 🚧 in-progress (sprint-2026-W26 — US-3.2 `koni-setup` v0.9.0 + US-3.3 `koni-harness` Phase 1 v0.10.0 + US-3.4 `koni-harness` Phase 2 v0.11.0, closing FR-10 / FR-20 / FR-21 / FR-22; US-3.1 plugin-skill pattern remains backlog)
+**Status:** 🚧 in-progress (sprint-2026-W26 — US-3.2 `koni-setup` v0.9.0 + US-3.3 `koni-harness` Phase 1 v0.10.0 + US-3.4 `koni-harness` Phase 2 v0.11.0 + US-3.5 `koni-harness` P3a v0.12.0, closing FR-10 / FR-20 / FR-21 / FR-22 / FR-23; US-3.1 plugin-skill pattern remains backlog)
 
-| Story                                                         | Title                                                   | Status     | Version |
-| ------------------------------------------------------------- | ------------------------------------------------------- | ---------- | ------- |
-| [US-3.1](sprints/stories/US-3.1-plugin-skill-pattern.md)      | Define plugin-skill pattern (Supabase, Next.js)         | 📋 backlog | —       |
-| [US-3.2](sprints/stories/US-3.2-koni-setup-bootstrapper.md)   | koni-setup — Koniverse project bootstrapper & onboarder | ✅ done     | v0.9.0  |
-| [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md) | koni-harness Phase 1 — Agentic Loop standard + gate     | ✅ done     | v0.10.0 |
-| [US-3.4](sprints/stories/US-3.4-koni-harness-loop-runner.md)  | koni-harness Phase 2 — single-story loop-runner         | ✅ done     | v0.11.0 |
+| Story                                                           | Title                                                   | Status     | Version |
+| --------------------------------------------------------------- | ------------------------------------------------------- | ---------- | ------- |
+| [US-3.1](sprints/stories/US-3.1-plugin-skill-pattern.md)        | Define plugin-skill pattern (Supabase, Next.js)         | 📋 backlog | —       |
+| [US-3.2](sprints/stories/US-3.2-koni-setup-bootstrapper.md)     | koni-setup — Koniverse project bootstrapper & onboarder | ✅ done     | v0.9.0  |
+| [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md)   | koni-harness Phase 1 — Agentic Loop standard + gate     | ✅ done     | v0.10.0 |
+| [US-3.4](sprints/stories/US-3.4-koni-harness-loop-runner.md)    | koni-harness Phase 2 — single-story loop-runner         | ✅ done     | v0.11.0 |
+| [US-3.5](sprints/stories/US-3.5-koni-harness-context-loader.md) | koni-harness P3a — context-loader (session digest)      | ✅ done     | v0.12.0 |
 
 ### EPIC-4 — Docs preview tooling (koni-docs CLI + Astro SSR viewer)
 
