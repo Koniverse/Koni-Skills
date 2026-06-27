@@ -32,6 +32,10 @@ chmod +x .koni-harness/context-load.sh
 cp "$SRC/sprint.sh" .koni-harness/sprint.sh
 chmod +x .koni-harness/sprint.sh
 
+# vendor the session briefing alongside the other helpers
+cp "$SRC/session-start.sh" .koni-harness/session-start.sh
+chmod +x .koni-harness/session-start.sh
+
 # gitignore the ephemeral loop-state (additive, marker-bounded, idempotent)
 gi=.gitignore
 gbegin='# >>> koni-harness >>>'

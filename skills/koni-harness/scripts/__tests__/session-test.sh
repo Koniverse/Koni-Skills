@@ -40,4 +40,17 @@ test_graceful() {
 }
 test_graceful
 
+test_install() {
+  INS="$HERE/../install-gate.sh"; SRC="$HERE/.."
+  d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  [ -f "$d/.koni-harness/session-start.sh" ] && ok "install: vendors session-start.sh" || no "install: vendors session-start.sh"
+  [ -x "$d/.koni-harness/session-start.sh" ] && ok "install: session-start.sh executable" || no "install: session-start.sh executable"
+  # and the vendored briefing actually composes the vendored sub-scripts
+  out=$(cd "$d" && sh .koni-harness/session-start.sh --root "$d" 2>&1 || true)
+  have "## Next" "$out" "install: vendored briefing runs"
+  rm -rf "$d"
+}
+test_install
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]
