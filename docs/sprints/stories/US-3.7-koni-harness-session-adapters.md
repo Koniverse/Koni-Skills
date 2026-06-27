@@ -14,7 +14,7 @@ depends_on:
   - US-3.5
   - US-3.6
 assignee: jindo9986
-commit: pending
+commit: 2ff5ad5
 created: 2026-06-28
 updated: 2026-06-28
 ---
