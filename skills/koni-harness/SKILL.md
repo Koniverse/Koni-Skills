@@ -1,1 +1,99 @@
-# koni-harness (WIP — see docs/superpowers/specs/2026-06-27-koni-harness-agentic-loop-design.md)
+---
+name: koni-harness
+description: >
+  Owns the Koni Agentic Loop standard and the portable, dependency-free
+  pre-commit/pre-push gate that catches agent mistakes (bad version bumps,
+  missing changelog anchor, leaked secrets, broken doc refs) before they land.
+  Use this whenever the user says "set up the harness", "install the gate into
+  this repo", "add the gate", "wire verification gates", "pre-commit gate",
+  "agentic loop", "harness engineering", or "make the loop portable" — even if
+  they don't name koni-harness. It owns only the loop standard + the gate; it
+  DELEGATES doc bodies to koni-docs, scaffold to koni-setup, plan to BMAD,
+  execute to Superpowers, and review/QA to gstack — it references and invokes
+  them, never reproduces them.
+---
+# koni-harness — Koni Agentic Loop + portable gate
+
+## What this owns vs. delegates
+
+This skill owns exactly two things: **the Koni Agentic Loop standard** (the
+tool-neutral definition of the six-stage loop and the gates between its stages)
+and **the gate** (the POSIX `gate-runner.sh` + `gates.conf` + checks that
+enforce the commit/release stage). It is glue + convention + a thin verification
+backbone — it *composes* the existing toolchain and never re-implements it.
+
+| Concern | Owner |
+|---|---|
+| Loop definition, gates, gate-runner | **koni-harness** (this) |
+| Doc bodies, 12 rules, `validate` CLI | koni-docs (invoked) |
+| Repo scaffold, skill wiring | koni-setup (invoked) |
+| Plan artifacts (brief→PRD→story) | BMAD (invoked) |
+| Execute (plan→code→test, TDD) | Superpowers (invoked) |
+| Review / QA / ship | gstack (invoked) |
+
+Anything in the right column is referenced and called, never reproduced here.
+
+## The standard
+
+The **Koni Agentic Loop** names the six stages (Plan → Execute → Self-verify →
+Review → Doc/Version gate → Commit/Release), the *gates between* them, the
+context load order (`AGENTS.md` → `CLAUDE.md` → `LESSONS.md` → `CONTEXT.md` →
+`.active-context.md`), and a portability contract (a capability is "in the
+harness" only if its core is tool-neutral and its adapter is thin). Full text:
+[`references/agentic-loop-standard.md`](references/agentic-loop-standard.md).
+
+## Install the gate
+
+From the **target repo root**, run the installer (source it from this skill's
+`scripts/`, or from the vendored `.koni-harness/` once present):
+
+```sh
+sh scripts/install-gate.sh                 # from skills/koni-harness/scripts
+# or, with an explicit source:
+sh /path/to/skills/koni-harness/scripts/install-gate.sh --source /path/to/skills/koni-harness/scripts
+```
+
+It is **additive**: it vendors `gate-runner.sh` + checks + `gates.conf` into the
+repo's `.koni-harness/` (never overwriting an existing `gates.conf`) and chains
+the runner into the `pre-commit` / `pre-push` hooks behind a marker block,
+preserving any existing hook. It skips a non-`sh` existing hook with a warning,
+and re-running is idempotent. Full procedure:
+[`references/adoption.md`](references/adoption.md).
+
+## Run / verify the gate
+
+Invoke the runner directly for any phase; add `--dry-run` to see what would run
+without executing the checks:
+
+```sh
+sh .koni-harness/gate-runner.sh --phase work-commit
+sh .koni-harness/gate-runner.sh --phase release-commit --dry-run
+sh .koni-harness/gate-runner.sh --phase pre-push
+```
+
+A failing `block` check exits non-zero (stop and fix); a failing `warn` check
+prints `WARN:` and lets the commit through. The six built-in checks, the config
+grammar, and how to add your own are in
+[`references/gate-catalog.md`](references/gate-catalog.md); how to wire the
+runner into git / Claude Code / Gemini / Codex / Cursor is in
+[`references/adapters.md`](references/adapters.md).
+
+## Hard invariant
+
+**Additive-only / non-destructive.** Adopting the harness MUST NOT overwrite,
+rewrite, or delete an existing hook, setting, doc, or config. Every edit to a
+shared file is bounded by reversible `# >>> koni-harness >>>` /
+`# <<< koni-harness <<<` markers; existing hooks are chained (POSIX) or skipped
+with a warning (non-POSIX), Claude `settings.json` is merged not replaced, and
+an existing `gates.conf` is left untouched. Every action is idempotent.
+
+## Reference table
+
+Load on demand based on what you're doing:
+
+| File | When to load |
+|---|---|
+| [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
+| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
+| [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
+| [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
