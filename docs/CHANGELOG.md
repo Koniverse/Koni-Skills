@@ -16,6 +16,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.10.1] — 2026-06-27 — koni-harness: "Right-sizing the loop" tiers in the Standard — v0.10.1
+
+Adds a **Right-sizing the loop** section to the Koni Agentic Loop standard
+([`agentic-loop-standard.md`](../skills/koni-harness/references/agentic-loop-standard.md)):
+a 3-tier model (0 trivial / 1 small / 2 substantial) for how much of the loop to
+run, with the rule that **process steps scale to risk × size while the
+deterministic gate is always on at every tier**. Codifies the answer to "do we
+need the full SOP every time?" — no: right-size the judgment-heavy stages, never
+skip the cheap gate. Enhancement to US-3.3 / FR-21; no behavior change to the gate.
+
+---
+
 ## [0.10.0] — 2026-06-27 — koni-harness: Koni Agentic Loop standard + portable pre-commit gate (Phase 1) — v0.10.0
 
 The second non-docs Koniverse skill, and the **connective tissue** of the

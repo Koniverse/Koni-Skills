@@ -34,6 +34,39 @@ script with an exit code, is what this Standard adds.
 
 ---
 
+## Right-sizing the loop
+
+Running all six stages in full for every change is an anti-pattern — "full SOP
+for a typo" wastes more than it protects. Scale the loop to **risk × size**.
+The trick is to separate two kinds of step:
+
+- **Gate steps are deterministic and cheap** (`version-phase`, `credential-scan`,
+  `changelog-anchor`, `koni-docs validate`, tests). They cost seconds and are the
+  safety net — **they run at every tier, always on.** This is the whole point of
+  a deterministic backbone: it's too cheap to skip.
+- **Process steps cost judgment** (brainstorm → spec → plan, BMAD planning,
+  two-stage subagent review). These are the expensive part — **scale them to the
+  work.**
+
+| Tier | When | Process steps | Gate |
+|---|---|---|---|
+| **0 — Trivial / mechanical** | typo, copy tweak, config bump | none — edit → self-verify → commit | always runs |
+| **1 — Small feature / bugfix** | 1–3 files, clear scope | a light TodoWrite instead of spec/plan; execute (TDD) → quick 1-pass review → doc gate | always runs |
+| **2 — Substantial / many decisions** | new skill, architecture, cross-cutting, anything touching money / secrets / migrations | full SOP: brainstorm → spec → plan → subagent-driven + two-stage review → verify → koni-docs backfill → ship | always runs |
+
+**Choosing a tier:** risk (money, secrets, migrations, multi-person blast radius)
+pushes you up; when in doubt, go one tier heavier. The failure modes are
+symmetric — *full SOP for tier-0 work* burns time, *tier-0 treatment for tier-2
+work* ships architecture nobody reviewed. The gate makes the cheap tiers safe to
+take: even a tier-0 commit can't leak a secret or bump a version without a
+changelog, because the gate is non-negotiable.
+
+This Standard, and the koni-harness skill that ships it, were built at **tier 2**
+(foundational, many architectural decisions, reused everywhere). A landing-page
+copy fix is **tier 0**. Both run the same gate.
+
+---
+
 ## Context layers and load order
 
 At session start an agent should read the repo's context layers in this order,
