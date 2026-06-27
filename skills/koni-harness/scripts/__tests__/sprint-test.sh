@@ -88,4 +88,31 @@ test_install() {
 }
 test_install
 
+test_inline_empty_deps() {
+  # FIX #4 (a): depends_on: [] immediately followed by --- must NOT yield a phantom '--' dep.
+  d=$(mktemp -d); st="$d/docs/sprints/stories"; mkdir -p "$st"
+  printf 'koni-docs:\n  active_sprint: sprint-E\n' > "$d/CLAUDE.md"
+  # closing --- directly after the inline [] value
+  printf -- '---\nid: US-E\ntitle: "x"\nstatus: planned\npriority: P0\npoints: 1\nsprint: sprint-E\ndepends_on: []\n---\n' > "$st/US-E.md"
+  out=$(sh "$SP" next --root "$d")
+  have "US-E" "$out" "inline-[]: story is ready (not blocked by phantom '--')"
+  have "loop.sh start US-E" "$out" "inline-[]: suggests starting US-E"
+  hasnt "blocked" "$out" "inline-[]: no blocked message"
+  rm -rf "$d"
+}
+test_inline_empty_deps
+
+test_multiline_deps_to_marker() {
+  # FIX #4 (b): a multiline depends_on list terminated directly by --- must not append '--'.
+  d=$(mktemp -d); st="$d/docs/sprints/stories"; mkdir -p "$st"
+  printf 'koni-docs:\n  active_sprint: sprint-M\n' > "$d/CLAUDE.md"
+  # list closes directly into the --- marker (no trailing field line)
+  printf -- '---\nid: US-M\ntitle: "x"\nstatus: planned\npriority: P1\npoints: 1\nsprint: sprint-M\ndepends_on:\n  - US-0\n---\n' > "$st/US-M.md"
+  out=$(sh "$SP" status --root "$d")
+  have "US-M blocked by: US-0" "$out" "multiline-marker: blocked names real dep US-0"
+  hasnt "blocked by: US-0 --" "$out" "multiline-marker: blocked line has no phantom '--'"
+  rm -rf "$d"
+}
+test_multiline_deps_to_marker
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

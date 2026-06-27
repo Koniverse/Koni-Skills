@@ -27,8 +27,10 @@ field() { # field file -> trimmed value (quotes + trailing comment stripped)
 }
 deps_of() { # file -> space-separated dep ids
   awk '
-    /^depends_on:/ { indep=1; next }
+    /^depends_on:[[:space:]]*$/ { indep=1; next }          # enter only on EMPTY value
+    /^depends_on:/              { next }                    # inline value (e.g. []) => no collection
     indep==1 {
+      if ($0 ~ /^(---|\.\.\.)[[:space:]]*$/) { indep=0; next }   # YAML doc marker ends the block
       if ($0 ~ /^[A-Za-z_]+:/) { indep=0; next }
       if ($0 ~ /^[[:space:]]*-[[:space:]]*/) {
         id=$0; sub(/^[[:space:]]*-[[:space:]]*/,"",id); sub(/[[:space:]].*/,"",id)
