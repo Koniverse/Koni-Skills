@@ -62,4 +62,14 @@ test_none_ready() {
 }
 test_none_ready
 
+test_install() {
+  INS="$HERE/../install-gate.sh"; SRC="$HERE/.."
+  d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t )
+  ( cd "$d" && sh "$INS" --source "$SRC" >/dev/null 2>&1 )
+  [ -f "$d/.koni-harness/sprint.sh" ] && ok "install: vendors sprint.sh" || no "install: vendors sprint.sh"
+  [ -x "$d/.koni-harness/sprint.sh" ] && ok "install: sprint.sh executable" || no "install: sprint.sh executable"
+  rm -rf "$d"
+}
+test_install
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"; [ "$FAIL" -eq 0 ]

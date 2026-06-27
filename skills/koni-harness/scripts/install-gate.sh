@@ -28,6 +28,10 @@ chmod +x .koni-harness/loop.sh
 cp "$SRC/context-load.sh" .koni-harness/context-load.sh
 chmod +x .koni-harness/context-load.sh
 
+# vendor the sprint-sequencer alongside the other helpers
+cp "$SRC/sprint.sh" .koni-harness/sprint.sh
+chmod +x .koni-harness/sprint.sh
+
 # gitignore the ephemeral loop-state (additive, marker-bounded, idempotent)
 gi=.gitignore
 gbegin='# >>> koni-harness >>>'
