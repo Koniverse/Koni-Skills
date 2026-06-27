@@ -118,6 +118,20 @@ test_koni_docs_validate() {
   d=$(newrepo)   # no docs/ dir
   assert_exit 0 "koni-docs-validate: no docs/ → skip-pass" sh -c "cd '$d' && sh '$CH'"
   rm -rf "$d"
+  # docs/ present but koni-docs not installed (stub npx --version → exit 1) → skip-pass
+  d=$(newrepo); ( cd "$d" && mkdir -p docs )
+  stub=$(mktemp -d)
+  printf '#!/bin/sh\nexit 1\n' > "$stub/npx"; chmod +x "$stub/npx"
+  assert_exit 0 "koni-docs-validate: not installed → skip-pass" \
+    sh -c "cd '$d' && PATH='$stub':\"\$PATH\" sh '$CH'"
+  rm -rf "$d" "$stub"
+  # docs/ present and koni-docs installed (stub npx: --version & validate both exit 0) → pass
+  d=$(newrepo); ( cd "$d" && mkdir -p docs )
+  stub=$(mktemp -d)
+  printf '#!/bin/sh\nexit 0\n' > "$stub/npx"; chmod +x "$stub/npx"
+  assert_exit 0 "koni-docs-validate: installed + validate ok → pass" \
+    sh -c "cd '$d' && PATH='$stub':\"\$PATH\" sh '$CH'"
+  rm -rf "$d" "$stub"
 }
 test_koni_docs_validate
 
@@ -134,6 +148,10 @@ test_story_status() {
   # markdown **Status:** Done form + unchecked AC → warn-fail (exit 1)
   printf -- '**Status:** Done\n## Acceptance criteria\n- [ ] AC-1\n' > "$d/docs/sprints/stories/US-3.md"
   assert_exit 1 "story-status: **Status:** Done + unchecked AC fails" sh -c "cd '$d' && sh '$CH'"
+  rm -f "$d/docs/sprints/stories/US-3.md"
+  # 'status: not done' must NOT match 'done' → no over-match even with an unchecked box
+  printf -- 'status: not done\n## Acceptance criteria\n- [ ] AC-1\n' > "$d/docs/sprints/stories/US-4.md"
+  assert_exit 0 "story-status: 'not done' + unchecked AC does not fail" sh -c "cd '$d' && sh '$CH'"
   rm -rf "$d"
 }
 test_story_status
