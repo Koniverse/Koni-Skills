@@ -49,6 +49,25 @@ EOF
 
 test_runner_dispatch
 
+test_version_phase() {
+  CH="$SCRIPTS/checks/version-phase.sh"
+  # (a) VERSION not staged → pass
+  d=$(newrepo); ( cd "$d" && echo x > a && git add a )
+  assert_exit 0 "version-phase: no VERSION change passes" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  # (b) VERSION staged, no CHANGELOG staged → block
+  d=$(newrepo); ( cd "$d" && echo 0.2.0 > VERSION && git add VERSION )
+  assert_exit 1 "version-phase: VERSION bump without CHANGELOG blocks" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+  # (c) VERSION staged + matching CHANGELOG section → pass
+  d=$(newrepo)
+  ( cd "$d" && echo 0.2.0 > VERSION && mkdir -p docs \
+    && printf '## [0.2.0]\n' > docs/CHANGELOG.md && git add VERSION docs/CHANGELOG.md )
+  assert_exit 0 "version-phase: VERSION bump with matching CHANGELOG passes" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+}
+test_version_phase
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
