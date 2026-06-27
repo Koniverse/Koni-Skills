@@ -96,6 +96,14 @@ test_credential_scan() {
 }
 test_credential_scan
 
+test_koni_docs_validate() {
+  CH="$SCRIPTS/checks/koni-docs-validate.sh"
+  d=$(newrepo)   # no docs/ dir
+  assert_exit 0 "koni-docs-validate: no docs/ → skip-pass" sh -c "cd '$d' && sh '$CH'"
+  rm -rf "$d"
+}
+test_koni_docs_validate
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
