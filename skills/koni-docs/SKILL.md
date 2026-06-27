@@ -116,6 +116,7 @@ These 12 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-17 | Frontmatter ID fields = bare canonical IDs only, never prose  | During     |
 
 **Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
+See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugin skills are structured, discovered (`koni-docs-plugins:`), and composed; `koni-nextjs` is the reference.
 
 ---
 
@@ -348,6 +349,7 @@ Load these on demand based on user intent:
 | `references/bmad-template-analysis.md` | User asks about BMad template standards, or mapping BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
 
 **Plugin skills**: If the project's CLAUDE.md declares `koni-docs-plugins`, load those skills for technology-specific rules that extend the core rule set.
+See [`references/plugin-pattern.md`](references/plugin-pattern.md) for the pattern (location / discovery / composition / authoring); `koni-nextjs` is the worked example.
 
 ---
 
