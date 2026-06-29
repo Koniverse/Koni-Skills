@@ -254,3 +254,53 @@ diverges from the diagram it's supposed to realise.
   edges") one level up: here the gap is between a skill's *instructions* and its
   *execution*, caught the same way — by running it against data/throwaway dirs
   the author didn't hand-curate.
+
+---
+
+## 7. A story is a deliverable, not a release — don't open one story per version
+
+**What happened (v0.10.0 → v0.15.1, surfaced 2026-06-28 on review)**:
+The `koni-harness` skill was built in five phases (gate → loop-runner →
+context-loader → sprint-sequencer → session-adapters), and each phase was tracked
+as its **own** story — US-3.3, US-3.4, US-3.5, US-3.6, US-3.7 — because each
+shipped its own version (v0.10.0 … v0.14.0). EPIC-3 ended up with **seven**
+stories for **three** real deliverables (koni-setup, koni-harness, the plugin
+pattern). On review the user flagged the sprawl: the story count tracked
+*releases*, not *work*. The five were consolidated into one US-3.3 (16 pts, a
+version→commit table + AC grouped by phase); the four extra files were deleted.
+
+**Why it happens**: the subagent-driven loop ships a version per phase, and the
+natural reflex is "new version → new story." But a version is an *increment*; a
+story is a *unit of work / a deliverable*. One skill shipped five times is one
+story shipped five times, not five stories. Per-phase stories also scatter the AC
+across files and make the epic unreadable.
+
+**How to avoid**:
+
+- **Open ONE story per deliverable, up front.** When a skill/feature will be
+  built in phases, create a single story and *append* a per-phase AC sub-section
+  + a `version → commit` table row at each ship. Don't spawn a story per phase.
+  (Codified as [CONTEXT D14](CONTEXT.md).)
+- **Split only on genuine independence.** Separate stories are right when the
+  pieces are distinct deliverables (koni-setup vs koni-harness vs the plugin
+  pattern), not when they're sequential phases of one thing.
+- **Let versions/CHANGELOG carry the increment history.** The append-only
+  CHANGELOG already records each `vX.Y.Z`; the live story tracker should not
+  duplicate that granularity.
+- **This is the right-sizing principle applied to docs** — the same "scale the
+  artifact to the work" rule the koni-harness Standard preaches for the loop
+  itself. Ceremony (stories, reviews, specs) should track real units of work,
+  not multiply with releases.
+
+**How to fix it after the fact (consolidation is append-only-safe)**:
+merge the phase-stories into the lowest-id one (version→commit table + phased
+AC), delete the rest, collapse the EPIC / PRD-index / sprint rows to one, and
+**leave CHANGELOG + spec/plan history untouched** (they are the point-in-time
+record). Re-run `koni-docs sync` + `validate` to confirm no dangling refs.
+
+**Codified as**:
+- [CONTEXT D14](CONTEXT.md) — phase-built work is one story with phase sub-sections
+- Consolidated story [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md) (the worked example)
+
+**Cross-references**:
+- Complements [§6](#6-a-scaffold-skills-copy-paste-command-must-match-its-own-tree-diagram--verify-with-a-sandboxed-dry-run): both are about *right-sizing* — §6 keeps a skill's instructions honest, §7 keeps the story tracker honest. Sibling skills `koni-setup` and the koni-harness "Right-sizing the loop" tiers encode the same scale-to-the-work instinct.

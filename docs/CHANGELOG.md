@@ -16,6 +16,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.15.2] — 2026-06-28 — LESSONS §7: a story is a deliverable, not a release — v0.15.2
+
+Captures the lesson behind the v0.15.1 story consolidation as a reusable trap +
+pattern. **LESSONS §7** ("A story is a deliverable, not a release — don't open
+one story per version"): why the koni-harness build sprawled into five
+phase-stories (one per shipped version), how to avoid it (one story per
+deliverable, append a per-phase AC + `version→commit` row at each ship), and how
+to fix it after the fact append-only-safely. Complements LESSONS §6 and pairs
+with the [CONTEXT D14](CONTEXT.md) decision.
+
+---
+
 ## [0.15.1] — 2026-06-28 — docs: consolidate the 5 koni-harness phase-stories into one — v0.15.1
 
 Story-tracker hygiene (no code change). The koni-harness skill had been tracked
