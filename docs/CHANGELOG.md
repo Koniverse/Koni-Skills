@@ -16,6 +16,30 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.15.1] — 2026-06-28 — docs: consolidate the 5 koni-harness phase-stories into one — v0.15.1
+
+Story-tracker hygiene (no code change). The koni-harness skill had been tracked
+as five separate stories (US-3.3 P1 · US-3.4 P2 · US-3.5 P3a · US-3.6 P2.5 ·
+US-3.7 P3b) — one per ship increment of a single skill — which inflated the
+EPIC-3 story count. Per [CONTEXT D14](CONTEXT.md), phase-built work is now tracked
+as **one story** with per-phase sub-sections.
+
+### Changed
+
+- **US-3.4..US-3.7 merged into US-3.3** — the consolidated koni-harness story
+  (16 pts, covers FR-21..FR-25, shipped across v0.10.0–v0.14.0) now carries a
+  version→commit table + AC grouped by phase. The four phase-story files were
+  removed. EPIC-3, the PRD Epics index, and sprint-2026-W26 collapsed the five
+  rows to one (sprint now **3 stories / 24 pts**, same point total).
+- **CONTEXT D14** records the convention to prevent re-fragmentation.
+
+This is append-only-safe: the per-phase v0.10.0–v0.14.0 CHANGELOG entries above
+are untouched — they remain the increment-level release history. Only the live
+story tracker was consolidated. `koni-setup` (US-3.2) and the plugin pattern +
+`koni-nextjs` (US-3.1) stay separate (distinct skills, not phases).
+
+---
+
 ## [0.15.0] — 2026-06-28 — Plugin-skill pattern + koni-nextjs reference (EPIC-3 plugin pillar) — v0.15.0
 
 Closes **FR-9** and the last open EPIC-3 pillar. koni-docs always *mentioned*

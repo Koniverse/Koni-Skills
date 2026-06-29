@@ -747,3 +747,46 @@ Two sub-decisions locked:
 **Date**: 2026-06-27
 **Version**: 0.10.0
 **Reference**: [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md), [spec](superpowers/specs/2026-06-27-koni-harness-agentic-loop-design.md), [plan](superpowers/plans/2026-06-27-koni-harness-phase1.md), [D12](#d12-koni-setup-is-a-sibling-skill-that-delegates-doc-bodies-to-koni-docs-independence-boundary).
+
+---
+
+### D14. Phase-built work is ONE story with phase sub-sections, not N stories
+
+**Context**: koni-harness was tracked as five separate stories (US-3.3 P1,
+US-3.4 P2, US-3.5 P3a, US-3.6 P2.5, US-3.7 P3b) — one per ship increment of a
+single skill. On review the user flagged this as story sprawl: the tracker had
+seven EPIC-3 stories where three real deliverables exist (koni-setup,
+koni-harness, koni-nextjs/plugin-pattern). Fragmenting one skill's phased build
+into one-story-per-version inflates the story count, scatters the AC across
+files, and makes the epic harder to read.
+
+**Decision**: When one skill/deliverable is built in sequential phases, track it
+as **one story** with per-phase sub-sections (a version→commit table + AC grouped
+by phase), not one story per phase. Applied retroactively: US-3.4..US-3.7 were
+merged into **US-3.3** (consolidated koni-harness story, 16 pts, FR-21..25,
+shipped across v0.10.0–v0.14.0); the four files were deleted. koni-setup (US-3.2)
+and koni-nextjs/plugin-pattern (US-3.1) stay separate — they are distinct skills,
+not phases of one.
+
+**Rationale**:
+
+- **A story is a deliverable, not a release.** Versions/commits record the
+  increments; the story records the unit of work. Five versions of one skill are
+  one story shipped five times, not five stories.
+- **Less sprawl, same traceability.** The version→commit table + the append-only
+  CHANGELOG (left intact — it keeps the per-phase v0.10.0–v0.14.0 history) fully
+  preserve the increment-level record; the live tracker just stops duplicating it.
+- **Right-sizing alignment.** Mirrors the harness's own "right-size the loop"
+  tier model — scale the artifact to the work, don't multiply ceremony.
+
+**What this does NOT change**: shipped versions, commits, and CHANGELOG history
+are untouched (append-only). The superpowers spec/plan files (one per phase)
+remain as point-in-time design artifacts.
+
+**Going forward**: a multi-phase skill build opens ONE story up front; each phase
+appends an AC sub-section + a version-table row at ship time. Split into separate
+stories only when the pieces are genuinely independent deliverables.
+
+**Date**: 2026-06-28
+**Version**: 0.15.1
+**Reference**: [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md) (consolidated), [EPIC-3](sprints/epics/EPIC-3.md).

@@ -4,14 +4,12 @@ status: active
 start: 2026-06-22T00:00:00.000Z
 end: 2026-06-28T00:00:00.000Z
 goal: >-
-  Open EPIC-3 (Koniverse skill catalog expansion) with its first concrete
-  delivery: ship `koni-setup` (v0.9.0) — the first non-docs Koniverse skill, a
-  day-0 project bootstrapper/onboarder that scaffolds + wires a repo to the
-  shared standard while delegating all doc-body templates to koni-docs. Closes
-  FR-10 and adds FR-20. Then ship `koni-harness` (v0.10.0, US-3.3) — the Koni
-  Agentic Loop standard + portable pre-commit gate (FR-21), then `koni-harness`
-  Phase 2 (v0.11.0, US-3.4) — the single-story loop-runner (FR-22). 3 stories /
-  13 pts / 1 contributor.
+  Deliver EPIC-3 (Koniverse skill catalog expansion) end-to-end: ship
+  `koni-setup` (US-3.2, v0.9.0 — day-0 bootstrapper/onboarder), the full
+  `koni-harness` (US-3.3, v0.10.0–v0.14.0 across 5 phases — gate + loop-runner +
+  context-loader + sprint-sequencer + session-adapters), and the plugin-skill
+  pattern + `koni-nextjs` reference (US-3.1, v0.15.0). 3 stories / 24 pts / 1
+  contributor. Closes FR-9, FR-10, FR-20–FR-25 — EPIC-3 fully delivered.
 ---
 ## Sprint scope
 
@@ -19,20 +17,18 @@ First sprint after the W22 EPIC-4 push. Scope is intentionally narrow: prove
 EPIC-3 can ship a non-docs skill that coexists with koni-docs without
 duplicating it.
 
-| US     | Title                                                   | Epic   | Pri | Points | Status | Ship    | Story file                                                                                         |
-| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | -------------------------------------------------------------------------------------------------- |
-| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0  | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)             |
-| US-3.3 | koni-harness Phase 1 — Agentic Loop standard + gate     | EPIC-3 | P1  | 5      | ✅ done | v0.10.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md)         |
-| US-3.4 | koni-harness Phase 2 — single-story loop-runner         | EPIC-3 | P1  | 3      | ✅ done | v0.11.0 | [stories/US-3.4-koni-harness-loop-runner.md](stories/US-3.4-koni-harness-loop-runner.md)           |
-| US-3.5 | koni-harness P3a — context-loader (session digest)      | EPIC-3 | P1  | 3      | ✅ done | v0.12.0 | [stories/US-3.5-koni-harness-context-loader.md](stories/US-3.5-koni-harness-context-loader.md)     |
-| US-3.6 | koni-harness P2.5 — sprint-sequencer                    | EPIC-3 | P1  | 3      | ✅ done | v0.13.0 | [stories/US-3.6-koni-harness-sprint-sequencer.md](stories/US-3.6-koni-harness-sprint-sequencer.md) |
-| US-3.7 | koni-harness P3b — multi-tool session adapters          | EPIC-3 | P1  | 2      | ✅ done | v0.14.0 | [stories/US-3.7-koni-harness-session-adapters.md](stories/US-3.7-koni-harness-session-adapters.md) |
-| US-3.1 | Plugin-skill pattern + koni-nextjs reference            | EPIC-3 | P1  | 3      | ✅ done | v0.15.0 | [stories/US-3.1-plugin-skill-pattern.md](stories/US-3.1-plugin-skill-pattern.md)                   |
+| US     | Title                                                   | Epic   | Pri | Points | Status | Ship            | Story file                                                                                 |
+| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | --------------- | ------------------------------------------------------------------------------------------ |
+| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0          | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)     |
+| US-3.3 | koni-harness — portable agentic-loop harness (5 phases) | EPIC-3 | P1  | 16     | ✅ done | v0.10.0–v0.14.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
+| US-3.1 | Plugin-skill pattern + koni-nextjs reference            | EPIC-3 | P1  | 3      | ✅ done | v0.15.0         | [stories/US-3.1-plugin-skill-pattern.md](stories/US-3.1-plugin-skill-pattern.md)           |
 
-**Total**: **7 stories / 24 points** — shipped v0.9.0 (koni-setup) + v0.10.0–v0.14.0
-(koni-harness P1 / P2 / P3a / P2.5 / P3b) + v0.15.0 (plugin pattern + koni-nextjs).
-**EPIC-3 fully delivered**: koni-setup + the complete koni-harness roadmap + the
-plugin-skill pattern with the koni-nextjs reference. All EPIC-3 FRs shipped.
+**Total**: **3 stories / 24 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
+koni-harness (16 pts shipped across v0.10.0–v0.14.0 in 5 phases) · US-3.1 plugin
+pattern + koni-nextjs (v0.15.0). **EPIC-3 fully delivered**: koni-setup + the
+complete koni-harness + the plugin-skill pattern with the koni-nextjs reference.
+All EPIC-3 FRs shipped. (koni-harness was consolidated from 5 phase-stories into
+one — see [CONTEXT D14](CONTEXT.md).)
 
 ## Sprint goal recap
 
