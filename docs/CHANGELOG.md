@@ -16,6 +16,54 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.16.0] — 2026-06-28 — koni-qc: QC methodology & coverage-intelligence skill (EPIC-5) — v0.16.0
+
+The catalog's quality-control capability. `koni-qc` turns koni-docs-standard
+inputs into Silicon-Valley-grade, fully-traceable test documentation and drives
+QC execution — covering every case and edge case. Compose-first: it contributes
+the methodology nothing else has and delegates the rest. Opens EPIC-5, closes
+FR-26. **Built by dogfooding the koni-harness loop** (US-5.1 tracked via
+`loop.sh`; the harness review gate even caught the pilot failing koni-qc's own
+AC↔TC-completeness rule — fixed before ship).
+
+### Added — `skills/koni-qc/`
+
+- **SKILL.md** — orchestrator with 3 modes (author test-cases / run QC execution /
+  release gate), an owns-vs-delegates table (methodology = koni-qc; templates =
+  koni-docs; execution = gstack; gate/loop = koni-harness), and an activation
+  table. Composes; never reproduces.
+- **6 methodology references** — `test-design.md` (partitioning/BVA/decision-
+  tables/state-transition/pairwise/error-guessing), `edge-coverage.md` (a 10-class
+  edge taxonomy), `traceability.md` (TC-ID scheme + the canonical 12-column rich-TC
+  table + the **mandatory AC↔TC coverage matrix** — the artifact neither corpus
+  had — + risk priority + `RC-` regression tagging), `nfr.md` (security-led:
+  security/perf-SLA/a11y/i18n/reliability/compatibility/observability),
+  `qc-workflow.md` (the 5-stage lifecycle naming each delegate), `quality-bar.md`
+  (a 3-band rubric: beat the backup / match Koni-Finance / close its gaps).
+- **Pilot** — `references/customize-network-test-cases.example.md`: a worked
+  test-cases doc for a real feature (24 typed cases, a complete AC↔TC matrix with
+  positive+negative+boundary for every AC, injection/SSRF/concurrency/
+  network-failure/atomic-save edge cases, perf SLA + a11y), with a before/after
+  delta vs the 58-case ~70%-happy-path manual backup and a self-grade = PASS.
+
+### Validation
+
+Synthesized two surveyed corpora — `koni-docs.backup` (weak manual baseline, 12
+gaps) and `Koni-Finance` (production standard: rich per-TC table + dedicated
+security). Target: **better than both**. Author-blind review APPROVED after one
+round of fixes (the pilot's AC↔TC matrix is now complete — no phantom TCs, every
+AC has positive+negative+boundary; TYPE scheme + priority/status vocab reconciled
+to the Koni-Finance standard; `RC-` regression tag applied). Compose-not-duplicate
+verified: koni-qc references koni-docs/gstack/koni-harness by name and reproduces
+none of them.
+
+### Docs
+
+- EPIC-5 + US-5.1 opened; PRD FR-26 + Epics index; sprint-2026-W26 gains US-5.1;
+  spec + plan under `docs/superpowers/`.
+
+---
+
 ## [0.15.2] — 2026-06-28 — LESSONS §7: a story is a deliverable, not a release — v0.15.2
 
 Captures the lesson behind the v0.15.1 story consolidation as a reusable trap +

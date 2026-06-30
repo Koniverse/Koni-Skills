@@ -48,12 +48,16 @@ editHistory:
     changes: >-
       FR-9 shipped (plugin-skill pattern + koni-nextjs reference); US-3.1 ships
       v0.15.0 in sprint-2026-W26 — EPIC-3 fully delivered.
+  - date: '2026-06-28'
+    changes: >-
+      Add EPIC-5 + FR-26 (koni-qc — QC methodology & coverage skill); US-5.1
+      ships v0.16.0 in sprint-2026-W26 (built by dogfooding koni-harness).
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.15.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.16.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
-**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is now **in-progress**: v0.9.0 ships `koni-setup` (US-3.2, day-0 bootstrapper/onboarder, FR-10 + FR-20) v0.10.0–v0.14.0 ship `koni-harness` (US-3.3, FR-21..FR-25) in five phases — gate + standard (v0.10.0), loop-runner (v0.11.0), context-loader (v0.12.0), sprint-sequencer (v0.13.0), session-adapters (v0.14.0); and v0.15.0 ships the plugin-skill pattern + `koni-nextjs` reference (US-3.1, FR-9). **EPIC-3 is fully delivered** — three non-docs Koniverse skills (koni-setup, koni-harness, koni-nextjs) plus the documented plugin-extension pattern.
+**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -369,6 +373,7 @@ reviewers.
 | FR-23 | Ship `koni-harness` P3a — a **context-loader**: a portable, read-only POSIX `context-load.sh` emitting a concise session digest of the context layers (verbatim `.active-context` snapshot + VERSION/active\_sprint + `D<n>`/`<n>` decision & lesson title indexes + canonical pointers). Digest-not-dump, deterministic extraction, graceful on missing layers. Additive install (vendors `context-load.sh`); tool session-start wiring is P3b.                                                                                                                                                    | P1       | ✅ shipped (v0.14.0)      | EPIC-3          |
 | FR-24 | Ship `koni-harness` P2.5 — a **sprint-sequencer**: a portable, read-only POSIX `sprint.sh` over koni-docs story frontmatter. `next` = dependency-ready story selection (not-`done` + all `depends_on` resolve to `done`) ordered by priority, suggesting `loop.sh start <id>` and distinguishing complete-vs-blocked; `status` = counts/points/blocked-with-reasons. Reads status (never writes); cross-story complement to `loop.sh`. Additive install (vendors `sprint.sh`).                                                                                                                      | P1       | ✅ shipped (v0.14.0)      | EPIC-3          |
 | FR-25 | Ship `koni-harness` P3b — **multi-tool session adapters**: a portable, read-only POSIX `session-start.sh` briefing (composes the P3a digest + P2.5 `next`) + `session-adapters.md` documenting per-tool session-start wiring (Claude `SessionStart` hook as a manual-merge JSON snippet; Gemini/Codex/Cursor equivalents). Additive (vendors `session-start.sh`); never auto-edits `settings.json`. Completes the koni-harness roadmap (P1/P2/P3a/P2.5/P3b).                                                                                                                                        | P1       | ✅ shipped (v0.14.0)      | EPIC-3          |
+| FR-26 | Ship `koni-qc` — a **compose-first QC methodology & coverage-intelligence skill**: turns koni-docs inputs into Silicon-Valley-grade, fully-traceable test docs (test-design techniques + edge taxonomy + a **mandatory AC↔TC coverage matrix** + security-led NFR + risk-based priority + a quality-bar rubric) and drives QC execution. Delegates templates→koni-docs, execution→gstack, gate/loop→koni-harness. Synthesizes the weak `koni-docs.backup` baseline + the `Koni-Finance` standard; pilot on customize-network proves the uplift. Built by dogfooding the koni-harness loop.          | P1       | ✅ shipped (v0.16.0)      | EPIC-5          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -460,3 +465,13 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 | [US-4.34](sprints/stories/US-4.34-viewer-warning-validator.md)      | Viewer `/project` Warning view — required-field validator         | 🚧 ready | v0.8.0  |
 | [US-4.35](sprints/stories/US-4.35-viewer-url-view-persist.md)       | Viewer `/project` `?view=` URL persist + `?warn=1` shim           | 🚧 ready | v0.8.0  |
 | [US-4.36](sprints/stories/US-4.36-viewer-footer-union-sort.md)      | Viewer `/project` footer + UNION buckets + default sort           | 🚧 ready | v0.8.0  |
+
+### EPIC-5 — Koniverse QC tooling
+
+**Goal:** Give the catalog a quality-control capability — a skill that turns koni-docs inputs into Silicon-Valley-grade, fully-traceable test documentation and drives QC execution.
+
+**Status:** ✅ done (sprint-2026-W26 — v0.16.0 ships `koni-qc`, FR-26). See [EPIC-5.md](sprints/epics/EPIC-5.md).
+
+| Story                                       | Title                                                  | Status | Version |
+| ------------------------------------------- | ------------------------------------------------------ | ------ | ------- |
+| [US-5.1](sprints/stories/US-5.1-koni-qc.md) | koni-qc — QC methodology & coverage-intelligence skill | ✅ done | v0.16.0 |

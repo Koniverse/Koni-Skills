@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-06-29 04:37:24 UTC
-> Total stories: 47
+> Last generated: 2026-06-30 07:38:22 UTC
+> Total stories: 48
 
 ## 📋 Backlog (0)
 
@@ -20,7 +20,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (47)
+## ✅ Done (48)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -71,6 +71,7 @@ _No stories_
 | US-4.34 | Viewer `/project` Warning view — required-field validator (replace filter-only impl) | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
 | US-4.35 | Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim | EPIC-4 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-4.36 | Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort | EPIC-4 | P1 | 2 | sprint-2026-W22 | saltict |
+| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill | EPIC-5 | P1 | 5 | sprint-2026-W26 | jindo9986 |
 
 ## 🚫 Blocked (0)
 
@@ -88,7 +89,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 47
+- ✅ **Done**: 48
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
