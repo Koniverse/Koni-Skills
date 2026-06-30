@@ -72,6 +72,10 @@ Run the cases and instrument the results — koni-qc does not run tests itself.
   - **`qa-only`** — report-only verification, no fixes.
   - **`investigate`** — root-cause a failing / flaky case.
   - **`browse`** — fast headless checks and screenshots.
+  - **`/design-review`** — for any **UI-bearing** case, verify it tracks the
+    repo's `DESIGN.md` (layout, spacing, hierarchy, states, tokens). A UI case
+    is not done until `/design-review` passes against `DESIGN.md`; record
+    deviations as failures with the offending TC-ID.
 - **Record into koni-docs `test-report.md`** — fill its run template; do not invent
   a report format.
 - **Execution instrumentation** — coverage % by AC and by type, pass / fail / blocked

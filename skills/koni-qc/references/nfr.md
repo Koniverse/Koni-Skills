@@ -61,6 +61,26 @@ WCAG 2.1 AA as the floor.
 
 ---
 
+## UI / visual conformance to DESIGN.md
+
+The product's `DESIGN.md` is the visual contract; a feature that "works" but
+drifts from it is a defect.
+
+- [ ] **Design-review pass** — for every UI-bearing case, run gstack
+  `/design-review` against the repo's `DESIGN.md` and confirm layout, spacing,
+  type hierarchy, color tokens, component states (hover/focus/disabled/loading/
+  empty/error), and motion match the spec.
+- [ ] **No AI-slop / inconsistency** — flag generic or off-system patterns
+  `/design-review` surfaces.
+- [ ] **Deviations are failures** — each mismatch is logged against its TC-ID,
+  not waved through.
+
+> **Required when**: any UI changes. These are `TC-<EPIC>.UI-<n>` (or fold into
+> the relevant `FUNC`/`A11Y` case). koni-qc does not eyeball pixels itself — it
+> **delegates to gstack `/design-review`**; `DESIGN.md` is the source of truth.
+
+---
+
 ## Internationalization
 
 - [ ] **Locale** — number / date / currency formatting per locale.

@@ -8,9 +8,11 @@ description: >
   this repo", "add the gate", "wire verification gates", "pre-commit gate",
   "agentic loop", "harness engineering", or "make the loop portable" — even if
   they don't name koni-harness. It owns only the loop standard + the gate; it
-  DELEGATES doc bodies to koni-docs, scaffold to koni-setup, plan to BMAD,
-  execute to Superpowers, and review/QA to gstack — it references and invokes
-  them, never reproduces them.
+  DELEGATES doc bodies to koni-docs, scaffold to koni-setup, plan/brainstorm to
+  BMAD + Superpowers + gstack, implementation to Anthropic Skills only
+  (`frontend-design` …), and review/QA to gstack `/design-review` + koni-qc — it
+  references and invokes them, never reproduces them. Hard rule: Superpowers and
+  gstack are brainstorm/review tools and never write feature code.
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -27,11 +29,14 @@ backbone — it *composes* the existing toolchain and never re-implements it.
 | Loop definition, gates, gate-runner | **koni-harness** (this) |
 | Doc bodies, 12 rules, `validate` CLI | koni-docs (invoked) |
 | Repo scaffold, skill wiring | koni-setup (invoked) |
-| Plan artifacts (brief→PRD→story) | BMAD (invoked) |
-| Execute (plan→code→test, TDD) | Superpowers (invoked) |
-| Review / QA / ship | gstack (invoked) |
+| Plan / brainstorm | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**) |
+| Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI (invoked) |
+| Review / QA | gstack `/design-review` (UI vs `DESIGN.md`) + **koni-qc** (test coverage) + code review (invoked) |
 
 Anything in the right column is referenced and called, never reproduced here.
+**Tool rule:** Superpowers + gstack brainstorm/plan/review; they never implement.
+Implementation is Anthropic Skills only. The Review stage adds `/design-review`
+(UI conformance to `DESIGN.md`) and koni-qc (the AC↔TC test-coverage gate).
 
 ## The standard
 

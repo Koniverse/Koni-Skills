@@ -16,6 +16,41 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.17.0] — 2026-06-28 — koni-harness × koni-qc tool-integration refinements — v0.17.0
+
+Refines the koni-harness loop's tool mapping and wires koni-qc + gstack
+`/design-review` into the loop's review stage. Enhances FR-21 (koni-harness) and
+FR-26 (koni-qc); no new FR/story (a refinement of shipped skills, per CONTEXT
+D14 — a story is a deliverable, not every edit).
+
+### Changed — `skills/koni-harness/`
+
+- **Implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review.**
+  New hard rule in the Standard (six-stage table note + new engineering
+  principle #7), `loop-runner.md` (execute/review drive rows), and `SKILL.md`
+  (description + owns/delegates table): the **Execute** stage uses Anthropic
+  Skills only (`frontend-design` for UI); Superpowers and gstack are
+  brainstorm/plan tools and **never write feature code**.
+- **Review stage gains `/design-review` + koni-qc.** Review now runs gstack
+  `/design-review` (UI must track the repo's `DESIGN.md`) and **koni-qc** (the
+  AC↔TC test-coverage gate) on top of code review.
+
+### Changed — `skills/koni-qc/`
+
+- **`/design-review` for UI verification.** `SKILL.md` (delegates + modes +
+  activation), `qc-workflow.md` §Execute, and `nfr.md` (new "UI / visual
+  conformance to DESIGN.md" section) now delegate UI checks to gstack
+  `/design-review` against the repo's `DESIGN.md`; koni-qc never eyeballs pixels
+  itself.
+- **`UI` test type added** to the `traceability.md` TC-ID scheme
+  (`TC-<EPIC>.UI-<n>`) for visual-conformance cases.
+
+### Docs
+
+- VERSION 0.16.0 → 0.17.0; this entry. validate green.
+
+---
+
 ## [0.16.0] — 2026-06-28 — koni-qc: QC methodology & coverage-intelligence skill (EPIC-5) — v0.16.0
 
 The catalog's quality-control capability. `koni-qc` turns koni-docs-standard

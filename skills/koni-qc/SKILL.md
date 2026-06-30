@@ -34,6 +34,7 @@ description: >
 | Test-design techniques, edge taxonomy, AC↔TC matrix, NFR/security, risk priority, the quality rubric | **koni-qc** (this) |
 | Test-doc templates / structure / `docs/tests/` layout | **koni-docs** — `references/templates/test-cases.md`, `test-report.md` (invoke; fill, don't redefine) |
 | Execution (browser / systematic QA, bug reports) | **gstack** — `qa` / `qa-only` / `investigate` / `browse` (invoke) |
+| UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` (invoke) |
 | Commit/release gate, loop, epic selection | **koni-harness** — `gate-runner.sh`, `loop.sh`, `sprint.sh` (invoke) |
 | Plan artifacts (brief → PRD → story) | **BMAD** (invoke) |
 
@@ -47,7 +48,7 @@ never re-implements the right-column owners.
 | Mode | What it does | Uses |
 |---|---|---|
 | **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N.md` with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` + koni-docs template |
-| **Run QC execution for EPIC-N** | Drive gstack per test case; record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack + koni-docs |
+| **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md`); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §Release + `quality-bar.md` + koni-harness |
 
 ---
@@ -60,6 +61,7 @@ never re-implements the right-column owners.
 | "am I missing edge cases?" / "make coverage thorough" | `references/edge-coverage.md` |
 | "trace AC to tests" / "TC IDs" / "coverage matrix" | `references/traceability.md` |
 | "security / performance / accessibility / i18n testing" | `references/nfr.md` |
+| "does the UI match the design?" / "check against DESIGN.md" | `references/nfr.md` §UI / visual conformance → gstack `/design-review` |
 | "run the whole QC process for an epic / release" | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
 | "show me a worked example" | `references/customize-network-test-cases.example.md` |

@@ -20,9 +20,9 @@ tool-neutral — any agent runs the same commands (see [Portable fallback](#port
 | Stage | What the runner does (incl. the exact `loop.sh` command) | Tool |
 |---|---|---|
 | `frame` | Find the story and flip it to `in-progress`; pick the tier; initialise the loop: `sh .koni-harness/loop.sh start <id> --tier N` | koni-docs / BMAD |
-| `execute` | `sh .koni-harness/loop.sh enter execute`; implement via Superpowers TDD (delegate to a subagent for tier ≥ 1) | Superpowers |
+| `execute` | `sh .koni-harness/loop.sh enter execute`; implement with **Anthropic Skills only** (`frontend-design` for UI; delegate to a subagent for tier ≥ 1) — **never Superpowers or gstack to write code** (those are brainstorm-only) | Anthropic Skills |
 | `self-verify` | `sh .koni-harness/loop.sh enter self-verify`; run tests + build — must be green before advancing | the agent |
-| `review` | `sh .koni-harness/loop.sh enter review`; run a spec-compliance subagent, then a code-quality subagent (the two-stage review from Phase 1) | gstack / subagents |
+| `review` | `sh .koni-harness/loop.sh enter review`; for UI run gstack `/design-review` against the repo's `DESIGN.md`; run **koni-qc** for test coverage (the AC↔TC gate); then a spec-compliance + code-quality subagent pass | gstack `/design-review` · koni-qc · subagents |
 | `doc-gate` | `sh .koni-harness/loop.sh enter doc-gate`; koni-docs backfill (story / CHANGELOG / VERSION) + `npx koni-docs validate` | koni-docs |
 | `commit` | `sh .koni-harness/loop.sh enter commit`; then `sh .koni-harness/loop.sh gate work-commit` (or `release-commit`); commit **only if the gate passes** | git + Phase-1 gate |
 

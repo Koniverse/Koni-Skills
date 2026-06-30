@@ -32,6 +32,7 @@ Every test case carries a stable ID: `TC-<EPIC>.<TYPE>-<n>`.
   | `SEC` | security — authn/authz, injection, data isolation |
   | `PERF` | performance — latency/throughput vs an SLA |
   | `A11Y` | accessibility — keyboard, screen-reader, contrast |
+  | `UI` | visual conformance to `DESIGN.md` (via gstack `/design-review`) |
   | `NEG` | negative — invalid/error input is rejected cleanly |
   | `BND` | boundary — at/just-past a limit (min/max/zero/overflow) |
   | `EDGE` | edge — concurrency, network-failure, encoding, state races |
@@ -47,7 +48,7 @@ Every test case carries a stable ID: `TC-<EPIC>.<TYPE>-<n>`.
 **Never renumber.** A removed TC keeps its number (marked deprecated) so
 cross-references in test-reports, lessons, and PRs survive. This matches the
 koni-docs `test-cases/EPIC-N.md` convention exactly — koni-qc adds the extra
-TYPEs (FUNC/API/SEC/PERF/A11Y/NEG/BND/EDGE) on top of koni-docs' core set, it
+TYPEs (FUNC/API/SEC/PERF/A11Y/UI/NEG/BND/EDGE) on top of koni-docs' core set, it
 does not replace the scheme.
 
 ---

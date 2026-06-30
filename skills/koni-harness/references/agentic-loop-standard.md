@@ -19,12 +19,21 @@ a deterministic gate between its stages.
 
 | # | Stage | Owned by | Entry gate (must be true to enter) |
 |---|---|---|---|
-| 1 | **Frame / Plan** | BMAD | A story exists in `docs/sprints/stories/` with status `in-progress` |
-| 2 | **Execute** | Superpowers (TDD) | Plan approved; LESSONS skimmed; DESIGN read if UI |
+| 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
+| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; LESSONS skimmed; DESIGN read if UI |
 | 3 | **Self-verify** | the agent | Code compiles; new tests written and green |
-| 4 | **Review / QA** | gstack | Self-verify passed; diff is reviewable |
+| 4 | **Review / QA** | gstack `/design-review` (UI vs DESIGN.md) + **koni-qc** (test coverage) + code review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
+
+> **Tool split — brainstorm vs implement vs review (a hard rule).**
+> *Brainstorm / plan* uses **Superpowers** (brainstorming, writing-plans) and
+> **gstack** (plan-reviews, office-hours). *Implement* uses **Anthropic Skills
+> only** (`frontend-design` for UI, and the other Anthropic implementation
+> skills) — **never** Superpowers or gstack to write feature code. *Review* uses
+> gstack `/design-review` (UI conformance to the repo's `DESIGN.md`), **koni-qc**
+> (test coverage), and code review. The one place gstack appears outside
+> brainstorm is the review stage (`/design-review`); it still never implements.
 
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:
@@ -149,3 +158,13 @@ Practitioner guidance, derived from the harness's first principles:
    runs as a Claude hook must also be invokable as the bare POSIX one-liner so
    Gemini / Codex / Cursor (which share no hook spec) get the same gate. If a
    feature can't degrade to the portable core, it isn't in the harness yet.
+
+7. **Implement with Anthropic Skills; brainstorm/review with Superpowers &
+   gstack.** Each tool family has one job. **Superpowers + gstack are for
+   brainstorming and planning** (and gstack `/design-review` for the review
+   stage) — they **must never write feature code**. **Implementation is Anthropic
+   Skills only** (`frontend-design` for UI, plus the other Anthropic
+   implementation skills). This keeps planning rigor and execution craft in the
+   tools each is best at, and it makes "who built this" unambiguous. The Review
+   stage adds gstack `/design-review` (UI must track the repo's `DESIGN.md`) and
+   **koni-qc** (the test-coverage gate) on top of code review.
