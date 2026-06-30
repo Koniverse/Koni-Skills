@@ -887,3 +887,36 @@ hand one at a time (the #1 onboarding gap was a repo with docs but no gate/QC).
 **Date**: 2026-06-30
 **Version**: 0.20.0
 **Reference**: [koni-setup SKILL.md](../skills/koni-setup/SKILL.md) (step 5 + verify), [skill-inventory.md](../skills/koni-setup/references/skill-inventory.md), [skill-wiring.md](../skills/koni-setup/references/skill-wiring.md), CHANGELOG [0.20.0].
+
+---
+
+### D18. Test coverage is organized by **user story**, not by epic (epic is the file container, US is the unit)
+
+**Context**: koni-qc's test-organization (D16) framed everything "by epic"
+(test-cases/EPIC-NN.md, test-reports/EPIC-NN/<date>/, app/tests/epic/EPIC-NN/).
+Re-checking Senti-Quant's matured QA practice (the 2026-06-30 `QC-PLAN-BY-US`)
+showed the epic is too coarse a unit for *coverage*: "EPIC-04 tested" hid that only
+14 of its stories had a case. Coverage there is measured and planned **per US**
+(12.5% = done-stories-with-a-case ÷ done-stories), even though the spec files stay
+grouped per epic.
+
+**Decision** (v0.21.0, refines FR-26/FR-28):
+
+- **The unit of coverage, traceability, and QC planning is the user story (US)** —
+  not the epic. Coverage % = (done stories with ≥1 covering TC) ÷ (done stories).
+  The QC backlog is a **per-US, risk-tiered list** (Tier 1 security/money/external
+  → Tier 2 core/perf → Tier 3 UI), captured as an `audits/QC-PLAN-BY-US-<date>.md`.
+- **Every TC carries a mandatory `maps_to.us`** (plus `fr`/`ac`); the AC↔TC matrix
+  is anchored per US (it already was). This is what makes per-US coverage computable.
+- **Epic stays the file *container*** — spec files (`test-cases/EPIC-NN.md`), test
+  code (`…/epic/EPIC-NN/`), and reports (`test-reports/EPIC-NN/<date>/`) still group
+  by epic, and the **TC-ID stays TYPE-based with an epic namespace** (`TC-<EPIC>.<TYPE>-<n>`,
+  D16) — the epic prefix is an ID namespace, not the coverage unit.
+
+**Why it matters**: "epic tested" is a misleading metric; per-US coverage is the
+honest, actionable one and drives a risk-ordered backlog. No file moves, no TC-ID
+change — only the *granularity of measurement/planning* shifts from epic to US.
+
+**Date**: 2026-06-30
+**Version**: 0.21.0
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) §0, [traceability.md](../skills/koni-qc/references/traceability.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md), source Senti-Quant `QC-PLAN-BY-US-2026-06-30.md`, CHANGELOG [0.21.0].

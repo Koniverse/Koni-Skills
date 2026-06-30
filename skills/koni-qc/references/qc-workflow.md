@@ -22,11 +22,16 @@ from [`traceability.md`](traceability.md) is the artifact that flows through all
 
 Decide *what* is under test and *when* it is done.
 
-- **Pick the epic** — invoke **koni-harness `sprint.sh`** to select the active epic
-  / story (do not hand-pick).
-- **Read the inputs** — invoke **koni-docs** to read the PRD FRs, stories + AC, and
-  ARCHITECTURE for the epic. These are the source of truth; AC are the units the
-  matrix traces.
+- **Pick the user story (the unit)** — invoke **koni-harness `sprint.sh`** to select
+  the target **US** (do not hand-pick). The **US is the unit of coverage and
+  planning, not the epic** (see [`test-organization.md`](test-organization.md) §0);
+  the epic is just the file container. For a backlog, build a **per-US, risk-tiered
+  coverage plan** (every shipped `done` story with no covering TC, ordered
+  Tier 1 security/money/external → Tier 2 core/perf → Tier 3 UI) and attack in
+  that order — not "epic by epic".
+- **Read the inputs** — invoke **koni-docs** to read the PRD FRs, the **story + its
+  AC**, and ARCHITECTURE. These are the source of truth; AC are the units the
+  matrix traces, and each TC will `maps_to` this US.
 - **Derive ACs if none are written** — the whole method is AC-anchored, so if the
   story has FRs but no story-level acceptance criteria, derive them first: turn
   each FR / user-facing behaviour into one testable, observable AC (a *Given →
@@ -37,7 +42,8 @@ Decide *what* is under test and *when* it is done.
 - **Define entry / exit** — the criteria below; written before any case is authored.
 - **Define environment** — target build, data, accounts, feature flags.
 
-**Exit**: epic chosen, inputs read, scope + entry/exit + environment written.
+**Exit**: target US chosen (or a per-US tiered backlog), inputs read, scope +
+entry/exit + environment written.
 
 ---
 

@@ -16,6 +16,39 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.21.0] — 2026-06-30 — koni-qc: coverage organized by user story, not epic — v0.21.0
+
+Re-checking Senti-Quant's matured QA practice (the by-US `QC-PLAN-BY-US`) showed
+the epic is too coarse for *coverage* — "epic tested" hides untested stories.
+Shifts koni-qc's granularity: the **unit of coverage, traceability, and QC
+planning is the user story (US)**; the epic stays the file container. Refines
+FR-26/FR-28; CONTEXT D18; no file moves, no TC-ID change.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/test-organization.md`** — new **§0 "Granularity: the unit is the
+  user story, not the epic"**: coverage % = done-stories-with-a-TC ÷ done-stories;
+  the QC backlog is a per-US, risk-tiered list (`audits/QC-PLAN-BY-US-<date>.md`);
+  epic is the *container*, US the *unit*. §3 sync rule now requires
+  `maps_to {us, fr, ac}` (the `us` is mandatory — it makes per-US coverage computable).
+- **`references/traceability.md`** — the AC↔TC matrix is explicitly anchored per US;
+  mandatory `maps_to.us`; coverage % computed per US.
+- **`references/qc-workflow.md`** — Frame picks the **US** as the unit and builds a
+  per-US risk-tiered coverage plan (not "epic by epic").
+- **`references/quality-bar.md`** — the Coverage % item is reported per US.
+
+### Unchanged (deliberately)
+
+- Spec files stay `test-cases/EPIC-NN.md`, code `…/epic/EPIC-NN/`, reports
+  `test-reports/EPIC-NN/<date>/`. **TC-ID stays TYPE-based** (`TC-<EPIC>.<TYPE>-<n>`)
+  — the epic prefix is an ID namespace, not the coverage unit.
+
+### Docs
+
+- VERSION 0.20.1 → 0.21.0; CONTEXT D18; US-5.3 refinement note; this entry. validate green.
+
+---
+
 ## [0.20.1] — 2026-06-30 — koni-setup graded-hardening to ≥95/100 — v0.20.1
 
 Graded koni-setup with koni-qc skill-grading (the dogfood) — it scored **84.5/100**,

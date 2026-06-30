@@ -67,6 +67,14 @@ codes; **(b)** koni-setup scaffolds when used, koni-qc self-scaffolds otherwise.
 - [x] **TASK-5.3.4** — Update koni-setup scaffold to the new tree.
 - [x] **TASK-5.3.5** — koni-docs layer + author-blind review + validate.
 
+## Post-ship refinements
+
+No scope change to FR-28; see [CONTEXT D18](../../CONTEXT.md):
+
+| Refinement | What | Version | Commit |
+|---|---|---|---|
+| Granularity → user story | The unit of coverage, traceability, and QC planning is the **US, not the epic** (re-checked Senti-Quant's by-US `QC-PLAN-BY-US`): coverage % = done-stories-with-a-TC ÷ done-stories; per-US risk-tiered backlog; mandatory `maps_to.us`. Epic stays the file container; TC-ID unchanged. test-organization §0 + traceability + qc-workflow + quality-bar | v0.21.0 | pending |
+
 ## References
 
 - [koni-qc test-organization](../../../skills/koni-qc/references/test-organization.md)

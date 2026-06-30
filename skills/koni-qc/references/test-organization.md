@@ -6,7 +6,8 @@
 > It is the standing standard; [`traceability.md`](traceability.md) owns the
 > TC-ID scheme and the AC↔TC matrix, this owns *where things live*.
 
-**Contents**: [docs/tests taxonomy](#1-the-docstests-taxonomy) ·
+**Contents**: [Granularity: the unit is the US](#0-granularity-the-unit-is-the-user-story-not-the-epic) ·
+[docs/tests taxonomy](#1-the-docstests-taxonomy) ·
 [Test-code layout](#2-test-code-layout-by-epic-type-in-the-suffix) ·
 [The 3-place sync rule](#3-the-3-place-sync-rule) ·
 [State cleanup](#4-state-cleanup--idempotent-tests) ·
@@ -15,6 +16,29 @@
 
 Synthesized from the matured Senti-Quant QA reorg (2026-06-30) and generalized
 for any Koniverse repo.
+
+## 0. Granularity: the unit is the **user story**, not the epic
+
+**Coverage, traceability, and QC planning are measured and tracked per US — not
+per epic.** An epic is too coarse: "EPIC-04 is tested" hides that only 14 of its N
+stories have a case. The honest, actionable unit is the story.
+
+- **Coverage %** = (done stories with ≥1 covering TC) ÷ (done stories). Never
+  "epics tested". A story counts as covered only when a real TC's `maps_to.us`
+  points at it (see [`traceability.md`](traceability.md)).
+- **The QC backlog is a per-US, risk-tiered list** — every shipped (`done`) story
+  with no covering TC is a row, ordered Tier 1 (security / money / external
+  surface) → Tier 2 (core data / perf) → Tier 3 (UI / lower-risk). This *by-US
+  coverage plan* is the planning artifact (an `audits/QC-PLAN-BY-US-<date>.md`),
+  not an epic checklist.
+- **The AC↔TC matrix is anchored per story** (one block per US, its ACs → TCs) —
+  this is already how `traceability.md` works.
+
+**Epic stays the file *container*, US is the tracked *unit*.** Spec files group by
+epic (`test-cases/EPIC-NN.md`), test code by epic (`…/epic/EPIC-NN/`), reports by
+epic+date — but inside them every TC carries its `maps_to.us`, and what you
+*measure and plan* is the story. Don't confuse the folder grouping (epic) with the
+coverage unit (US).
 
 ## 1. The `docs/tests/` taxonomy
 
@@ -83,7 +107,7 @@ The **run cadence** is encoded in the file SUFFIX (not a sub-folder):
 
 One TC-ID threads through **three** places; change one → change all three:
 
-1. **Source spec** — `docs/tests/test-cases/EPIC-NN.md` (the source of truth: TC-ID + gherkin + yaml `maps_to {fr, ac}`). Written *before* coding.
+1. **Source spec** — `docs/tests/test-cases/EPIC-NN.md` (the source of truth: TC-ID + gherkin + yaml **`maps_to {us, fr, ac}`** — the `us` is mandatory; it's what makes per-US coverage computable, §0). Written *before* coding.
 2. **Test code** — `…/tests/epic/EPIC-NN/<slug>.<cadence>.spec.ts`; the test name **starts with the TC-ID** so the reporter can parse it.
 3. **Coverage story** — the `docs/sprints/stories/US-*.md` row: TC-ID → Status + coverage % + report link.
 

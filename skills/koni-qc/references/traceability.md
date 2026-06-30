@@ -57,6 +57,18 @@ koni-docs `test-cases/EPIC-N.md` convention exactly — koni-qc adds the extra
 TYPEs (FUNC/API/SEC/PERF/A11Y/UI/NEG/BND/EDGE) on top of koni-docs' core set, it
 does not replace the scheme.
 
+> **The TC-ID's `<EPIC>` is an ID namespace, not the coverage unit** — coverage is
+> measured per **US** (see [`test-organization.md`](test-organization.md) §0). Every
+> case carries a mandatory **`maps_to`** linking it to the story it covers, e.g.:
+>
+> ```yaml
+> # in docs/tests/test-cases/EPIC-NN.md, per TC
+> TC-02.LINK-1:
+>   maps_to: { us: US-2.1, fr: FR-12, ac: AC-1 }   # us is mandatory
+> ```
+> A case may map to several ACs (`ac: [AC-1, AC-3]`); a story is "covered" once
+> ≥1 TC's `maps_to.us` points at it.
+
 ---
 
 ## The canonical test-case table
@@ -103,7 +115,11 @@ Column contract:
 **The mandatory artifact. The gate. The thing both corpora lacked.**
 
 Every story's acceptance criteria are listed, each mapped to the TCs that cover
-it and the case *types* those TCs span.
+it and the case *types* those TCs span. **The matrix is anchored per user story
+(`US-X.Y`), not per epic** — the story is the unit of coverage (see
+[`test-organization.md`](test-organization.md) §0). Each TC therefore carries a
+mandatory **`maps_to.us`** (plus `fr`/`ac`); **coverage % is computed per US** —
+(done stories with ≥1 covering TC) ÷ (done stories) — never "epics tested".
 
 | Story | AC | AC description | Positive | Negative | Boundary/edge |
 |---|---|---|---|---|---|

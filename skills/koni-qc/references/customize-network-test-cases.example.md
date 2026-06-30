@@ -137,6 +137,14 @@ Every AC has ≥1 positive **and** ≥1 negative **and** ≥1 boundary-or-edge c
 each filled by a **distinct** TC (no double-counting) — the check the manual
 backup suite lacked entirely. No orphan AC; no orphan TC.
 
+> **Single-feature suite → one US block.** This worked example is a single
+> customize-network feature, so the matrix collapses to one story block and omits
+> the per-US **Story** column that [`traceability.md`](traceability.md) shows for a
+> multi-story epic. In a real `EPIC-NN.md` the matrix has a leading `Story` column
+> (one block per US) and every TC carries `maps_to.us` — coverage is then measured
+> per US (`test-organization.md` §0). Here every TC `maps_to.us: US-CN` (the
+> customize-network story).
+
 | AC | AC description | Positive | Negative | Boundary / edge | NFR |
 |---|---|---|---|---|---|
 | AC-1 | Auto-detect + auto-fill | TC-CN.FUNC-1, FUNC-2, SMK-1 | TC-CN.NEG-1 | TC-CN.EDGE-3 | TC-CN.PERF-1, A11Y-1 |

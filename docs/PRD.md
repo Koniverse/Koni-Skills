@@ -61,6 +61,11 @@ editHistory:
       CRITICAL zsh word-split in the bootstrap loop + tree drift + CSO; LESSONS §9.
   - date: '2026-06-30'
     changes: >-
+      Refine FR-26/FR-28 (no scope change): test coverage is organized by user
+      story, not epic — US is the unit of coverage/traceability/QC planning,
+      epic stays the file container; mandatory maps_to.us. v0.21.0; CONTEXT D18.
+  - date: '2026-06-30'
+    changes: >-
       Add FR-28 (test-organization standard): one canonical docs/tests taxonomy
       + by-epic test-code layout + 3-place sync rule; koni-qc owns the standard,
       koni-setup scaffolds it, koni-qc self-scaffolds otherwise. US-5.3 ships
@@ -81,7 +86,7 @@ editHistory:
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.20.1 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.21.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
 **Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)). v0.18.0 then makes that grading **reusable** — `skill-grading` (US-5.2, FR-27): koni-qc QC for skill artifacts, invoked by the harness Review stage when building a skill. v0.19.0 adds the **test-organization standard** (US-5.3, FR-28): one canonical `docs/tests/` taxonomy + by-epic test-code layout + 3-place sync, owned by koni-qc and scaffolded by koni-setup (synthesized from the Senti-Quant QA reorg). v0.20.0 makes the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) + the harness gate the **koni-setup baseline** — a new repo documents, gates, and QCs itself on day 0 (refines FR-20; CONTEXT D17).
 **Dual-Audience:** Human stakeholders + LLM implementation agents
