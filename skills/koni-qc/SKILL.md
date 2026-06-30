@@ -62,7 +62,7 @@ never re-implements the right-column owners.
 | "security / performance / accessibility / i18n testing" | `references/nfr.md` |
 | "run the whole QC process for an epic / release" | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
-| "show me a worked example" | `references/examples/customize-network-test-cases.md` |
+| "show me a worked example" | `references/customize-network-test-cases.example.md` |
 
 ---
 
@@ -91,7 +91,7 @@ and C. Self-grade against it before review.
 | [`references/traceability.md`](references/traceability.md) | The TC-ID scheme, the canonical rich-TC table, and the **mandatory AC↔TC coverage matrix** + risk/regression tagging |
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
-| [`references/examples/customize-network-test-cases.md`](references/examples/customize-network-test-cases.md) | A worked pilot showing the standard + the uplift over a manual suite |
+| [`references/customize-network-test-cases.example.md`](references/customize-network-test-cases.example.md) | A worked pilot showing the standard + the uplift over a manual suite |
 
 **Boundary reminder**: anything about the *doc template shape* is koni-docs';
 anything about *running* a test is gstack's; the *gate* is koni-harness'. koni-qc
