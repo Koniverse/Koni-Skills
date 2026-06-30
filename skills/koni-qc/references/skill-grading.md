@@ -24,9 +24,18 @@ target and the tools. Grade across **four dimensions, each scored /25 (total
 /100), each by a _separate_ agent** so the verdicts can't collude (no halo effect
 from one grader liking the skill).
 
-**Default bar**: **≥90/100** to ship a skill; **≥95/100** for a foundational /
-widely-reused skill (e.g. a harness or a methodology skill). Set the bar by blast
-radius, the same way `traceability.md` sets test priority.
+**The standard pass bar is ≥95/100 — non-negotiable for every skill in the
+catalog.** A skill that scores below 95 does **not** pass review: fix the findings
+and re-grade until it clears 95 (foundational / high-blast-radius skills may set a
+higher bar, never lower). This is the Koniverse catalog standard, enforced by the
+koni-harness Review stage (see [CONTEXT D19](../../../docs/CONTEXT.md)).
+
+**Re-grade the *whole* skill, not just the diff.** After **any** change to a
+skill that already passed — even a one-line edit — re-run **all four dimensions**
+and confirm it still clears 95. A change can lower a dimension elsewhere (a new
+reference drifts a rule; a description edit shifts triggering). Never infer
+"still ≥95" from a passing review of the change alone — that is exactly how a
+95-skill silently slips to ~91 (see [LESSONS §8](../../../docs/LESSONS.md)).
 
 ## The four dimensions
 
@@ -74,11 +83,14 @@ radius, the same way `traceability.md` sets test priority.
   config; the carve-out you add to make a self-grade honest can collide a name).
   See [LESSONS §8](../../../docs/LESSONS.md).
 - **Average the subjective axis** (D4) over ≥2 runs.
-- **Stop** when a full round yields only Suggestions — not Important/Critical.
+- **Re-grade all four dimensions, not just the changed file** — after any edit to a
+  passing skill, re-run the whole grade (a change can drop a dimension elsewhere).
+- **Stop** when a full round yields only Suggestions (no Important/Critical) **and
+  the total is ≥95**. If the total is <95, it has not passed — keep fixing.
 
 ## Scorecard
 
-Emit one table; total and pass/fail against the bar.
+Emit one table; total and **PASS only if ≥95**.
 
 | Dimension | Score /25 | Tool | Key findings |
 |---|---|---|---|
@@ -86,7 +98,7 @@ Emit one table; total and pass/fail against the bar.
 | D2 Rule-robustness | … | writing-skills | … |
 | D3 Content (author-blind) | … | code-reviewer | … |
 | D4 Best-practices | … | anthropic rubric (×2 avg) | … |
-| **Total** | **…/100** | — | **PASS / FAIL vs bar** |
+| **Total** | **…/100** | — | **PASS (≥95) / FAIL (<95)** |
 
 ## Composes, never reproduces
 

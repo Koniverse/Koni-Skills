@@ -54,8 +54,10 @@ between its stages.
 > instead of the product AC↔TC gate: score the skill /100 across four independent
 > dimensions — triggering (skill-creator), rule-robustness under pressure
 > (writing-skills), author-blind content (`superpowers:code-reviewer`), and
-> Anthropic best-practices — to a hard bar (≥90, or ≥95 for a foundational skill),
-> re-verifying every fix round. This is how the harness builds *and verifies the
+> Anthropic best-practices. **The pass bar is ≥95/100 — the Koniverse catalog
+> standard ([CONTEXT D19](../../../docs/CONTEXT.md)); a skill below 95 does not pass
+> Review.** Re-grade the *whole* skill after any change (not just the diff), and
+> re-verify every fix round. This is how the harness builds *and verifies the
 > building of* new skills.
 
 The stages themselves are not the contribution — they are existing tools that

@@ -44,7 +44,8 @@ LESSONS §8; decision: CONTEXT D15.
 
 - [x] **AC-1** — `skills/koni-qc/references/skill-grading.md`: the four-dimension
   rubric (D1 triggering · D2 rule-robustness · D3 author-blind content · D4
-  best-practices), each /25 → /100, with a hard bar (≥90 ship, ≥95 foundational),
+  best-practices), each /25 → /100, with a hard bar of **≥95/100 for every skill**
+  (foundational / high-blast-radius may set higher, never lower; see CONTEXT D19),
   the delegated tool per dimension, and the non-negotiable method (one agent per
   dimension, re-verify each fix round, average the subjective axis, stop on
   Suggestions-only).
@@ -54,7 +55,8 @@ LESSONS §8; decision: CONTEXT D15.
   trigger — without reproducing the delegated tools.
 - [x] **AC-3** — koni-harness wires it into **Review**: the standard's tool-split
   note, the `loop-runner.md` review drive row, and `SKILL.md` all state that when
-  the deliverable is a skill, the koni-qc review step runs skill-grading to a bar.
+  the deliverable is a skill, the koni-qc review step runs skill-grading to the
+  ≥95 bar (CONTEXT D19).
 - [x] **AC-4** — Compose-not-duplicate holds: skill-grading references
   skill-creator / writing-skills / `superpowers:code-reviewer` / the Anthropic
   best-practices doc **by name** and reproduces none (boundary stated in the file).
@@ -77,5 +79,5 @@ LESSONS §8; decision: CONTEXT D15.
 ## Cross-references
 
 - [Epic EPIC-5](../epics/EPIC-5.md)
-- [CONTEXT D15 — the loop tool-split](../../CONTEXT.md) · [LESSONS §8 — the grading method](../../LESSONS.md)
+- [CONTEXT D15 — the loop tool-split](../../CONTEXT.md) · [CONTEXT D19 — the ≥95 catalog bar + whole-skill re-grade](../../CONTEXT.md) · [LESSONS §8 — the grading method](../../LESSONS.md)
 - [CHANGELOG 0.18.0](../../CHANGELOG.md)

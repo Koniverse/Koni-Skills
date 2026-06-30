@@ -920,3 +920,36 @@ change — only the *granularity of measurement/planning* shifts from epic to US
 **Date**: 2026-06-30
 **Version**: 0.21.0
 **Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) §0, [traceability.md](../skills/koni-qc/references/traceability.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md), source Senti-Quant `QC-PLAN-BY-US-2026-06-30.md`, CHANGELOG [0.21.0].
+
+---
+
+### D19. ≥95/100 skill-grading is the catalog standard; re-grade the whole skill after any change
+
+**Context**: koni-qc's skill-grading (FR-27) shipped with a soft bar ("≥90 ship;
+≥95 foundational"). Grading the catalog showed every shipped skill can reach the
+mid-90s (koni-harness 96, koni-qc 97, koni-setup 96), and that a "passing" skill
+silently slipped to ~91 after later edits because only the *diff* was re-reviewed,
+not the whole skill. Both gaps are now closed by a firm standard.
+
+**Decision** (v0.22.0, refines FR-21/FR-27):
+
+- **The pass bar is ≥95/100 for every skill in the catalog** — not 90. A skill that
+  scores <95 does **not** pass the koni-harness **Review** stage; fix and re-grade
+  until it clears 95. Foundational/high-blast-radius skills may set a higher bar,
+  never lower.
+- **Re-grade the *whole* skill (all four dimensions), not just the changed file**,
+  after *any* edit to a skill that already passed — a change can drop a dimension
+  elsewhere (a new reference drifts a rule; a description edit shifts triggering).
+  Never infer "still ≥95" from a passing review of the change alone.
+- **Enforced where**: koni-qc `skill-grading.md` (the bar + the re-grade rule) and
+  the koni-harness Review stage (`agentic-loop-standard.md` + `loop-runner.md`),
+  which runs skill-grading whenever the deliverable is a skill.
+
+**Why it matters**: "≥95 or it doesn't ship" makes skill quality a hard gate, not a
+suggestion, and the whole-skill re-grade rule prevents the exact silent-regression
+(95 → 91) that prompted this. The four dimensions stay: triggering · rule-robustness ·
+author-blind content · best-practices, D4 variance-averaged ×2.
+
+**Date**: 2026-06-30
+**Version**: 0.22.0
+**Reference**: [skill-grading.md](../skills/koni-qc/references/skill-grading.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [LESSONS §8](LESSONS.md), CHANGELOG [0.22.0].

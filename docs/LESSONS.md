@@ -329,11 +329,22 @@ rule-robustness via writing-skills pressure-tests (does the rule hold under dead
 pressure?), content via an **author-blind** code-reviewer, best-practices via the Anthropic
 rubric. **Re-verify after every fix round** (the fix is new code → new test), and **run the
 subjective rubric ≥2× and average** to cancel grader variance. Stop when a full round yields
-only Suggestions, not Important/Critical findings.
+only Suggestions, not Important/Critical findings, **and the total is ≥95 — the catalog bar**.
+
+**Re-grade the *whole* skill, not just the diff.** (Added 2026-06-30, v0.21.1.) A
+skill that already passed at ≥95 can silently slip below it after later edits, because
+a change drifts a *different* dimension than the one you touched: koni-qc fell 97 → ~91
+when three later features (skill-grading, test-organization, by-US) left a rule
+("boundary-or-edge") un-propagated to two files and opened a triggering gap — yet each
+change's *own* review had passed. **The fix is not to trust a passing review of the
+change; re-run all four dimensions on the whole skill and confirm it still clears 95.**
+The ≥95 bar + this whole-skill re-grade rule are now the standard ([CONTEXT D19](CONTEXT.md)),
+enforced by the koni-harness Review stage.
 
 **Codified as**:
 - [CONTEXT D15](CONTEXT.md) — the tool-split the grading hardened
-- CHANGELOG [0.17.2] — the per-dimension final scores (harness 96, qc 97)
+- [CONTEXT D19](CONTEXT.md) — ≥95 catalog bar + re-grade-the-whole-skill rule
+- CHANGELOG [0.17.2] / [0.21.1] — per-dimension scores; the 97→91→97 regression-and-recovery
 
 **Cross-references**:
 - This *is* the koni-harness Review stage ([D15](CONTEXT.md)) dogfooded on the skills themselves: spec-compliance → koni-qc → `/design-review` → code-quality, with the author-blind reviewer being the same two-stage review the loop prescribes.

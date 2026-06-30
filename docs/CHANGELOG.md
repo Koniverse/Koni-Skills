@@ -16,6 +16,39 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.22.0] — 2026-06-30 — ≥95 skill-grading is the catalog standard, enforced at Review — v0.22.0
+
+Makes **≥95/100 the hard pass bar** for any skill reviewed by koni-qc skill-grading,
+and bakes in the whole-skill re-grade rule that the 97→91→97 koni-qc regression
+taught. Refines FR-21 (harness Review) + FR-27 (skill-grading); CONTEXT D19.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/skill-grading.md`** — the bar is now **"≥95/100, non-negotiable for
+  every skill"** (was "≥90 ship; ≥95 foundational"); a skill <95 does not pass.
+  Added the **re-grade-the-whole-skill-not-just-the-diff** rule and made the
+  scorecard PASS condition explicitly `≥95`.
+- **`SKILL.md`** — the "Grade a skill" mode states the ≥95 catalog standard + the
+  whole-skill re-grade.
+
+### Changed — `skills/koni-harness/`
+
+- The **Review stage** now states skill-grading **must clear ≥95 to pass**
+  (`agentic-loop-standard.md` tool-split note, `loop-runner.md` review drive row,
+  `SKILL.md` Review row) — a skill deliverable doesn't pass Review below 95.
+
+### Decision (CONTEXT D19) + lesson
+
+- ≥95 is the Koniverse catalog standard; re-grade the whole skill (all 4
+  dimensions) after any change, never infer "still ≥95" from a passing review of the
+  diff alone. LESSONS §8 updated with the 97→91→97 regression-and-recovery.
+
+### Docs
+
+- VERSION 0.21.1 → 0.22.0; CONTEXT D19; LESSONS §8 addendum; this entry. validate green.
+
+---
+
 ## [0.21.1] — 2026-06-30 — koni-qc: re-grade fixes back to ≥95 after the by-US change — v0.21.1
 
 A **full 4-dimension re-grade** of koni-qc (not just the change-review) found it had
