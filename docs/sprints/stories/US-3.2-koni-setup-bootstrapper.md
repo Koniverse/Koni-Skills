@@ -104,7 +104,7 @@ No scope change to FR-20; see [CONTEXT D17](../../CONTEXT.md):
 | Refinement | What | Version | Commit |
 |---|---|---|---|
 | Core-trio baseline | Setup now wires the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) and runs koni-harness `install-gate.sh` (vendors `.koni-harness/` + git hooks), instead of koni-docs alone — SKILL.md step 5 + verify, skill-inventory baseline, skill-wiring commands | v0.20.0 | a59861a |
-| Graded-hardening → 96/100 | koni-qc skill-grading graded it 84.5/100 → fixed: **CRITICAL** zsh word-split (bootstrap created 0 doc stubs under zsh) → literal-list loop; bare `bmad-*` glob → `find`; docs/tests tree drift reconciled to the koni-qc standard; triggers-only description; TOCs on 3 long refs. Re-grade **96.25/100** | v0.20.1 | pending |
+| Graded-hardening → 96/100 | koni-qc skill-grading graded it 84.5/100 → fixed: **CRITICAL** zsh word-split (bootstrap created 0 doc stubs under zsh) → literal-list loop; bare `bmad-*` glob → `find`; docs/tests tree drift reconciled to the koni-qc standard; triggers-only description; TOCs on 3 long refs. Re-grade **96.25/100** | v0.20.1 | 4af5332 |
 
 ## References
 
