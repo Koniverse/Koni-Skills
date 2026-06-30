@@ -1,5 +1,10 @@
 # Scaffold checklist — the exact skeleton to create
 
+**Contents**: [Directory tree](#directory-tree) ·
+[Create-the-tree command](#create-the-tree-command) ·
+[.gitignore — baseline](#gitignore--baseline) ·
+[CHANGELOG — canonical location](#changelog--canonical-location)
+
 This is what **bootstrap** lays down. Create directories and **stub** files only;
 the *content* of every doc comes from koni-docs templates, not from here. A stub
 is a file with a single `# Title` heading and a one-line `> TODO: drafted via
@@ -79,12 +84,17 @@ mkdir -p docs/sprints/{epics,stories,archive} docs/design \
 # 3. root-level doc stubs — note these include the docs/ root README and the
 #    per-subtree READMEs that the tree shows. CHANGELOG is handled separately
 #    in step 4 (it needs the [Unreleased] anchor, not a generic stub).
-docs_root="README SETUP BRIEF CONTEXT LESSONS"
-[ "$PROFILE" = content ] || docs_root="$docs_root PRD ARCHITECTURE"   # code/devops only
-for f in $docs_root; do
-  [ -f "docs/$f.md" ] || printf '# %s\n\n> TODO: draft via koni-docs templates/%s.md\n' \
-    "$f" "$(echo $f | tr A-Z a-z)" > "docs/$f.md"
-done
+#    NB: iterate LITERAL word lists (a bare `for f in $var` is NOT split by zsh —
+#    zsh has SH_WORD_SPLIT off by default — so an unquoted-var loop creates one
+#    mis-named file under zsh). Literal lists are split by the parser in every shell.
+stub_doc() {  # $1 = BASENAME (upper)
+  lc=$(printf '%s' "$1" | tr 'A-Z' 'a-z')
+  [ -f "docs/$1.md" ] || printf '# %s\n\n> TODO: draft via koni-docs templates/%s.md\n' "$1" "$lc" > "docs/$1.md"
+}
+for f in README SETUP BRIEF CONTEXT LESSONS; do stub_doc "$f"; done
+if [ "$PROFILE" != content ]; then            # code/devops only
+  for f in PRD ARCHITECTURE; do stub_doc "$f"; done
+fi
 
 # 4. sub-tree READMEs + STATUS + first sprint (all shown in the tree)
 [ -f docs/sprints/README.md ]      || printf '# Sprints\n\n> TODO: agile schema via koni-docs sprint-system.md\n' > docs/sprints/README.md

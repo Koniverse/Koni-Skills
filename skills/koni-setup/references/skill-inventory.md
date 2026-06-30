@@ -1,5 +1,11 @@
 # Skill inventory — what every Koniverse repo installs
 
+**Contents**: [Install mechanisms (4 sources)](#install-mechanisms-4-sources) ·
+[Baseline — every repo](#baseline--every-repo) ·
+[Per-profile additions](#per-profile-additions) ·
+[Install order during bootstrap](#install-order-during-bootstrap) ·
+[Audit (onboard)](#audit-onboard--is-the-skill-set-installed)
+
 This is the concrete answer to "which AI skills do I install?" — derived from
 auditing the six reference repos (`koni-devops`, `Koni-ERP-02`, `koni-growth`,
 `koni-landing`, `koni-training`, `Senti-Quant`). Install the **baseline** in
@@ -66,7 +72,7 @@ bmad-validate-prd
 
 You don't hand-pick these — `bmad-method install` lays down the whole module.
 The point of listing them is so an audit can confirm the install *took* (e.g.
-`ls .claude/skills/bmad-* | wc -l` ≈ 40+).
+`find .claude/skills -maxdepth 1 -name 'bmad-*' | wc -l` ≈ 40+).
 
 ### 3. gstack (global)
 Confirm `~/.claude/skills/gstack` exists. If missing, install globally once —
@@ -121,7 +127,7 @@ review / qa / cso, etc.
 ## Audit (onboard) — is the skill set installed?
 
 ```bash
-echo "bmad pack: $(ls .claude/skills/bmad-* 2>/dev/null | wc -l | tr -d ' ') skills"
+echo "bmad pack: $(find .claude/skills -maxdepth 1 -name 'bmad-*' 2>/dev/null | wc -l | tr -d ' ') skills"   # find, not a bare glob (zsh errors on no-match)
 for s in koni-docs koni-harness koni-qc; do
   test -e ".claude/skills/$s" && echo "$s ✅" || echo "$s ⬜"
 done

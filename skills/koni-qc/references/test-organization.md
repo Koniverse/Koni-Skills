@@ -44,6 +44,15 @@ docs/tests/
 > **Root holds only standing docs + the framework subdirs.** Dated one-offs go in
 > `audits/`; run output goes in `test-reports/EPIC-NN/<MMDDYYYY>/` — never at root.
 
+> **Relationship to koni-docs (report layout vs report body).** koni-qc owns this
+> **layout** — per-run reports live at `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
+> (+ `report-manual.md`). **koni-docs owns the report *body* templates**
+> (per-execution + per-release aggregate). This layout supersedes koni-docs' older
+> `test-reports/{runs,releases}/` path wherever koni-qc is adopted; a release-level
+> rollup is still a koni-docs per-release report, placed under the same tree.
+> (koni-docs' own `sprint-system.md`/`templates.md` still reference the legacy
+> path — reconciling them to this layout is a tracked koni-docs follow-up.)
+
 ## 2. Test-code layout: by epic, type in the suffix
 
 Test **code** (not docs) is organized **by epic, never by test type**:

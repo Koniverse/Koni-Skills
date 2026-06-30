@@ -1,17 +1,15 @@
 ---
 name: koni-setup
 description: >
-  Bootstraps a new Koniverse repo or onboards an existing one to the shared
-  Koniverse project standard — directory skeleton, the **Koniverse core trio**
-  (koni-docs + koni-harness + koni-qc) wired in + the koni-harness commit/release
-  gate installed, CLAUDE.md / AGENTS.md / .active-context wiring, .gitignore,
-  VERSION, _bmad, and the package.json agile scripts. Use this whenever the user
-  says "set up a new project", "scaffold a repo", "bootstrap a Koni project",
-  "onboard this repo to koni-docs", "wire up CLAUDE.md / AGENTS.md", "add the
-  skills / sprint structure to this repo", "make this repo match the others", or
-  "audit this repo's setup" — even if they don't name koni-setup explicitly. It
-  is the day-0 orchestrator; it DELEGATES all documentation-body templates to
-  the koni-docs skill rather than duplicating them, so the two never conflict.
+  Use when bootstrapping a brand-new Koniverse repo or onboarding/auditing an
+  existing one against the shared project standard — e.g. the user says "set up a
+  new project", "scaffold a repo", "bootstrap a Koni project", "onboard this
+  repo", "wire up CLAUDE.md / AGENTS.md", "add the skills / sprint structure to
+  this repo", "make this repo match the others", or "audit this repo's setup" —
+  even if they don't name koni-setup. Also use when a repo is missing its standard
+  skeleton, its skill wiring (`.claude` / `.agents` symlinks), the Koniverse skill
+  set, VERSION, `_bmad`, or the agile npm scripts, or when checking a repo against
+  the shared standard.
 ---
 # koni-setup — Koniverse project bootstrapper & onboarder
 
@@ -87,13 +85,17 @@ that already has real content; check first, write only if absent or a stub.
    create-the-tree command in `scaffold-checklist.md` does both.)
 
 3. **Directory skeleton** — create the canonical tree. The full file-by-file
-   list is in [`references/scaffold-checklist.md`](references/scaffold-checklist.md);
-   the docs/ subtree mirrors koni-docs §0 exactly:
+   list (authoritative) is in
+   [`references/scaffold-checklist.md`](references/scaffold-checklist.md); the
+   `docs/` subtree follows koni-docs §0, and the `docs/tests/` subtree follows the
+   koni-qc **test-organization** standard. Abridged (see scaffold-checklist.md for
+   the exact tree):
 
    ```
    docs/{README,SETUP,BRIEF,PRD,ARCHITECTURE,CHANGELOG,CONTEXT,LESSONS}.md
    docs/sprints/{README.md,STATUS.md,epics/,stories/,archive/}
-   docs/tests/{test-cases/,test-reports/{runs,releases}/}
+   docs/tests/{README.md,test-organization.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}
+   #   docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/  ← created on first run, never pre-made
    docs/design/
    ```
    Create the **directories and stub files**, but for the *contents* of each doc
@@ -193,8 +195,9 @@ to live".
    `.koni-harness/gate-runner.sh` is absent, run its `install-gate.sh` (the
    repo's `docs/` tree + VERSION already exist on an onboard, so its checks read
    them fine). Also check
-   the BMAD pack: `ls .claude/skills/bmad-* | wc -l` near zero means
-   `npx bmad-method install` was never run — the most common onboarding gap (see
+   the BMAD pack: `find .claude/skills -maxdepth 1 -name 'bmad-*' | wc -l` near
+   zero means `npx bmad-method install` was never run — the most common onboarding
+   gap (see
    [`references/skill-inventory.md`](references/skill-inventory.md) §audit).
 5. **Hand off doc backfill to koni-docs** — if stories/CHANGELOG/PRD need real
    content or a consistency sweep, that's koni-docs' job: run its audit loop
@@ -214,7 +217,7 @@ for s in koni-docs koni-harness koni-qc; do
   test -e ".claude/skills/$s" && echo "$s wired ($(readlink ".claude/skills/$s" 2>/dev/null))" || echo "$s ⬜ not wired"
 done
 test -f .koni-harness/gate-runner.sh && echo "koni-harness gate installed" || echo "koni-harness gate ⬜ run install-gate.sh"
-echo "bmad pack: $(ls .claude/skills/bmad-* 2>/dev/null | wc -l | tr -d ' ') skills"   # ~40+ if bmad-method install ran
+echo "bmad pack: $(find .claude/skills -maxdepth 1 -name 'bmad-*' 2>/dev/null | wc -l | tr -d ' ') skills"   # ~40+ if bmad-method install ran (find, not a bare glob — zsh errors on no-match)
 test -d ~/.claude/skills/gstack && echo "gstack global ok"
 test -d docs/sprints && echo "sprints ok"
 grep -q "Koni-Docs Integration" CLAUDE.md && echo "integration block ok"

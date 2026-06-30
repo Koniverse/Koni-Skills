@@ -35,7 +35,7 @@ profile; untagged rows apply to all.
 - [ ] `docs/sprints/README.md`
 - [ ] `docs/sprints/STATUS.md` (auto-generated — RULE-5)
 - [ ] `docs/sprints/{epics,stories,archive}/`
-- [ ] `docs/tests/{test-cases,test-reports/{runs,releases}}/`
+- [ ] `docs/tests/{README.md,test-organization.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}` (koni-qc test-organization standard; `test-reports/EPIC-NN/<date>/` is created on first run, not scaffolded)
 - [ ] `docs/design/`
 
 ### Skills & agents
@@ -66,10 +66,14 @@ chk docs/SETUP.md; chk docs/PRD.md; chk docs/ARCHITECTURE.md
 chk docs/sprints/README.md; chk docs/sprints/STATUS.md
 chk docs/sprints/epics; chk docs/sprints/stories
 chk docs/tests/test-cases; chk docs/design
-# skill links resolve?
-for s in .claude/skills/koni-docs .agents/skills/koni-docs; do
-  [ -e "$s" ] && echo "✅ $s -> $(readlink "$s" 2>/dev/null)" || echo "⬜ $s (missing/dangling)"
+# core trio skill links resolve? + the harness gate vendored?
+for s in koni-docs koni-harness koni-qc; do
+  for d in ".claude/skills/$s" ".agents/skills/$s"; do
+    [ -e "$d" ] && echo "✅ $d -> $(readlink "$d" 2>/dev/null)" || echo "⬜ $d (missing/dangling)"
+  done
 done
+chk .koni-harness/gate-runner.sh
+echo "bmad pack: $(find .claude/skills -maxdepth 1 -name 'bmad-*' 2>/dev/null | wc -l | tr -d ' ')"
 grep -q "Koni-Docs Integration" CLAUDE.md 2>/dev/null && echo "✅ integration block" || echo "⬜ integration block"
 [ -f .active-context.example.md ] && echo "✅ active-context (Pattern B)" || \
   (grep -q "koni-docs:auto-update" CLAUDE.md 2>/dev/null && echo "✅ active-context (Pattern A)" || echo "⬜ active-context")

@@ -16,6 +16,45 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.20.1] — 2026-06-30 — koni-setup graded-hardening to ≥95/100 — v0.20.1
+
+Graded koni-setup with koni-qc skill-grading (the dogfood) — it scored **84.5/100**,
+below the foundational ≥95 bar, surfacing a real correctness bug. Fixed to
+**96.25/100**.
+
+### Fixed — `skills/koni-setup/`
+
+- **CRITICAL (correctness): the bootstrap doc-stub loop is now zsh-safe.** It used
+  `for f in $unquoted_var`, which **zsh does not word-split** (SH_WORD_SPLIT off by
+  default) → under the default macOS shell it created one mis-named file and **zero**
+  doc stubs. Rewritten to iterate **literal word lists** (split by the parser in
+  every shell) via a `stub_doc` helper. Verified under zsh: 7 stubs created.
+- **zsh no-match glob**: the `bmad-*` audit used a bare `ls .claude/skills/bmad-*`
+  (zsh errors on no-match — exactly the "0 bmad skills" case the audit detects).
+  Replaced with `find … -name 'bmad-*'` in the verify blocks **and** the two prose
+  snippets that had it.
+- **docs/tests tree drift**: SKILL.md's inline tree + `onboarding-audit.md` still
+  showed the legacy `test-reports/{runs,releases}`; reconciled to the koni-qc
+  test-organization standard (test-plan/test-cases/bug-bash/audits + EPIC-NN/<date>
+  on first run); dropped the false "mirrors koni-docs §0 exactly" claim. koni-qc
+  `test-organization.md` now states the report-layout ownership vs koni-docs
+  (legacy `runs/releases` superseded; koni-docs body templates reconcile as a
+  tracked follow-up).
+
+### Changed (best-practices)
+
+- Description rewritten **triggers-only** (was enumerating deliverables + ownership);
+  Contents TOCs added to the three >100-line references (scaffold-checklist,
+  skill-inventory, skill-wiring); onboard quick-audit now checks the full core trio
+  + the `.koni-harness` gate.
+
+### Docs
+
+- VERSION 0.20.0 → 0.20.1; LESSONS §9 (the zsh word-split gotcha); US-3.2 note; this
+  entry. validate green.
+
+---
+
 ## [0.20.0] — 2026-06-30 — koni-setup installs the Koniverse core trio + the harness gate at setup — v0.20.0
 
 Refines FR-20 (koni-setup): the **baseline a new repo gets is now the Koniverse

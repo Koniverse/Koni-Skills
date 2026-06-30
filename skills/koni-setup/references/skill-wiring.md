@@ -1,5 +1,10 @@
 # Skill wiring — `.claude` / `.agents`, symlinks, agile scripts
 
+**Contents**: [Three wiring strategies](#three-wiring-strategies--pick-one) ·
+[Wiring commands (central symlink)](#wiring-commands-central-symlink) ·
+[Repair a dangling link](#repair-a-dangling-link-onboardaudit) ·
+[Agile scripts (package.json block)](#agile-scripts-code-repos--packagejson-block)
+
 Koniverse repos expose skills to every AI tool through two parallel dirs:
 
 - `.claude/skills/` — read by Claude Code

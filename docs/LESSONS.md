@@ -337,3 +337,37 @@ only Suggestions, not Important/Critical findings.
 
 **Cross-references**:
 - This *is* the koni-harness Review stage ([D15](CONTEXT.md)) dogfooded on the skills themselves: spec-compliance → koni-qc → `/design-review` → code-quality, with the author-blind reviewer being the same two-stage review the loop prescribes.
+
+---
+
+## 9. A scaffold's `for f in $unquoted_var` silently breaks under zsh — iterate literal lists
+
+**What happened (v0.20.1, 2026-06-30, found by grading koni-setup)**: koni-setup's
+bootstrap created the root doc stubs with
+`docs_root="README SETUP …"; for f in $docs_root; do …`. POSIX sh and bash
+word-split an unquoted `$docs_root` into separate words; **zsh does not**
+(`SH_WORD_SPLIT` is off by default). On the default macOS shell the loop ran
+**once** with `f` = the whole string and wrote a single file literally named
+`README SETUP BRIEF CONTEXT LESSONS PRD ARCHITECTURE.md` — **zero** real stubs. The
+block's header even said "run with bash" but never warned about zsh, the likeliest
+Mac default. An author-blind reviewer running it via its shell tool hit it immediately.
+
+**Why it matters**: shell snippets in a skill are *executed*, not just read. A
+portability gap that an LLM reviewer reproduces is a correctness defect, not a
+style nit — and it was invisible to every prior review that didn't actually run the
+block under the user's shell.
+
+**How to fix / avoid**:
+- **Iterate a literal word list** — `for f in README SETUP BRIEF …; do …` — which the
+  parser splits in *every* shell. Never `for x in $var` for a list you control.
+- If you must loop a variable, either force the interpreter (`bash <<'EOF' … EOF`),
+  or `setopt sh_word_split` (zsh), or split on a real array.
+- Same family of bug: a **bare glob** (`ls foo-*`) **errors under zsh on no-match**
+  (`no matches found`) — use `find … -name 'foo-*'` for counts/audits.
+- **Test shell snippets under the actual default shell** (zsh on macOS), not only bash.
+
+**Codified as**:
+- CHANGELOG [0.20.1]; the fixed loop in `koni-setup/references/scaffold-checklist.md`.
+
+**Cross-references**:
+- Found via [§8](#8-grading-a-skill-is-iterative-author-blind-review--variance-averaged-rubric-and-expect-your-own-fix-to-introduce-the-next-finding)'s author-blind dimension — concrete proof that the grading method catches real execution bugs, not just prose.
