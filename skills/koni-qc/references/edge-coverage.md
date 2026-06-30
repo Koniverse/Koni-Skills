@@ -49,13 +49,17 @@ names the backup gap it closes so the uplift is traceable.
    must be **off-path = negative (NEG) + boundary (BND) + edge (EDGE)**, not
    happy-path. This is a [`quality-bar.md`](quality-bar.md) Band-A item and is
    checked in self-review. The backup sat near 25%; the pilot lands at or above 50%.
-3. **Map each edge case to its AC and TYPE.** An injection case is `TC-*.SEC-*`,
-   a network-failure case is often `TC-*.FUNC-*` or `TC-*.E2E-*` — record it in
-   the canonical table with the right TYPE so it counts in the AC↔TC matrix.
+3. **Map each edge case to its AC and TYPE.** An injection case is `TC-*.SEC-*`;
+   a **concurrency / network-failure / encoding / state-race** case is `TC-*.EDGE-*`
+   (the `EDGE` TYPE per [`traceability.md`](traceability.md)) — record it in the
+   canonical table with the right TYPE so it counts in the AC↔TC matrix.
 4. **Escalate the security and NFR rows.** Rows 3, 5, and 6 frequently graduate
    into the dedicated coverage in [`nfr.md`](nfr.md) (§Security, §Reliability) —
    when risk is high, emit a standalone `*-security-test-cases.md` rather than
    burying them.
 5. **Prove it in the matrix.** Every AC must come out of this pass with a
-   boundary case (rows 1, 8, 10) and a negative case (rows 2–7, 9) attached, or
-   the AC↔TC matrix in [`traceability.md`](traceability.md) fails.
+   **boundary-or-edge** case — a value boundary (`BND`, e.g. rows 1, 8, 10) *or* an
+   `EDGE` case (concurrency / network-failure / state-race, e.g. rows 4, 6, 7) — **and**
+   a **negative** case (invalid input / permission, e.g. rows 2, 3, 5, 9), or the
+   AC↔TC matrix in [`traceability.md`](traceability.md) fails. (EDGE rows fill the
+   boundary-or-edge slot, not the negative slot.)

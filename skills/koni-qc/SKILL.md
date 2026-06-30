@@ -8,8 +8,10 @@ description: >
   thorough enough", or "grade the test suite" — even if they don't name koni-qc.
   Also use when checking that every acceptance criterion is covered by positive,
   negative, and boundary tests, when hunting missing edge cases, when verifying a
-  UI against DESIGN.md before shipping, or when grading/scoring a **skill** itself
-  ("is this skill good enough", "score this SKILL.md") before it is built or merged.
+  UI against DESIGN.md before shipping, when deciding **where test files / specs /
+  reports should live** or **how to organize tests** (`docs/tests/` layout, coverage
+  by user story), or when grading/scoring a **skill** itself ("is this skill good
+  enough", "score this SKILL.md").
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -39,6 +41,11 @@ never re-implements the right-column owners.
 ---
 
 ## 2. Modes
+
+> **`EPIC-N` is the file container; the user story is the coverage unit.** Specs
+> group per epic (`test-cases/EPIC-N.md`) but coverage, traceability, and planning
+> are measured **per US** (each TC `maps_to.us`) — see
+> [`test-organization.md`](references/test-organization.md) §0.
 
 | Mode | What it does | Uses |
 |---|---|---|

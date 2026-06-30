@@ -45,8 +45,9 @@ radius, the same way `traceability.md` sets test priority.
   routes each query to one skill using *descriptions only*; score precision +
   recall for the skill under test. Where the `claude` CLI is available,
   `skill-creator`'s `scripts/run_loop.py` (and `improve_description.py`) automate
-  this and optimize the description. **→ /25**: start at 25, subtract for each
-  missed should-trigger and each false-positive near-miss (≈ precision × recall × 25).
+  this and optimize the description. **→ /25** (heuristic, use judgment — there's no
+  validator): scale by precision × recall; a perfect route is 25, each missed
+  should-trigger or false-positive near-miss costs a few points.
 - **D2 — pressure.** Using `writing-skills`' `testing-skills-with-subagents.md`,
   give a subagent (that has the skill) a scenario engineered to make it violate
   each hard rule under pressure; the rule holds = GREEN. Optionally run a no-skill
@@ -54,9 +55,9 @@ radius, the same way `traceability.md` sets test priority.
   held GREEN ÷ rules tested).
 - **D3 — author-blind content.** Dispatch `superpowers:code-reviewer` on the skill
   directory; it verifies every load-bearing claim against the actual files and
-  ranks findings. **→ /25**: the reviewer's own score; if it doesn't emit one,
-  map mechanically — start at 25 and subtract **8 per surviving Critical, 4 per
-  Important, 1 per Minor** (floor 0). Pass requires **no Critical/Important
+  ranks findings. **→ /25**: take the reviewer's own score; if it doesn't emit one,
+  map by severity as a guide (~8 per surviving Critical, ~4 per Important, ~1 per
+  Minor off 25, floored at 0). Pass requires **no Critical/Important
   finding survives** regardless of the number.
 - **D4 — best-practices.** Grade against the `anthropic-best-practices.md` inside
   the `writing-skills` skill (load it via that skill — don't vendor a copy).

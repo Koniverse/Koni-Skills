@@ -63,7 +63,8 @@ Author the cases into the koni-docs container — fill its template, never copy 
   action · expected · perf · side-effects · covered-by).
 - **Build the AC↔TC matrix** — the mandatory artifact, per
   [`traceability.md`](traceability.md): every AC → ≥1 positive AND ≥1 negative AND
-  ≥1 boundary TC.
+  ≥1 **boundary-or-edge** TC (a `BND` *or* `EDGE` case fills the third slot),
+  each a distinct case (no double-counting).
 
 **Exit**: every AC mapped; the canonical table + the AC↔TC matrix are complete.
 

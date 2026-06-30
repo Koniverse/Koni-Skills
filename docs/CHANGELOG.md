@@ -16,6 +16,37 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.21.1] — 2026-06-30 — koni-qc: re-grade fixes back to ≥95 after the by-US change — v0.21.1
+
+A **full 4-dimension re-grade** of koni-qc (not just the change-review) found it had
+slipped to **~91/100** after the v0.18–0.21 additions (skill-grading + test-organization
++ by-US): the "boundary-or-edge" doctrine hadn't propagated to all files, a trigger
+gap routed "where do tests live?" to the wrong skill, and two scoring lines read as
+fake-precise formulas. Fixed back to **97.25/100** (D1 25 · D2 24 · D3 24 · D4 24.25).
+
+### Fixed — `skills/koni-qc/`
+
+- **Completeness-rule drift**: `test-design.md` + `qc-workflow.md` said "≥1 boundary";
+  reconciled to the canonical **"≥1 boundary-or-edge"** (matches `traceability.md` +
+  the pilot, which fills the third slot with EDGE cases).
+- **`edge-coverage.md` mis-slotting**: EDGE cases (concurrency / network-failure /
+  state-race) were filed under the *negative* slot and network-failure was typed
+  `FUNC/E2E`; now EDGE fills the **boundary-or-edge** slot and maps to the **`EDGE`**
+  TYPE.
+- **Triggering gap (D1)**: koni-qc's description now triggers on "where test files /
+  specs / reports live" and "how to organize tests" — `test-organization` queries no
+  longer mis-route to koni-harness.
+- **Degrees-of-freedom (D4)**: the per-dimension `/25` scoring lines in
+  `skill-grading.md` are reframed as **heuristics** ("use judgment — there's no
+  validator"), not fake formulas. SKILL.md §2 now states epic = container, US = unit.
+
+### Docs
+
+- VERSION 0.21.0 → 0.21.1; this entry. validate green. Re-grade dogfooded via
+  koni-qc skill-grading (4 dimensions, D4 ×2 variance-averaged).
+
+---
+
 ## [0.21.0] — 2026-06-30 — koni-qc: coverage organized by user story, not epic — v0.21.0
 
 Re-checking Senti-Quant's matured QA practice (the by-US `QC-PLAN-BY-US`) showed

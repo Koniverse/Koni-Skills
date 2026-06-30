@@ -44,11 +44,11 @@ The procedure, run once per acceptance criterion:
 6. **Guess the errors** — run the AC through the
    [`edge-coverage.md`](edge-coverage.md) taxonomy and add the classes it flags
    (injection, encoding, concurrency, network failure, permission).
-7. **Classify every derived case** as positive / negative / boundary and assign
-   it a `TC-<EPIC>.<TYPE>-<n>` ID. The matrix rule
+7. **Classify every derived case** as positive / negative / boundary-or-edge and
+   assign it a `TC-<EPIC>.<TYPE>-<n>` ID. The matrix rule
    ([`traceability.md`](traceability.md)) requires *each AC* to end with **≥1
-   positive AND ≥1 negative AND ≥1 boundary** case — if any is missing, the AC
-   is not done.
+   positive AND ≥1 negative AND ≥1 boundary-or-edge** case (a `BND` *or* an `EDGE`
+   case fills the third slot) — if any is missing, the AC is not done.
 
 The output of this procedure is rows in the canonical test-case table, ready to
 fill in the koni-docs `test-cases/EPIC-N.md` container.
