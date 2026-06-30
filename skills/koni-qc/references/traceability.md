@@ -32,14 +32,23 @@ Every test case carries a stable ID: `TC-<EPIC>.<TYPE>-<n>`.
   | `SEC` | security — authn/authz, injection, data isolation |
   | `PERF` | performance — latency/throughput vs an SLA |
   | `A11Y` | accessibility — keyboard, screen-reader, contrast |
+  | `NEG` | negative — invalid/error input is rejected cleanly |
+  | `BND` | boundary — at/just-past a limit (min/max/zero/overflow) |
+  | `EDGE` | edge — concurrency, network-failure, encoding, state races |
+
+  `FUNC`/`SMK`/`E2E`/`API` carry happy-path coverage; `NEG`/`BND`/`EDGE` carry the
+  off-path coverage the matrix demands; `SEC`/`PERF`/`A11Y` carry the
+  non-functional axes. The TYPE code names the *category*; the matrix's
+  *Types covered* column records the positive/negative/boundary *classification*
+  independently (a `TC-CN.SEC-1` XSS case is category SEC, classification negative).
 
 - `<n>` — sequential within (epic, type), starting at `1`.
 
 **Never renumber.** A removed TC keeps its number (marked deprecated) so
 cross-references in test-reports, lessons, and PRs survive. This matches the
 koni-docs `test-cases/EPIC-N.md` convention exactly — koni-qc adds the extra
-TYPEs (FUNC/API/SEC/PERF/A11Y) on top of koni-docs' core set, it does not
-replace the scheme.
+TYPEs (FUNC/API/SEC/PERF/A11Y/NEG/BND/EDGE) on top of koni-docs' core set, it
+does not replace the scheme.
 
 ---
 
@@ -52,18 +61,18 @@ standard. Every functional/edge case is one row. The columns are fixed:
 
 | TC-ID | Name | Priority | Test data | Preconditions | Action/Request | Expected | Actual | Status | Perf | Side-effects | Covered-by |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| TC-CN.FUNC-1 | Add reachable EVM network | P0 | `https://rpc.ankr.com/eth` | Manage Network open, network not present | + → paste RPC → auto-detect → Save | EVM detected; name/symbol/decimals/chainId auto-filled; network appears in selector | — | ready | detect < 3s | 1 row added to custom-network store | — (manual) |
-| TC-CN.SEC-1 | Reject script in network name | P0 | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | ready | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
+| TC-CN.FUNC-1 | Add reachable EVM network | Critical | `https://rpc.ankr.com/eth` | Manage Network open, network not present | + → paste RPC → auto-detect → Save | EVM detected; name/symbol/decimals/chainId auto-filled; network appears in selector | — | Not Executed | detect < 3s | 1 row added to custom-network store | — (manual) |
+| TC-CN.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
 
 Column contract:
-- **Priority** — `P0..P3`, derived from risk (see §Risk-based priority).
+- **Priority** — `Critical / High / Medium / Low`, derived from risk (see §Risk-based priority). (Matches the Koni-Finance production standard.)
 - **Test data** — a concrete, reusable value, never "some valid input".
 - **Preconditions** — the system state before the action (the Gherkin *Given*).
 - **Action/Request** — the user action or the API request (the *When*).
 - **Expected** — the observable outcome + invariant (the *Then*).
-- **Actual / Status** — filled at execution; `ready/draft/pass/fail/blocked`.
-  Execution *history* lives in koni-docs `test-report.md`, not here — this
-  column is only the current state.
+- **Actual / Status** — filled at execution; `Not Executed / Pass / Fail /
+  Blocked / Skipped` (Koni-Finance vocabulary). Execution *history* lives in
+  koni-docs `test-report.md`, not here — this column is only the current state.
 - **Perf** — measured time **or** the SLA target the case asserts (see
   [`nfr.md`](nfr.md) §Performance).
 - **Side-effects** — DB writes, store mutations, events, files — the things a
@@ -85,16 +94,24 @@ Column contract:
 Every story's acceptance criteria are listed, each mapped to the TCs that cover
 it and the case *types* those TCs span.
 
-| Story | AC | AC description | TC(s) | Types covered |
-|---|---|---|---|---|
-| US-X.Y | AC-1 | Add a reachable network → appears in selector | TC-CN.FUNC-1, TC-CN.FUNC-7, TC-CN.FUNC-9 | positive, negative, boundary |
-| US-X.Y | AC-2 | Reject unreachable / invalid / duplicate RPC | TC-CN.FUNC-3, TC-CN.FUNC-4, TC-CN.FUNC-5 | negative, negative, boundary |
+| Story | AC | AC description | Positive | Negative | Boundary/edge |
+|---|---|---|---|---|---|
+| US-X.Y | AC-1 | Add a reachable network → appears in selector | TC-CN.FUNC-1 | TC-CN.NEG-1 | TC-CN.EDGE-3 |
+| US-X.Y | AC-2 | Reject duplicate network | TC-CN.SMK-1 | TC-CN.NEG-3 | TC-CN.BND-3 |
 
 **The completeness rule (non-negotiable):**
 
 > Every AC has **≥1 positive AND ≥1 negative AND ≥1 boundary** TC.
 > **No orphan AC** (an AC with no TC). **No orphan TC** (a TC that maps to no
 > AC). If any holds, the suite is incomplete and does not pass the gate.
+
+A **rejection-style AC** (e.g. *"reject an invalid RPC"*) still gets all three:
+its *positive* is the valid-input-accepted case (the inverse the rule protects),
+its *negative* is the rejection case(s), its *boundary* is the just-valid /
+just-invalid edge. There is no "where applicable" escape — if a class seems
+impossible, the AC is usually under-specified; re-read it via
+[`test-design.md`](test-design.md) before declaring a class N/A, and if truly
+N/A, log it in *Open / deferred* with the reason (never silently blank).
 
 How it is enforced:
 - An AC missing any of positive/negative/boundary → return to
@@ -116,17 +133,17 @@ It is the single most important difference between a koni-qc suite and the backu
 
 **Priority = impact × likelihood.** Impact = blast radius if it breaks (data
 loss, fund loss, auth bypass = high). Likelihood = how often the path runs ×
-how fragile it is. The product sets the `P0..P3` in the canonical table:
+how fragile it is. The product sets the priority in the canonical table:
 
 | | High impact | Med impact | Low impact |
 |---|---|---|---|
-| **High likelihood** | P0 | P0 | P1 |
-| **Med likelihood** | P0 | P1 | P2 |
-| **Low likelihood** | P1 | P2 | P3 |
+| **High likelihood** | Critical | Critical | High |
+| **Med likelihood** | Critical | High | Medium |
+| **Low likelihood** | High | Medium | Low |
 
-**Run-order under time pressure**: P0 first (release-blockers), then P1; P2/P3
-only if time remains. The order is the value of the priority column — a suite
-that can't all run still runs the cases that matter.
+**Run-order under time pressure**: Critical first (release-blockers), then High;
+Medium/Low only if time remains. The order is the value of the priority column —
+a suite that can't all run still runs the cases that matter.
 
 **Regression tagging (`RC-`)**: cases that guard the per-release baseline — a
 fixed bug must never return, a cross-story invariant must hold — are tagged
