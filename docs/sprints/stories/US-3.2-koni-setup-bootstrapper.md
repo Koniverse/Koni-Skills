@@ -103,7 +103,7 @@ No scope change to FR-20; see [CONTEXT D17](../../CONTEXT.md):
 
 | Refinement | What | Version | Commit |
 |---|---|---|---|
-| Core-trio baseline | Setup now wires the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) and runs koni-harness `install-gate.sh` (vendors `.koni-harness/` + git hooks), instead of koni-docs alone — SKILL.md step 5 + verify, skill-inventory baseline, skill-wiring commands | v0.20.0 | pending |
+| Core-trio baseline | Setup now wires the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) and runs koni-harness `install-gate.sh` (vendors `.koni-harness/` + git hooks), instead of koni-docs alone — SKILL.md step 5 + verify, skill-inventory baseline, skill-wiring commands | v0.20.0 | a59861a |
 
 ## References
 
