@@ -22,7 +22,7 @@ a deterministic gate between its stages.
 | 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
 | 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; LESSONS skimmed; DESIGN read if UI |
 | 3 | **Self-verify** | the agent | Code compiles; new tests written and green |
-| 4 | **Review / QA** | gstack `/design-review` (UI vs DESIGN.md) + **koni-qc** (test coverage) + code review | Self-verify passed; diff is reviewable |
+| 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md) → code-quality review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
 
@@ -34,6 +34,13 @@ a deterministic gate between its stages.
 > gstack `/design-review` (UI conformance to the repo's `DESIGN.md`), **koni-qc**
 > (test coverage), and code review. The one place gstack appears outside
 > brainstorm is the review stage (`/design-review`); it still never implements.
+>
+> **Execute keeps TDD as a discipline** (write the failing test first), but TDD
+> is the *practice* — the implementation tool is an Anthropic Skill, **not** the
+> Superpowers TDD skill. **Review runs in a fixed order**: (1) spec-compliance
+> (does the diff meet the story AC?) → (2) **koni-qc** (does every AC have
+> covering tests? the AC↔TC gate) → (3) gstack `/design-review` for UI → (4)
+> code-quality. So the only thing *before* koni-qc is the spec-compliance pass.
 
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:

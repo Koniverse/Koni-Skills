@@ -16,6 +16,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.17.1] — 2026-06-28 — koni-harness: fixed review order + TDD-as-discipline — v0.17.1
+
+Follow-up to v0.17.0 — pins the Review-stage order and clarifies TDD's place in
+Execute. Refines FR-21; no new story.
+
+### Changed — `skills/koni-harness/`
+
+- **Review runs in a fixed order**: (1) spec-compliance subagent → (2) **koni-qc**
+  (AC↔TC coverage gate) → (3) gstack `/design-review` for UI → (4) code-quality
+  subagent. So the only thing *before* koni-qc is the spec-compliance pass.
+  (Standard six-stage table + tool-split note; `loop-runner.md` review drive row.)
+- **TDD stays the discipline in Execute** (write the failing test first), but TDD
+  is the *practice* — the implementation **tool** is an Anthropic Skill, never the
+  Superpowers TDD skill. (Standard tool-split note; `loop-runner.md` execute row.)
+
+### Docs
+
+- VERSION 0.17.0 → 0.17.1; this entry. validate green.
+
+---
+
 ## [0.17.0] — 2026-06-28 — koni-harness × koni-qc tool-integration refinements — v0.17.0
 
 Refines the koni-harness loop's tool mapping and wires koni-qc + gstack
