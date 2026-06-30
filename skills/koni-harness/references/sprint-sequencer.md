@@ -18,8 +18,10 @@ a read-only query layer on top of it.
   missing/unknown sorts last), then by **id** as a tiebreak.
 - Prints one `- <id>  —  <title>` line per ready story and suggests the
   top pick: `→ start: loop.sh start <id>`.
-- If nothing is ready it prints `No ready stories in <sprint>. Run 'sprint.sh
-  status' to see blockers.` and still exits `0`.
+- If nothing is ready it prints one of two messages and still exits `0`: when
+  every story is done, `Sprint <id> is complete — all stories done.`; when stories
+  remain but all are blocked, `No ready stories in <sprint> (all remaining are
+  blocked). Run 'sprint.sh status' to see blockers.`
 
 **`status`** — the sprint at a glance.
 

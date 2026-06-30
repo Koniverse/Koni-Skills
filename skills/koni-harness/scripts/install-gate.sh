@@ -10,6 +10,9 @@ while [ $# -gt 0 ]; do
 done
 [ -n "$SRC" ] || SRC=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 git rev-parse --git-dir >/dev/null 2>&1 || { echo "install-gate: run from inside a git repo" >&2; exit 2; }
+# Install at the repo root, not the cwd: the vendored files and the chained hook
+# both anchor on the toplevel, so running from a subdirectory must not split them.
+TOP=$(git rev-parse --show-toplevel) && CDPATH= cd -- "$TOP" || { echo "install-gate: cannot cd to repo root" >&2; exit 2; }
 hooks=$(git rev-parse --git-path hooks)
 mkdir -p "$hooks"
 

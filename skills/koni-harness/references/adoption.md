@@ -8,6 +8,11 @@ idempotent and safe to re-run.
 `install-gate.sh` enforces this for you; this file is the procedure it follows
 (and the manual steps for the cases it leaves to you).
 
+**Contents**: [Procedure (checklist)](#procedure-checklist) ·
+[Marker-block discipline](#marker-block-discipline) ·
+[Recognize a prior 2-phase gate (don't duplicate)](#recognize-a-prior-2-phase-gate-dont-duplicate) ·
+[Idempotency](#idempotency) · [In *this* repo](#in-this-repo)
+
 ---
 
 ## Procedure (checklist)
@@ -39,11 +44,12 @@ idempotent and safe to re-run.
     adding inside the existing hook's language:
     `sh "$(git rev-parse --show-toplevel)/.koni-harness/gate-runner.sh" --phase <phase>`.
 
-- [ ] **Merge Claude `settings.json` — never replace.** Append the gate's
-      `PreToolUse` (or `Stop`) hook object into the existing array, preserving
-      every current key. If a conflicting hook already exists, print the snippet
-      and ask rather than overwrite. (See [`adapters.md`](adapters.md) for the
-      exact JSON.)
+- [ ] **Merge Claude `settings.json` — MANUAL step; `install-gate.sh` never
+      touches it.** The installer only vendors files and chains git hooks; wiring
+      the Claude hook is a separate hand-merge. Append the gate's `PreToolUse`
+      (or `Stop`) hook object into the existing array, preserving every current
+      key. If a conflicting hook already exists, print the snippet and ask rather
+      than overwrite. (See [`adapters.md`](adapters.md) for the exact JSON.)
 
 - [ ] **Leave existing gate config untouched.** If the repo already has a
       `.koni-harness/gates.conf`, do not overwrite it; if you want to suggest

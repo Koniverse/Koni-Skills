@@ -9,6 +9,11 @@
 > Each section is a tight checklist plus a **required when** risk trigger. Apply a
 > section only when its trigger fires — not every feature needs every category.
 
+**Contents**: [Security](#security) · [Performance](#performance) ·
+[Accessibility](#accessibility) · [UI / visual conformance to DESIGN.md](#ui--visual-conformance-to-designmd) ·
+[Internationalization](#internationalization) · [Reliability & resilience](#reliability--resilience) ·
+[Compatibility](#compatibility) · [Observability](#observability)
+
 ---
 
 ## Security

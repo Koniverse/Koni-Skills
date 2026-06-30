@@ -9,6 +9,15 @@
 
 ---
 
+**Contents**: [Overview](#overview) ·
+[Quick reference — test scenarios summary](#quick-reference--test-scenarios-summary) ·
+[Test scenarios](#test-scenarios) · [Coverage matrix (AC ↔ TC)](#coverage-matrix-ac--tc) ·
+[Open / deferred scenarios](#open--deferred-scenarios) ·
+[Self-grade vs `quality-bar.md`](#self-grade-vs-quality-barmd) ·
+[Before / after delta](#before--after-delta-vs-the-manual-backup)
+
+---
+
 ## Overview
 
 ### Scope
@@ -59,32 +68,36 @@ flaky networks; no duplicate or orphaned network state is created.
 
 ## Quick reference — test scenarios summary
 
+> The **AC** column lists the AC(s) each TC *touches*; for the slot role
+> (positive / negative / boundary-or-edge / NFR) see the §Coverage matrix below.
+
 | # | ID | Type | Priority | Short description | AC |
 |---|---|---|---|---|---|
 | 1 | TC-CN.SMK-1 | Smoke | Critical | Import a valid EVM RPC end-to-end | AC-1,3,5 |
 | 2 | TC-CN.FUNC-1 | Functional | Critical | Auto-detect + auto-fill (EVM); valid RPC accepted | AC-1,4 |
 | 3 | TC-CN.FUNC-2 | Functional | Critical | Auto-detect + auto-fill (Substrate) | AC-1 |
-| 4 | TC-CN.FUNC-3 | Functional | High | Override an auto-filled field, then save | AC-2,3 |
+| 4 | TC-CN.FUNC-3 | Functional | High | Override an auto-filled field, then save | AC-2 |
 | 5 | TC-CN.FUNC-4 | Functional | High | Saved network appears in selector | AC-3 |
 | 6 | TC-CN.FUNC-5 | Functional | High | Edit a custom network | AC-6 |
 | 7 | TC-CN.FUNC-6 | Functional | High | Delete a custom (not-in-use) network | AC-6 |
-| 8 | TC-CN.NEG-1 | Negative | Critical | Unreachable RPC → clear error, nothing saved | AC-4 |
+| 8 | TC-CN.NEG-1 | Negative | Critical | Unreachable RPC → clear error, nothing saved | AC-1,4 |
 | 9 | TC-CN.NEG-2 | Negative | High | Malformed URL → validation error | AC-4 |
 | 10 | TC-CN.NEG-3 | Negative | High | Duplicate network (same chain-id) rejected | AC-5 |
 | 11 | TC-CN.NEG-4 | Negative | High | Cannot delete an in-use / built-in network | AC-6 |
 | 12 | TC-CN.NEG-5 | Negative | High | Storage write fails on Save → no orphan network | AC-3 |
-| 13 | TC-CN.BND-1 | Boundary | Medium | Name at 64 (ok) / 65 (rejected) chars | AC-2 |
-| 14 | TC-CN.BND-2 | Boundary | Medium | Decimals 0 / max accepted; max+1 rejected | AC-2 |
-| 15 | TC-CN.BND-3 | Boundary | Medium | Same name, different chain-id → accepted (not a dup) | AC-5 |
-| 16 | TC-CN.BND-4 | Boundary | Medium | Rename a custom network onto an existing name → rejected | AC-6 |
-| 17 | TC-CN.SEC-1 | Security | Critical | XSS in network name is neutralized | AC-2 |
-| 18 | TC-CN.SEC-2 | Security | High | RPC URL sanitized (no SSRF to internal hosts) | AC-4 |
-| 19 | TC-CN.EDGE-1 | Edge | Medium | Emoji / non-ASCII name persists correctly | AC-2 |
-| 20 | TC-CN.EDGE-2 | Edge | High | Double-tap Save creates only one network | AC-3 |
-| 21 | TC-CN.EDGE-3 | Edge | High | Network drops mid-detect → graceful timeout | AC-1,4 |
-| 22 | TC-CN.PERF-1 | Performance | Medium | Detect completes within SLA (p95 ≤ 2.0s) | AC-1 |
-| 23 | TC-CN.A11Y-1 | Accessibility | Medium | Import form is keyboard-navigable + labelled | AC-1,2 |
-| 24 | TC-CN.REG-1 (`RC-1`) | Regression | Critical | Adding a custom network doesn't break built-ins | AC-3 |
+| 13 | TC-CN.NEG-6 | Negative | High | Override a field with an invalid type (non-numeric decimals) → rejected | AC-2 |
+| 14 | TC-CN.BND-1 | Boundary | Medium | Name at 64 (ok) / 65 (rejected) chars | AC-2 |
+| 15 | TC-CN.BND-2 | Boundary | Medium | Decimals 0 / max accepted; max+1 rejected | AC-2 |
+| 16 | TC-CN.BND-3 | Boundary | Medium | Same name, different chain-id → accepted (not a dup) | AC-5 |
+| 17 | TC-CN.BND-4 | Boundary | Medium | Rename a custom network onto an existing name → rejected | AC-6 |
+| 18 | TC-CN.SEC-1 | Security | Critical | XSS in network name is neutralized | AC-2 |
+| 19 | TC-CN.SEC-2 | Security | High | RPC URL sanitized (no SSRF to internal hosts) | AC-4 |
+| 20 | TC-CN.EDGE-1 | Edge | Medium | Emoji / non-ASCII name persists correctly | AC-2 |
+| 21 | TC-CN.EDGE-2 | Edge | High | Double-tap Save creates only one network | AC-3 |
+| 22 | TC-CN.EDGE-3 | Edge | High | Network drops mid-detect → graceful timeout | AC-1,4 |
+| 23 | TC-CN.PERF-1 | Performance | Medium | Detect completes within SLA (p95 ≤ 2.0s) | AC-1 |
+| 24 | TC-CN.A11Y-1 | Accessibility | Medium | Import form is keyboard-navigable + labelled | AC-1,2 |
+| 25 | TC-CN.REG-1 (`RC-1`) | Regression | Critical | Adding a custom network doesn't break built-ins | AC-3 |
 
 ## Test scenarios
 
@@ -92,11 +105,11 @@ Canonical rich-TC table (per koni-qc `traceability.md`).
 
 | TC-ID | Name | Priority | Test data | Preconditions | Action/Request | Expected | Actual | Status | Perf | Side-effects | Covered-by |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| TC-CN.SMK-1 | Import valid EVM RPC end-to-end | Critical | `RPC_EVM_OK` | No custom networks | Manage Network → + → paste RPC → Save | Detected EVM; fields auto-filled; saved; appears in selector | — | Not Executed | — | +1 network row | `e2e/customize-network.spec::smoke` |
+| TC-CN.SMK-1 | Import valid EVM RPC end-to-end | Critical | `RPC_EVM_OK` | No custom networks | Manage Network → + → paste RPC → Save | Detected EVM; fields auto-filled; saved; appears in selector | — | Not Executed | — | +1 network row | `e2e/customize-network.spec.ts::smoke` |
 | TC-CN.FUNC-1 | Auto-detect + fill (EVM); valid RPC accepted | Critical | `RPC_EVM_OK` | On import screen | Paste RPC, wait for detect | Chain=EVM; name/symbol/decimals/chain-id/explorer populated, editable; Save enabled | — | Not Executed | — | None (pre-save) | — (manual) |
 | TC-CN.FUNC-2 | Auto-detect + fill (Substrate) | Critical | `RPC_SUBSTRATE_OK` | On import screen | Paste WSS RPC | Chain=Substrate; fields populated | — | Not Executed | — | None | — (manual) |
 | TC-CN.FUNC-3 | Override auto-filled name, then save | High | `RPC_EVM_OK`, name "My EVM" | Detect succeeded | Edit name → Save | Saved network uses the overridden name | — | Not Executed | — | +1 network | — (manual) |
-| TC-CN.FUNC-4 | Saved network appears in selector | High | `RPC_EVM_OK` | Network saved (FUNC-1) | Open the provider/network selector | The new network is listed and selectable | — | Not Executed | — | None | `e2e/customize-network.spec::appears` |
+| TC-CN.FUNC-4 | Saved network appears in selector | High | `RPC_EVM_OK` | Network saved (FUNC-1) | Open the provider/network selector | The new network is listed and selectable | — | Not Executed | — | None | `e2e/customize-network.spec.ts::appears` |
 | TC-CN.FUNC-5 | Edit a custom network | High | custom `NET_X` | `NET_X` is custom | Edit → change explorer URL → Save | Change persists; selector reflects it | — | Not Executed | — | 1 row updated | — (manual) |
 | TC-CN.FUNC-6 | Delete a custom (not-in-use) network | High | custom `NET_X`, not selected | `NET_X` custom + not active | Delete `NET_X` → confirm | Removed from list & store | — | Not Executed | — | −1 network row | — (manual) |
 | TC-CN.NEG-1 | Unreachable RPC rejected | Critical | `RPC_UNREACHABLE` | On import screen | Paste → wait | Error "Cannot connect to this provider"; Save disabled; nothing saved | — | Not Executed | — | **None** (assert no row) | — (manual) |
@@ -104,34 +117,38 @@ Canonical rich-TC table (per koni-qc `traceability.md`).
 | TC-CN.NEG-3 | Duplicate network (same chain-id) rejected | High | RPC of `NET_EXISTING` | `NET_EXISTING` imported | Paste same RPC → Save | Rejected "Network already exists"; count unchanged | — | Not Executed | — | None | — (manual) |
 | TC-CN.NEG-4 | Cannot delete in-use / built-in | High | a built-in + the active network | A network is selected/in-use | Attempt delete | Delete blocked with explanation; network retained | — | Not Executed | — | None | — (manual) |
 | TC-CN.NEG-5 | Storage write fails on Save → no orphan | High | `RPC_EVM_OK` + injected store-write failure | Detect succeeded; store write will fail | Save | Error surfaced; **no partial/orphan network** persisted; list unchanged | — | Not Executed | — | None (assert atomic) | — (manual) |
+| TC-CN.NEG-6 | Override field with invalid type → rejected | High | decimals = `"abc"` (non-numeric) | Detect succeeded | Override decimals with a non-numeric value → Save | Rejected with a field-level validation error; nothing saved | — | Not Executed | — | None | — (manual) |
 | TC-CN.BND-1 | Name length boundary | Medium | `NAME_MAX` (64), `NAME_OVER` (65) | Detect succeeded | Save with 64 then 65 chars | 64 → saved; 65 → validation error | — | Not Executed | — | +1 (valid only) | — (manual) |
 | TC-CN.BND-2 | Decimals boundary | Medium | decimals 0, max, max+1 | Detect succeeded | Override decimals → Save | 0 & max accepted; max+1 rejected | — | Not Executed | — | +1 | — (manual) |
 | TC-CN.BND-3 | Same name, different chain-id → accepted | Medium | name of `NET_EXISTING`, new chain-id | `NET_EXISTING` imported | Add: same name, different chain-id → Save | Accepted (uniqueness is chain-id, not name) | — | Not Executed | — | +1 network | — (manual) |
 | TC-CN.BND-4 | Rename onto an existing name → rejected | Medium | custom `NET_X`, name of `NET_EXISTING` | both exist | Edit `NET_X` → set name = existing → Save | Rejected with a name-collision error; `NET_X` unchanged | — | Not Executed | — | None | — (manual) |
-| TC-CN.SEC-1 | XSS in name neutralized | Critical | `NAME_XSS` | Detect succeeded | Set name = `<script>…` → Save → view in selector | Stored & rendered as inert text; no script executes | — | Not Executed | — | +1 (sanitized) | `e2e/customize-network.spec::xss-name` |
+| TC-CN.SEC-1 | XSS in name neutralized | Critical | `NAME_XSS` | Detect succeeded | Set name = `<script>…` → Save → view in selector | Stored & rendered as inert text; no script executes | — | Not Executed | — | +1 (sanitized) | `e2e/customize-network.spec.ts::xss-name` |
 | TC-CN.SEC-2 | RPC URL sanitized (no SSRF) | High | `RPC_INTERNAL`, `http://localhost:…` | On import screen | Paste internal-host URL | Blocked; not dialed to internal metadata / loopback | — | Not Executed | — | None | — (manual) |
 | TC-CN.EDGE-1 | Emoji / non-ASCII name | Medium | `NAME_EMOJI` | Detect succeeded | Save emoji name → reopen | Persists & displays correctly (UTF-8); no mojibake | — | Not Executed | — | +1 | — (manual) |
 | TC-CN.EDGE-2 | Double-tap Save idempotent | High | `RPC_EVM_OK` | Detect succeeded | Tap Save twice quickly | Exactly **one** network created; button locks after first | — | Not Executed | — | +1 (not +2) | — (manual) |
 | TC-CN.EDGE-3 | Network flaky mid-detect | High | `RPC_EVM_OK` + throttle→offline | Detect in progress | Drop connection during detect | Graceful timeout + retryable error; no half-saved state | — | Not Executed | — | None | — (manual) |
 | TC-CN.PERF-1 | Detect within SLA | Medium | `RPC_EVM_OK` | On import screen | Measure detect time | p95 ≤ **2.0 s** on staging | — | Not Executed | target 2.0s | None | `perf/detect.bench` |
 | TC-CN.A11Y-1 | Form keyboard + labels | Medium | — | On import screen | Tab through form; screen-reader | Inputs reachable by keyboard, labelled, logical focus order, errors announced | — | Not Executed | — | None | — (manual) |
-| TC-CN.REG-1 | Built-ins intact after add (`RC-1`) | Critical | `RPC_EVM_OK` | Built-in networks present | Add a custom network | All built-in networks still present & selectable | — | Not Executed | — | +1 | `e2e/customize-network.spec::regress` |
+| TC-CN.REG-1 | Built-ins intact after add (`RC-1`) | Critical | `RPC_EVM_OK` | Built-in networks present | Add a custom network | All built-in networks still present & selectable | — | Not Executed | — | +1 | `e2e/customize-network.spec.ts::regress` |
 
 ## Coverage matrix (AC ↔ TC)
 
-Every AC has ≥1 positive **and** ≥1 negative **and** ≥1 boundary case — the check
-the manual backup suite lacked entirely. No orphan AC; no orphan TC.
+Every AC has ≥1 positive **and** ≥1 negative **and** ≥1 boundary-or-edge case,
+each filled by a **distinct** TC (no double-counting) — the check the manual
+backup suite lacked entirely. No orphan AC; no orphan TC.
 
 | AC | AC description | Positive | Negative | Boundary / edge | NFR |
 |---|---|---|---|---|---|
 | AC-1 | Auto-detect + auto-fill | TC-CN.FUNC-1, FUNC-2, SMK-1 | TC-CN.NEG-1 | TC-CN.EDGE-3 | TC-CN.PERF-1, A11Y-1 |
-| AC-2 | Override fields | TC-CN.FUNC-3 | TC-CN.BND-1 (65-char rejected), BND-2 (max+1 rejected) | TC-CN.BND-1, BND-2, EDGE-1 | TC-CN.SEC-1, A11Y-1 |
+| AC-2 | Override fields | TC-CN.FUNC-3 | TC-CN.NEG-6 | TC-CN.BND-1, BND-2, EDGE-1 | TC-CN.SEC-1, A11Y-1 |
 | AC-3 | Persist + appears in selector | TC-CN.FUNC-4, SMK-1, REG-1 | TC-CN.NEG-5 | TC-CN.EDGE-2 | — |
 | AC-4 | Reject invalid / unreachable RPC | TC-CN.FUNC-1 (valid accepted) | TC-CN.NEG-1, NEG-2 | TC-CN.EDGE-3 | TC-CN.SEC-2 |
 | AC-5 | Reject duplicate | TC-CN.SMK-1 (new accepted) | TC-CN.NEG-3 | TC-CN.BND-3 | — |
 | AC-6 | Edit / delete rules | TC-CN.FUNC-5, FUNC-6 | TC-CN.NEG-4 | TC-CN.BND-4 | — |
 
-**Every AC row has positive + negative + boundary coverage.** Each TC in the
+**Every AC row has a distinct positive, negative, and boundary-or-edge TC** (AC-1,
+AC-3, AC-4 use an EDGE case for the third slot — explicitly allowed by the
+[`traceability.md`](traceability.md) "boundary-or-edge" rule). Each TC in the
 matrix exists as a row in §Test scenarios (no orphan TC); each AC is covered (no
 orphan AC). Regression baseline = the `RC-` set: **RC-1** (TC-CN.REG-1), run
 every release.
@@ -146,17 +163,22 @@ every release.
 
 **Band A — beat the manual backup (all must clear):**
 - [x] Explicit TC IDs — `TC-CN.<TYPE>-<n>`
-- [x] AC↔TC matrix — complete; every AC pos+neg+boundary; no orphans
-- [x] ≥50% negative/boundary — 5 NEG + 4 BND + 3 EDGE of 24 cases (50%) off-path
+- [x] AC↔TC matrix — complete; every AC has a distinct pos + neg + boundary-or-edge; no orphans, no double-counting
+- [x] ≥50% off-path — 6 NEG + 4 BND + 3 EDGE = 13 of 25 cases (52%) off-path
 - [x] NFR present — SEC-1/2, PERF-1, A11Y-1
-- [x] Coverage matrix — §Coverage matrix
+- [ ] Coverage % reported — **N/A for this authoring artifact** (execution item;
+  satisfied at Execute when the run reports % by AC/type). The authoring AC↔TC
+  matrix itself is the row above.
 - [x] Test-data strategy — named reusable fixtures + teardown
 - [x] Entry/exit criteria — `qc-workflow.md`; release gate on matrix + RC set
 - [x] Test lifecycle — Open/deferred; deprecate-not-renumber per scheme
 - [x] Risk-based order — Critical→Low priorities
 - [x] Regression scope — `RC-1` baseline
-- [x] Automation linkage — Covered-by column (`*.spec` / `bench` handles)
-- [x] Real reports — execution → koni-docs `test-report.md` (run instrumentation)
+- [x] Automation linkage — Covered-by column (`*.spec.ts` / `bench` handles)
+- [ ] Real reports — **N/A for this authoring artifact** (all 25 rows are `Not
+  Executed`); satisfied at the Execute stage when the koni-docs `test-report.md`
+  is filled. Per `quality-bar.md`, the two execution-stage Band-A items (Real
+  reports + Coverage % reported) are deferred-not-failed for an Author-mode suite.
 
 **Band B — match the Koni-Finance standard:**
 - [x] Rich per-TC metadata table (12 columns)
@@ -189,7 +211,7 @@ every release.
 | Risk ordering | equal (row order) | Critical→Low |
 | Regression scope | undefined | `RC-1` baseline |
 
-58 shallow manual cases → **24 typed, traced, risk-ordered, edge/NFR/security-complete**
+58 shallow manual cases → **25 typed, traced, risk-ordered, edge/NFR/security-complete**
 cases that pass koni-qc's own quality bar — the same feature, covered to a standard
 the manual suite never reached, and to a completeness (full AC↔TC matrix) the
 Koni-Finance production suite did not have either. A full production suite expands

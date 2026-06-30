@@ -8,6 +8,11 @@ For how the runner is wired into git / Claude Code / Gemini / Codex, see
 [`adapters.md`](adapters.md). For non-destructive install, see
 [`adoption.md`](adoption.md).
 
+**Contents**: [Phases and severities](#phases-and-severities) ·
+[Invoking the release-commit phase](#invoking-the-release-commit-phase) ·
+[The six built-in checks](#the-six-built-in-checks) ·
+[Config grammar](#config-grammar) · [Adding a custom check](#adding-a-custom-check)
+
 ---
 
 ## Phases and severities
@@ -110,6 +115,12 @@ enforce release-time checks.
   value). Low-confidence heuristics are deliberately out of scope to avoid
   false positives. A repo can add `.koni-harness/secret-allow` — one substring
   per line; matching added lines are filtered out before scanning.
+- **Allowlist sharp edge**: the allowlist is a **substring** filter, so each entry
+  must be the **full distinctive secret value** you are exempting — never a short
+  common token. An entry like `api_key` would strip *every* added line containing
+  that substring (including a line that also carries a real leaked value), silently
+  defeating the scan. Allowlist the whole value (e.g. the exact test fixture
+  string), not a generic word.
 - **Phase(s)**: `work-commit`, `pre-push`
 - **Default severity**: `block`
 - **Generalizes from**: Senti-Quant's credential-isolation discipline.
@@ -217,3 +228,15 @@ Parsing rules:
 
 The runner is the only orchestrator — checks never call each other. New checks
 should start at `warn` and graduate to `block` once the repo runs clean.
+
+> **Calling convention**: the runner always invokes a check as
+> `sh <script> "<arg>"` — your check receives **exactly one positional argument**,
+> which is the empty string when the `arg` column is blank. A `set -eu` check that
+> shifts positionals should default it (`a=${1:-}`), not assume it is absent.
+
+> **Path foot-gun**: a relative `script` is resolved against the **runner's**
+> directory, *not* against the `gates.conf` location or the cwd. So a custom
+> check must live in `.koni-harness/checks/` (next to the runner) or be named by
+> an absolute path. If you test with `--config ./elsewhere/gates.conf`, a
+> relative `checks/foo.sh` there will be looked up next to `gate-runner.sh`, not
+> next to your config — use an absolute path in that case.

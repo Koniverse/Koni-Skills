@@ -14,6 +14,14 @@ trusting that the author thought of everything. The backup suite skipped this
 step, which is why it landed at ~70% happy-path with no boundary or negative
 coverage. koni-qc makes derivation explicit.
 
+**Contents**: [Deriving cases from an AC](#deriving-cases-from-an-ac) ·
+[Equivalence partitioning](#equivalence-partitioning) ·
+[Boundary-value analysis](#boundary-value-analysis) ·
+[Decision tables](#decision-tables) ·
+[State-transition testing](#state-transition-testing) ·
+[Pairwise / combinatorial](#pairwise--combinatorial) ·
+[Error-guessing](#error-guessing)
+
 ---
 
 ## Deriving cases from an AC
@@ -76,10 +84,15 @@ their seams.
 **When to use**: any ordered or sized input — string length, numeric limits,
 counts, decimals, pagination size, timeouts.
 
-**Worked example** — AC: *"Token decimals is an integer 0–18."* Boundaries: `-1`
-(just below → reject), `0` (min, valid), `18` (max, valid), `19` (just above →
-reject). The `0` and `18` cases are the boundary coverage the matrix requires;
-`-1`/`19` are the negative coverage. The backup tested only "decimals = 18".
+**Worked example** — AC: *"Token decimals is an integer 0–18."* The BVA probes
+are `0`/`18` (just-valid, accepted) and `-1`/`19` (just-invalid, rejected) —
+together these are **one boundary (`BND`) case** that asserts both the just-valid
+accept *and* the just-invalid reject at each edge (this is how the matrix's
+boundary slot is filled; see the no-double-counting rule in
+[`traceability.md`](traceability.md)). A **negative (`NEG`)** case is different:
+it rejects a value from a *wrong partition* — wrong type or malformed, e.g.
+decimals = `"abc"` — not a value one step past a numeric edge. The backup tested
+only "decimals = 18".
 
 ---
 

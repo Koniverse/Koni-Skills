@@ -16,6 +16,60 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.17.2] — 2026-06-28 — koni-harness & koni-qc: graded hardening to ≥95/100 — v0.17.2
+
+Acted on a multi-skill grading pass (skill-creator triggering eval · writing-skills
+pressure-tests · author-blind code-review · Anthropic best-practices rubric).
+Fixes every blocking/medium finding on both skills and lifts each to ≥95/100.
+Refines FR-21 + FR-26; no new story.
+
+### Changed — `skills/koni-harness/`
+
+- **install-gate.sh** now `cd`s to the repo toplevel before vendoring, so running
+  it from a subdirectory installs at the root (was: split `.koni-harness/` vs
+  hook path → every commit failed). New regression test in `gate-test.sh`.
+- **loop.sh** `--tier` now rejects a missing/flag value instead of swallowing the
+  next flag.
+- **Docs corrected**: `settings.json` is a **manual** merge (the installer never
+  edits it); the additive invariant clarifies vendored files are refreshed in
+  place; credential-allowlist substring foot-gun and custom-check relative-path
+  foot-gun documented in `gate-catalog.md`; stale `sprint.sh` "none ready"
+  message and stale "Superpowers executes" intro fixed.
+- **CSO + structure**: description rewritten to triggers-only (no owns/delegates
+  summary); SKILL.md ownership de-duplicated; TOCs added to the 3 long
+  references; new worked end-to-end example `references/example-loop.md`.
+
+### Changed — `skills/koni-qc/`
+
+- **AC↔TC rule made airtight**: the completeness rule is now "≥1 positive AND
+  ≥1 negative AND ≥1 **boundary-or-edge**", with an explicit **no-double-counting**
+  clause; the ≥50% Band-A gate is defined as off-path = NEG+BND+EDGE everywhere.
+- **Pilot complies strictly**: added `TC-CN.NEG-6` so AC-2 has an independent
+  negative (was double-counting BND); 25 cases, 13 off-path (52%); standardized
+  `Covered-by` to `.spec.ts::`; matrix notes the EDGE-for-boundary cases as
+  rule-sanctioned.
+- **Vocabulary unified**: priority is Critical/High/Medium/Low everywhere
+  (removed residual P0..P3 in `quality-bar.md`/`qc-workflow.md`); canonical-table
+  demo rows use placeholder IDs (`TC-XX.*`) + consistent SLA; phantom *Notes*
+  column reference removed; "above 50%" → "at or above".
+- **Gaps closed**: a "derive ACs from FRs when none are written" step in Frame;
+  CSO description rewrite (triggers-only); TOCs on the 5 long references; the
+  SKILL.md quality-bar narration trimmed to a pointer.
+
+### Graded result (multi-skill grading, 3 review rounds + variance-averaged rubric)
+
+- **koni-harness 96/100**, **koni-qc 97/100** — both ≥95. Per dimension (/25):
+  triggering 25/25 both (blind-router 17/17, perfect precision+recall);
+  hard-rule-under-pressure 24 both (3/3 GREEN); author-blind review 24 both
+  ("ship-ready", no Critical/Important findings left); best-practices rubric 23
+  (harness) / 24 (qc), stable across two independent passes.
+
+### Docs
+
+- VERSION 0.17.1 → 0.17.2; this entry. validate green; harness suites 113/113.
+
+---
+
 ## [0.17.1] — 2026-06-28 — koni-harness: fixed review order + TDD-as-discipline — v0.17.1
 
 Follow-up to v0.17.0 — pins the Review-stage order and clarifies TDD's place in

@@ -230,6 +230,25 @@ EOF
 }
 test_runner_dry_run
 
+# install-gate must anchor on the repo root even when invoked from a subdirectory
+test_install_from_subdir() {
+  INS="$SCRIPTS/install-gate.sh"
+  d=$(newrepo)
+  mkdir -p "$d/sub/deep"
+  ( cd "$d/sub/deep" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  [ -f "$d/.koni-harness/gate-runner.sh" ] \
+    && ok "install: vendors to repo root when run from a subdir" \
+    || no "install: vendors to repo root when run from a subdir"
+  [ ! -e "$d/sub/deep/.koni-harness" ] \
+    && ok "install: leaves nothing in the subdir" \
+    || no "install: leaves nothing in the subdir"
+  grep -q '>>> koni-harness >>>' "$d/.git/hooks/pre-commit" \
+    && ok "install: chains pre-commit from a subdir run" \
+    || no "install: chains pre-commit from a subdir run"
+  rm -rf "$d"
+}
+test_install_from_subdir
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

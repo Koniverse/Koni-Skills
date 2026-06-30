@@ -10,6 +10,14 @@ from [`traceability.md`](traceability.md) is the artifact that flows through all
 
 ---
 
+**Contents**: [1. Frame](#1-frame) · [2. Design](#2-design) ·
+[3. Self-review](#3-self-review) · [4. Execute](#4-execute) ·
+[5. Release gate](#5-release-gate) · [Entry / exit criteria](#entry--exit-criteria) ·
+[Test-data & fixtures strategy](#test-data--fixtures-strategy) ·
+[Test lifecycle](#test-lifecycle)
+
+---
+
 ## 1. Frame
 
 Decide *what* is under test and *when* it is done.
@@ -19,6 +27,12 @@ Decide *what* is under test and *when* it is done.
 - **Read the inputs** — invoke **koni-docs** to read the PRD FRs, stories + AC, and
   ARCHITECTURE for the epic. These are the source of truth; AC are the units the
   matrix traces.
+- **Derive ACs if none are written** — the whole method is AC-anchored, so if the
+  story has FRs but no story-level acceptance criteria, derive them first: turn
+  each FR / user-facing behaviour into one testable, observable AC (a *Given →
+  When → Then* the matrix can trace). Prefer invoking **BMAD** to author the
+  missing ACs back into the story; never invent untracked ACs that live only in
+  the test doc. If an FR is too vague to yield an AC, raise it as a PRD/story gap.
 - **Define scope** — in / out of scope; which surfaces; regression blast radius.
 - **Define entry / exit** — the criteria below; written before any case is authored.
 - **Define environment** — target build, data, accounts, feature flags.
@@ -81,7 +95,7 @@ Run the cases and instrument the results — koni-qc does not run tests itself.
 - **Execution instrumentation** — coverage % by AC and by type, pass / fail / blocked
   counts, and **perf vs SLA** (measured against the budgets in [`nfr.md`](nfr.md)).
 
-**Exit**: every P0/P1 case executed; results + instrumentation recorded.
+**Exit**: every Critical/High case executed; results + instrumentation recorded.
 
 ---
 
@@ -104,7 +118,7 @@ Turn results into a ship decision.
 |---|---|---|
 | **Inputs** | PRD/stories/AC/ARCH read; env ready | — |
 | **Coverage** | scope agreed | AC↔TC matrix complete, no orphans |
-| **Execution** | suite passes self-review | all P0/P1 run; 0 P0 failures open |
+| **Execution** | suite passes self-review | all Critical/High run; 0 Critical failures open |
 | **NFR** | required triggers identified | required NFR sections executed |
 | **Perf** | SLA budgets set | p95 within budget or waiver logged |
 | **Decision** | — | release report + ship decision recorded |

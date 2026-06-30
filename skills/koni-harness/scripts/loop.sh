@@ -25,7 +25,7 @@ idx_of() { # stage -> 1-based index, 0 if unknown
 do_start() {
   story=""; tier=2
   while [ $# -gt 0 ]; do case "$1" in
-    --tier) tier=$2; shift 2 ;;
+    --tier) tier=${2:-}; case "$tier" in ''|-*) echo "loop start: --tier needs an integer value" >&2; exit 2 ;; esac; shift 2 ;;
     --state) STATE=$2; shift 2 ;;
     -*) echo "loop start: unknown $1" >&2; exit 2 ;;
     *) story=$1; shift ;;
@@ -39,7 +39,7 @@ do_start() {
 }
 
 do_status() {
-  while [ $# -gt 0 ]; do case "$1" in --state) STATE=$2; shift 2 ;; *) shift ;; esac; done
+  while [ $# -gt 0 ]; do case "$1" in --state) STATE=$2; shift 2 ;; *) echo "loop status: unexpected arg '$1'" >&2; exit 2 ;; esac; done
   [ -f "$STATE" ] || { echo "loop: no active loop ($STATE not found)"; return 0; }
   echo "story:   $(kv_get story "$STATE")"
   echo "tier:    $(kv_get tier "$STATE")"
@@ -62,7 +62,7 @@ do_enter() {
   while [ $# -gt 0 ]; do case "$1" in
     --state) STATE=$2; shift 2 ;;
     -*) echo "loop enter: unknown $1" >&2; exit 2 ;;
-    *) stage=$1; shift ;;
+    *) [ -z "$stage" ] || { echo "loop enter: unexpected extra arg '$1'" >&2; exit 2; }; stage=$1; shift ;;
   esac; done
   [ -n "$stage" ] || { echo "loop enter: <stage> required" >&2; exit 2; }
   [ -f "$STATE" ] || { echo "loop enter: no active loop; run 'loop.sh start' first" >&2; exit 2; }
@@ -74,8 +74,9 @@ do_enter() {
     exit 0
   fi
   tier=$(kv_get tier "$STATE"); entered=$(kv_get entered "$STATE")
+  case "$tier" in ''|*[!0-9]*) tier=2 ;; esac   # harden against a corrupted/hand-edited state
   [ "$ni" -lt "$ci" ] && echo "loop WARN: entering '$stage' is before current '$cur' (going backward)" >&2
-  if [ "$stage" = commit ] && [ "${tier:-2}" -ge 1 ]; then
+  if [ "$stage" = commit ] && [ "$tier" -ge 1 ]; then
     echo ",$entered," | grep -q ",self-verify," || \
       echo "loop WARN: entering 'commit' without 'self-verify' (tier $tier)" >&2
   fi
@@ -90,7 +91,7 @@ do_gate() {
   while [ $# -gt 0 ]; do case "$1" in
     --state) STATE=$2; shift 2 ;;
     -*) echo "loop gate: unknown $1" >&2; exit 2 ;;
-    *) phase=$1; shift ;;
+    *) [ -z "$phase" ] || { echo "loop gate: unexpected extra arg '$1'" >&2; exit 2; }; phase=$1; shift ;;
   esac; done
   [ -n "$phase" ] || { echo "loop gate: <phase> required" >&2; exit 2; }
   runner="$SELF_DIR/gate-runner.sh"
@@ -102,7 +103,7 @@ do_gate() {
 }
 
 do_complete() {
-  while [ $# -gt 0 ]; do case "$1" in --state) STATE=$2; shift 2 ;; *) shift ;; esac; done
+  while [ $# -gt 0 ]; do case "$1" in --state) STATE=$2; shift 2 ;; *) echo "loop complete: unexpected arg '$1'" >&2; exit 2 ;; esac; done
   [ -f "$STATE" ] || { echo "loop complete: no active loop" >&2; exit 2; }
   kv_set stage complete "$STATE"; kv_set updated "$(now)" "$STATE"
   echo "loop: complete"

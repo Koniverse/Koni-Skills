@@ -8,6 +8,8 @@
 > feeds [`traceability.md`](traceability.md) (the negative/boundary half of the
 > AC↔TC matrix).
 
+**Contents**: [The edge-case taxonomy](#the-edge-case-taxonomy) · [How to apply](#how-to-apply)
+
 The backup suite's single largest defect was distribution: ~70% of its cases
 exercised the happy path, ~25% were thin negatives, and edge classes
 (injection, encoding, concurrency, network failure) were essentially absent. A
@@ -43,10 +45,10 @@ names the backup gap it closes so the uplift is traceable.
 1. **Run the full list, every feature.** The taxonomy is a gate, not a buffet.
    A row you skip must be justified in the suite's *Open / deferred scenarios*
    with an owner — silence is a gap, not a pass.
-2. **Budget ≥50% negative + boundary.** Across the finished suite, at least half
-   the cases must be negative or boundary (rows 1–10 above), not happy-path.
-   This is a [`quality-bar.md`](quality-bar.md) Band-A item and is checked in
-   self-review. The backup sat near 25%; the pilot lands above 50%.
+2. **Budget ≥50% off-path.** Across the finished suite, at least half the cases
+   must be **off-path = negative (NEG) + boundary (BND) + edge (EDGE)**, not
+   happy-path. This is a [`quality-bar.md`](quality-bar.md) Band-A item and is
+   checked in self-review. The backup sat near 25%; the pilot lands at or above 50%.
 3. **Map each edge case to its AC and TYPE.** An injection case is `TC-*.SEC-*`,
    a network-failure case is often `TC-*.FUNC-*` or `TC-*.E2E-*` — record it in
    the canonical table with the right TYPE so it counts in the AC↔TC matrix.

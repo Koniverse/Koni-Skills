@@ -1,29 +1,21 @@
 ---
 name: koni-qc
 description: >
-  Turns koni-docs-standard inputs (PRD FRs, stories + acceptance criteria,
-  ARCHITECTURE, epics) into Silicon-Valley-grade, fully-traceable test
-  documentation and drives quality-control execution — covering every case and
-  edge case so a product ships smoothly. Use this whenever the user says "write
-  test cases", "build a test plan", "QC / QA this", "cover the edge cases",
-  "coverage matrix", "test this epic / feature / product", "QA the release", or
-  asks how thorough the testing is — even if they don't name koni-qc. It owns the
-  QC METHODOLOGY (test-design techniques, the edge-case taxonomy, the mandatory
-  AC↔TC coverage matrix, non-functional + security testing, risk-based
-  prioritization, and a quality rubric); it DELEGATES the doc templates to
-  koni-docs, execution to gstack, and the commit/release gate + loop to
-  koni-harness — it composes them, it never reproduces them.
+  Use when building test documentation or running quality control on a feature,
+  epic, or release — e.g. the user says "write test cases", "build a test plan",
+  "QC / QA this", "cover the edge cases", "coverage matrix", "traceability",
+  "test this epic / feature / product", "QA the release", "is our testing
+  thorough enough", or "grade the test suite" — even if they don't name koni-qc.
+  Also use when checking that every acceptance criterion is covered by positive,
+  negative, and boundary tests, when hunting missing edge cases, or when
+  verifying a UI against DESIGN.md before shipping.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
-> **What this skill adds, and what it doesn't.** Koni already has the *templates*
-> (koni-docs `test-cases.md` / `test-report.md` + the `docs/tests/` tree), the
-> *execution engine* (gstack `qa` / `investigate` / `browse`), and the *gate*
-> (koni-harness). What none of them has is the **intelligence to derive
-> exhaustive, traceable coverage from requirements** — that is koni-qc. It is a
-> methodology layer that fills the existing templates with far better content and
-> drives the existing engine. The day it would copy a koni-docs template or a
-> gstack procedure, it's doing the wrong thing.
+> koni-qc is the **intelligence to derive exhaustive, traceable coverage from
+> requirements** — the one thing koni-docs (templates), gstack (execution), and
+> koni-harness (gate) don't provide. It *fills* those templates and *drives* that
+> engine; it never reproduces them (the ownership split is §1).
 
 ---
 
@@ -70,16 +62,13 @@ never re-implements the right-column owners.
 
 ## 4. The quality bar
 
-koni-qc's promise is **test docs that are better than both** the hand-made
-Koniverse suites *and* the best deliberately-authored ones. The rubric in
-[`references/quality-bar.md`](references/quality-bar.md) makes that concrete in
-three bands: (A) beat the weak manual baseline's gaps — explicit TC IDs, the
-AC↔TC matrix, ≥50% negative/boundary, NFR present, real reports; (B) match the
-production standard — rich per-TC metadata, a dedicated security suite, concrete
-reusable test data, execution instrumentation; (C) close even *its* gaps — a
-*complete* AC↔TC matrix, an env/fixtures playbook, a11y/i18n, perf SLAs, cadence.
-A test doc passes only when it clears all of Band A and demonstrably exceeds B
-and C. Self-grade against it before review.
+koni-qc's promise is **test docs better than both** the weak hand-made Koniverse
+suites *and* the best deliberately-authored ones. A suite is graded in three
+bands (A beat the manual baseline · B match the production standard · C close
+even its residual gaps) and passes only when it clears all of Band A and
+demonstrably exceeds B and C. The bands, their items, and the pass rule live in
+[`references/quality-bar.md`](references/quality-bar.md) — self-grade against it
+before review; do not restate the bands here.
 
 ---
 

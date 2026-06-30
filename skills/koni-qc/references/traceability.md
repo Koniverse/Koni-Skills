@@ -11,6 +11,12 @@ Traceability answers two questions a reviewer must be able to answer in seconds:
 requirement?"* (no orphan TC). Without it, a 250-case suite can still leave a
 critical AC untested and nobody notices. With it, coverage is provable.
 
+**Contents**: [TC-ID scheme](#tc-id-scheme) ·
+[The canonical test-case table](#the-canonical-test-case-table) ·
+[AC↔TC coverage matrix](#actc-coverage-matrix) ·
+[Risk-based priority & regression](#risk-based-priority--regression) ·
+[koni conventions preserved](#koni-conventions-preserved)
+
 ---
 
 ## TC-ID scheme
@@ -62,8 +68,12 @@ standard. Every functional/edge case is one row. The columns are fixed:
 
 | TC-ID | Name | Priority | Test data | Preconditions | Action/Request | Expected | Actual | Status | Perf | Side-effects | Covered-by |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| TC-CN.FUNC-1 | Add reachable EVM network | Critical | `https://rpc.ankr.com/eth` | Manage Network open, network not present | + → paste RPC → auto-detect → Save | EVM detected; name/symbol/decimals/chainId auto-filled; network appears in selector | — | Not Executed | detect < 3s | 1 row added to custom-network store | — (manual) |
-| TC-CN.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
+| TC-XX.FUNC-1 | Add reachable EVM network | Critical | `https://rpc.ankr.com/eth` | Manage Network open, network not present | + → paste RPC → auto-detect → Save | EVM detected; name/symbol/decimals/chainId auto-filled; network appears in selector | — | Not Executed | detect < 2.0s | 1 row added to custom-network store | — (manual) |
+| TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
+
+> These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
+> suite's IDs. The **`Covered-by`** handle format is fixed: `<path>.spec.ts::<name>`
+> for automated cases, or `— (manual)`.
 
 Column contract:
 - **Priority** — `Critical / High / Medium / Low`, derived from risk (see §Risk-based priority). (Matches the Koni-Finance production standard.)
@@ -97,14 +107,36 @@ it and the case *types* those TCs span.
 
 | Story | AC | AC description | Positive | Negative | Boundary/edge |
 |---|---|---|---|---|---|
-| US-X.Y | AC-1 | Add a reachable network → appears in selector | TC-CN.FUNC-1 | TC-CN.NEG-1 | TC-CN.EDGE-3 |
-| US-X.Y | AC-2 | Reject duplicate network | TC-CN.SMK-1 | TC-CN.NEG-3 | TC-CN.BND-3 |
+| US-X.Y | AC-1 | Add a reachable network → appears in selector | TC-XX.FUNC-1 | TC-XX.NEG-1 | TC-XX.EDGE-3 |
+| US-X.Y | AC-2 | Reject duplicate network | TC-XX.SMK-1 | TC-XX.NEG-3 | TC-XX.BND-3 |
 
 **The completeness rule (non-negotiable):**
 
-> Every AC has **≥1 positive AND ≥1 negative AND ≥1 boundary** TC.
-> **No orphan AC** (an AC with no TC). **No orphan TC** (a TC that maps to no
-> AC). If any holds, the suite is incomplete and does not pass the gate.
+> Every AC has **≥1 positive AND ≥1 negative AND ≥1 boundary-or-edge** TC
+> (a `BND` *or* an `EDGE` case satisfies the third slot). **No orphan AC** (an AC
+> with no TC). **No orphan TC** (a TC that maps to no AC). If any holds, the suite
+> is incomplete and does not pass the gate.
+>
+> **No double-counting**: a single TC satisfies **at most one** of the
+> positive / negative / boundary-or-edge slots for a given AC. If an AC's only
+> negative is also its only boundary case, it is missing one class — add a
+> distinct case.
+>
+> **BND vs NEG (the one classification rule that keeps the slots distinct):** a
+> `BND` case is a min/max±1 *boundary probe* that asserts **both** the just-valid
+> accept and the just-invalid reject at an edge (one case, the boundary slot). A
+> `NEG` case rejects a value from a **wrong partition** — wrong type, malformed,
+> missing, unauthorized — *not* a value one step past a numeric edge. So
+> "decimals = 19" is `BND`; "decimals = `abc`" is `NEG`. (See the BVA worked
+> example in [`test-design.md`](test-design.md).)
+>
+> **Prefer a value-boundary for the third slot**: when the AC has an ordered/sized
+> input, fill the boundary slot with a real `BND` case that probes both sides of
+> the edge; fall back to an `EDGE` case (concurrency, network-failure, encoding)
+> only when the AC has no natural value boundary. For a **non-ordinal predicate**
+> (uniqueness, membership, a name collision — no numeric min/max), a `BND` case
+> may probe a single side of the equivalence-class edge (the just-inside-accept
+> *or* the just-outside-reject), since there is no two-sided numeric edge to assert.
 
 A **rejection-style AC** (e.g. *"reject an invalid RPC"*) still gets all three:
 its *positive* is the valid-input-accepted case (the inverse the rule protects),
@@ -166,8 +198,8 @@ them:
   step-level detail; the parent TC-ID owns the matrix entry.
 - **Explicit preconditions** — the Preconditions column is mandatory, never
   blank, never "logged in" alone — name the exact state.
-- **Issue-tracker links** — a case born from a bug links the issue in *Notes* /
-  Covered-by; an `RC-` regression cites the bug it guards.
+- **Issue-tracker links** — a case born from a bug links the issue in its
+  `Covered-by` cell; an `RC-` regression cites the bug it guards.
 - **Native-language steps** — Vietnamese (or other) step text is allowed in
   internal suites; the canonical docs (koni-docs templates) remain English-only
   per RULE-13.

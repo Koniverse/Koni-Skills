@@ -8,10 +8,17 @@ into a given tool is documented separately in
 [`adapters.md`](adapters.md), and the gate that enforces it is documented in
 [`gate-catalog.md`](gate-catalog.md).
 
-Koni already owns every *stage* of the loop (BMAD plans, Superpowers executes,
-gstack reviews, koni-docs gates docs + version, koni-setup bootstraps). What
-this Standard adds is the **connective tissue**: a shared name for the loop and
-a deterministic gate between its stages.
+Koni already owns every *stage* of the loop (BMAD + Superpowers + gstack plan and
+review, Anthropic Skills implement, koni-qc gates test coverage, koni-docs gates
+docs + version, koni-setup bootstraps). What this Standard adds is the
+**connective tissue**: a shared name for the loop and a deterministic gate
+between its stages.
+
+**Contents**: [The six stages](#the-six-stages) ·
+[Right-sizing the loop](#right-sizing-the-loop) ·
+[Context layers and load order](#context-layers-and-load-order) ·
+[Portability contract](#portability-contract) ·
+[Harness engineering principles](#harness-engineering-principles)
 
 ---
 

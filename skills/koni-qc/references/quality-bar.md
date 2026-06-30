@@ -7,6 +7,11 @@
 
 Score each item as a checkbox. The **Pass rule** at the bottom is the gate.
 
+**Contents**: [Band A — beat the manual backup](#band-a--beat-the-manual-backup-must-clear-all) ·
+[Band B — match the Koni-Finance standard](#band-b--match-the-koni-finance-standard) ·
+[Band C — close its residual gaps](#band-c--close-its-residual-gaps) ·
+[Pass rule](#pass-rule)
+
 ---
 
 ## Band A — beat the manual backup (must clear ALL)
@@ -15,13 +20,13 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 
 - [ ] **Explicit TC IDs** — every case has a stable `TC-<EPIC>.<TYPE>-<n>` ([`traceability.md`](traceability.md)).
 - [ ] **AC↔TC matrix** — present and complete; the mandatory artifact.
-- [ ] **≥50% negative + boundary** — not ~70% happy-path; at least half the cases are negative or boundary.
+- [ ] **≥50% off-path** — not ~70% happy-path; at least half the cases are **off-path = negative (NEG) + boundary (BND) + edge (EDGE)** (the three off-path TYPEs in [`traceability.md`](traceability.md)). NFR types (SEC/PERF/A11Y/UI) and happy-path types (FUNC/SMK/E2E/API) do **not** count toward the 50%.
 - [ ] **NFR present** — required [`nfr.md`](nfr.md) sections filled, not <5%.
-- [ ] **Coverage matrix** — coverage % by AC and by type is reported.
+- [ ] **Coverage % reported** — the *execution* coverage report: % by AC and by type, from a run (distinct from the authoring AC↔TC matrix above; this is an execution item, deferrable on an unrun suite — see the Author-mode carve-out).
 - [ ] **Test-data strategy** — concrete, reusable values + named fixtures.
 - [ ] **Entry / exit criteria** — written before authoring; checked at the gate.
 - [ ] **Test lifecycle** — active / deprecated / archived states applied.
-- [ ] **Risk-based order** — P0..P3 priority set by impact × likelihood.
+- [ ] **Risk-based order** — Critical/High/Medium/Low priority set by impact × likelihood.
 - [ ] **Regression scope** — `RC-` set defined as the per-release regression scope.
 - [ ] **Automation linkage** — `Covered-by` filled (`*.spec.ts::name` or `— (manual)`).
 - [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty.
@@ -57,3 +62,12 @@ What Koni-Finance lacked; koni-qc must exceed here.
 > exceeds Band B and Band C.** Any unticked Band-A box is a hard fail — return to
 > **Design**. A Band-B/C item that is merely matched, not exceeded, is a finding to
 > raise in review.
+
+**Author-mode vs Execute-mode bar.** Two Band-A items — **Real execution reports**
+and **Coverage % reported** — depend on the suite having been *run*. An
+**authoring** artifact (test cases written, not yet executed: every row `Not
+Executed`) legitimately marks those two `N/A — deferred to Execute` rather than
+failing them; it must clear every *other* Band-A item. The full Band-A bar
+(including the two execution items) applies at the **Execute/Release** stage, once
+the koni-docs `test-report.md` is filled. Do not tick an execution item on an
+unrun suite — mark it deferred.

@@ -1,28 +1,24 @@
 ---
 name: koni-harness
 description: >
-  Owns the Koni Agentic Loop standard and the portable, dependency-free
-  pre-commit/pre-push gate that catches agent mistakes (bad version bumps,
-  missing changelog anchor, leaked secrets, broken doc refs) before they land.
-  Use this whenever the user says "set up the harness", "install the gate into
-  this repo", "add the gate", "wire verification gates", "pre-commit gate",
-  "agentic loop", "harness engineering", or "make the loop portable" — even if
-  they don't name koni-harness. It owns only the loop standard + the gate; it
-  DELEGATES doc bodies to koni-docs, scaffold to koni-setup, plan/brainstorm to
-  BMAD + Superpowers + gstack, implementation to Anthropic Skills only
-  (`frontend-design` …), and review/QA to gstack `/design-review` + koni-qc — it
-  references and invokes them, never reproduces them. Hard rule: Superpowers and
-  gstack are brainstorm/review tools and never write feature code.
+  Use when setting up or running a Koniverse repo's development loop or its
+  commit/release safety net — e.g. the user says "set up the harness", "install
+  the gate", "add the gate", "wire verification gates", "pre-commit gate",
+  "pre-push gate", "agentic loop", "harness engineering", "right-size the
+  process", or "make the loop portable across Claude / Cursor / Codex / Gemini" —
+  even if they don't name koni-harness. Also use when a change risks a bad
+  version bump, a missing changelog anchor, leaked secrets, or broken doc
+  references, when deciding how much process a change needs, or when picking the
+  next dependency-ready story to work on.
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
 ## What this owns vs. delegates
 
-This skill owns exactly two things: **the Koni Agentic Loop standard** (the
-tool-neutral definition of the six-stage loop and the gates between its stages)
-and **the gate** (the POSIX `gate-runner.sh` + `gates.conf` + checks that
-enforce the commit/release stage). It is glue + convention + a thin verification
-backbone — it *composes* the existing toolchain and never re-implements it.
+This skill owns exactly two things — **the Koni Agentic Loop standard** (the
+tool-neutral six-stage loop + the gates between stages) and **the gate** (the
+POSIX `gate-runner.sh` + `gates.conf` + checks). Everything else it *invokes*,
+never reproduces:
 
 | Concern | Owner |
 |---|---|
@@ -33,10 +29,9 @@ backbone — it *composes* the existing toolchain and never re-implements it.
 | Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI (invoked) |
 | Review / QA | gstack `/design-review` (UI vs `DESIGN.md`) + **koni-qc** (test coverage) + code review (invoked) |
 
-Anything in the right column is referenced and called, never reproduced here.
-**Tool rule:** Superpowers + gstack brainstorm/plan/review; they never implement.
-Implementation is Anthropic Skills only. The Review stage adds `/design-review`
-(UI conformance to `DESIGN.md`) and koni-qc (the AC↔TC test-coverage gate).
+**Tool rule (the one non-obvious invariant):** Superpowers + gstack are for
+brainstorm/plan/review only; implementation is Anthropic Skills only. The Review
+stage adds `/design-review` (UI vs `DESIGN.md`) and koni-qc (the AC↔TC gate).
 
 ## The standard
 
@@ -49,15 +44,13 @@ harness" only if its core is tool-neutral and its adapter is thin). Full text:
 
 ## Install the gate
 
-Stand in the **target repo root** (cwd = the repo you're installing into), then
-invoke the installer by its real path. It defaults `--source` to its own
-directory, so no `--source` is needed when called by that path:
-Passing `--source <path-to>/skills/koni-harness/scripts` explicitly is
-equivalent to the default, so the no-arg form and that explicit `--source`
-produce the same install.
+Run the installer from **anywhere inside the target repo** (it `cd`s to the repo
+root itself) by its real path. `--source` defaults to the installer's own
+directory, so the no-arg form and an explicit `--source <that-dir>` are
+equivalent; pass `--source` only to vendor from a different location.
 
 ```sh
-# cwd = the TARGET repo root
+# run from inside the TARGET repo (any subdir is fine)
 sh /path/to/Koni-Skills/skills/koni-harness/scripts/install-gate.sh
 # override the vendored source only if needed:
 sh /path/to/Koni-Skills/skills/koni-harness/scripts/install-gate.sh --source <dir>
@@ -154,12 +147,15 @@ Per-tool wiring (Claude `SessionStart` merge snippet; Gemini/Codex/Cursor) is in
 
 ## Hard invariant
 
-**Additive-only / non-destructive.** Adopting the harness MUST NOT overwrite,
-rewrite, or delete an existing hook, setting, doc, or config. Every edit to a
-shared file is bounded by reversible `# >>> koni-harness >>>` /
-`# <<< koni-harness <<<` markers; existing hooks are chained (POSIX) or skipped
-with a warning (non-POSIX), Claude `settings.json` is merged not replaced, and
-an existing `gates.conf` is left untouched. Every action is idempotent.
+**Additive-only / non-destructive.** Adopting the harness never overwrites your
+own files (hooks, docs, `gates.conf`) — shared-file edits are bounded by reversible
+`# >>> koni-harness >>>` markers and every action is idempotent (full rules:
+[`references/adoption.md`](references/adoption.md)). Two non-obvious points: Claude
+`settings.json` is merged **manually** — the installer never edits it (see
+[`references/session-adapters.md`](references/session-adapters.md)); and the
+vendored harness files (`gate-runner.sh`, the helpers, `checks/*.sh`) are
+**refreshed in place** on re-install, so don't hand-edit them — put local rules in
+`gates.conf`.
 
 ## Reference table
 
@@ -169,6 +165,7 @@ Load on demand based on what you're doing:
 |---|---|
 | [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
+| [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |

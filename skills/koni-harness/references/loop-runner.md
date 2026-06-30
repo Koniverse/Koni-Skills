@@ -11,6 +11,10 @@ state in a gitignored `.koni-harness/loop-state` file, warns on out-of-order
 transitions, and shells out to the Phase-1 gate-runner for the commit gate. The
 actual stage work stays agent-driven — this document tells the agent how.
 
+**Contents**: [Driving a story through the loop](#driving-a-story-through-the-loop) ·
+[Tier-awareness](#tier-awareness) · [Portable fallback](#portable-fallback) ·
+[Resumability](#resumability) · [Command reference](#command-reference)
+
 ## Driving a story through the loop
 
 Run one stage at a time, recording each transition with `loop.sh enter` so the
@@ -39,7 +43,7 @@ a different subset of the six stages:
 |---|---|
 | **0 — trivial / mechanical** | `frame` (light) → `execute` → `commit` + gate |
 | **1 — small feature / bugfix** | tier 0 + `self-verify` + a single-pass `review` + `doc-gate` |
-| **2 — substantial / many decisions** | the full table, incl. a two-stage `review` (spec-compliance then code-quality) + koni-docs backfill at `doc-gate` |
+| **2 — substantial / many decisions** | the full table, incl. the four-step `review` (spec-compliance → koni-qc → `/design-review` for UI → code-quality) + koni-docs backfill at `doc-gate` |
 
 **The gate stage runs at every tier** — that is the whole point of a cheap
 deterministic backbone: even a tier-0 commit cannot leak a secret or bump a
