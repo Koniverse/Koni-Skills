@@ -12,7 +12,7 @@ classification:
   complexity: Medium
   projectContext: Greenfield (skill catalog) + Brownfield (koni-docs already shipped)
 workflowType: 'prd'
-lastEdited: '2026-05-27'
+lastEdited: '2026-06-30'
 editHistory:
   - date: '2026-05-27'
     changes: >-
@@ -52,12 +52,20 @@ editHistory:
     changes: >-
       Add EPIC-5 + FR-26 (koni-qc — QC methodology & coverage skill); US-5.1
       ships v0.16.0 in sprint-2026-W26 (built by dogfooding koni-harness).
+  - date: '2026-06-30'
+    changes: >-
+      Refine FR-21 + FR-26 (no scope change): v0.17.0 tool-split rule (implement
+      = Anthropic Skills only; Superpowers/gstack = brainstorm/review) +
+      `/design-review` and koni-qc in the loop's review stage; v0.17.1 pins the
+      review order + TDD-as-discipline; v0.17.2 graded-hardening lifts
+      koni-harness to 96/100 and koni-qc to 97/100. Logged as CONTEXT D15 +
+      LESSONS §8.
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.16.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.17.2 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
-**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop.
+**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)).
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.

@@ -790,3 +790,35 @@ stories only when the pieces are genuinely independent deliverables.
 **Date**: 2026-06-28
 **Version**: 0.15.1
 **Reference**: [US-3.3](sprints/stories/US-3.3-koni-harness-agentic-loop.md) (consolidated), [EPIC-3](sprints/epics/EPIC-3.md).
+
+---
+
+### D15. The loop's tool-split: implement with Anthropic Skills only; Superpowers + gstack are brainstorm/review
+
+**Context**: the koni-harness loop originally mapped Execute → Superpowers and
+Review → gstack generically. Operating it surfaced a sharper division of labour the
+team wants enforced.
+
+**Decision** (v0.17.0–0.17.1, refining [D13](#d13-koni-harness-composes-the-existing-toolchain--delegates-the-gate-is-the-one-new-primitive)):
+
+- **Implement with Anthropic Skills only** (`frontend-design` for UI, etc.).
+  **Superpowers + gstack never write feature code** — they are for brainstorm/plan
+  (and gstack `/design-review` for the review stage) only. This keeps "who built
+  this" unambiguous and planning rigor separate from execution craft.
+- **The Review stage runs a fixed four-step order**: (1) spec-compliance →
+  (2) **koni-qc** (the AC↔TC coverage gate) → (3) gstack **`/design-review`** (UI
+  vs the repo's `DESIGN.md`) → (4) code-quality. So koni-qc and design-review are
+  first-class review steps, not optional add-ons.
+- **TDD stays the discipline** in Execute (test-first), but it is a *practice* —
+  the implementation tool is an Anthropic Skill, not the Superpowers TDD skill.
+
+**Why it matters**: it wires koni-qc and `/design-review` into the harness loop
+(cross-skill composition), and makes the implement-vs-brainstorm boundary a hard
+rule the pressure-tests verify.
+
+**What this does NOT change**: koni-harness still *composes* and never reproduces
+the tools it invokes (D13 holds); brainstorm/plan still use BMAD + Superpowers + gstack.
+
+**Date**: 2026-06-30
+**Version**: 0.17.2
+**Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (principle 7 + six-stage table), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), CHANGELOG [0.17.0]–[0.17.2].

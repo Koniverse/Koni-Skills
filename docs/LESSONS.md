@@ -304,3 +304,36 @@ record). Re-run `koni-docs sync` + `validate` to confirm no dangling refs.
 
 **Cross-references**:
 - Complements [§6](#6-a-scaffold-skills-copy-paste-command-must-match-its-own-tree-diagram--verify-with-a-sandboxed-dry-run): both are about *right-sizing* — §6 keeps a skill's instructions honest, §7 keeps the story tracker honest. Sibling skills `koni-setup` and the koni-harness "Right-sizing the loop" tiers encode the same scale-to-the-work instinct.
+
+---
+
+## 8. Grading a skill is iterative: author-blind review + variance-averaged rubric, and expect your own fix to introduce the next finding
+
+**What happened (v0.17.2, 2026-06-30)**: grading koni-harness + koni-qc to a "≥95/100"
+bar took **three** find→fix→re-verify rounds, not one. Each round's fixes *created*
+the next round's findings: the worked example added to lift the discoverability score
+showed a gate output the shipped `gates.conf` couldn't produce; the Author-mode
+carve-out added to make the pilot's self-grade honest introduced a Band-A item
+name-collision ("Coverage matrix" vs "Coverage % reported"). A single rubric pass
+also disagreed with itself across runs (koni-qc scored 24 then 21.5 on the *same*
+files) — grader variance, not a real regression.
+
+**Why it matters**: a one-shot "review it and fix" understates the work and can ship a
+fix that quietly breaks something adjacent. Skill quality converges; it isn't a single
+gate.
+
+**How to do it**: grade across **independent dimensions** (triggering / rule-robustness /
+content / best-practices), each by a *separate* agent — triggering via a blind router
+(route realistic should/should-not queries by description alone, measure precision+recall),
+rule-robustness via writing-skills pressure-tests (does the rule hold under deadline
+pressure?), content via an **author-blind** code-reviewer, best-practices via the Anthropic
+rubric. **Re-verify after every fix round** (the fix is new code → new test), and **run the
+subjective rubric ≥2× and average** to cancel grader variance. Stop when a full round yields
+only Suggestions, not Important/Critical findings.
+
+**Codified as**:
+- [CONTEXT D15](CONTEXT.md) — the tool-split the grading hardened
+- CHANGELOG [0.17.2] — the per-dimension final scores (harness 96, qc 97)
+
+**Cross-references**:
+- This *is* the koni-harness Review stage ([D15](CONTEXT.md)) dogfooded on the skills themselves: spec-compliance → koni-qc → `/design-review` → code-quality, with the author-blind reviewer being the same two-stage review the loop prescribes.

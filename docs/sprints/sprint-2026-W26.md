@@ -30,6 +30,12 @@ koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0, EPIC-5). **EPIC-3 fully
 delivered** + EPIC-5 (QC tooling) opened & delivered. (koni-harness was
 consolidated from 5 phase-stories into one — see [CONTEXT D14](CONTEXT.md).)
 
+**Post-ship refinements (v0.17.0–0.17.2, no new story — refine FR-21 + FR-26 per
+[CONTEXT D14](CONTEXT.md)):** the loop's tool-split rule + fixed review order
+(`/design-review` + koni-qc) — [CONTEXT D15](CONTEXT.md) — then a multi-skill
+grading pass that hardened both non-docs skills to **koni-harness 96/100,
+koni-qc 97/100** ([LESSONS §8](LESSONS.md); CHANGELOG \[0.17.0]–\[0.17.2]).
+
 ## Sprint goal recap
 
 The W22 sprint closed EPIC-4 at 100% and left EPIC-3 as the only open epic —
