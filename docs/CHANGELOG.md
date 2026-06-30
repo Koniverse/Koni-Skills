@@ -16,6 +16,33 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.20.0] — 2026-06-30 — koni-setup installs the Koniverse core trio + the harness gate at setup — v0.20.0
+
+Refines FR-20 (koni-setup): the **baseline a new repo gets is now the Koniverse
+core trio — koni-docs + koni-harness + koni-qc — all wired in, plus the
+koni-harness commit/release gate vendored** (`install-gate.sh` → `.koni-harness/`
++ git hooks). Previously only koni-docs was baseline. No new story (refinement of
+FR-20 per CONTEXT D14); decision logged as CONTEXT D17. Built via the koni-harness
+loop; deliverable is a skill, so Review used koni-qc skill-grading.
+
+### Changed — `skills/koni-setup/`
+
+- **`SKILL.md`** — description + bootstrap step 5 ("Install the skill set") now
+  wire the trio and run `install-gate.sh` after the docs tree + VERSION exist;
+  the Verify + Onboard/Audit + gap-report surfaces check all three + the
+  `.koni-harness/` gate.
+- **`references/skill-inventory.md`** — "Baseline — every repo" is now the core
+  trio (was koni-docs only); install-order + audit blocks updated.
+- **`references/skill-wiring.md`** — the central-symlink command loops the trio and
+  runs `install-gate.sh`; the dangling-link repair re-points all three.
+
+### Docs
+
+- VERSION 0.19.0 → 0.20.0; CONTEXT D17; US-3.2 post-ship-refinement note; this
+  entry. validate green; harness suites 113/113 (no script change).
+
+---
+
 ## [0.19.0] — 2026-06-30 — test-organization: standard docs/tests layout + scaffolding (US-5.3, FR-28) — v0.19.0
 
 Folds the matured Senti-Quant test-doc organization (2026-06-30 reorg) into the

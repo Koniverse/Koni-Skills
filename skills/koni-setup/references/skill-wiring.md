@@ -31,11 +31,21 @@ repo lives.
 KONI_SKILLS="$(cd ../Koni-Skills && pwd)"      # resolve the shared repo
 mkdir -p .agents/skills .claude/skills
 
-# koni-docs: physical link in .agents, relative hop from .claude
-ln -sfn "$KONI_SKILLS/skills/koni-docs" .agents/skills/koni-docs
-ln -sfn ../../.agents/skills/koni-docs .claude/skills/koni-docs
+# Koniverse core trio — wire all three (physical link in .agents, relative hop from .claude)
+for s in koni-docs koni-harness koni-qc; do
+  ln -sfn "$KONI_SKILLS/skills/$s" ".agents/skills/$s"
+  ln -sfn "../../.agents/skills/$s" ".claude/skills/$s"
+done
 
-# repeat per skill you want wired (e.g. koni-setup itself, domain skills)
+# koni-harness also vendors its gate — guarded so it only runs once the docs/
+# tree + VERSION exist (the gate's version/changelog/validate checks read them):
+if [ -f VERSION ] && [ -d docs ]; then
+  sh .claude/skills/koni-harness/scripts/install-gate.sh   # → .koni-harness/ + chained git hooks (additive, idempotent)
+else
+  echo "gate install skipped — create docs/ + VERSION first (bootstrap §2–3), then re-run install-gate.sh"
+fi
+
+# repeat the loop for any extra skills (koni-setup itself, koni-nextjs, domain skills)
 ```
 
 For **BMAD** skills (planning) and **Anthropic/gstack** skills, follow the same
@@ -52,8 +62,11 @@ longer exists (repo moved, sibling not checked out).
 for s in .claude/skills/* .agents/skills/*; do
   [ -L "$s" ] && { t="$(readlink "$s")"; [ -e "$s" ] || echo "DANGLING: $s -> $t"; }
 done
-# repair: re-point to the current Koni-Skills location
-ln -sfn "$KONI_SKILLS/skills/koni-docs" .agents/skills/koni-docs
+# repair: re-point the core trio to the current Koni-Skills location
+for s in koni-docs koni-harness koni-qc; do
+  ln -sfn "$KONI_SKILLS/skills/$s" ".agents/skills/$s"
+  ln -sfn "../../.agents/skills/$s" ".claude/skills/$s"
+done
 ```
 
 `ln -sfn` is the safe re-point: `-f` replaces, `-n` treats an existing symlinked

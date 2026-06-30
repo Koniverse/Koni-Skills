@@ -856,3 +856,34 @@ outright; it composes koni-setup + koni-docs).
 **Date**: 2026-06-30
 **Version**: 0.19.0
 **Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [koni-setup scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), source Senti-Quant `docs/tests/`, CHANGELOG [0.19.0].
+
+---
+
+### D17. The setup baseline is the Koniverse core trio (koni-docs + koni-harness + koni-qc) + the harness gate — not koni-docs alone
+
+**Context**: koni-setup historically wired only **koni-docs** as the per-repo
+baseline (harness/qc were optional, hand-added). Now that all three are mature, a
+new repo should get the whole methodology stack on day 0.
+
+**Decision** (v0.20.0, refines FR-20):
+
+- **Baseline = the core trio**, all wired per-repo: koni-docs (docs lifecycle) +
+  koni-harness (agentic-loop standard **+ the commit/release gate**) + koni-qc (QC
+  methodology). koni-setup additionally **runs koni-harness `install-gate.sh`** so
+  `.koni-harness/` + the pre-commit/pre-push hooks guard the repo from the first
+  commit.
+- **Order matters**: wire + install the gate **after** the `docs/` tree + VERSION
+  exist, because the gate's `koni-docs-validate` / `changelog-anchor` /
+  `version-phase` checks read them.
+- **Boundaries unchanged** (D12/D13): koni-setup *scaffolds and wires*; it does not
+  reproduce any skill — it symlinks them and invokes koni-harness's own installer.
+  A repo with genuinely no test/QC surface may defer koni-qc, but the default is
+  all three.
+
+**Why it matters**: "set up a Koni repo" now yields a repo that documents, gates,
+and QCs itself out of the box — the three skills compose instead of being wired by
+hand one at a time (the #1 onboarding gap was a repo with docs but no gate/QC).
+
+**Date**: 2026-06-30
+**Version**: 0.20.0
+**Reference**: [koni-setup SKILL.md](../skills/koni-setup/SKILL.md) (step 5 + verify), [skill-inventory.md](../skills/koni-setup/references/skill-inventory.md), [skill-wiring.md](../skills/koni-setup/references/skill-wiring.md), CHANGELOG [0.20.0].

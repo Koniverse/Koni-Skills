@@ -2,8 +2,9 @@
 name: koni-setup
 description: >
   Bootstraps a new Koniverse repo or onboards an existing one to the shared
-  Koniverse project standard — directory skeleton, skill wiring (.claude /
-  .agents symlinks), CLAUDE.md / AGENTS.md / .active-context wiring, .gitignore,
+  Koniverse project standard — directory skeleton, the **Koniverse core trio**
+  (koni-docs + koni-harness + koni-qc) wired in + the koni-harness commit/release
+  gate installed, CLAUDE.md / AGENTS.md / .active-context wiring, .gitignore,
   VERSION, _bmad, and the package.json agile scripts. Use this whenever the user
   says "set up a new project", "scaffold a repo", "bootstrap a Koni project",
   "onboard this repo to koni-docs", "wire up CLAUDE.md / AGENTS.md", "add the
@@ -106,16 +107,22 @@ that already has real content; check first, write only if absent or a stub.
    text into this skill.
 
 5. **Install the skill set** — bring in the same skills the other Koniverse
-   repos run, from their correct sources: the **BMAD pack** (~40 skills) via
-   `npx bmad-method install`, **koni-docs** wired per-repo, **gstack** confirmed
+   repos run, from their correct sources. **Baseline: the Koniverse core trio —
+   `koni-docs` + `koni-harness` + `koni-qc` — is wired per-repo in every repo**
+   (docs lifecycle + the agentic-loop/commit gate + QC methodology). Wiring the
+   trio is the symlink step; **`koni-harness` additionally vendors its gate** —
+   run its `install-gate.sh` so `.koni-harness/` + the pre-commit/pre-push hooks
+   guard the repo from day 0 (the gate's doc/version checks rely on the `docs/`
+   tree + VERSION created in steps 2–3, so install it after them). Then the
+   **BMAD pack** (~40 skills) via `npx bmad-method install`, **gstack** confirmed
    global, plus profile extras (shadcn for UI code, the Anthropic doc/design
-   skills for content repos). The full per-profile inventory + install
-   mechanism for each is in
-   [`references/skill-inventory.md`](references/skill-inventory.md); the
-   `.claude` / `.agents` symlink mechanics are in
-   [`references/skill-wiring.md`](references/skill-wiring.md). This is the step
-   people most often skip — a repo with koni-docs but no `bmad-*` skills means
-   `bmad-method install` never ran.
+   skills for content repos). The full per-profile inventory + install mechanism
+   for each is in [`references/skill-inventory.md`](references/skill-inventory.md);
+   the `.claude` / `.agents` symlink mechanics + the trio-wiring + gate-install
+   commands are in [`references/skill-wiring.md`](references/skill-wiring.md).
+   This is the step people most often skip — a repo with koni-docs but no
+   `bmad-*` skills means `bmad-method install` never ran; a repo with the trio
+   wired but no `.koni-harness/` means the gate install was skipped.
 
 6. **CLAUDE.md + AGENTS.md** — use the AGENTS-canonical convention: AGENTS.md is
    the single source of truth; CLAUDE.md is a thin pointer + the `Koni-Docs
@@ -174,14 +181,19 @@ to live".
    ✅ present   ⬜ missing   ⚠️ stub/partial
    ✅ VERSION            ✅ CLAUDE.md         ⬜ AGENTS.md
    ✅ docs/CHANGELOG.md  ⚠️ docs/PRD.md (stub) ⬜ docs/sprints/STATUS.md
-   ⬜ .active-context.example.md   ⬜ agile npm scripts   ✅ .claude/skills/koni-docs
+   ⬜ .active-context.example.md   ⬜ agile npm scripts
+   ✅ koni-docs   ⬜ koni-harness   ⬜ koni-qc   ⬜ .koni-harness/ gate
    ```
 
 3. **Fill missing scaffolding only** — for each ⬜, create it (skeleton via this
    skill, content via koni-docs). For each ⚠️ stub, ask before touching.
-4. **Re-wire skills if broken** — a dangling koni-docs symlink is a common find;
-   re-point it (see `references/skill-wiring.md` §repair). Also check the skill
-   set is actually installed: `ls .claude/skills/bmad-* | wc -l` near zero means
+4. **Re-wire skills if broken** — confirm the **core trio** (koni-docs +
+   koni-harness + koni-qc) is wired and re-point any dangling symlink (see
+   `references/skill-wiring.md` §repair); if koni-harness is wired but
+   `.koni-harness/gate-runner.sh` is absent, run its `install-gate.sh` (the
+   repo's `docs/` tree + VERSION already exist on an onboard, so its checks read
+   them fine). Also check
+   the BMAD pack: `ls .claude/skills/bmad-* | wc -l` near zero means
    `npx bmad-method install` was never run — the most common onboarding gap (see
    [`references/skill-inventory.md`](references/skill-inventory.md) §audit).
 5. **Hand off doc backfill to koni-docs** — if stories/CHANGELOG/PRD need real
@@ -197,7 +209,11 @@ After bootstrap or onboard, confirm the wiring actually holds:
 
 ```bash
 test -f VERSION && echo "VERSION ok"
-test -e .claude/skills/koni-docs && echo "koni-docs wired ($(readlink .claude/skills/koni-docs 2>/dev/null))"
+# Koniverse core trio — all three wired
+for s in koni-docs koni-harness koni-qc; do
+  test -e ".claude/skills/$s" && echo "$s wired ($(readlink ".claude/skills/$s" 2>/dev/null))" || echo "$s ⬜ not wired"
+done
+test -f .koni-harness/gate-runner.sh && echo "koni-harness gate installed" || echo "koni-harness gate ⬜ run install-gate.sh"
 echo "bmad pack: $(ls .claude/skills/bmad-* 2>/dev/null | wc -l | tr -d ' ') skills"   # ~40+ if bmad-method install ran
 test -d ~/.claude/skills/gstack && echo "gstack global ok"
 test -d docs/sprints && echo "sprints ok"

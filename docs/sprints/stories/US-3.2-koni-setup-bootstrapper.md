@@ -16,7 +16,7 @@ depends_on:
 assignee: jindo9986
 commit: f3b8c34
 created: 2026-06-26
-updated: 2026-06-26
+updated: 2026-06-30
 ---
 
 ## Goal
@@ -97,6 +97,14 @@ remains backlog), flipping the epic from "single-skill repo" toward "catalog".
   `git init`, `active_sprint` default, version-pin single-source). (AC: 3, 4)
 - [x] **TASK-3.2.5** — Wire `.claude` + `.agents` symlinks; verify resolve. (AC: 8)
 
+## Post-ship refinements
+
+No scope change to FR-20; see [CONTEXT D17](../../CONTEXT.md):
+
+| Refinement | What | Version | Commit |
+|---|---|---|---|
+| Core-trio baseline | Setup now wires the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) and runs koni-harness `install-gate.sh` (vendors `.koni-harness/` + git hooks), instead of koni-docs alone — SKILL.md step 5 + verify, skill-inventory baseline, skill-wiring commands | v0.20.0 | pending |
+
 ## References
 
 - [Skill: skills/koni-setup/SKILL.md](../../../skills/koni-setup/SKILL.md)
@@ -107,4 +115,4 @@ remains backlog), flipping the epic from "single-skill repo" toward "catalog".
 ## Cross-references
 
 - [Epic EPIC-3](../epics/EPIC-3.md)
-- [CHANGELOG v0.9.0 (pending)](../../CHANGELOG.md)
+- [CHANGELOG v0.9.0](../../CHANGELOG.md) (ship) + [0.20.0] (core-trio refinement)
