@@ -15,7 +15,7 @@ depends_on:
 assignee: jindo9986
 commit: 01138e9
 created: 2026-06-28
-updated: 2026-06-28
+updated: 2026-06-30
 ---
 
 ## Goal
@@ -77,6 +77,17 @@ Design + plan:
 - [x] **TASK-5.1.5** — customize-network pilot.
 - [x] **TASK-5.1.6** — Author-blind review + fixes; wire + koni-docs ship.
 
+## Post-ship refinements
+
+No scope change to FR-26 (see [CONTEXT D15](../../CONTEXT.md)):
+
+| Refinement | What | Version | Commit |
+|---|---|---|---|
+| `/design-review` for UI | UI cases delegate to gstack `/design-review` vs the repo's `DESIGN.md`; new `UI` TC-type; koni-qc wired into the harness review stage | v0.17.0 | `a4bcd05` |
+| Graded hardening | AC↔TC rule made airtight (boundary-or-edge + no-double-counting + BND-vs-NEG doctrine); pilot recut to strictly comply (25 cases, 52% off-path, truthful self-grade); priority/vocab unified → **koni-qc 97/100** | v0.17.2 | `2d519dd` |
+
+Grading method: [LESSONS §8](../../LESSONS.md); per-version detail: [CHANGELOG](../../CHANGELOG.md) [0.17.0]–[0.17.2].
+
 ## References
 
 - [Skill: skills/koni-qc/SKILL.md](../../../skills/koni-qc/SKILL.md)
@@ -87,4 +98,4 @@ Design + plan:
 ## Cross-references
 
 - [Epic EPIC-5](../epics/EPIC-5.md)
-- [CHANGELOG v0.16.0 (pending)](../../CHANGELOG.md)
+- [CHANGELOG v0.16.0](../../CHANGELOG.md) (ship) + [0.17.0]–[0.17.2] (refinements)

@@ -19,7 +19,7 @@ depends_on:
 assignee: jindo9986
 commit: 2ff5ad5
 created: 2026-06-27
-updated: 2026-06-28
+updated: 2026-06-30
 ---
 
 ## Goal
@@ -45,6 +45,16 @@ see [CONTEXT D14](../../CONTEXT.md)). Each phase shipped its own version:
 | **P3b** — session-adapters | `session-start.sh` briefing + `session-adapters.md` per-tool wiring | v0.14.0 | `2ff5ad5` |
 
 A v0.10.1 patch added the "Right-sizing the loop" tier model to the standard.
+
+**Post-ship refinements** (no scope change to FR-21; see [CONTEXT D15](../../CONTEXT.md)):
+
+| Refinement | What | Version | Commit |
+|---|---|---|---|
+| Tool-split + review wiring | Implement = Anthropic Skills only (Superpowers/gstack = brainstorm/review); Review stage gains gstack `/design-review` + koni-qc | v0.17.0 | `a4bcd05` |
+| Fixed review order + TDD | Review order pinned (spec → koni-qc → `/design-review` → code-quality); TDD-as-discipline | v0.17.1 | `6f9904a` |
+| Graded hardening | Multi-skill grading pass (triggering / pressure / author-blind / best-practices) → **koni-harness 96/100**; subdir-install fix + arg-handling + docs | v0.17.2 | `2d519dd` |
+
+See [LESSONS §8](../../LESSONS.md) for the grading method and [CHANGELOG](../../CHANGELOG.md) [0.17.0]–[0.17.2].
 
 ## Background
 
