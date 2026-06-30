@@ -28,10 +28,11 @@ a11y/i18n, and perf SLAs. EPIC-5 closes that gap with a methodology skill that i
 
 ### Feature pillars
 
-| # | Pillar                       | Stories                                        | Purpose                                                                                                                                                            |
-| - | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1 | **QC methodology skill**     | [US-5.1](../stories/US-5.1-koni-qc.md) ✅       | `koni-qc` — test-design techniques + edge taxonomy + mandatory AC↔TC matrix + NFR/security + quality rubric; composes koni-docs/gstack/koni-harness                |
-| 2 | **Skill-grading capability** | [US-5.2](../stories/US-5.2-skill-grading.md) ✅ | QC for *skill artifacts*: koni-qc's four-dimension skill-grading rubric, invoked by the koni-harness Review stage to build *and verify the building of* new skills |
+| # | Pillar                         | Stories                                            | Purpose                                                                                                                                                                             |
+| - | ------------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | **QC methodology skill**       | [US-5.1](../stories/US-5.1-koni-qc.md) ✅           | `koni-qc` — test-design techniques + edge taxonomy + mandatory AC↔TC matrix + NFR/security + quality rubric; composes koni-docs/gstack/koni-harness                                 |
+| 2 | **Skill-grading capability**   | [US-5.2](../stories/US-5.2-skill-grading.md) ✅     | QC for *skill artifacts*: koni-qc's four-dimension skill-grading rubric, invoked by the koni-harness Review stage to build *and verify the building of* new skills                  |
+| 3 | **Test-organization standard** | [US-5.3](../stories/US-5.3-test-organization.md) ✅ | One canonical `docs/tests/` taxonomy + by-epic test-code layout + 3-place sync rule; koni-qc owns the standard, koni-setup scaffolds it (synthesized from the Senti-Quant QA reorg) |
 
 ### Out of scope
 
@@ -42,17 +43,19 @@ a11y/i18n, and perf SLAs. EPIC-5 closes that gap with a methodology skill that i
 
 ## FR Coverage
 
-| FR    | Story                                        | Status              |
-| ----- | -------------------------------------------- | ------------------- |
-| FR-26 | [US-5.1](../stories/US-5.1-koni-qc.md)       | ✅ shipped (v0.16.0) |
-| FR-27 | [US-5.2](../stories/US-5.2-skill-grading.md) | ✅ shipped (v0.18.0) |
+| FR    | Story                                            | Status              |
+| ----- | ------------------------------------------------ | ------------------- |
+| FR-26 | [US-5.1](../stories/US-5.1-koni-qc.md)           | ✅ shipped (v0.16.0) |
+| FR-27 | [US-5.2](../stories/US-5.2-skill-grading.md)     | ✅ shipped (v0.18.0) |
+| FR-28 | [US-5.3](../stories/US-5.3-test-organization.md) | ✅ shipped (v0.19.0) |
 
 ## Stories
 
-| ID                                           | Title         | Goal                                                                                                                                   | Status | Version |
-| -------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- |
-| [US-5.1](../stories/US-5.1-koni-qc.md)       | koni-qc       | Compose-first QC methodology + coverage-intelligence skill; pilot on customize-network proving the uplift over the manual backup suite | ✅ done | v0.16.0 |
-| [US-5.2](../stories/US-5.2-skill-grading.md) | skill-grading | QC for skill artifacts: koni-qc's four-dimension rubric + koni-harness Review-stage wiring, so the loop builds and verifies new skills | ✅ done | v0.18.0 |
+| ID                                               | Title             | Goal                                                                                                                                   | Status | Version |
+| ------------------------------------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- |
+| [US-5.1](../stories/US-5.1-koni-qc.md)           | koni-qc           | Compose-first QC methodology + coverage-intelligence skill; pilot on customize-network proving the uplift over the manual backup suite | ✅ done | v0.16.0 |
+| [US-5.2](../stories/US-5.2-skill-grading.md)     | skill-grading     | QC for skill artifacts: koni-qc's four-dimension rubric + koni-harness Review-stage wiring, so the loop builds and verifies new skills | ✅ done | v0.18.0 |
+| [US-5.3](../stories/US-5.3-test-organization.md) | test-organization | Standard docs/tests taxonomy + by-epic test-code layout + 3-place sync; koni-qc owns it, koni-setup scaffolds it                       | ✅ done | v0.19.0 |
 
 ## Cross-cutting invariants
 

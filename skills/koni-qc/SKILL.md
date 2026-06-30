@@ -30,6 +30,7 @@ description: >
 | UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` (invoke) |
 | Commit/release gate, loop, epic selection | **koni-harness** — `gate-runner.sh`, `loop.sh`, `sprint.sh` (invoke) |
 | Plan artifacts (brief → PRD → story) | **BMAD** (invoke) |
+| Repo scaffold incl. the `docs/tests/` tree at setup | **koni-setup** (invoke) — koni-qc self-scaffolds the tree only when koni-setup isn't used (see [`test-organization.md`](references/test-organization.md)) |
 | Skill-QC eval engines (when grading a *skill*) | **skill-creator** (triggering eval) · **writing-skills** (pressure-tests + best-practices rubric) · **`superpowers:code-reviewer`** (author-blind content) — invoked by [`skill-grading.md`](references/skill-grading.md) |
 
 koni-qc is the **Review / QA stage** of the koni-harness loop, made rigorous. It
@@ -45,6 +46,7 @@ never re-implements the right-column owners.
 | **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md`); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §Release + `quality-bar.md` + koni-harness |
 | **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to a hard bar; re-verify each fix round | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
+| **Set up / standardize test docs** | Apply the standard `docs/tests/` taxonomy + by-epic test-code layout + the 3-place sync rule; if the repo wasn't bootstrapped by koni-setup, self-scaffold the missing tree | `test-organization.md` (+ koni-setup scaffolds at setup; koni-docs owns the templates) |
 
 ---
 
@@ -60,6 +62,7 @@ never re-implements the right-column owners.
 | "run the whole QC process for an epic / release" | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
 | "grade this skill" / "score this SKILL.md" / "is this skill good enough?" / "QC a skill" | `references/skill-grading.md` |
+| "where do test files go?" / "set up test folders" / "test directory structure" / "test organization" | `references/test-organization.md` |
 | "show me a worked example" | `references/customize-network-test-cases.example.md` |
 
 ---
@@ -87,6 +90,7 @@ before review; do not restate the bands here.
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
 | [`references/skill-grading.md`](references/skill-grading.md) | Grading a **skill artifact** /100 across 4 dimensions (triggering · rule-robustness · content · best-practices); the harness Review stage uses it when building a skill |
+| [`references/test-organization.md`](references/test-organization.md) | The standard `docs/tests/` taxonomy + by-epic/suffix test-code layout + the 3-place sync rule + status legend + scaffolding (koni-setup at setup, koni-qc self-scaffold fallback) |
 | [`references/customize-network-test-cases.example.md`](references/customize-network-test-cases.example.md) | A worked pilot showing the standard + the uplift over a manual suite |
 
 **Boundary reminder**: anything about the *doc template shape* is koni-docs';

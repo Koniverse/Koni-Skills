@@ -36,11 +36,15 @@ real content. Bootstrap must be safe to re-run.
 │       ├── stories/                # US-X.Y-<slug>.md
 │       ├── archive/                # closed sprints
 │       └── sprint-YYYY-WNN.md      # the first active sprint
-├── docs/tests/
-│   ├── test-cases/                 # EPIC-N.md + README.md
-│   └── test-reports/
-│       ├── runs/                   # YYYY-MM-DD-EPIC-N-runN.md
-│       └── releases/               # vX.Y.Z.md
+├── docs/tests/                     # test surface — standard: koni-qc references/test-organization.md
+│   ├── README.md                   # QA hub
+│   ├── test-organization.md        # the standard (stub → koni-qc)
+│   ├── findings.md                 # open QA findings tracker
+│   ├── test-plan/                  # EPIC-NN-<slug>.md (strategy: scope · risk · priority)
+│   ├── test-cases/                 # EPIC-N.md + README.md (koni-qc specs + AC↔TC matrix)
+│   ├── test-reports/               # EPIC-NN/<MMDDYYYY>/ — created on first run, never pre-made
+│   ├── bug-bash/                   # sprint-YYYY-WNN.md
+│   └── audits/                     # dated one-off analyses (historical)
 ├── .claude/skills/                 # see skill-wiring.md
 ├── .agents/skills/                 # see skill-wiring.md
 └── _bmad/  _bmad-output/           # BMAD framework (output dir gitignored)
@@ -52,9 +56,10 @@ Root-level extras (per profile — see repo-types.md): `DEPLOY.md`, `DESIGN.md`,
 
 ## Create-the-tree command
 
-This single block matches the tree above exactly, is profile-aware, is
-re-runnable (only writes absent files), and keeps empty dirs alive in git with
-`.gitkeep`. Set `PROFILE` first.
+This single **bash** block (it uses brace expansion — run it with `bash`, not a
+bare POSIX `sh`) matches the tree above exactly, is profile-aware, is re-runnable
+(only writes absent files), and keeps empty dirs alive in git with `.gitkeep`.
+Set `PROFILE` first.
 
 ```bash
 PROFILE=code     # code | devops | content  — decides whether PRD/ARCHITECTURE stub
@@ -62,10 +67,11 @@ PROFILE=code     # code | devops | content  — decides whether PRD/ARCHITECTURE
 # 0. new repo? initialise git (skip if already a repo)
 [ -d .git ] || git init -q
 
-# 1. directories
+# 1. directories  (docs/tests standard: koni-qc references/test-organization.md)
 mkdir -p docs/sprints/{epics,stories,archive} docs/design \
-         docs/tests/test-cases docs/tests/test-reports/{runs,releases} \
+         docs/tests/{test-plan,test-cases,bug-bash,audits} \
          .claude/skills .agents/skills _bmad-output
+# test-reports/EPIC-NN/<MMDDYYYY>/ is created on first run, never pre-made
 
 # 2. VERSION (bare semver, only if absent)
 [ -f VERSION ] || echo "0.1.0" > VERSION
@@ -83,6 +89,10 @@ done
 # 4. sub-tree READMEs + STATUS + first sprint (all shown in the tree)
 [ -f docs/sprints/README.md ]      || printf '# Sprints\n\n> TODO: agile schema via koni-docs sprint-system.md\n' > docs/sprints/README.md
 [ -f docs/tests/test-cases/README.md ] || printf '# Test cases\n\n> TODO: via koni-docs templates/test-cases.md\n' > docs/tests/test-cases/README.md
+# docs/tests standing docs (standard owned by koni-qc references/test-organization.md)
+[ -f docs/tests/README.md ]            || printf '# docs/tests — QA hub\n\n> Standard: koni-qc references/test-organization.md\n' > docs/tests/README.md
+[ -f docs/tests/test-organization.md ] || printf '# Test organization\n\n> Follows koni-qc references/test-organization.md (taxonomy · by-epic layout · 3-place sync).\n' > docs/tests/test-organization.md
+[ -f docs/tests/findings.md ]          || printf '# Open QA findings\n' > docs/tests/findings.md
 [ -f docs/sprints/STATUS.md ]      || : > docs/sprints/STATUS.md   # koni-docs status regenerates this
 # first sprint file: name from current ISO week (see "Active sprint" note below)
 WEEK="$(date +%G-W%V)"
@@ -93,15 +103,17 @@ WEEK="$(date +%G-W%V)"
 
 # 6. keep empty leaf dirs in git
 for d in docs/sprints/{epics,stories,archive} docs/design \
-         docs/tests/test-reports/{runs,releases}; do
+         docs/tests/{test-plan,bug-bash,audits}; do
   [ -z "$(ls -A "$d" 2>/dev/null)" ] && : > "$d/.gitkeep"
 done
 ```
 
 Why `.gitkeep`: git won't track empty directories, so `epics/`, `stories/`,
-`archive/`, `design/`, and the test-report dirs would silently vanish on the
-first commit — breaking the "structure validates" promise. The `.gitkeep`
-files are removed naturally once real content lands.
+`archive/`, `design/`, and the empty `docs/tests/` framework dirs
+(`test-plan/`, `bug-bash/`, `audits/`) would silently vanish on the first commit
+— breaking the "structure validates" promise. (`test-reports/` is *not* kept — it
+is created on the first run, never pre-made.) The `.gitkeep` files are removed
+naturally once real content lands.
 
 **Active sprint value**: a brand-new repo has no planned sprint yet. The command
 seeds a first sprint file named for the current ISO week and uses that same

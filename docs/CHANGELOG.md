@@ -16,6 +16,46 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.19.0] — 2026-06-30 — test-organization: standard docs/tests layout + scaffolding (US-5.3, FR-28) — v0.19.0
+
+Folds the matured Senti-Quant test-doc organization (2026-06-30 reorg) into the
+catalog as a koni-qc standard, and wires it into setup so every Koniverse repo
+gets the right test folders. Opens FR-28 under EPIC-5; CONTEXT D16.
+
+### Added — `skills/koni-qc/`
+
+- **`references/test-organization.md`** — the standing standard: the `docs/tests/`
+  taxonomy (`test-plan/` · `test-cases/` · `test-reports/EPIC-NN/<MMDDYYYY>/` with
+  report.md+img / report-manual.md+img-manual · `bug-bash/` · `audits/` + standing
+  README / test-organization / findings), the **by-epic + file-suffix** test-code
+  layout (`.e2e`/`.smoke`/`.integration`/`.unit`), the **3-place sync rule** (spec ↔
+  code ↔ coverage story), the state-cleanup/idempotency rule, the status legend, and
+  the scaffolding rule.
+- **SKILL.md** — "Set up / standardize test docs" mode + activation row + reference
+  index row + a koni-setup delegate row.
+
+### Changed — `skills/koni-setup/`
+
+- `scaffold-checklist.md` now creates the standard `docs/tests/` tree (`test-plan/` /
+  `test-cases/` / `bug-bash/` / `audits/` + README / test-organization.md / findings.md
+  stubs; `test-reports/EPIC-NN/<MMDDYYYY>/` created on first run, not pre-made) and
+  points at the koni-qc standard — replacing the older `test-reports/{runs,releases}`.
+
+### Decisions (CONTEXT D16)
+
+- **TC-ID stays TYPE-based** (`TC-<EPIC>.<TYPE>-<n>`) — *not* Senti-Quant's
+  GROUP-based codes; the file suffix carries run cadence (orthogonal to TC TYPE),
+  so the two coexist. `traceability.md` is unchanged.
+- **Scaffolding**: koni-setup creates the tree when used; koni-qc self-scaffolds it
+  otherwise. koni-docs still owns the doc-body templates.
+
+### Docs
+
+- VERSION 0.18.0 → 0.19.0; PRD FR-28 + EPIC-5 story row; US-5.3 story; this entry.
+  validate green.
+
+---
+
 ## [0.18.0] — 2026-06-30 — skill-grading: QC for skill artifacts, wired into the build/verify loop (US-5.2, FR-27) — v0.18.0
 
 Turns the v0.17.2 multi-skill grading method (which lived only in a transcript +

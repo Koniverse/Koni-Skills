@@ -822,3 +822,37 @@ the tools it invokes (D13 holds); brainstorm/plan still use BMAD + Superpowers +
 **Date**: 2026-06-30
 **Version**: 0.17.2
 **Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (principle 7 + six-stage table), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), CHANGELOG [0.17.0]–[0.17.2].
+
+---
+
+### D16. The test-doc/test-code organization standard lives in koni-qc; scaffolding is koni-setup's (koni-qc self-scaffolds as fallback)
+
+**Context**: Senti-Quant matured a clean `docs/tests/` organization (2026-06-30
+reorg). koni-qc only assumed `test-cases/EPIC-N.md` + a single `test-report.md`;
+koni-setup scaffolded a thinner `test-reports/{runs,releases}` tree. We folded the
+matured standard into the catalog.
+
+**Decision** (v0.19.0, US-5.3, FR-28):
+
+- **koni-qc owns the standard** — a new `references/test-organization.md`: the
+  `docs/tests/` taxonomy (test-plan / test-cases / test-reports/EPIC-NN/<MMDDYYYY>/ /
+  bug-bash / audits + standing docs), the **by-epic + file-suffix** test-code
+  layout, the **3-place sync rule** (spec ↔ code ↔ coverage story), state-cleanup/
+  idempotency, and the status legend.
+- **TC-ID stays TYPE-based** (`TC-<EPIC>.<TYPE>-<n>`, per [`traceability.md`]) — we
+  did **not** adopt Senti-Quant's GROUP-based codes. The file **suffix** carries run
+  *cadence* (`.e2e`/`.smoke`/`.integration`/`.unit`), which is orthogonal to the TC
+  TYPE (*category*: FUNC/NEG/BND/…). Feature grouping uses the existing domain-prefix
+  allowance, not a scheme change. (Decision (a).)
+- **Ownership of creation** (decision (b)): if the repo is bootstrapped by
+  **koni-setup**, it creates the `docs/tests/` skeleton; if not, **koni-qc
+  self-scaffolds** the missing tree. koni-docs still owns the doc-body templates.
+
+**Why it matters**: every Koniverse repo now gets the same test surface, and the
+"where does this test go" question has one answer — without breaking koni-qc's
+TYPE-based traceability or the compose boundary (koni-qc never owns scaffolding
+outright; it composes koni-setup + koni-docs).
+
+**Date**: 2026-06-30
+**Version**: 0.19.0
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [koni-setup scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), source Senti-Quant `docs/tests/`, CHANGELOG [0.19.0].
