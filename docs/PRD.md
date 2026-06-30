@@ -54,6 +54,11 @@ editHistory:
       ships v0.16.0 in sprint-2026-W26 (built by dogfooding koni-harness).
   - date: '2026-06-30'
     changes: >-
+      Add FR-27 (skill-grading — QC for skill artifacts, reusable): koni-qc
+      gains a skill-grading rubric + the harness Review stage invokes it when
+      building a skill; US-5.2 ships v0.18.0 in sprint-2026-W26 (EPIC-5).
+  - date: '2026-06-30'
+    changes: >-
       Refine FR-21 + FR-26 (no scope change): v0.17.0 tool-split rule (implement
       = Anthropic Skills only; Superpowers/gstack = brainstorm/review) +
       `/design-review` and koni-qc in the loop's review stage; v0.17.1 pins the
@@ -63,9 +68,9 @@ editHistory:
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.17.2 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.18.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
-**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)).
+**Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)). v0.18.0 then makes that grading **reusable** — `skill-grading` (US-5.2, FR-27): koni-qc QC for skill artifacts, invoked by the harness Review stage when building a skill.
 **Dual-Audience:** Human stakeholders + LLM implementation agents
 
 > **Scope boundary:** This PRD contains business requirements only.
@@ -382,6 +387,7 @@ reviewers.
 | FR-24 | Ship `koni-harness` P2.5 — a **sprint-sequencer**: a portable, read-only POSIX `sprint.sh` over koni-docs story frontmatter. `next` = dependency-ready story selection (not-`done` + all `depends_on` resolve to `done`) ordered by priority, suggesting `loop.sh start <id>` and distinguishing complete-vs-blocked; `status` = counts/points/blocked-with-reasons. Reads status (never writes); cross-story complement to `loop.sh`. Additive install (vendors `sprint.sh`).                                                                                                                      | P1       | ✅ shipped (v0.14.0)      | EPIC-3          |
 | FR-25 | Ship `koni-harness` P3b — **multi-tool session adapters**: a portable, read-only POSIX `session-start.sh` briefing (composes the P3a digest + P2.5 `next`) + `session-adapters.md` documenting per-tool session-start wiring (Claude `SessionStart` hook as a manual-merge JSON snippet; Gemini/Codex/Cursor equivalents). Additive (vendors `session-start.sh`); never auto-edits `settings.json`. Completes the koni-harness roadmap (P1/P2/P3a/P2.5/P3b).                                                                                                                                        | P1       | ✅ shipped (v0.14.0)      | EPIC-3          |
 | FR-26 | Ship `koni-qc` — a **compose-first QC methodology & coverage-intelligence skill**: turns koni-docs inputs into Silicon-Valley-grade, fully-traceable test docs (test-design techniques + edge taxonomy + a **mandatory AC↔TC coverage matrix** + security-led NFR + risk-based priority + a quality-bar rubric) and drives QC execution. Delegates templates→koni-docs, execution→gstack, gate/loop→koni-harness. Synthesizes the weak `koni-docs.backup` baseline + the `Koni-Finance` standard; pilot on customize-network proves the uplift. Built by dogfooding the koni-harness loop.          | P1       | ✅ shipped (v0.16.0)      | EPIC-5          |
+| FR-27 | Ship **skill-grading** — QC for *skill artifacts* (not product features), reusable across the catalog: koni-qc gains a four-dimension rubric (triggering / rule-robustness / author-blind content / best-practices, each /25 → /100, to a hard bar) that **delegates** the eval engines (skill-creator, writing-skills, `superpowers:code-reviewer`, Anthropic best-practices) and never reproduces them; koni-harness invokes it in the **Review** stage when the deliverable is a skill, so the loop builds *and verifies the building of* new skills.                                            | P1       | ✅ shipped (v0.18.0)      | EPIC-5          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -480,6 +486,7 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 
 **Status:** ✅ done (sprint-2026-W26 — v0.16.0 ships `koni-qc`, FR-26). See [EPIC-5.md](sprints/epics/EPIC-5.md).
 
-| Story                                       | Title                                                  | Status | Version |
-| ------------------------------------------- | ------------------------------------------------------ | ------ | ------- |
-| [US-5.1](sprints/stories/US-5.1-koni-qc.md) | koni-qc — QC methodology & coverage-intelligence skill | ✅ done | v0.16.0 |
+| Story                                             | Title                                                                            | Status | Version |
+| ------------------------------------------------- | -------------------------------------------------------------------------------- | ------ | ------- |
+| [US-5.1](sprints/stories/US-5.1-koni-qc.md)       | koni-qc — QC methodology & coverage-intelligence skill                           | ✅ done | v0.16.0 |
+| [US-5.2](sprints/stories/US-5.2-skill-grading.md) | skill-grading — QC for skill artifacts, wired into the harness build/verify loop | ✅ done | v0.18.0 |

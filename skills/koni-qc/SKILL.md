@@ -7,8 +7,9 @@ description: >
   "test this epic / feature / product", "QA the release", "is our testing
   thorough enough", or "grade the test suite" — even if they don't name koni-qc.
   Also use when checking that every acceptance criterion is covered by positive,
-  negative, and boundary tests, when hunting missing edge cases, or when
-  verifying a UI against DESIGN.md before shipping.
+  negative, and boundary tests, when hunting missing edge cases, when verifying a
+  UI against DESIGN.md before shipping, or when grading/scoring a **skill** itself
+  ("is this skill good enough", "score this SKILL.md") before it is built or merged.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -29,6 +30,7 @@ description: >
 | UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` (invoke) |
 | Commit/release gate, loop, epic selection | **koni-harness** — `gate-runner.sh`, `loop.sh`, `sprint.sh` (invoke) |
 | Plan artifacts (brief → PRD → story) | **BMAD** (invoke) |
+| Skill-QC eval engines (when grading a *skill*) | **skill-creator** (triggering eval) · **writing-skills** (pressure-tests + best-practices rubric) · **`superpowers:code-reviewer`** (author-blind content) — invoked by [`skill-grading.md`](references/skill-grading.md) |
 
 koni-qc is the **Review / QA stage** of the koni-harness loop, made rigorous. It
 never re-implements the right-column owners.
@@ -42,6 +44,7 @@ never re-implements the right-column owners.
 | **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N.md` with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` + koni-docs template |
 | **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md`); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §Release + `quality-bar.md` + koni-harness |
+| **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to a hard bar; re-verify each fix round | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
 
 ---
 
@@ -56,6 +59,7 @@ never re-implements the right-column owners.
 | "does the UI match the design?" / "check against DESIGN.md" | `references/nfr.md` §UI / visual conformance → gstack `/design-review` |
 | "run the whole QC process for an epic / release" | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
+| "grade this skill" / "score this SKILL.md" / "is this skill good enough?" / "QC a skill" | `references/skill-grading.md` |
 | "show me a worked example" | `references/customize-network-test-cases.example.md` |
 
 ---
@@ -82,6 +86,7 @@ before review; do not restate the bands here.
 | [`references/traceability.md`](references/traceability.md) | The TC-ID scheme, the canonical rich-TC table, and the **mandatory AC↔TC coverage matrix** + risk/regression tagging |
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
+| [`references/skill-grading.md`](references/skill-grading.md) | Grading a **skill artifact** /100 across 4 dimensions (triggering · rule-robustness · content · best-practices); the harness Review stage uses it when building a skill |
 | [`references/customize-network-test-cases.example.md`](references/customize-network-test-cases.example.md) | A worked pilot showing the standard + the uplift over a manual suite |
 
 **Boundary reminder**: anything about the *doc template shape* is koni-docs';

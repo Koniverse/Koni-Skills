@@ -17,18 +17,19 @@ First sprint after the W22 EPIC-4 push. Scope is intentionally narrow: prove
 EPIC-3 can ship a non-docs skill that coexists with koni-docs without
 duplicating it.
 
-| US     | Title                                                   | Epic   | Pri | Points | Status | Ship            | Story file                                                                                 |
-| ------ | ------------------------------------------------------- | ------ | --- | ------ | ------ | --------------- | ------------------------------------------------------------------------------------------ |
-| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder | EPIC-3 | P1  | 5      | ✅ done | v0.9.0          | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)     |
-| US-3.3 | koni-harness — portable agentic-loop harness (5 phases) | EPIC-3 | P1  | 16     | ✅ done | v0.10.0–v0.14.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
-| US-3.1 | Plugin-skill pattern + koni-nextjs reference            | EPIC-3 | P1  | 3      | ✅ done | v0.15.0         | [stories/US-3.1-plugin-skill-pattern.md](stories/US-3.1-plugin-skill-pattern.md)           |
-| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill  | EPIC-5 | P1  | 5      | ✅ done | v0.16.0         | [stories/US-5.1-koni-qc.md](stories/US-5.1-koni-qc.md)                                     |
+| US     | Title                                                       | Epic   | Pri | Points | Status | Ship            | Story file                                                                                 |
+| ------ | ----------------------------------------------------------- | ------ | --- | ------ | ------ | --------------- | ------------------------------------------------------------------------------------------ |
+| US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder     | EPIC-3 | P1  | 5      | ✅ done | v0.9.0          | [stories/US-3.2-koni-setup-bootstrapper.md](stories/US-3.2-koni-setup-bootstrapper.md)     |
+| US-3.3 | koni-harness — portable agentic-loop harness (5 phases)     | EPIC-3 | P1  | 16     | ✅ done | v0.10.0–v0.14.0 | [stories/US-3.3-koni-harness-agentic-loop.md](stories/US-3.3-koni-harness-agentic-loop.md) |
+| US-3.1 | Plugin-skill pattern + koni-nextjs reference                | EPIC-3 | P1  | 3      | ✅ done | v0.15.0         | [stories/US-3.1-plugin-skill-pattern.md](stories/US-3.1-plugin-skill-pattern.md)           |
+| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill      | EPIC-5 | P1  | 5      | ✅ done | v0.16.0         | [stories/US-5.1-koni-qc.md](stories/US-5.1-koni-qc.md)                                     |
+| US-5.2 | skill-grading — QC for skill artifacts, wired into the loop | EPIC-5 | P1  | 3      | ✅ done | v0.18.0         | [stories/US-5.2-skill-grading.md](stories/US-5.2-skill-grading.md)                         |
 
-**Total**: **4 stories / 29 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
+**Total**: **5 stories / 32 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
 koni-harness (16 pts across v0.10.0–v0.14.0, 5 phases) · US-3.1 plugin pattern +
-koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0, EPIC-5). **EPIC-3 fully
-delivered** + EPIC-5 (QC tooling) opened & delivered. (koni-harness was
-consolidated from 5 phase-stories into one — see [CONTEXT D14](CONTEXT.md).)
+koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0) · US-5.2 skill-grading (v0.18.0)
+— both EPIC-5. **EPIC-3 fully delivered** + EPIC-5 (QC tooling) opened & delivered.
+(koni-harness was consolidated from 5 phase-stories into one — see [CONTEXT D14](CONTEXT.md).)
 
 **Post-ship refinements (v0.17.0–0.17.2, no new story — refine FR-21 + FR-26 per
 [CONTEXT D14](CONTEXT.md)):** the loop's tool-split rule + fixed review order

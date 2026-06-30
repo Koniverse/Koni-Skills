@@ -27,7 +27,7 @@ never reproduces:
 | Repo scaffold, skill wiring | koni-setup (invoked) |
 | Plan / brainstorm | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**) |
 | Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI (invoked) |
-| Review / QA | gstack `/design-review` (UI vs `DESIGN.md`) + **koni-qc** (test coverage) + code review (invoked) |
+| Review / QA | gstack `/design-review` (UI vs `DESIGN.md`) + **koni-qc** (test coverage — or its **skill-grading** rubric when the deliverable is a skill) + code review (invoked) |
 
 **Tool rule (the one non-obvious invariant):** Superpowers + gstack are for
 brainstorm/plan/review only; implementation is Anthropic Skills only. The Review

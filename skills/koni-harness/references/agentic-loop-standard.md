@@ -48,6 +48,15 @@ between its stages.
 > (does the diff meet the story AC?) → (2) **koni-qc** (does every AC have
 > covering tests? the AC↔TC gate) → (3) gstack `/design-review` for UI → (4)
 > code-quality. So the only thing *before* koni-qc is the spec-compliance pass.
+>
+> **When the deliverable is a *skill*** (a `SKILL.md` + references/scripts), the
+> koni-qc review step runs **skill-grading** (koni-qc `references/skill-grading.md`)
+> instead of the product AC↔TC gate: score the skill /100 across four independent
+> dimensions — triggering (skill-creator), rule-robustness under pressure
+> (writing-skills), author-blind content (`superpowers:code-reviewer`), and
+> Anthropic best-practices — to a hard bar (≥90, or ≥95 for a foundational skill),
+> re-verifying every fix round. This is how the harness builds *and verifies the
+> building of* new skills.
 
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:

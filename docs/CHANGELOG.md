@@ -16,6 +16,47 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.18.0] — 2026-06-30 — skill-grading: QC for skill artifacts, wired into the build/verify loop (US-5.2, FR-27) — v0.18.0
+
+Turns the v0.17.2 multi-skill grading method (which lived only in a transcript +
+LESSONS §8) into a **reusable capability**, so the harness can build *and verify
+the building of* future skills the same way it just graded koni-harness (96/100)
+and koni-qc (97/100). Opens FR-27 under EPIC-5; compose-first per CONTEXT D15.
+
+### Added — `skills/koni-qc/`
+
+- **`references/skill-grading.md`** — QC for a *skill artifact* (not a product
+  feature): a four-dimension rubric (D1 triggering · D2 rule-robustness under
+  pressure · D3 author-blind content · D4 best-practices), each scored /25 → /100,
+  to a hard bar (≥90 ship, ≥95 foundational). Documents the delegated engine per
+  dimension and the non-negotiable method — one independent agent per dimension,
+  re-verify every fix round, average the subjective axis (≥2×), stop on
+  Suggestions-only. The skill-artifact analog of `quality-bar.md`.
+- **SKILL.md** — a new **"Grade a skill (skill-QC)"** mode, an activation row, a
+  delegates row (skill-creator · writing-skills · `superpowers:code-reviewer`), a
+  reference-index row, and a description trigger.
+
+### Changed — `skills/koni-harness/`
+
+- Review stage now runs **koni-qc skill-grading** (not the product AC↔TC gate)
+  when the deliverable is a skill — stated in the standard's tool-split note, the
+  `loop-runner.md` review drive row, and `SKILL.md`. This is how the harness
+  verifies new skills it builds.
+
+### Composition (not duplication)
+
+skill-grading **delegates** every eval to the tool that owns it — `skill-creator`
+(triggering), `writing-skills` (pressure-tests + the Anthropic best-practices doc),
+`superpowers:code-reviewer` (author-blind content) — and contributes only the
+rubric + the multi-dimension method. Same boundary koni-qc keeps everywhere.
+
+### Docs
+
+- VERSION 0.17.2 → 0.18.0; PRD FR-27 + EPIC-5 story row; US-5.2 story; this entry.
+  validate green; harness suites 113/113.
+
+---
+
 ## [0.17.2] — 2026-06-28 — koni-harness & koni-qc: graded hardening to ≥95/100 — v0.17.2
 
 Acted on a multi-skill grading pass (skill-creator triggering eval · writing-skills
