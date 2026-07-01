@@ -11,8 +11,9 @@ from [`traceability.md`](traceability.md) is the artifact that flows through all
 ---
 
 **Contents**: [1. Frame](#1-frame) · [2. Design](#2-design) ·
-[3. Self-review](#3-self-review) · [4. Execute](#4-execute) ·
-[5. Release gate](#5-release-gate) · [Entry / exit criteria](#entry--exit-criteria) ·
+[3. Self-review](#3-self-review) · [3b. Generate](#3b-generate--spec--runnable-tests) ·
+[4. Execute](#4-execute) · [5. Release gate](#5-release-gate) ·
+[Entry / exit criteria](#entry--exit-criteria) ·
 [Test-data & fixtures strategy](#test-data--fixtures-strategy) ·
 [Test lifecycle](#test-lifecycle)
 
@@ -84,25 +85,44 @@ Grade the suite before anyone executes it.
 
 ---
 
+## 3b. Generate — spec → runnable tests
+
+A graded spec is not automated until each TC is a **runnable test**. This is the
+step that was missing when the loop stalled at "specs written, `— (manual)`,
+`test-reports/` empty".
+
+- **Generate a test per TC**, named starting with its TC-ID, into
+  `<app>/tests/epic/EPIC-NN/…` — the full contract is
+  [`test-automation.md`](test-automation.md) §1 (it also materialises the
+  `tests/epic/` tree, which the doc scaffold does not create).
+- **Write the `Covered-by` handle back** into each spec row (flip `— (manual)`).
+- Per-function **unit** tests remain Dev-authored ([`unit-coverage.md`](unit-coverage.md));
+  the AC↔TC **integration/e2e/smoke** tests are generated here.
+
+**Exit**: every Critical/High TC has a runnable, TC-ID-named test; no spec row
+left `— (manual)` for an automatable case.
+
+---
+
 ## 4. Execute
 
-Run the cases and instrument the results — koni-qc does not run tests itself.
+Run the generated tests and instrument the results — **koni-qc drives + gates;
+the repo's runner executes** (koni-qc never runs tests itself).
 
-- **Drive gstack** per case, picking the mode by intent:
-  - **`qa`** — full interactive QA of a flow.
-  - **`qa-only`** — report-only verification, no fixes.
-  - **`investigate`** — root-cause a failing / flaky case.
-  - **`browse`** — fast headless checks and screenshots.
-  - **`/design-review`** — for any **UI-bearing** case, verify it tracks the
-    repo's `DESIGN.md` (layout, spacing, hierarchy, states, tokens). A UI case
-    is not done until `/design-review` passes against `DESIGN.md`; record
-    deviations as failures with the offending TC-ID.
-- **Record into koni-docs `test-report.md`** — fill its run template; do not invent
-  a report format.
-- **Execution instrumentation** — coverage % by AC and by type, pass / fail / blocked
-  counts, and **perf vs SLA** (measured against the budgets in [`nfr.md`](nfr.md)).
+- **Code tests (unit / integration / e2e / smoke)** — run with the repo runner and
+  the **reporter contract** ([`test-automation.md`](test-automation.md) §2): run →
+  parse the TC-ID from each test name → write `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
+  → **write back Status + coverage % + link to the story** (§3 sync). This is the
+  automation, not a hand-fill.
+- **UI-bearing cases** — additionally drive gstack `/design-review` against the repo's
+  `DESIGN.md` (a UI case isn't done until it passes; record deviations as failures
+  with the TC-ID). gstack `qa` / `qa-only` / `investigate` / `browse` remain the tools
+  for interactive/browser flows a headless runner can't cover.
+- **Instrumentation** — coverage % **per US** and by type, pass / fail / blocked, and
+  perf vs SLA ([`nfr.md`](nfr.md)) — emitted by the reporter, not typed by hand.
 
-**Exit**: every Critical/High case executed; results + instrumentation recorded.
+**Exit**: every Critical/High case executed via the runner/reporter (or `/design-review`
+for UI); `report.md` written; stories synced.
 
 ---
 
@@ -111,6 +131,9 @@ Run the cases and instrument the results — koni-qc does not run tests itself.
 Turn results into a ship decision.
 
 - **Check entry / exit** — exit criteria met (below). If not, the gate fails.
+- **A CI test gate exists** — the suite + coverage threshold run on every push/PR
+  (bootstrap it if absent: [`test-automation.md`](test-automation.md) §4). Without it
+  the suite silently rots — the #1 finding of the koni-erp-02 audit.
 - **Release report** — invoke **koni-docs** to produce the release report + ship
   decision from the run.
 - **Commit / gate** — invoke **koni-harness `gate`** to commit and gate the release.
@@ -125,7 +148,9 @@ Turn results into a ship decision.
 |---|---|---|
 | **Inputs** | PRD/stories/AC/ARCH read; env ready | — |
 | **Coverage** | scope agreed | AC↔TC matrix complete, no orphans |
-| **Execution** | suite passes self-review | all Critical/High run; 0 Critical failures open |
+| **Generation** | spec graded | every Critical/High TC has a runnable TC-ID-named test; no automatable case left `— (manual)` |
+| **Execution** | suite generated | all Critical/High run via runner/reporter; `report.md` written; stories synced; 0 Critical failures open |
+| **CI gate** | runner + coverage script exist | a `.github/workflows` runs the suite + coverage threshold on push/PR |
 | **NFR** | required triggers identified | required NFR sections executed |
 | **Perf** | SLA budgets set | p95 within budget or waiver logged |
 | **Decision** | — | release report + ship decision recorded |

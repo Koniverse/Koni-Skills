@@ -63,9 +63,10 @@ advance to Review until:
   — no new branch ships untested.
 - **Coverage of the changed unit meets the bar** — default **≥80% line-and-branch
   on new/changed code** (repos may raise it; never silently drop it). Measure with
-  the repo's runner (`vitest run --coverage`, `jest --coverage`, `pytest --cov`),
-  wired as a koni-harness `passthrough` gate check (see koni-harness
-  `gate-catalog.md`).
+  the repo's runner (`vitest run --coverage`, `jest --coverage`, `pytest --cov`);
+  bootstrap the `test:cov` script + the CI workflow + the `passthrough` gate rows per
+  [`test-automation.md`](test-automation.md) §4 (backed by koni-harness
+  [`gate-catalog.md`](../../koni-harness/references/gate-catalog.md)).
 - **All unit tests green** (already the Self-verify tests-green gate).
 
 A repo with zero unit tests for a logic-bearing change fails Self-verify — "build

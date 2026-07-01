@@ -16,6 +16,45 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.24.0] — 2026-07-01 — koni-qc automation spine: generate → report → sync → CI (US-5.5, FR-30) — v0.24.0
+
+Closes the gaps a **real koni-qc deployment on koni-erp-02** exposed: the agent could
+author specs + run a coverage audit but **could not automate the test workflow** —
+every TC `— (manual)`, no `tests/epic/` tree, `test-reports/` empty, zero story
+write-back, no CI. koni-qc was complete on *authoring* yet delegated running/gating to
+tooling it named but never defined ("gstack `qa`", "a repo `/run-test`"). This release
+ships the missing spine. Opens FR-30 under EPIC-5; CONTEXT D21.
+
+### Added — `skills/koni-qc/`
+
+- **`references/test-automation.md`** — the **automation spine** (generate → report →
+  sync → CI): §1 **Generate** (spec → runnable TC-ID-named test + materialise
+  `tests/epic/EPIC-NN/`, write `Covered-by` back), §2 the **reporter contract** (runner
+  JSON — `vitest run --reporter=json` / `jest --json` / `pytest --json-report` /
+  `playwright --reporter=json` — parse the leading TC-ID token → `report.md`), §3
+  **story write-back** (Status + coverage% + link), §4 **CI gate + runner bootstrap**
+  (`test:cov` at ≥80% + `.github/workflows/test.yml` + `gates.conf` rows). Ends the
+  "specs written, nothing runs" stall.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/qc-workflow.md`** — added a **§3b Generate** stage (spec → runnable test,
+  before Execute); rewrote §4 Execute to run code tests via the runner + reporter
+  contract (gstack `/design-review` scoped to UI); added "a CI test gate exists" as a
+  §5 Release exit criterion; added Generation/Execution/CI-gate rows to entry/exit.
+- **`references/test-organization.md`** — §3 sync: "Spec → code" is now a generation
+  step and "Code → story" is automated by the reporter contract; removed the phantom
+  "automated by gstack `qa` or a repo `/run-test`" assertion.
+- **`references/unit-coverage.md`** — the coverage/CI bootstrap now points at
+  test-automation.md §4 (`test:cov` + CI workflow + `passthrough` gate rows).
+- **`SKILL.md`** — added an "Automate the test loop" mode + activation + reference-index
+  rows; added the automation trigger to the description (re-tightened to 734 chars,
+  under the 1024 frontmatter limit).
+
+Whole-skill re-graded to ≥95 (CONTEXT D19).
+
+---
+
 ## [0.23.0] — 2026-06-30 — per-function unit-test process + Self-verify gate (US-5.4, FR-29) — v0.23.0
 
 Adds the missing **unit layer**: the loop had a TDD *discipline* line + a "tests

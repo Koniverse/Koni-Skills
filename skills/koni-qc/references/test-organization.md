@@ -111,9 +111,14 @@ One TC-ID threads through **three** places; change one → change all three:
 2. **Test code** — `…/tests/epic/EPIC-NN/<slug>.<cadence>.spec.ts`; the test name **starts with the TC-ID** so the reporter can parse it.
 3. **Coverage story** — the `docs/sprints/stories/US-*.md` row: TC-ID → Status + coverage % + report link.
 
-- **Spec ↔ code** is manual (the drift-prone direction — check on PR review).
-- **Code → story** is automated by the run/report tooling (gstack `qa` or a repo
-  `/run-test`): run → report → parse TC-IDs → update Status + coverage % + link.
+- **Spec → code** is a **generation step**, not manual copying — see
+  [`test-automation.md`](test-automation.md) §1 (spec → runnable TC-ID-named test;
+  it also materialises the `tests/epic/EPIC-NN/` tree, which the doc scaffold §6
+  does *not* create).
+- **Code → story** is automated by the **reporter contract**
+  ([`test-automation.md`](test-automation.md) §2–§3): run → parse the TC-ID from each
+  test name → write `report.md` → write back Status + coverage % + link to the story.
+  koni-qc defines that contract (it is *not* gstack `qa`, which is browser QA only).
   Never hand-edit `test-reports/`.
 
 ## 4. State cleanup / idempotent tests
@@ -131,8 +136,11 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
   (reproducible) · ⚠️ flaky · ⏸️ blocked · 🚧 impl-gap · 📋 manual-only · ⊘ retired ·
   — not-written.
 - **US story files** (`sprints/stories/US-*.md`) — **plain words, no icons**
-  (machine-parsed, diff-able): `done` · `failed` · `pending` · `impl-gap` ·
-  `manual` · `covered-by X` · `in-progress`.
+  (machine-parsed, diff-able): `done` · `failed` · `blocked` · `pending` ·
+  `impl-gap` · `manual` · `covered-by X` · `in-progress`. (`blocked` = a test ran
+  but a precondition/dependency was unmet, distinct from `pending` = no test yet —
+  the reporter write-back keeps them separate, see
+  [`test-automation.md`](test-automation.md) §2.)
 - **Run reports** — icons follow what the reporter emits; do not hand-edit.
 
 ## 6. Scaffolding: who creates the tree
@@ -164,6 +172,8 @@ report — don't pre-create empty dated folders.
 
 koni-qc owns this **standard** (where test docs live + the conventions);
 **koni-docs** owns the doc-body **templates** that fill `test-cases/` /
-`test-report.md`; **koni-setup** **scaffolds** the tree at setup; **gstack** runs
-the tests and emits reports; **koni-harness** gates the commit. koni-qc composes
-them — it never reproduces a template, a runner, or the scaffolder.
+`test-report.md`; **koni-setup** **scaffolds** the tree at setup; the **repo's test
+runner + the reporter contract** ([`test-automation.md`](test-automation.md) §2) run
+the code tests and emit `report.md` (**gstack** runs only interactive/browser QA +
+`/design-review`, not the automated suite); **koni-harness** gates the commit. koni-qc
+composes them — it never reproduces a template, a runner, or the scaffolder.

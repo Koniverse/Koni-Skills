@@ -1,5 +1,6 @@
 # Test Cases — Customize Network (koni-qc pilot)
 
+> **Load when**: you want a concrete end-to-end example of an authored suite.
 > **Worked example** produced by `koni-qc` from a feature's requirements, shown
 > in the koni-docs `docs/tests/test-cases/EPIC-N.md` shape. It demonstrates the
 > standard and the uplift over the hand-made `koni-docs.backup` `customize-network`

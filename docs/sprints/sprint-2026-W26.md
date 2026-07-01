@@ -26,11 +26,13 @@ duplicating it.
 | US-5.2 | skill-grading — QC for skill artifacts, wired into the loop       | EPIC-5 | P1  | 3      | ✅ done | v0.18.0         | [stories/US-5.2-skill-grading.md](stories/US-5.2-skill-grading.md)                         |
 | US-5.3 | test-organization — standard docs/tests taxonomy + scaffolding    | EPIC-5 | P1  | 3      | ✅ done | v0.19.0         | [stories/US-5.3-test-organization.md](stories/US-5.3-test-organization.md)                 |
 | US-5.4 | unit-coverage — per-function unit-test process + Self-verify gate | EPIC-5 | P1  | 3      | ✅ done | v0.23.0         | [stories/US-5.4-unit-coverage.md](stories/US-5.4-unit-coverage.md)                         |
+| US-5.5 | test-automation — spec→test→run→report→sync→CI spine              | EPIC-5 | P1  | 3      | ✅ done | v0.24.0         | [stories/US-5.5-test-automation.md](stories/US-5.5-test-automation.md)                     |
 
-**Total**: **7 stories / 38 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
+**Total**: **8 stories / 41 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
 koni-harness (16 pts across v0.10.0–v0.14.0, 5 phases) · US-3.1 plugin pattern +
 koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0) · US-5.2 skill-grading (v0.18.0)
-· US-5.3 test-organization (v0.19.0) — three EPIC-5. **EPIC-3 fully delivered** +
+· US-5.3 test-organization (v0.19.0) · US-5.4 unit-coverage (v0.23.0) · US-5.5
+test-automation (v0.24.0) — five EPIC-5. **EPIC-3 fully delivered** +
 EPIC-5 (QC tooling) opened & delivered.
 (koni-harness was consolidated from 5 phase-stories into one — see [CONTEXT D14](CONTEXT.md).)
 

@@ -989,3 +989,42 @@ stays with Dev, the *standard and the gate* are koni-qc's.
 **Date**: 2026-06-30
 **Version**: 0.23.0
 **Reference**: [unit-coverage.md](../skills/koni-qc/references/unit-coverage.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (Execute + Self-verify), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md), CHANGELOG [0.23.0].
+
+### D21. koni-qc ships the automation spine (generate → report → sync → CI), not just authoring — the delegated "run/report tooling" is now a defined contract
+
+**Context**: koni-qc was deployed from scratch on **koni-erp-02** (2026-07-01) and
+the agent **could not automate the test workflow**. Evidence: 12 `test-cases/EPIC-*.md`
+specs authored + a whole-project coverage audit — but every TC `— (manual)`, no
+`tests/epic/` tree, `test-reports/` empty, zero story write-back, no `.github/workflows`.
+The skill was complete on the **authoring** half yet delegated *running/gating* to
+tooling it named but never defined ("gstack `qa`", "a repo `/run-test`", "the run/report
+tooling") — and omitted spec→test **generation** + the tree scaffold. An author-blind
+analyst ranked five gaps: (1) no spec→runnable-test generation, (2) `tests/epic/` never
+materialised, (3) no reporter contract, (4) no code→story sync mechanism, (5) no
+CI-gate/runner bootstrap.
+
+**Decision** (v0.24.0, US-5.5, FR-30; completes FR-21/FR-26/FR-29):
+
+- **koni-qc defines the automation spine** in `references/test-automation.md`:
+  §1 **Generate** (spec → runnable TC-ID-named test + materialise `tests/epic/EPIC-NN/`,
+  write `Covered-by` back), §2 the **reporter contract** (runner JSON → parse the
+  leading TC-ID token → `report.md`), §3 **story write-back** (Status + coverage% +
+  link), §4 **CI gate + runner bootstrap** (`test:cov` at ≥80% + `.github/workflows` +
+  `gates.conf` rows). Portable across vitest/jest/pytest/playwright.
+- **The delegated tooling is now a contract, not a name-drop.** The phantom
+  "automated by gstack `qa` or a repo `/run-test`" assertions are removed;
+  `qc-workflow.md` gains a **§3b Generate** stage and runs code tests via the
+  runner+reporter (gstack `/design-review` scoped to UI); "a CI test gate exists" is a
+  Release exit criterion.
+- **Ownership holds** (D-series invariant): koni-qc contributes the *contracts +
+  procedure* (portable, no vendored binary); the repo's runner executes; koni-harness/CI
+  enforces. koni-qc still never runs a test — it now *specifies how the run happens*.
+
+**Why it matters**: the koni-erp-02 stall — "specs written, `— (manual)`, nothing
+runs" — is exactly the failure a QC skill must prevent. Authoring without a running,
+self-reporting, CI-gated loop is a half-skill; D21 closes the half that blocked full
+automation, grounded in a real deployment rather than a hypothetical.
+
+**Date**: 2026-07-01
+**Version**: 0.24.0
+**Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§3b + §Execute + §Release), [test-organization.md](../skills/koni-qc/references/test-organization.md) (§3 sync), [unit-coverage.md](../skills/koni-qc/references/unit-coverage.md), [US-5.5](sprints/stories/US-5.5-test-automation.md), CHANGELOG [0.24.0].

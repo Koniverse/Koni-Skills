@@ -1,18 +1,15 @@
 ---
 name: koni-qc
 description: >
-  Use when building test documentation or running quality control on a feature,
-  epic, or release — e.g. the user says "write test cases", "build a test plan",
-  "QC / QA this", "cover the edge cases", "coverage matrix", "traceability",
-  "test this epic / feature / product", "QA the release", "is our testing
-  thorough enough", or "grade the test suite" — even if they don't name koni-qc.
-  Also use when checking that every acceptance criterion is covered by positive,
-  negative, and boundary tests, when hunting missing edge cases, when verifying a
-  UI against DESIGN.md before shipping, when deciding **where test files / specs /
-  reports should live** or **how to organize tests** (`docs/tests/` layout, coverage
-  by user story), when setting the **unit-test / unit-coverage standard** (testing
-  each function to a coverage bar), or when grading/scoring a **skill** itself ("is this skill good
-  enough", "score this SKILL.md").
+  Use when building test documentation or running quality control — writing test
+  cases, a test plan, a coverage matrix, or traceability; covering edge cases and
+  checking every acceptance criterion has positive/negative/boundary tests; QA-ing
+  a release or asking if testing is thorough enough; deciding where test files and
+  reports live or how to organize tests (docs/tests layout, coverage per user
+  story); setting the unit-test / coverage bar; automating the test loop (generate
+  tests from specs, run → report → sync coverage, add a CI test gate — "test-reports
+  empty, nothing runs"); verifying a UI against DESIGN.md; or grading/scoring a
+  skill itself ("score this SKILL.md") — even if they don't name koni-qc.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -56,6 +53,7 @@ never re-implements the right-column owners.
 | **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to the **≥95 catalog standard** (re-grade the whole skill after any change, not just the diff) | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
 | **Set up / standardize test docs** | Apply the standard `docs/tests/` taxonomy + by-epic test-code layout + the 3-place sync rule; if the repo wasn't bootstrapped by koni-setup, self-scaffold the missing tree | `test-organization.md` (+ koni-setup scaffolds at setup; koni-docs owns the templates) |
 | **Set the unit-coverage standard** | Own the per-function unit-test rule + coverage bar (the layer *below* the AC↔TC matrix); Dev authors the tests, koni-harness Self-verify enforces the bar | `unit-coverage.md` (+ koni-harness Execute/Self-verify; the repo's runner executes) |
+| **Automate the test loop** | Turn authored specs into a running, self-reporting, CI-gated suite: generate TC-ID-named tests → run → reporter writes `report.md` → sync Status/coverage% to the story → CI gate. Closes the "specs written, `— (manual)`, no reports" stall | `test-automation.md` (+ the repo's runner + `.github/workflows`; koni-harness gate) |
 
 ---
 
@@ -68,6 +66,7 @@ never re-implements the right-column owners.
 | "trace AC to tests" / "TC IDs" / "coverage matrix" | `references/traceability.md` |
 | "security / performance / accessibility / i18n testing" | `references/nfr.md` |
 | "unit tests" / "test each function" / "unit coverage" / "TDD per function" | `references/unit-coverage.md` |
+| "automate the tests" / "generate tests from the spec" / "run + report + sync coverage" / "self-updating / CI-gated suite" / "set up CI for tests" / "test-reports empty, nothing runs" | `references/test-automation.md` |
 | "does the UI match the design?" / "check against DESIGN.md" | `references/nfr.md` §UI / visual conformance → gstack `/design-review` |
 | "run the whole QC process for an epic / release" | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
@@ -98,6 +97,7 @@ before review; do not restate the bands here.
 | [`references/edge-coverage.md`](references/edge-coverage.md) | The edge-case taxonomy applied to every feature so coverage stops at thorough, not happy-path |
 | [`references/traceability.md`](references/traceability.md) | The TC-ID scheme, the canonical rich-TC table, and the **mandatory AC↔TC coverage matrix** + risk/regression tagging |
 | [`references/unit-coverage.md`](references/unit-coverage.md) | The **per-function unit-test** layer below the AC↔TC matrix — the per-function rule, the TDD cycle, and the unit-coverage bar (koni-qc owns the bar · Dev authors · harness Self-verify enforces) |
+| [`references/test-automation.md`](references/test-automation.md) | Load the moment specs are authored but `test-reports/` is empty — the generate → report → sync → CI spine (with the reporter parse/aggregate/status-map contract + the runner/CI bootstrap) |
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
 | [`references/skill-grading.md`](references/skill-grading.md) | Grading a **skill artifact** /100 across 4 dimensions (triggering · rule-robustness · content · best-practices); the harness Review stage uses it when building a skill |
