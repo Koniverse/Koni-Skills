@@ -28,7 +28,9 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 - [ ] **Test lifecycle** — active / deprecated / archived states applied.
 - [ ] **Risk-based order** — Critical/High/Medium/Low priority set by impact × likelihood.
 - [ ] **Regression scope** — `RC-` set defined as the per-release regression scope.
-- [ ] **Automation linkage** — `Covered-by` filled (`*.spec.ts::name` or `— (manual)`).
+- [ ] **Automation linkage** — `Covered-by` filled with one of the three fixed forms
+  (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)`); `PROPOSED:` counts as
+  filled-but-uncovered (see [`traceability.md`](traceability.md)).
 - [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty.
 
 ---

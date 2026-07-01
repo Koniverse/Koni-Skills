@@ -44,12 +44,15 @@ real content. Bootstrap must be safe to re-run.
 ├── docs/tests/                     # test surface — standard: koni-qc references/test-organization.md
 │   ├── README.md                   # QA hub
 │   ├── test-organization.md        # the standard (stub → koni-qc)
+│   ├── STRATEGY.md                 # whole-repo test strategy (stub → koni-qc); per-epic plans live in test-plan/
 │   ├── findings.md                 # open QA findings tracker
-│   ├── test-plan/                  # EPIC-NN-<slug>.md (strategy: scope · risk · priority)
+│   ├── test-plan/                  # per-EPIC plans — EPIC-NN-<slug>.md (that epic's scope · risk · priority)
 │   ├── test-cases/                 # EPIC-N.md + README.md (koni-qc specs + AC↔TC matrix)
 │   ├── test-reports/               # EPIC-NN/<MMDDYYYY>/ — created on first run, never pre-made
 │   ├── bug-bash/                   # sprint-YYYY-WNN.md
 │   └── audits/                     # dated one-off analyses (historical)
+├── <app>/tests/epic/               # test CODE root (by-epic tree) — <app> = the package that owns tests
+│   └── EPIC-NN/                     #   <slug>.<cadence>.spec.ts — created per epic; .gitkeep at the root
 ├── .claude/skills/                 # see skill-wiring.md
 ├── .agents/skills/                 # see skill-wiring.md
 └── _bmad/  _bmad-output/           # BMAD framework (output dir gitignored)
@@ -68,6 +71,7 @@ Set `PROFILE` first.
 
 ```bash
 PROFILE=code     # code | devops | content  — decides whether PRD/ARCHITECTURE stub
+APP=.            # test-code root for code repos: "." (single package) or e.g. "app"/"packages/web" (monorepo)
 
 # 0. new repo? initialise git (skip if already a repo)
 [ -d .git ] || git init -q
@@ -77,6 +81,9 @@ mkdir -p docs/sprints/{epics,stories,archive} docs/design \
          docs/tests/{test-plan,test-cases,bug-bash,audits} \
          .claude/skills .agents/skills _bmad-output
 # test-reports/EPIC-NN/<MMDDYYYY>/ is created on first run, never pre-made
+# the test CODE root (by-epic tree) — koni-qc test-organization §2/§6. Only for code repos;
+# APP defaults to repo root, override for a monorepo (APP=app or APP=packages/web).
+if [ "$PROFILE" = code ]; then mkdir -p "${APP:-.}/tests/epic"; fi
 
 # 2. VERSION (bare semver, only if absent)
 [ -f VERSION ] || echo "0.1.0" > VERSION
@@ -102,6 +109,7 @@ fi
 # docs/tests standing docs (standard owned by koni-qc references/test-organization.md)
 [ -f docs/tests/README.md ]            || printf '# docs/tests — QA hub\n\n> Standard: koni-qc references/test-organization.md\n' > docs/tests/README.md
 [ -f docs/tests/test-organization.md ] || printf '# Test organization\n\n> Follows koni-qc references/test-organization.md (taxonomy · by-epic layout · 3-place sync).\n' > docs/tests/test-organization.md
+[ -f docs/tests/STRATEGY.md ]          || printf '# Test strategy\n\n> Whole-repo strategy: scope · risk posture · priority order · tooling. Per-epic plans live in test-plan/EPIC-NN-<slug>.md. Standard: koni-qc references/test-organization.md.\n' > docs/tests/STRATEGY.md
 [ -f docs/tests/findings.md ]          || printf '# Open QA findings\n' > docs/tests/findings.md
 [ -f docs/sprints/STATUS.md ]      || : > docs/sprints/STATUS.md   # koni-docs status regenerates this
 # first sprint file: name from current ISO week (see "Active sprint" note below)
@@ -116,6 +124,10 @@ for d in docs/sprints/{epics,stories,archive} docs/design \
          docs/tests/{test-plan,bug-bash,audits}; do
   [ -z "$(ls -A "$d" 2>/dev/null)" ] && : > "$d/.gitkeep"
 done
+# the test CODE root too (code repos) — so tests/epic/ survives the first commit
+if [ "$PROFILE" = code ] && [ -d "${APP:-.}/tests/epic" ] && [ -z "$(ls -A "${APP:-.}/tests/epic" 2>/dev/null)" ]; then
+  : > "${APP:-.}/tests/epic/.gitkeep"
+fi
 ```
 
 Why `.gitkeep`: git won't track empty directories, so `epics/`, `stories/`,

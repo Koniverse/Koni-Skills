@@ -1,17 +1,28 @@
 # Test Report — Full Template
 
-> **File locations**:
-> - Per-execution: `docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md`
-> - Per-release: `docs/tests/test-reports/releases/vX.Y.Z.md`
+> **File locations** (the *path* is owned by the koni-qc **test-organization**
+> standard; this template owns the *body* you write at that path):
+> - Per-execution (auto): `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md`
+>   — the runner/reporter is the only writer (koni-qc `test-automation.md` §2).
+> - Per-execution (manual run): same folder, `report-manual.md`.
+> - Per-release aggregate: `docs/tests/test-reports/releases/vX.Y.Z.md`
+>   (a cross-epic rollup, linked from CHANGELOG.md).
+>
+> This **supersedes the legacy `test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md` path**
+> wherever koni-qc is adopted — the run folder groups **by epic** (`EPIC-NN/`) then
+> by **`MMDDYYYY`** date, never a flat `runs/` dir or ISO date. Older `runs/...`
+> filenames in the examples below are illustrative of the *body*, not the path.
 >
 > **Use when**: A test-cases file ([template](test-cases.md)) has just been
 > executed (manually or by CI), or a release is shipping and needs an
 > aggregate test summary that ships alongside CHANGELOG.md.
 >
-> **One rule above all others**: a test report is **append-only history**.
-> Once a run is recorded, never edit the result fields — if you re-run the
-> same scenario, create a NEW run file (`-run2`, `-run3`, …). The reason a
-> test failed and was then re-run is itself a signal worth preserving.
+> **One rule above all others**: a test report is **history, not a scratchpad** —
+> never hand-edit result fields. For an **automated** `report.md` the runner is the
+> sole writer and re-derives it each run (history lives in git + the per-release
+> aggregate §B). For a **manual** `report-manual.md`, treat it as append-only: don't
+> rewrite a recorded run — add a new dated folder for a re-run. The reason a test
+> failed and was then re-run is itself a signal worth preserving.
 
 ---
 
@@ -19,7 +30,7 @@
 
 | Sub-template | Path | Purpose |
 |---|---|---|
-| **A. Per-execution detail** | `test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md` | One file per test run. Captures who ran what, in which env, against which commit, and the pass/fail of each TC. |
+| **A. Per-execution detail** | `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) · `report-manual.md` (manual) | One file per test run. Captures who ran what, in which env, against which commit, and the pass/fail of each TC. |
 | **B. Per-release master** | `test-reports/releases/vX.Y.Z.md` | One file per shipped version. Aggregates run files into a release-level summary, linked from CHANGELOG.md. |
 
 Both share frontmatter conventions (date / commit / version) but differ in
@@ -32,17 +43,20 @@ body: A is granular (per-TC results + failure detail), B is aggregate
 
 ### A.1 File location & naming
 
-`docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md`
+`docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) · `report-manual.md` (manual)
 
-- `YYYY-MM-DD` is the run date in local TZ.
-- `EPIC-N` is the epic whose test-cases were executed.
-- `runN` increments per (date, epic) pair starting at `run1`. If a 2nd run
-  happens on the same day for the same epic, it is `run2`.
+- `EPIC-NN` groups the run by the epic whose test-cases were executed (mandatory level).
+- `<MMDDYYYY>` is the run date, e.g. `07012026` — **not** ISO `YYYY-MM-DD`.
+- The reporter is the only writer of `report.md`; a hand-run goes in `report-manual.md`
+  in the same folder. A same-day re-run overwrites `report.md` (the run is re-derived
+  from the suite); append-only history is preserved by the per-release aggregate (§B)
+  and git, not by `-runN` filenames. (Legacy layout: `runs/YYYY-MM-DD-EPIC-N-runN.md`,
+  now superseded — koni-qc `test-organization.md` §1.)
 
 Examples:
-- `2026-05-15-EPIC-02-run1.md` — first run of EPIC-02 tests on 2026-05-15
-- `2026-05-15-EPIC-02-run2.md` — re-run after fixing a flake
-- `2026-05-15-EPIC-03-run1.md` — separate epic same day
+- `EPIC-02/05152026/report.md` — EPIC-02 run on 2026-05-15 (re-run overwrites; git keeps history)
+- `EPIC-02/05152026/report-manual.md` — a manual run of EPIC-02 the same day
+- `EPIC-03/05152026/report.md` — separate epic, same day
 
 ### A.2 Full skeleton
 
@@ -207,9 +221,9 @@ list. Do not duplicate the changelog body here.>
 <Append every run that contributed to this release decision. Most
 recent first.>
 
-- [2026-05-15-EPIC-02-run2](../runs/2026-05-15-EPIC-02-run2.md) — ✅ pass (re-run after fixing flake)
-- [2026-05-15-EPIC-02-run1](../runs/2026-05-15-EPIC-02-run1.md) — ⚠️ 1 flake (TC-02.E2E-2)
-- [2026-05-14-EPIC-03-run1](../runs/2026-05-14-EPIC-03-run1.md) — ✅ pass
+- [EPIC-02/05152026](../EPIC-02/05152026/report.md) — ✅ pass (re-run after fixing flake)
+- [EPIC-02/05142026](../EPIC-02/05142026/report.md) — ⚠️ 1 flake (TC-02.E2E-2)
+- [EPIC-03/05142026](../EPIC-03/05142026/report.md) — ✅ pass
 
 ## Outstanding risks
 
@@ -282,7 +296,9 @@ any conditions attached to the release.>
 
 ### Append-only discipline
 
-- NEVER edit a past run's results. Errors? Add a new run.
+- NEVER edit a past **manual** run's results — add a new dated folder. An automated
+  `report.md` is reporter-owned and re-derived each run; its history lives in git + the
+  per-release aggregate, not in edited fields.
 - NEVER edit a past release's `ship_status` retroactively — except
   `shipped → rolled-back` (which is itself an event worth dating in the
   Ship decision paragraph).
@@ -382,7 +398,7 @@ provisioning, health badge, unlink + decommission.
 
 ## Run history
 
-- [2026-05-15-EPIC-02-run1](../runs/2026-05-15-EPIC-02-run1.md) — ✅ pass
+- [EPIC-02/05152026](../EPIC-02/05152026/report.md) — ✅ pass
 
 ## Outstanding risks
 

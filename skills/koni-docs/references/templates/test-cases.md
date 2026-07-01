@@ -26,7 +26,7 @@
 | Regression scenarios protecting epic-level invariants | **This file** |
 | Smoke check for the epic at release time | **This file** |
 | Coverage matrix (AC → TC) | **This file** §Coverage matrix |
-| Execution history (when/who/pass/fail) | `docs/tests/test-reports/runs/*.md` |
+| Execution history (when/who/pass/fail) | `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` |
 | Cross-story test infrastructure (fixtures, harness) | Epic file §13 Cross-story testing requirements |
 
 **Iron rule**: if a scenario can be expressed as a single story's AC, it
@@ -389,7 +389,7 @@ the trigger (date / event) that will close the gap.>
 
 A TC is implicitly `draft` until its Coverage matrix row is filled.
 Once `maps_to.ac` is non-empty AND a runnable Notes line or manual steps
-exist, treat it as `ready`. Use test-reports (`runs/*.md`) to track
+exist, treat it as `ready`. Use test-reports (`test-reports/EPIC-NN/<MMDDYYYY>/report.md`) to track
 `executed` state — never duplicate execution status into the test-cases
 file itself.
 
@@ -499,7 +499,7 @@ And   the account appears in the dashboard with terminalStatus=ACTIVE within 60s
 **Test data:** `mt5-sandbox-accounts.json` → `account_a_demo`
 
 **Notes:**
-- Last run 2026-05-14 — pass (link to runs/2026-05-14-EPIC-02-run1.md).
+- Last run 2026-05-14 — pass (link to ../test-reports/EPIC-02/05142026/report.md).
 - Manual phase 1; will be automated in `e2e-tests/tests/mt5-link-flow.spec.ts` (TBD US-19.X).
 
 ### TC-02.REG-1 — Credential vault never returns plaintext (security regression)

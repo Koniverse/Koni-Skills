@@ -1028,3 +1028,48 @@ automation, grounded in a real deployment rather than a hypothetical.
 **Date**: 2026-07-01
 **Version**: 0.24.0
 **Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§3b + §Execute + §Release), [test-organization.md](../skills/koni-qc/references/test-organization.md) (§3 sync), [unit-coverage.md](../skills/koni-qc/references/unit-coverage.md), [US-5.5](sprints/stories/US-5.5-test-automation.md), CHANGELOG [0.24.0].
+
+### D22. A standard stated in prose drifts; scaffold the shape and reject the deviation — the ERP-02-vs-Senti-Quant test-doc lesson
+
+**Context**: Koni-ERP-02 adopted the koni-qc test-doc standard but **drifted from
+Senti-Quant** (the reference repo the standard was synthesized from). An author-blind
+audit of both `docs/tests/` trees + test-code layouts against the koni-qc yardstick
+found 10 deviations, the structural ones being: run output at a flat
+`test-reports/<YYYY-MM-DD>/` (no `EPIC-NN` level, ISO date) instead of
+`test-reports/EPIC-NN/<MMDDYYYY>/`; all suites flat at `tests/*.test.ts` with **no**
+`tests/epic/` tree; the whole-repo strategy overloaded into `test-plan/README.md`
+(no `STRATEGY.md`); an ad-hoc `PROPOSED:` `Covered-by` value; and spec TC-IDs
+colliding with Dev-authored unit-file IDs. The common root cause: **the skills
+*stated* the standard in prose but nothing created the shape at bootstrap or rejected
+the drift at first run** — koni-setup scaffolded only the `docs/tests/` doc tree,
+never the `<app>/tests/epic/` code root, and the report path was a diagram, not a MUST.
+
+**Decision** (v0.25.0, US-5.6, FR-31; refines FR-26/FR-28/FR-30):
+
+- **Scaffold the shape, don't just describe it.** koni-setup now bootstraps **both**
+  trees (`docs/tests/` **and** `<app>/tests/epic/`) + `STRATEGY.md` + `test-cases/README`,
+  and koni-qc's self-scaffold snippet does the same — a first run can no longer invent
+  its own layout because the layout already exists.
+- **Make the invariants MUSTs with checkers.** The report path is a MUST + validator
+  regex (`EPIC-NN` grouping, `MMDDYYYY` not ISO, no flat `<date>/`); the flat
+  `tests/*.test.ts` layout is non-conformant and migration is a step, not "as you go";
+  the reporter flags off-tree suites and TC-ID orphans/collisions. onboarding-audit
+  gains matching drift checks.
+- **Legitimize the real need, name one home.** `PROPOSED:<path>::name` is blessed as
+  the third `Covered-by` state (planned automation, counts *uncovered*) — fresh
+  adoptions are mostly this; and whole-repo strategy has exactly one home
+  (`docs/tests/STRATEGY.md`), `test-plan/` staying per-epic. The spec is the **sole
+  authority** for a TC-ID (no Dev-authored unit-file collisions).
+- **Ownership stays clean across the trio.** koni-qc owns the *standard + path*,
+  koni-docs owns the report *body* template (its legacy `test-reports/runs/…` path is
+  reconciled to the unified layout), koni-setup *scaffolds* both trees. The pervasive
+  koni-docs `Docs/`→`docs/` casing is logged as a separate follow-up (out of scope).
+
+**Why it matters**: one deployment drifting is a bug report; the *pattern* — a prose
+standard with no scaffold and no checker drifts on every fresh adoption — is the
+lesson. D22 converts the standard from "documented" to "generated and enforced" so
+the next repo gets the Senti-Quant-grade structure by default, not by diligence.
+
+**Date**: 2026-07-01
+**Version**: 0.25.0
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2/§4), [traceability.md](../skills/koni-qc/references/traceability.md) (Covered-by), [scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), [onboarding-audit.md](../skills/koni-setup/references/onboarding-audit.md), [test-report.md](../skills/koni-docs/references/templates/test-report.md), [US-5.6](sprints/stories/US-5.6-test-doc-standardization.md), CHANGELOG [0.25.0].

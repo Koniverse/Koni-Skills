@@ -71,15 +71,23 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   installed — it is **not** in pytest core), or `playwright test --reporter=json`.
 - **Parse rule (per test)**: take the **leading `TC-<EPIC>.<TYPE>-<n>` token** of the
   test name → `{tcId, result: passed|failed|skipped, durationMs, error?}`. A test whose
-  name has no TC-ID is an **orphan test** (flag it, per traceability).
+  name has no TC-ID is an **orphan test**; a test whose TC-ID is **absent from the spec**
+  is an **orphan ID**, and one whose TC-ID exists in the spec but asserts a *different*
+  case is a **collision** (the ERP-02 F-12 bug) — flag all three, the spec is the sole
+  authority for TC-IDs (test-organization §3).
+- **Conformance flag**: a suite file living **outside `<app>/tests/epic/EPIC-NN/`** (a
+  flat `tests/*.test.ts`) is **non-conformant** — surface it in the report so the
+  unmigrated layout (test-organization §2) is visible, not silent.
 - **Aggregate to one row per TC-ID** (a TC-ID can back several tests — a `describe`
   group or parametrized cases). Fold its tests: **any `failed` ⇒ the TC is `failed`**;
   else **any `skipped` ⇒ `blocked`**; else **`passed`**. One TC-ID → one report row.
 - **Reconcile against the spec, not just the run.** Enumerate every `TC-<EPIC>.<TYPE>-<n>`
   in `test-cases/EPIC-N.md`; a TC with **no test in the JSON** is `not-written` (or, if
-  the spec row is flagged manual-only `📋`, `manual`) — emit the row anyway. This is
-  mandatory: coverage % (§3) is computed over the **spec's** TC list, so an un-generated
-  TC must count as uncovered instead of silently vanishing.
+  the spec row is flagged manual-only `📋`, `manual`; or, if its `Covered-by` is
+  `PROPOSED:<path>::name`, **planned automation** — still counts as *uncovered*, see
+  [`traceability.md`](traceability.md)) — emit the row anyway. This is mandatory:
+  coverage % (§3) is computed over the **spec's** TC list, so an un-generated TC must
+  count as uncovered instead of silently vanishing (a fresh adoption is mostly this).
 - **Status mapping** — one canonical table from the TC outcome → `report.md` icon → the
   US plain-word legend (test-organization §5), so the write-back (§3) is deterministic
   and **lossless** (each report status has a *distinct* US plain-word — `blocked` and
@@ -102,6 +110,11 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   koni-docs `test-report.md` template shape — a row per TC (id · status icon · time ·
   failure detail) + the run header (commit, env, runner). `report.md` is the
   **reporter's exclusive artifact**; manual `MAN-*` runs go in `report-manual.md`.
+- **Path validator (MUST)**: the output path must match
+  `test-reports/EPIC-[0-9A-Z]+/[0-1][0-9][0-3][0-9][0-9]{4}/report(-manual)?\.md`
+  (`EPIC-NN` grouping level present, `MMDDYYYY` date — **not** ISO `YYYY-MM-DD`, **not**
+  a flat `test-reports/<date>/`). Reject a non-matching path before writing — this is the
+  #1 fresh-adoption drift (test-organization §1).
 - **Build it as**: a thin script over the runner's JSON reporter (≈40 lines), or a
   repo `/run-test EPIC-NN` skill that wraps `<runner> → parse → aggregate → reconcile →
   write`. koni-qc specifies the *contract*; the repo owns the *script*.
@@ -131,10 +144,17 @@ a cloud repo** (a fresh repo has neither by default — bootstrap both):
    `test.coverage.thresholds` / `coverageThreshold` in `vitest.config`/`jest.config`
    (then `test:cov` = `vitest run --coverage` / `jest --coverage`); only pytest takes it
    on the CLI (`pytest --cov --cov-fail-under=80`). A run below the bar must exit non-zero.
-2. **CI workflow**: emit `.github/workflows/test.yml` that runs the TC suite + `test:cov`
-   on every push/PR (optionally typecheck — `tsc --noEmit` — if the repo is typed); it
-   fails the PR below the bar. This is the server-side counterpart to koni-harness's
-   `pre-push` hook.
+2. **CI workflow — match the repo's CI, don't assume GitHub Actions**:
+   - **GitHub Actions repo** → emit `.github/workflows/test.yml` running the TC suite +
+     `test:cov` on every push/PR (optionally typecheck — `tsc --noEmit` — if the repo is
+     typed); it fails the PR below the bar.
+   - **Container-/Docker-built repo (no `.github/workflows`, like ERP-02)** → wire the
+     same `test:cov` into the build gate: a `RUN npm run test:cov` layer in the
+     `Dockerfile` (build fails below the bar) and/or the platform's CI step (GitLab CI,
+     Cloud Build, etc.). The **rule is "the coverage bar runs on every push/PR/build"**;
+     the *file* is whatever that repo's CI actually is — do not leave a repo un-gated just
+     because it isn't on GitHub Actions.
+   This is the server-side counterpart to koni-harness's `pre-push` hook.
 3. **Local gate rows**: add the `tests` + `unit-coverage` `passthrough` rows to
    `.koni-harness/gates.conf` (koni-harness [`gate-catalog.md`](../../koni-harness/references/gate-catalog.md)).
 

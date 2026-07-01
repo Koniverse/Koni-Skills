@@ -35,8 +35,19 @@ profile; untagged rows apply to all.
 - [ ] `docs/sprints/README.md`
 - [ ] `docs/sprints/STATUS.md` (auto-generated — RULE-5)
 - [ ] `docs/sprints/{epics,stories,archive}/`
-- [ ] `docs/tests/{README.md,test-organization.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}` (koni-qc test-organization standard; `test-reports/EPIC-NN/<date>/` is created on first run, not scaffolded)
+- [ ] `docs/tests/{README.md,test-organization.md,STRATEGY.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}` (koni-qc test-organization standard; `test-reports/EPIC-NN/<date>/` is created on first run, not scaffolded)
+- [ ] `<app>/tests/epic/` — the test **code** root exists (koni-qc §2); code repos only
 - [ ] `docs/design/`
+
+### Test-doc drift (the ERP-02 patterns — flag, don't silently pass)
+- [ ] **Report path** — run folders are `test-reports/EPIC-NN/<MMDDYYYY>/`, **not** a flat
+  `test-reports/<date>/` and **not** ISO `YYYY-MM-DD` (koni-qc test-automation §2 validator)
+- [ ] **Code layout** — tests live under `<app>/tests/epic/EPIC-NN/`, **not** flat
+  `tests/*.test.ts` (a flat layout is non-conformant — migrate it, koni-qc §2)
+- [ ] **Strategy home** — whole-repo strategy is in `docs/tests/STRATEGY.md`, **not**
+  overloaded into `test-plan/README.md`
+- [ ] **Covered-by vocabulary** — only `<path>.spec.ts::name`, `PROPOSED:<path>::name`,
+  or `— (manual)`; no ad-hoc free-text markers
 
 ### Skills & agents
 - [ ] `.claude/skills/koni-docs` resolves (not dangling)
@@ -65,7 +76,10 @@ chk docs/README.md; chk docs/CHANGELOG.md; chk docs/CONTEXT.md; chk docs/LESSONS
 chk docs/SETUP.md; chk docs/PRD.md; chk docs/ARCHITECTURE.md
 chk docs/sprints/README.md; chk docs/sprints/STATUS.md
 chk docs/sprints/epics; chk docs/sprints/stories
-chk docs/tests/test-cases; chk docs/design
+chk docs/tests/test-cases; chk docs/tests/STRATEGY.md; chk docs/design
+# test-doc drift (ERP-02 patterns) — warn, don't fail
+[ -d docs/tests/test-reports ] && ls docs/tests/test-reports 2>/dev/null | grep -Eqv '^EPIC-' && echo "⚠ test-reports/ has non-EPIC-NN folders (flat/ISO date drift — koni-qc test-automation §2)"
+A="${APP:-.}"; { [ -d "$A/tests" ] && ls "$A"/tests/*.test.* >/dev/null 2>&1 && [ ! -d "$A/tests/epic" ]; } && echo "⚠ flat tests/*.test.* with no tests/epic/ (migrate to by-epic — koni-qc §2)"
 # core trio skill links resolve? + the harness gate vendored?
 for s in koni-docs koni-harness koni-qc; do
   for d in ".claude/skills/$s" ".agents/skills/$s"; do

@@ -94,8 +94,9 @@ that already has real content; check first, write only if absent or a stub.
    ```
    docs/{README,SETUP,BRIEF,PRD,ARCHITECTURE,CHANGELOG,CONTEXT,LESSONS}.md
    docs/sprints/{README.md,STATUS.md,epics/,stories/,archive/}
-   docs/tests/{README.md,test-organization.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}
+   docs/tests/{README.md,test-organization.md,STRATEGY.md,findings.md,test-plan/,test-cases/,bug-bash/,audits/}
    #   docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/  ← created on first run, never pre-made
+   <app>/tests/epic/   ← test CODE root (by-epic tree; code repos) — koni-qc test-organization §2
    docs/design/
    ```
    Create the **directories and stub files**, but for the *contents* of each doc

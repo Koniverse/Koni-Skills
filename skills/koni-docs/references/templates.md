@@ -25,7 +25,7 @@
 | **OKR — File-Native Quarterly Ledger** | [templates/okr.md](templates/okr.md) | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md` |
 | **CLAUDE.md + AGENTS.md integration blocks** | [templates/integration.md](templates/integration.md) | Wiring koni-docs into a new project, refreshing Active Context |
 | **Test Cases — per-epic scenarios** | [templates/test-cases.md](templates/test-cases.md) | Capturing end-to-end + regression + smoke scenarios at the EPIC level (complements per-story AC) |
-| **Test Report — per-execution + per-release** | [templates/test-report.md](templates/test-report.md) | Recording an execution run (`runs/`) or aggregating a release (`releases/`) |
+| **Test Report — per-execution + per-release** | [templates/test-report.md](templates/test-report.md) | Recording an execution run (`test-reports/EPIC-NN/<MMDDYYYY>/report.md`) or aggregating a release (`releases/`) |
 
 ---
 
@@ -144,7 +144,7 @@ maps_to:
   rule: [RULE-N]           # optional
 ```
 
-### Test report — per-execution (`docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md`)
+### Test report — per-execution (`docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md`)
 
 ```yaml
 ---

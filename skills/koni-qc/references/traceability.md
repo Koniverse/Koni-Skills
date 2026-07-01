@@ -84,8 +84,17 @@ standard. Every functional/edge case is one row. The columns are fixed:
 | TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
 
 > These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
-> suite's IDs. The **`Covered-by`** handle format is fixed: `<path>.spec.ts::<name>`
-> for automated cases, or `— (manual)`.
+> suite's IDs. The **`Covered-by`** handle has **three** fixed forms:
+> 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran);
+> 2. `PROPOSED:<path>::<name>` — **planned automation**: the test is intended at that
+>    path/name but the file does **not exist yet** (dominant on a fresh adoption). It
+>    records author intent so the target survives in the spec, but it counts as
+>    **uncovered** for coverage % until it becomes form 1 — the reporter treats it as
+>    `not-written` ([`test-automation.md`](test-automation.md) §2);
+> 3. `— (manual)` — **manual-only**, never automated.
+>
+> Do **not** invent a fourth form; `PROPOSED:` is the one blessed way to say "planned,
+> not yet built" (it replaces ad-hoc notes like the ERP-02 free-text markers).
 
 Column contract:
 - **Priority** — `Critical / High / Medium / Low`, derived from risk (see §Risk-based priority). (Matches the Koni-Finance production standard.)
@@ -100,7 +109,8 @@ Column contract:
   [`nfr.md`](nfr.md) §Performance).
 - **Side-effects** — DB writes, store mutations, events, files — the things a
   reviewer can't see in the UI.
-- **Covered-by** — the automation handle (`*.spec.ts::name`) or `— (manual)`.
+- **Covered-by** — the automation handle (`*.spec.ts::name`), `PROPOSED:<path>::name`
+  (planned, still uncovered), or `— (manual)` (see the three fixed forms above).
 
 > The koni-docs `test-cases/EPIC-N.md` container also supports a Gherkin
 > Given/When/Then block per scenario. Use the canonical table for the dense

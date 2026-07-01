@@ -46,8 +46,9 @@ coverage unit (US).
 docs/tests/
 ├── README.md             ← QA hub (entry point; links the coverage epic)
 ├── test-organization.md  ← STANDING: this standard (points here)
+├── STRATEGY.md           ← STANDING: whole-repo test strategy (scope · risk posture · priority order · tooling)
 ├── findings.md           ← STANDING: open QA findings tracker
-├── test-plan/            ← strategy per epic — EPIC-NN-<slug>.md (scope · risk · priority)
+├── test-plan/            ← per-EPIC plans — EPIC-NN-<slug>.md (that epic's scope · risk · priority)
 ├── test-cases/           ← specs per epic — EPIC-NN.md + README.md (koni-qc authored: TC-IDs + AC↔TC matrix + gherkin)
 ├── test-reports/         ← one folder per run
 │   └── EPIC-NN/<MMDDYYYY>/
@@ -57,9 +58,10 @@ docs/tests/
 └── audits/               ← point-in-time analyses (dated, historical; not maintained)
 ```
 
-| Folder | Owner | Purpose |
+| Folder / file | Owner | Purpose |
 |---|---|---|
-| `test-plan/` | QA | per-epic strategy: scope, out-of-scope, risk map, priority order |
+| `STRATEGY.md` | QA | **whole-repo** test strategy — the one place for cross-epic scope, risk posture, priority order, and tooling choices (do **not** overload `test-plan/README.md` with this) |
+| `test-plan/` | QA | **per-epic** plans only — `EPIC-NN-<slug>.md` (that epic's scope, out-of-scope, risk map, priority order) |
 | `test-cases/` | koni-qc (Dev/PM) | the source specs — TC-IDs, AC↔TC matrix, Given/When/Then |
 | `test-reports/` | the runner (auto) | per-run output; **never hand-edited** (manual runs use `report-manual.md`) |
 | `bug-bash/` | whole team | end-of-sprint break-it-together findings |
@@ -67,6 +69,14 @@ docs/tests/
 
 > **Root holds only standing docs + the framework subdirs.** Dated one-offs go in
 > `audits/`; run output goes in `test-reports/EPIC-NN/<MMDDYYYY>/` — never at root.
+
+> **The report path is a MUST, not a suggestion.** Every run folder is
+> `test-reports/EPIC-NN/<MMDDYYYY>/` — the **`EPIC-NN` grouping level is mandatory**
+> (a flat `test-reports/<date>/` is non-conformant) and the date is **`MMDDYYYY`**
+> (e.g. `07012026`), **not** ISO `YYYY-MM-DD`. The fixed, sortable-per-epic shape is
+> what lets the reporter and story write-back resolve a run deterministically; a
+> validator for it lives in [`test-automation.md`](test-automation.md) §2. This is the
+> #1 drift a fresh adoption makes — the first run must not invent its own layout.
 
 > **Relationship to koni-docs (report layout vs report body).** koni-qc owns this
 > **layout** — per-run reports live at `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
@@ -96,6 +106,13 @@ The **run cadence** is encoded in the file SUFFIX (not a sub-folder):
 
 - **No `integration/` or `e2e/` sub-folders** — keep files flat in the epic folder;
   group cases inside a file with `describe`.
+- **A flat repo-root `tests/*.test.ts` layout is non-conformant — migrate it, don't
+  tolerate it.** On adoption, if the repo already has flat suites (common in
+  OpenSaaS/Vite-inherited repos), **generate the `<app>/tests/epic/EPIC-NN/` tree and
+  move (or re-export) each suite into its epic folder** — do not leave "migrate as you
+  go" open-ended, because it becomes "never" (the ERP-02 drift). The reporter
+  ([`test-automation.md`](test-automation.md) §2) flags any suite living outside
+  `tests/epic/` as non-conformant so the gap is visible, not silent.
 - **Suffix ≠ TC-ID TYPE.** The TC-ID TYPE (`FUNC`/`NEG`/`BND`/`SEC`/`EDGE`/… per
   [`traceability.md`](traceability.md)) says *what the case tests*; the file suffix
   says *how/when it runs*. A `TC-NN.SEC-1` can live in an `.integration.spec.ts`
@@ -106,6 +123,16 @@ The **run cadence** is encoded in the file SUFFIX (not a sub-folder):
 ## 3. The 3-place sync rule
 
 One TC-ID threads through **three** places; change one → change all three:
+
+> **The spec is the *sole authority* for a TC-ID.** A TC-ID means **one** thing across
+> all three places. A Dev-authored unit file must **not coin its own** `TC-<EPIC>.<TYPE>-<n>`
+> for a *different* case — reusing a spec ID for a different behaviour (the ERP-02 F-12
+> collision, where `crypto.test.ts` `FUNC-3/BND-1/NEG-1` meant something other than the
+> same IDs in `EPIC-2.md`) breaks sync silently. If a unit test asserts a spec'd case,
+> reuse that case's ID; if it covers something the spec doesn't, it is a per-function
+> unit test — name it by function+behaviour, **not** a TC-ID ([`unit-coverage.md`](unit-coverage.md)).
+> The reporter flags any code TC-ID absent from the spec (orphan) or bound to a different
+> case (collision).
 
 1. **Source spec** — `docs/tests/test-cases/EPIC-NN.md` (the source of truth: TC-ID + gherkin + yaml **`maps_to {us, fr, ac}`** — the `us` is mandatory; it's what makes per-US coverage computable, §0). Written *before* coding.
 2. **Test code** — `…/tests/epic/EPIC-NN/<slug>.<cadence>.spec.ts`; the test name **starts with the TC-ID** so the reporter can parse it.
@@ -145,18 +172,23 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
 
 ## 6. Scaffolding: who creates the tree
 
-- **If the repo is set up with koni-setup** — koni-setup creates this `docs/tests/`
-  skeleton at bootstrap (it owns the directory skeleton; bodies come from koni-docs
-  templates and this standard).
+- **If the repo is set up with koni-setup** — koni-setup creates **both** skeletons at
+  bootstrap: the `docs/tests/` doc tree **and** the `<app>/tests/epic/` **code** root
+  (it owns the directory skeleton; bodies come from koni-docs templates and this
+  standard). Scaffolding *only* the doc tree — the historical gap — is what let a repo
+  keep flat `tests/*.test.ts` with no forcing function to migrate (see §2).
 - **If the repo does NOT use koni-setup** — koni-qc **self-scaffolds** the missing
-  tree (additive, only writes absent paths):
+  trees (additive, only writes absent paths — **both** the doc tree and the code root):
 
 ```sh
 mkdir -p docs/tests/test-cases docs/tests/test-plan docs/tests/bug-bash docs/tests/audits
 [ -f docs/tests/README.md ]            || printf '# docs/tests — QA hub\n\n> See test-organization.md for the standard.\n' > docs/tests/README.md
 [ -f docs/tests/test-organization.md ] || printf '# Test organization\n\n> Follows koni-qc references/test-organization.md.\n' > docs/tests/test-organization.md
+[ -f docs/tests/STRATEGY.md ]          || printf '# Test strategy\n\n> Whole-repo test strategy: scope · risk posture · priority order · tooling. Per-epic plans live in test-plan/EPIC-NN-<slug>.md.\n' > docs/tests/STRATEGY.md
 [ -f docs/tests/findings.md ]          || printf '# Open QA findings\n' > docs/tests/findings.md
 [ -f docs/tests/test-cases/README.md ] || printf '# Test cases\n\n> EPIC-NN.md specs — via koni-docs templates/test-cases.md\n' > docs/tests/test-cases/README.md
+# the CODE tree — the doc scaffold historically stopped here; create it too (<app> = the package that owns tests):
+mkdir -p "${APP:-.}/tests/epic" && [ -e "${APP:-.}/tests/epic/.gitkeep" ] || : > "${APP:-.}/tests/epic/.gitkeep"
 # per-epic report folders are created on first run: docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/
 ```
 

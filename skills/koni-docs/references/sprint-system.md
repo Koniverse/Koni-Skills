@@ -115,7 +115,7 @@ Per-story Acceptance Criteria (`stories/US-X.Y-<slug>.md` §4) + Verification co
 | Artifact | Location | Owns |
 |---|---|---|
 | Test cases | `docs/tests/test-cases/EPIC-N.md` (one per epic) | End-to-end scenarios spanning ≥2 stories; regression scenarios for cross-story invariants; smoke; coverage matrix (AC → TC) |
-| Test report — per-execution | `docs/tests/test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md` | Execution log: who ran which TCs in which env against which commit, pass/fail per TC, failure reproduction detail |
+| Test report — per-execution | `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) · `report-manual.md` (manual) — path owned by koni-qc test-organization | Execution log: who ran which TCs in which env against which commit, pass/fail per TC, failure reproduction detail |
 | Test report — per-release | `docs/tests/test-reports/releases/vX.Y.Z.md` | Release-level aggregate of run files; outstanding risks; named ship-decision sign-off |
 
 **Promotion rule** — keep a scenario inside the story file unless one of:
@@ -139,9 +139,9 @@ Per-story Acceptance Criteria (`stories/US-X.Y-<slug>.md` §4) + Verification co
 
 The Stories-in-scope / Goals / Quick-reference triad up front lets a tester understand scope + run sequence in ≤2 minutes without scrolling through Gherkin. The Coverage matrix's inline short name + AC description columns mean each row is self-explanatory — no story-file lookup needed.
 
-**Lifecycle (per-TC, implicit — no frontmatter status)** — `draft` until §Coverage matrix row + `maps_to.ac` are populated → `ready`. Execution state lives only in `test-reports/runs/*.md`. Deprecate by replacing the H3 body with `**Deprecated YYYY-MM-DD** — <reason>` and keeping the ID intact.
+**Lifecycle (per-TC, implicit — no frontmatter status)** — `draft` until §Coverage matrix row + `maps_to.ac` are populated → `ready`. Execution state lives only in `test-reports/EPIC-NN/<MMDDYYYY>/report.md`. Deprecate by replacing the H3 body with `**Deprecated YYYY-MM-DD** — <reason>` and keeping the ID intact.
 
-**Append-only discipline (reports)** — never edit a past run's results; re-runs create new files (`-run2`, `-run3`, …). A release file's `ship_status` may flip `held → shipped` or `shipped → rolled-back`, recorded as a dated paragraph under §Ship decision. Reports are never deleted.
+**Append-only discipline (reports)** — an automated `report.md` is reporter-owned and re-derived each run (its history lives in git + the per-release aggregate); a manual `report-manual.md` is append-only — a re-run gets a new dated folder, never a `-runN` suffix. A release file's `ship_status` may flip `held → shipped` or `shipped → rolled-back`, recorded as a dated paragraph under §Ship decision. Reports are never deleted.
 
 **Templates**: [`test-cases.md`](templates/test-cases.md) · [`test-report.md`](templates/test-report.md) (two sub-templates: per-execution + per-release).
 

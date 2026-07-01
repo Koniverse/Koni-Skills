@@ -16,6 +16,53 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.25.0] — 2026-07-01 — test-doc standardization: scaffold + enforce (from ERP-02-vs-Senti audit) (US-5.6, FR-31) — v0.25.0
+
+A second real deployment (Koni-ERP-02) adopted the koni-qc test-doc standard but
+**drifted from Senti-Quant**, the reference repo the standard was synthesized from. An
+author-blind audit of both `docs/tests/` trees found 10 deviations; the root cause was
+uniform — the skills *stated* the standard in prose but nothing scaffolded the shape or
+rejected the drift. This release feeds the learnings back into the three skills that
+*generate* the structure so a future run produces it automatically. Opens FR-31 under
+EPIC-5; CONTEXT D22.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/test-organization.md`** — added `docs/tests/STRATEGY.md` as the
+  whole-repo strategy home (`test-plan/` now strictly per-epic); made the report path a
+  **MUST** with the `EPIC-NN`/`MMDDYYYY` rationale (flat `<date>/` and ISO forbidden);
+  made the `<app>/tests/epic/` migration a real adoption **step** (flat layout
+  non-conformant); the self-scaffold + koni-setup now create **both** trees; added a
+  TC-ID reservation rule (spec is the sole authority — the ERP F-12 collision).
+- **`references/test-automation.md`** — §2 reporter: report-path validator regex,
+  off-tree-suite conformance flag, orphan-ID/collision detection, `PROPOSED:` handled as
+  `not-written`; §4 CI: a **non-GitHub-Actions / Dockerfile branch** so container-built
+  repos (like ERP) get a blessed gate.
+- **`references/traceability.md`** — blessed `PROPOSED:<path>::name` as the third
+  `Covered-by` state (planned automation, counts *uncovered*); documented the three
+  fixed forms + the "spec owns the TC-ID" rule.
+
+### Changed — `skills/koni-setup/`
+
+- **`references/scaffold-checklist.md`** + **`SKILL.md`** — bootstrap now scaffolds the
+  `<app>/tests/epic/` **code** root and `docs/tests/STRATEGY.md` (+ `test-cases/README`),
+  not just the doc tree; `test-plan/` relabelled per-epic; `APP` var for monorepos.
+- **`references/onboarding-audit.md`** — added test-doc drift checks (flat report path,
+  flat test layout, strategy home, `Covered-by` vocabulary) to catch the ERP patterns.
+
+### Changed — `skills/koni-docs/`
+
+- **`references/templates/test-report.md`** (+ `SKILL.md`, `references/sprint-system.md`,
+  `references/templates.md`, `references/templates/test-cases.md`) — reconciled the
+  legacy `test-reports/runs/YYYY-MM-DD-EPIC-N-runN.md` path to the unified
+  `test-reports/EPIC-NN/<MMDDYYYY>/report.md` layout (koni-qc owns the *path*, koni-docs
+  owns the *body*). The pervasive `Docs/`→`docs/` casing is logged as a separate
+  follow-up (out of scope).
+
+All three changed skills re-graded whole to ≥95 (CONTEXT D19).
+
+---
+
 ## [0.24.0] — 2026-07-01 — koni-qc automation spine: generate → report → sync → CI (US-5.5, FR-30) — v0.24.0
 
 Closes the gaps a **real koni-qc deployment on koni-erp-02** exposed: the agent could
