@@ -1158,3 +1158,42 @@ worker is isolated in its own worktree). A `set -e` bug in `swarm.sh` (a trailin
 **Date**: 2026-07-01
 **Version**: 0.27.0
 **Reference**: [parallel-orchestration.md](../skills/koni-harness/references/parallel-orchestration.md), [swarm.sh](../skills/koni-harness/scripts/swarm.sh), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (execution modes), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [sprint-sequencer.md](../skills/koni-harness/references/sprint-sequencer.md), [US-3.8](sprints/stories/US-3.8-harness-parallel-orchestration.md), CHANGELOG [0.27.0].
+
+### D25. First product/client skill — `koni-agent-monitoring`: content-free by construction, built through the harness
+
+**Context**: the ERP shipped Agent Ops (ingest API, token mint, Live/History dashboard —
+Koni-ERP-02 EPIC-13, through US-13.6) but had no **client** — the per-machine piece that
+watches Claude Code transcripts and reports usage. A FINAL handoff spec
+(`Koni-ERP-02/docs/handoffs/2026-07-01-koni-agent-monitoring-client.md`) asked for it to be
+built in koni-skills. This is the catalog's **first product/client skill**: unlike the
+meta-skills (koni-docs/qc/harness/setup) that ship *method*, it ships **runnable code** — a
+reporter + installer that run on staff machines.
+
+**Decision** (v0.28.0, US-6.1, FR-34; new EPIC-6):
+
+- **Content-free by construction is the defining invariant.** The client streams metrics +
+  light activity, **never** prompt text, code, or tool input/output. Enforced in three
+  layers (defence in depth): `projectLine` extracts only names/counts/paths; `buildBatch`
+  writes only allowlisted keys; `pick()` filters the final `session`/`events`/`metadata` to
+  the strict allowlist. The **only** prompt-derived field is a capped `task_summary`
+  (≤300, single line). A **mandatory content-leak test** (`leak-test.mjs`) proves the whole
+  chain — the client half of the ERP's schema-rejection guarantee (ERP LESSONS §214).
+- **Pure-core / thin-I/O split.** All privacy + pricing logic is a pure, stdlib-only module
+  (`agent-report-core.mjs`) so the leak test exercises the exact code that builds the wire
+  payload; `report.mjs` is only fs/queue/detached-drain/backoff. **Never blocks the editor**
+  — the hook enqueues and returns; the POST resolves in a detached child.
+- **The ERP schema wins.** The client mirrors `POST /api/agent-ops/ingest`; on any
+  disagreement the schema is authoritative. No double-count (byte-offset advances only past
+  complete lines); `seq` is the per-session idempotency key; resends are safe.
+- **Built through koni-harness** at tier 2; Review used koni-qc **skill-grading** (≥95, D19)
+  plus an author-blind code review of the reporter. The installer follows the harness
+  "settings.json is merged manually" invariant (opt-in `--merge-hooks` via jq + backup).
+
+**Why it matters**: it proves the catalog can host **product/client** skills (with real code
++ tests), not only methodology skills, and it sets the bar that such a skill's privacy/safety
+guarantee must be *tested*, not asserted. The content-free boundary makes org-wide agent
+observability adoptable without a surveillance tradeoff.
+
+**Date**: 2026-07-01
+**Version**: 0.28.0
+**Reference**: [koni-agent-monitoring SKILL.md](../skills/koni-agent-monitoring/SKILL.md), [privacy-allowlist.md](../skills/koni-agent-monitoring/references/privacy-allowlist.md), [agent-report-core.mjs](../skills/koni-agent-monitoring/scripts/agent-report-core.mjs), [leak-test.mjs](../skills/koni-agent-monitoring/scripts/__tests__/leak-test.mjs), [EPIC-6](sprints/epics/EPIC-6.md), [US-6.1](sprints/stories/US-6.1-koni-agent-monitoring.md), CHANGELOG [0.28.0].

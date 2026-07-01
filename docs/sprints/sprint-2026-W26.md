@@ -30,15 +30,17 @@ duplicating it.
 | US-5.6 | test-doc standardization — scaffold + enforce (ERP-vs-Senti audit)   | EPIC-5 | P1  | 3      | ✅ done | v0.25.0         | [stories/US-5.6-test-doc-standardization.md](stories/US-5.6-test-doc-standardization.md)             |
 | US-5.7 | whole-project QC — QA-tracking epic + DoD + depth bar (ERP learning) | EPIC-5 | P1  | 3      | ✅ done | v0.26.0         | [stories/US-5.7-whole-project-qc.md](stories/US-5.7-whole-project-qc.md)                             |
 | US-3.8 | koni-harness parallel orchestration — multi-agent swarm + fan-out    | EPIC-3 | P1  | 3      | ✅ done | v0.27.0         | [stories/US-3.8-harness-parallel-orchestration.md](stories/US-3.8-harness-parallel-orchestration.md) |
+| US-6.1 | koni-agent-monitoring — content-free Claude Code usage reporter      | EPIC-6 | P1  | 5      | ✅ done | v0.28.0         | [stories/US-6.1-koni-agent-monitoring.md](stories/US-6.1-koni-agent-monitoring.md)                   |
 
-**Total**: **11 stories / 50 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
+**Total**: **12 stories / 55 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
 koni-harness (16 pts across v0.10.0–v0.14.0, 5 phases) · US-3.1 plugin pattern +
 koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0) · US-5.2 skill-grading (v0.18.0)
 · US-5.3 test-organization (v0.19.0) · US-5.4 unit-coverage (v0.23.0) · US-5.5
 test-automation (v0.24.0) · US-5.6 test-doc standardization (v0.25.0) · US-5.7
 whole-project QC (v0.26.0) — seven EPIC-5 · US-3.8 koni-harness parallel
-orchestration (v0.27.0) — an EPIC-3 post-completion enhancement.
-**EPIC-3 fully delivered** + EPIC-5 (QC tooling) opened & delivered.
+orchestration (v0.27.0) — an EPIC-3 post-completion enhancement · US-6.1
+koni-agent-monitoring (v0.28.0) — EPIC-6, the first product/client skill.
+**EPIC-3 fully delivered** + EPIC-5 (QC tooling) + EPIC-6 (Agent Ops client) delivered.
 (koni-harness was consolidated from 5 phase-stories into one — see [CONTEXT D14](CONTEXT.md).)
 
 **Post-ship refinements (v0.17.0–0.17.2, no new story — refine FR-21 + FR-26 per

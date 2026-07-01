@@ -106,6 +106,14 @@ editHistory:
       fan-out, with a gate-per-worktree + integration-gate + human-merge
       contract. No stage or gate change. US-3.8 ships v0.27.0 (EPIC-3); CONTEXT
       D24. Extends FR-21/FR-22/FR-24.
+  - date: '2026-07-01'
+    changes: >-
+      Add EPIC-6 + FR-34 (koni-agent-monitoring): the catalog's first product/
+      client skill — a per-machine Claude Code monitor that streams a
+      content-free projection of session usage (agent count, model, token/cost)
+      to the ERP Agent Ops ingest API. Ships runnable code (pure privacy core +
+      reporter + installer + a mandatory content-leak test), built from the
+      FINAL ERP handoff through koni-harness. US-6.1 ships v0.28.0; CONTEXT D25.
   - date: '2026-06-30'
     changes: >-
       Refine FR-21/FR-27: ≥95/100 skill-grading is the catalog pass standard
@@ -140,7 +148,7 @@ editHistory:
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.27.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.28.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
 **Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)). v0.18.0 then makes that grading **reusable** — `skill-grading` (US-5.2, FR-27): koni-qc QC for skill artifacts, invoked by the harness Review stage when building a skill. v0.19.0 adds the **test-organization standard** (US-5.3, FR-28): one canonical `docs/tests/` taxonomy + by-epic test-code layout + 3-place sync, owned by koni-qc and scaffolded by koni-setup (synthesized from the Senti-Quant QA reorg). v0.20.0 makes the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) + the harness gate the **koni-setup baseline** — a new repo documents, gates, and QCs itself on day 0 (refines FR-20; CONTEXT D17).
 **Dual-Audience:** Human stakeholders + LLM implementation agents
@@ -466,6 +474,7 @@ reviewers.
 | FR-31 | Ship **test-doc standardization** — convert the koni-qc test-doc standard from *documented* to *generated + enforced* so it stops drifting on fresh adoption (an ERP-02-vs-Senti-Quant audit found 10 deviations because the standard was prose with no scaffold/checker). Feeds the fix into the three generators: **koni-qc** — report path is a MUST + validator (`EPIC-NN`/`MMDDYYYY`, no flat/ISO), `docs/tests/STRATEGY.md` as the one strategy home, `<app>/tests/epic/` migration as a step, `PROPOSED:` blessed as the 3rd `Covered-by` state, TC-ID reservation (spec is sole authority), a non-GitHub-Actions CI branch; **koni-setup** — scaffold *both* trees (`docs/tests/` + `<app>/tests/epic/`) + `STRATEGY.md`, plus onboarding drift checks; **koni-docs** — reconcile the legacy `test-reports/runs/…` path to the unified `test-reports/EPIC-NN/<MMDDYYYY>/report.md` layout (koni-qc owns the path, koni-docs the body). CONTEXT D22. | P1       | ✅ shipped (v0.25.0)      | EPIC-5          |
 | FR-32 | Ship **whole-project QC** — the koni-qc layer above the per-epic lifecycle so QC-ing a whole repo reaches the Senti-Quant bar by procedure, not diligence (from an ERP-02 learning note / ERP LESSONS §213 where whole-repo QC came out worse on five concerns left to operator memory). `references/whole-project-qc.md`: stand up the **QA-tracking epic** (a coverage story per app epic + infra/process stories + the QA ownership model), **author the strategy** (`STRATEGY.md` + per-epic `test-plan/`), **artifact-location MUSTs** (`audits/QC-PLAN-BY-US-<date>.md`, per-epic dated reports), **execution required** (≥1 real `report.md`, not specs-only), a whole-project **Definition-of-Done** checklist, and a **depth bar** ("creating a file is not authoring it" — no thin stubs, spot-check 3). CONTEXT D23.                                                                                                                             | P1       | ✅ shipped (v0.26.0)      | EPIC-5          |
 | FR-33 | Ship **koni-harness multi-agent orchestration** — a parallel execution mode so the harness stops running one story at a time: `scripts/swarm.sh` (a **read-only** wave planner that single-sources the dependency-ready set from `sprint.sh` and emits one worker per ready story — `git worktree add` + `loop.sh start <id> --state …` — priority-ordered, `--cap`-limited, plus the integrate + re-plan step) + `references/parallel-orchestration.md` (Tier A sprint swarm wave-by-wave over the DAG, one git worktree per story; Tier B within-story fan-out of a stage's independent sub-tasks; the gate-per-worktree + integration-gate + human-owns-final-merge contract; portable fallback = run the same plan sequentially). No stage or gate change — parallelism is orchestration around the loop; the planner is the tool-neutral core, spawning is the thin per-tool adapter (Claude Agent `isolation:'worktree'` / Workflow). CONTEXT D24.    | P1       | ✅ shipped (v0.27.0)      | EPIC-3          |
+| FR-34 | Ship **koni-agent-monitoring** — the catalog's first **product/client** skill: a per-machine Claude Code monitor that streams a **content-free** projection of session usage (agent count, model, token/cost burn, light activity — never prompt/code/tool-IO) to the ERP `POST /api/agent-ops/ingest`, so the admin Agent Ops dashboard shows live usage. Ships runnable code: `agent-report-core.mjs` (pure privacy projection + strict allowlist + pricing), `report.mjs` (4 Claude Code hooks + local queue + detached non-blocking drain with backoff/idempotency), `install.sh` (additive installer: chmod-600 config + hook wiring), a **mandatory content-leak test**, + SKILL.md/5 references. Mirrors the ERP ingest schema (the schema wins). Built from the FINAL ERP handoff through koni-harness. CONTEXT D25.                                                                                                                                | P1       | ✅ shipped (v0.28.0)      | EPIC-6          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -574,3 +583,13 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 | [US-5.5](sprints/stories/US-5.5-test-automation.md)          | test-automation — spec→test→run→report→sync→CI spine (from koni-erp-02 deployment)                                     | ✅ done | v0.24.0 |
 | [US-5.6](sprints/stories/US-5.6-test-doc-standardization.md) | test-doc standardization — scaffold + enforce the standard across koni-qc/koni-setup/koni-docs (ERP-02-vs-Senti audit) | ✅ done | v0.25.0 |
 | [US-5.7](sprints/stories/US-5.7-whole-project-qc.md)         | whole-project QC — QA-tracking epic + Definition-of-Done + depth bar (ERP-02 learning note)                            | ✅ done | v0.26.0 |
+
+### EPIC-6 — Agent Ops monitoring client
+
+**Goal:** Give the catalog a client-side agent-observability skill — a per-machine Claude Code monitor that streams a content-free projection of session usage to the Koni ERP Agent Ops dashboard.
+
+**Status:** ✅ done (sprint-2026-W26 — v0.28.0 ships `koni-agent-monitoring`, FR-34). See [EPIC-6.md](sprints/epics/EPIC-6.md).
+
+| Story                                                     | Title                                                                                      | Status | Version |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------ | ------- |
+| [US-6.1](sprints/stories/US-6.1-koni-agent-monitoring.md) | koni-agent-monitoring — content-free Claude Code usage reporter (client for ERP Agent Ops) | ✅ done | v0.28.0 |

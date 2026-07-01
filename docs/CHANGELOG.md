@@ -16,6 +16,40 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.28.0] — 2026-07-01 — koni-agent-monitoring: content-free Claude Code usage reporter (US-6.1, FR-34) — v0.28.0
+
+The catalog's **first product/client skill**: a per-machine Claude Code monitor that streams
+a content-free projection of session usage (agent count, model, token/cost) to the Koni ERP
+Agent Ops dashboard. Built from the FINAL ERP handoff spec, through koni-harness. Opens FR-34
+under the new EPIC-6; CONTEXT D25.
+
+### Added — `skills/koni-agent-monitoring/`
+
+- **`scripts/agent-report-core.mjs`** — the pure, privacy-critical core: strict
+  session/event/metadata **allowlists**, `projectLine` (transcript → names/counts/paths only,
+  never text/tool-IO), `buildBatch` (accumulate → absolute snapshot + delta events),
+  `costUsd`/`PRICING`, and `pick()` filtering the final batch to the allowlist (defence in
+  depth). Node stdlib-only.
+- **`scripts/report.mjs`** — the reporter: a Claude Code hook entrypoint that reads only new
+  transcript lines from a per-session byte offset, enqueues a batch, and **spawns a detached
+  drain** (never blocks the editor). Drain POSTs ≤500-event batches with `2xx`→drop /
+  `401`→stop+warn / `429`/`5xx`/network→keep+exponential-backoff + buffer-cap trim.
+- **`scripts/install.sh`** — additive/idempotent installer: copies the reporter, writes
+  chmod-600 config, wires the four hooks (`--merge-hooks` via jq + backup, else prints the
+  block — matching koni-harness's "settings.json merged manually" invariant).
+- **`scripts/__tests__/`** — the **mandatory content-leak test** (`leak-test.mjs`) + core,
+  reporter-io (e2e), and installer tests. **89 assertions, all green (sh + zsh).**
+- **`SKILL.md`** + 5 references (`privacy-allowlist`, `ingest-contract`, `transcript-parsing`,
+  `pricing`, `install`), each with a Load-when + Contents TOC.
+
+### Added — `docs/`
+
+- **EPIC-6** (Agent Ops monitoring client) + **US-6.1** + **FR-34**.
+
+Skill graded ≥95 (CONTEXT D19) via skill-grading + an author-blind code review of the reporter.
+
+---
+
 ## [0.27.0] — 2026-07-01 — koni-harness multi-agent: parallel sprint swarm + within-story fan-out (US-3.8, FR-33) — v0.27.0
 
 koni-harness drove work single-agent (one story at a time). This adds a **multi-agent
