@@ -92,7 +92,7 @@ The **run cadence** is encoded in the file SUFFIX (not a sub-folder):
 | `*.integration.spec.ts` | API / server-side (calls actions directly) | per commit |
 | `*.e2e.spec.ts` | end-to-end via real UI | per PR |
 | `*.smoke.spec.ts` | light post-deploy smoke (real anchor) | per deploy / release |
-| `*.unit.test.ts` | pure logic (Dev owns; QA skips) | — |
+| `*.unit.test.ts` | pure logic, per function (**Dev authors; koni-qc owns the unit-coverage bar, harness Self-verify enforces** — see [`unit-coverage.md`](unit-coverage.md)) | — |
 
 - **No `integration/` or `e2e/` sub-folders** — keep files flat in the epic folder;
   group cases inside a file with `describe`.

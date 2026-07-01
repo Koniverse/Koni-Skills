@@ -28,7 +28,7 @@ between its stages.
 |---|---|---|---|
 | 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
 | 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; LESSONS skimmed; DESIGN read if UI |
-| 3 | **Self-verify** | the agent | Code compiles; new tests written and green |
+| 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md) → code-quality review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
@@ -42,9 +42,11 @@ between its stages.
 > (test coverage), and code review. The one place gstack appears outside
 > brainstorm is the review stage (`/design-review`); it still never implements.
 >
-> **Execute keeps TDD as a discipline** (write the failing test first), but TDD
-> is the *practice* — the implementation tool is an Anthropic Skill, **not** the
-> Superpowers TDD skill. **Review runs in a fixed order**: (1) spec-compliance
+> **Execute keeps TDD as a discipline, per function** (RED→GREEN→REFACTOR: a
+> failing unit test for each new/changed function + branch *first*, per koni-qc
+> `unit-coverage.md`), but TDD is the *practice* — the implementation tool is an
+> Anthropic Skill, **not** the Superpowers TDD skill. Self-verify then gates that
+> the unit-coverage bar is met (the layer below the AC↔TC matrix). **Review runs in a fixed order**: (1) spec-compliance
 > (does the diff meet the story AC?) → (2) **koni-qc** (does every AC have
 > covering tests? the AC↔TC gate) → (3) gstack `/design-review` for UI → (4)
 > code-quality. So the only thing *before* koni-qc is the spec-compliance pass.

@@ -953,3 +953,39 @@ author-blind content · best-practices, D4 variance-averaged ×2.
 **Date**: 2026-06-30
 **Version**: 0.22.0
 **Reference**: [skill-grading.md](../skills/koni-qc/references/skill-grading.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [LESSONS §8](LESSONS.md), CHANGELOG [0.22.0].
+
+---
+
+### D20. Unit tests are a distinct layer *below* the AC↔TC matrix — Dev authors, koni-qc gates, harness Self-verify enforces
+
+**Context**: the loop had a TDD *discipline* line in Execute and a "tests green"
+Self-verify, but **no per-function unit-test process and no unit-coverage gate** —
+a logic-bearing change with zero unit tests still passed Self-verify if the build
+was green. koni-qc's coverage gate is the **AC↔TC matrix**, which is per *user
+story* (functional/e2e/integration), not per function.
+
+**Decision** (v0.23.0, US-5.4, FR-29; refines FR-21 + FR-26):
+
+- **Two complementary test layers.** *Unit* proves each function/branch in
+  isolation (per function); the *AC↔TC matrix* proves each story's behaviour (per
+  US). A feature needs both — neither substitutes for the other.
+- **koni-qc owns the unit-coverage *standard*** (`references/unit-coverage.md`: the
+  per-function rule — happy + each branch + boundary + error path — the RED→GREEN→
+  REFACTOR cycle, and the coverage bar, default ≥80% line-and-branch on changed
+  code). **Dev authors** the unit tests during Execute; the **repo's runner**
+  (vitest/jest/pytest) executes them. koni-qc never runs or writes them.
+- **koni-harness drives + gates it.** *Execute* does per-function TDD; *Self-verify*
+  becomes a real gate — new/changed logic must have unit tests meeting the bar
+  ("build green" alone no longer passes). A `unit-coverage` `passthrough` gate check
+  (repo coverage command with a threshold) is the deterministic backing.
+- **Granularity chosen: both** (Execute drives + koni-qc gates), per the request —
+  not one or the other.
+
+**Why it matters**: the loop now proves code at *two* levels — every function (unit)
+and every story (AC↔TC) — closing the "green build, zero unit tests" hole. The old
+"unit = Dev owns, QA skips" framing becomes "Dev authors, koni-qc gates": authorship
+stays with Dev, the *standard and the gate* are koni-qc's.
+
+**Date**: 2026-06-30
+**Version**: 0.23.0
+**Reference**: [unit-coverage.md](../skills/koni-qc/references/unit-coverage.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (Execute + Self-verify), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md), CHANGELOG [0.23.0].

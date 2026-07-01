@@ -42,19 +42,25 @@ sh .koni-harness/loop.sh enter execute
 ```
 
 Implement the panel with the **`frontend-design`** Anthropic Skill (UI). Keep TDD
-as the discipline — write the failing test first, then the minimal component to
-pass it. For tier ≥ 1, delegate the implementation to a fresh subagent.
+as the discipline **per function** — for each new/changed function + branch, write
+the failing unit test first, then the minimal code to pass it (RED→GREEN→REFACTOR,
+per koni-qc `unit-coverage.md`). For tier ≥ 1, delegate the implementation to a
+fresh subagent.
 
 **Do NOT** reach for `superpowers:executing-plans` or gstack `qa` to *write the
 code* — they are brainstorm/plan/review only. That line does not move for a
 deadline.
 
-## 3. `self-verify` — green before advancing
+## 3. `self-verify` — green **and unit-covered** before advancing
 
 ```sh
 sh .koni-harness/loop.sh enter self-verify
-npm test && npm run build        # must be green
+npm run test:cov && npm run build   # tests green + unit-coverage bar met (≥80% on changed code)
 ```
+
+Each new/changed function got its unit tests in Execute (RED→GREEN→REFACTOR, per
+koni-qc `unit-coverage.md`). "Build green" alone does not pass — the unit-coverage
+gate must pass too.
 
 ## 4. `review` — the fixed four-step order
 

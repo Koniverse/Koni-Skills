@@ -16,6 +16,47 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.23.0] — 2026-06-30 — per-function unit-test process + Self-verify gate (US-5.4, FR-29) — v0.23.0
+
+Adds the missing **unit layer**: the loop had a TDD *discipline* line + a "tests
+green" Self-verify, but no per-function unit-test process and no unit-coverage gate
+(a logic change with zero unit tests passed if the build was green). Now Execute
+drives per-function TDD and Self-verify gates unit coverage — the layer *below*
+koni-qc's per-US AC↔TC matrix. Opens FR-29 under EPIC-5; CONTEXT D20.
+
+### Added — `skills/koni-qc/`
+
+- **`references/unit-coverage.md`** — the unit-coverage standard: the two-layer
+  model (unit per-function vs AC↔TC per-US), the **per-function rule** (happy +
+  each branch + boundary + error path), RED→GREEN→REFACTOR, the **coverage gate**
+  (new/changed logic has unit tests; default ≥80% line-and-branch on changed code),
+  and the exemptions. koni-qc owns the standard + gate; **Dev authors**; the repo's
+  runner executes.
+- **SKILL.md** activation + reference-index + description trigger; `test-organization.md`
+  `*.unit.test.ts` row reframed "Dev owns; QA skips" → **"Dev authors; koni-qc gates
+  unit coverage"**.
+
+### Changed — `skills/koni-harness/`
+
+- **Execute** now does per-function TDD (agentic-loop-standard §Execute note +
+  loop-runner execute row + example-loop).
+- **Self-verify** is a real gate — new/changed functions must have unit tests
+  meeting the bar (stage-table entry gate + loop-runner self-verify row +
+  example-loop); "build green" alone no longer passes.
+- **gate-catalog.md** documents a `unit-coverage` `passthrough` row (repo coverage
+  command with a threshold, warn→block) as the deterministic backing.
+
+### Verification (CONTEXT D19 whole-skill re-grade)
+
+- Both koni-qc and koni-harness re-graded whole after the change; both remain ≥95.
+
+### Docs
+
+- VERSION 0.22.0 → 0.23.0; CONTEXT D20; US-5.4 story; PRD FR-29 + EPIC-5 row; this
+  entry. validate green.
+
+---
+
 ## [0.22.0] — 2026-06-30 — ≥95 skill-grading is the catalog standard, enforced at Review — v0.22.0
 
 Makes **≥95/100 the hard pass bar** for any skill reviewed by koni-qc skill-grading,

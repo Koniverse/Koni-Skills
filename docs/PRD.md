@@ -56,15 +56,23 @@ editHistory:
     changes: >-
       Refine FR-20 (no scope change): koni-setup's per-repo baseline is now the
       Koniverse core trio (koni-docs + koni-harness + koni-qc) wired in + the
-      koni-harness gate installed at setup (was koni-docs alone). v0.20.0; CONTEXT D17.
-      v0.20.1 graded-hardening (koni-qc skill-grading 84.5 → 96.25/100): fixed a
-      CRITICAL zsh word-split in the bootstrap loop + tree drift + CSO; LESSONS §9.
+      koni-harness gate installed at setup (was koni-docs alone). v0.20.0;
+      CONTEXT D17. v0.20.1 graded-hardening (koni-qc skill-grading 84.5 →
+      96.25/100): fixed a CRITICAL zsh word-split in the bootstrap loop + tree
+      drift + CSO; LESSONS §9.
+  - date: '2026-06-30'
+    changes: >-
+      Add FR-29 (unit-coverage layer): per-function unit testing below the AC↔TC
+      matrix — koni-qc owns the standard, Dev authors, koni-harness drives it in
+      Execute + gates it at Self-verify. US-5.4 ships v0.23.0 (EPIC-5); CONTEXT
+      D20.
   - date: '2026-06-30'
     changes: >-
       Refine FR-21/FR-27: ≥95/100 skill-grading is the catalog pass standard
       (was ≥90), enforced by the harness Review stage; re-grade the whole skill
       after any change, not just the diff. v0.22.0; CONTEXT D19; LESSONS §8.
-      (Also v0.21.1: re-grade fixes that returned koni-qc to 97 after it slipped to ~91.)
+      (Also v0.21.1: re-grade fixes that returned koni-qc to 97 after it slipped
+      to ~91.)
   - date: '2026-06-30'
     changes: >-
       Refine FR-26/FR-28 (no scope change): test coverage is organized by user
@@ -92,7 +100,7 @@ editHistory:
 ---
 # Koni-Skills — Product Requirements Document
 
-**Version:** 0.22.0 (see [VERSION](../VERSION) for the live value)
+**Version:** 0.23.0 (see [VERSION](../VERSION) for the live value)
 **Date:** 2026-06-28
 **Status:** v0.1.0 → v0.8.0 shipped across sprint-2026-W21 (v0.2.0 dogfood) + sprint-2026-W22 (v0.3.0 → v0.8.0); v0.9.0 shipped in sprint-2026-W26. EPIC-1, EPIC-2, EPIC-4 all done at 100%. EPIC-4 closed at v0.8.0 with Pillar G shipping the full koni-erp-02 5-view `/project` tracker (Board + Calendar + Analysis + Warning validator + URL `?view=` + footer/UNION/sort). **EPIC-3** (catalog expansion) is **done**: v0.9.0 `koni-setup` (US-3.2, FR-10/FR-20) + v0.10.0–v0.14.0 `koni-harness` (US-3.3, FR-21..FR-25, five phases) + v0.15.0 the plugin-skill pattern & `koni-nextjs` (US-3.1, FR-9) — three non-docs skills plus the documented plugin-extension pattern. **EPIC-5** (QC tooling) is **done**: v0.16.0 `koni-qc` (US-5.1, FR-26) — a QC methodology & coverage-intelligence skill, built by dogfooding the koni-harness loop. **Post-ship refinements (v0.17.0–0.17.2)** hardened both non-docs skills: a tool-split rule (implement = Anthropic Skills only; Superpowers/gstack = brainstorm/review), a fixed review order with `/design-review` + koni-qc, and a multi-skill grading pass that lifted koni-harness to **96/100** and koni-qc to **97/100** (see [CONTEXT D15](CONTEXT.md), [LESSONS §8](LESSONS.md)). v0.18.0 then makes that grading **reusable** — `skill-grading` (US-5.2, FR-27): koni-qc QC for skill artifacts, invoked by the harness Review stage when building a skill. v0.19.0 adds the **test-organization standard** (US-5.3, FR-28): one canonical `docs/tests/` taxonomy + by-epic test-code layout + 3-place sync, owned by koni-qc and scaffolded by koni-setup (synthesized from the Senti-Quant QA reorg). v0.20.0 makes the **Koniverse core trio** (koni-docs + koni-harness + koni-qc) + the harness gate the **koni-setup baseline** — a new repo documents, gates, and QCs itself on day 0 (refines FR-20; CONTEXT D17).
 **Dual-Audience:** Human stakeholders + LLM implementation agents
@@ -413,6 +421,7 @@ reviewers.
 | FR-26 | Ship `koni-qc` — a **compose-first QC methodology & coverage-intelligence skill**: turns koni-docs inputs into Silicon-Valley-grade, fully-traceable test docs (test-design techniques + edge taxonomy + a **mandatory AC↔TC coverage matrix** + security-led NFR + risk-based priority + a quality-bar rubric) and drives QC execution. Delegates templates→koni-docs, execution→gstack, gate/loop→koni-harness. Synthesizes the weak `koni-docs.backup` baseline + the `Koni-Finance` standard; pilot on customize-network proves the uplift. Built by dogfooding the koni-harness loop.          | P1       | ✅ shipped (v0.16.0)      | EPIC-5          |
 | FR-27 | Ship **skill-grading** — QC for *skill artifacts* (not product features), reusable across the catalog: koni-qc gains a four-dimension rubric (triggering / rule-robustness / author-blind content / best-practices, each /25 → /100, to a hard bar) that **delegates** the eval engines (skill-creator, writing-skills, `superpowers:code-reviewer`, Anthropic best-practices) and never reproduces them; koni-harness invokes it in the **Review** stage when the deliverable is a skill, so the loop builds *and verifies the building of* new skills.                                            | P1       | ✅ shipped (v0.18.0)      | EPIC-5          |
 | FR-28 | Ship the **test-organization standard** — a single canonical `docs/tests/` taxonomy (test-plan / test-cases / test-reports/EPIC-NN/<date> / bug-bash / audits + standing docs), a by-epic + file-suffix test-code layout, and the 3-place sync rule (spec ↔ code ↔ coverage story). koni-qc owns the standard; koni-setup scaffolds the tree at setup; koni-qc self-scaffolds it when koni-setup isn't used; koni-docs owns the templates. Synthesized from the matured Senti-Quant QA reorg; TC-ID stays TYPE-based (CONTEXT D16).                                                                 | P1       | ✅ shipped (v0.19.0)      | EPIC-5          |
+| FR-29 | Ship the **unit-coverage layer** — per-function unit testing *below* the AC↔TC matrix: koni-qc owns the standard (`unit-coverage.md` — the per-function rule + RED→GREEN→REFACTOR + a coverage bar), Dev authors the tests, and koni-harness drives it in Execute + gates it at Self-verify (new logic needs unit tests meeting the bar; a `unit-coverage` passthrough check is the deterministic backing). Closes the "green build, zero unit tests" hole. CONTEXT D20.                                                                                                                            | P1       | ✅ shipped (v0.23.0)      | EPIC-5          |
 
 Priority: `P0` = must-ship/blocking, `P1` = high, `P2` = medium, `P3` = nice-to-have.
 
@@ -516,3 +525,4 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 | [US-5.1](sprints/stories/US-5.1-koni-qc.md)           | koni-qc — QC methodology & coverage-intelligence skill                            | ✅ done | v0.16.0 |
 | [US-5.2](sprints/stories/US-5.2-skill-grading.md)     | skill-grading — QC for skill artifacts, wired into the harness build/verify loop  | ✅ done | v0.18.0 |
 | [US-5.3](sprints/stories/US-5.3-test-organization.md) | test-organization — standard docs/tests taxonomy + scaffolding (from Senti-Quant) | ✅ done | v0.19.0 |
+| [US-5.4](sprints/stories/US-5.4-unit-coverage.md)     | unit-coverage — per-function unit-test process + Self-verify gate                 | ✅ done | v0.23.0 |

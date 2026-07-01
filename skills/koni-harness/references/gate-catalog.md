@@ -177,6 +177,13 @@ enforce release-time checks.
   ```
   tests                | checks/passthrough.sh              | pre-push                   | block | npm test
   ```
+- **Unit-coverage variant**: to enforce the koni-qc `unit-coverage.md` bar as a
+  gate, add a second `passthrough` row whose `arg` runs the repo's coverage command
+  with a threshold (it fails non-zero below the bar), e.g.
+  ```
+  unit-coverage        | checks/passthrough.sh              | work-commit                | warn  | npm run test:cov
+  ```
+  where `test:cov` is e.g. `vitest run --coverage --coverage.thresholds.lines=80 --coverage.thresholds.branches=80` (or `jest --coverage --coverageThreshold=…`, `pytest --cov --cov-fail-under=80`). Start at `warn`, graduate to `block` once the repo is clean. This is the deterministic backing for the Self-verify unit-coverage gate.
 
 ---
 
