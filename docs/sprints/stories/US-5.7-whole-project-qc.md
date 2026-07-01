@@ -11,7 +11,7 @@ depends_on:
   - US-5.5
   - US-5.6
 assignee: jindo9986
-commit: pending
+commit: 5b0ed16
 sprint: sprint-2026-W26
 version_shipped: "0.26.0"
 created: 2026-07-01
