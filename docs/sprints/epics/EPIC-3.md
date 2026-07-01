@@ -2,7 +2,7 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: done
-prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25'
+prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-33'
 created: 2026-05-27T00:00:00.000Z
 updated: 2026-06-28T00:00:00.000Z
 ---
@@ -31,10 +31,11 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 
 ### Feature pillars
 
-| # | Pillar                              | Stories                                                                                                               | Purpose                                                                                                                              |
-| - | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1 | **Plugin pattern**                  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) ✅                                                                 | Define how a plugin skill extends koni-docs rules + ship `koni-nextjs` as the reference implementation                               |
-| 2 | **First non-docs Koniverse skills** | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) ✅ · [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) ✅ | `koni-setup` (day-0 bootstrapper/onboarder) + `koni-harness` (Agentic Loop standard + portable gate) — prove the multi-skill catalog |
+| # | Pillar                                                              | Stories                                                                                                               | Purpose                                                                                                                                                             |
+| - | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | **Plugin pattern**                                                  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) ✅                                                                 | Define how a plugin skill extends koni-docs rules + ship `koni-nextjs` as the reference implementation                                                              |
+| 2 | **First non-docs Koniverse skills**                                 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) ✅ · [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) ✅ | `koni-setup` (day-0 bootstrapper/onboarder) + `koni-harness` (Agentic Loop standard + portable gate) — prove the multi-skill catalog                                |
+| 3 | **Harness multi-agent orchestration** (post-completion enhancement) | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) ✅                                                       | koni-harness parallel execution mode: sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out; `swarm.sh` planner, no stage/gate change |
 
 ### Out of scope
 
@@ -44,24 +45,26 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 
 ## FR Coverage
 
-| FR    | Story                                                    | Status              |
-| ----- | -------------------------------------------------------- | ------------------- |
-| FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)      | ✅ shipped (v0.15.0) |
-| FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | ✅ shipped (v0.9.0)  |
-| FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | ✅ shipped (v0.9.0)  |
-| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.10.0) |
-| FR-22 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.11.0) |
-| FR-23 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.12.0) |
-| FR-24 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.13.0) |
-| FR-25 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | ✅ shipped (v0.14.0) |
+| FR    | Story                                                         | Status              |
+| ----- | ------------------------------------------------------------- | ------------------- |
+| FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)           | ✅ shipped (v0.15.0) |
+| FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | ✅ shipped (v0.9.0)  |
+| FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | ✅ shipped (v0.9.0)  |
+| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.10.0) |
+| FR-22 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.11.0) |
+| FR-23 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.12.0) |
+| FR-24 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.13.0) |
+| FR-25 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.14.0) |
+| FR-33 | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) | ✅ shipped (v0.27.0) |
 
 ## Stories
 
-| ID                                                       | Title                              | Goal                                                                                                                                                                                                 | Status | Version |
-| -------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- |
-| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)      | Plugin-skill pattern + koni-nextjs | Define the plugin-skill pattern (plugin-pattern.md) + ship the `koni-nextjs` reference (NX- rules extending koni-docs); discovery via `plugins:` in the `koni-docs:` block                           | ✅ done | v0.15.0 |
-| [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)   | koni-setup bootstrapper            | Ship the first non-docs Koniverse skill: detect repo profile + scaffold/wire/onboard a repo to the shared standard, delegating doc bodies to koni-docs                                               | ✅ done | v0.9.0  |
-| [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) | koni-harness (full harness)        | Portable agentic-loop harness shipped in 5 phases (v0.10.0–v0.14.0): gate + standard (P1), loop-runner (P2), context-loader (P3a), sprint-sequencer (P2.5), session-adapters (P3b). Covers FR-21..25 | ✅ done | v0.14.0 |
+| ID                                                            | Title                               | Goal                                                                                                                                                                                                            | Status | Version |
+| ------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- |
+| [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)           | Plugin-skill pattern + koni-nextjs  | Define the plugin-skill pattern (plugin-pattern.md) + ship the `koni-nextjs` reference (NX- rules extending koni-docs); discovery via `plugins:` in the `koni-docs:` block                                      | ✅ done | v0.15.0 |
+| [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | koni-setup bootstrapper             | Ship the first non-docs Koniverse skill: detect repo profile + scaffold/wire/onboard a repo to the shared standard, delegating doc bodies to koni-docs                                                          | ✅ done | v0.9.0  |
+| [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | koni-harness (full harness)         | Portable agentic-loop harness shipped in 5 phases (v0.10.0–v0.14.0): gate + standard (P1), loop-runner (P2), context-loader (P3a), sprint-sequencer (P2.5), session-adapters (P3b). Covers FR-21..25            | ✅ done | v0.14.0 |
+| [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) | koni-harness parallel orchestration | Multi-agent execution mode: `swarm.sh` wave planner + `parallel-orchestration.md` (sprint swarm, worktree per story; within-story fan-out; gate-per-worktree + integration + human-merge). No stage/gate change | ✅ done | v0.27.0 |
 
 ## Cross-cutting invariants
 

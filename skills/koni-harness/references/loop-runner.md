@@ -62,6 +62,13 @@ loop-state file and the gate are the portable contract. This is the Standard's
 [portability contract](agentic-loop-standard.md#portability-contract) applied to
 orchestration: portable core, thin per-tool adapter.
 
+> **`loop.sh` is also the per-worker spine of the parallel swarm.** Because `start`,
+> `enter`, `gate`, and `complete` all take `--state PATH`, N stories can run N
+> concurrent loops with zero shared state — each worker points `--state` at its own
+> worktree's `.koni-harness/loop-state`. That is exactly what the swarm dispatches:
+> one `loop.sh` per story, one worktree each (see
+> [`parallel-orchestration.md`](parallel-orchestration.md)).
+
 ## Resumability
 
 Loop position lives in `.koni-harness/loop-state`, not in the agent's memory. An

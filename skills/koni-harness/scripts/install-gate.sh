@@ -35,17 +35,21 @@ chmod +x .koni-harness/context-load.sh
 cp "$SRC/sprint.sh" .koni-harness/sprint.sh
 chmod +x .koni-harness/sprint.sh
 
+# vendor the swarm planner (parallel/multi-agent dispatch; read-only, needs sprint.sh)
+cp "$SRC/swarm.sh" .koni-harness/swarm.sh
+chmod +x .koni-harness/swarm.sh
+
 # vendor the session briefing alongside the other helpers
 cp "$SRC/session-start.sh" .koni-harness/session-start.sh
 chmod +x .koni-harness/session-start.sh
 
-# gitignore the ephemeral loop-state (additive, marker-bounded, idempotent)
+# gitignore the ephemeral loop-state + swarm worktrees (additive, marker-bounded, idempotent)
 gi=.gitignore
 gbegin='# >>> koni-harness >>>'
 gend='# <<< koni-harness <<<'
 if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
   if [ -s "$gi" ] && [ -n "$(tail -c1 "$gi")" ]; then printf '\n' >> "$gi"; fi
-  printf '%s\n.koni-harness/loop-state\n%s\n' "$gbegin" "$gend" >> "$gi"
+  printf '%s\n.koni-harness/loop-state\n.koni-harness/worktrees/\n%s\n' "$gbegin" "$gend" >> "$gi"
 fi
 
 # 2. chain a git hook behind a marker block, preserving any existing content

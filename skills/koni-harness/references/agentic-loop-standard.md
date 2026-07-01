@@ -68,6 +68,16 @@ the entry/exit criteria that decide when work may advance from one stage to the
 next. Naming those gates, and making the commit/release gate a deterministic
 script with an exit code, is what this Standard adds.
 
+> **Execution modes — single-agent or parallel swarm (same stages, same gates).**
+> The loop runs either one story at a time (single-agent — [`loop-runner.md`](loop-runner.md))
+> or many at once (**parallel swarm** — [`parallel-orchestration.md`](parallel-orchestration.md):
+> one worker per dependency-ready story, each in its own git worktree, wave-by-wave over
+> the DAG; plus within-story fan-out of a stage's independent sub-tasks). Parallelism is
+> **orchestration around the loop** — it adds no stage and weakens no gate; the gate
+> simply runs per worktree and once more at integration. Per the portability contract
+> below, the wave *planner* (`swarm.sh`) is the tool-neutral core and *spawning* agents
+> is the thin adapter; a tool without parallel agents runs the identical plan sequentially.
+
 ---
 
 ## Right-sizing the loop

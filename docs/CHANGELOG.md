@@ -16,6 +16,46 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.27.0] — 2026-07-01 — koni-harness multi-agent: parallel sprint swarm + within-story fan-out (US-3.8, FR-33) — v0.27.0
+
+koni-harness drove work single-agent (one story at a time). This adds a **multi-agent
+execution mode**: a whole wave of dependency-ready stories runs in parallel, one worker
+per story in its own git worktree, plus within-story fan-out — without changing the six
+stages or the gates. Opens FR-33 under EPIC-3; CONTEXT D24.
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/swarm.sh`** — a **read-only** wave planner. `plan` turns the dependency-ready
+  set (single-sourced from `sprint.sh`, priority-ordered, `--cap` default 4) into one
+  worker block per story — `git worktree add` + `loop.sh start <id> --state …` — then the
+  integrate + re-plan step; `status` delegates to `sprint.sh`. Never spawns an agent, adds
+  a worktree, or writes state.
+- **`references/parallel-orchestration.md`** — the two-tier standard (Tier A sprint swarm
+  wave-by-wave over the DAG; Tier B within-story fan-out of a stage's independent
+  sub-tasks), the isolation + integration contract (worktree per story; gate per worktree
+  + again at integration; human owns the final merge), orchestrator/worker roles, and the
+  portable fallback (tools without parallel agents run the same plan sequentially).
+- **`scripts/__tests__/swarm-test.sh`** — 20 deterministic assertions (wave/cap/ordering/
+  blocked-exclusion/passthrough/guards).
+
+### Changed — `skills/koni-harness/`
+
+- **`SKILL.md`** — new "Run a sprint in parallel (multi-agent swarm)" section + reference
+  row + an owned-vs-delegated row (koni-harness plans the wave; the tool runtime spawns);
+  "The standard" now names both execution modes.
+- **`scripts/install-gate.sh`** — vendors `swarm.sh`; gitignores `.koni-harness/worktrees/`.
+- **`references/agentic-loop-standard.md`** — an execution-modes note (single-agent vs
+  swarm; parallelism adds no stage, weakens no gate).
+- **`references/loop-runner.md`** — `loop.sh --state` is the per-worker spine of the swarm.
+- **`references/sprint-sequencer.md`** — `sprint.sh next` is the single source of the ready
+  set the swarm consumes.
+- **`references/adapters.md`** — pointer to the swarm's agent-spawning adapter.
+
+Fixed a `set -e` bug in `swarm.sh` (trailing `[ test ] && echo` → non-zero exit) caught by
+the new test. Whole koni-harness re-graded to ≥95 (CONTEXT D19).
+
+---
+
 ## [0.26.0] — 2026-07-01 — whole-project QC: QA-tracking epic + Definition-of-Done + depth bar (US-5.7, FR-32) — v0.26.0
 
 A koni-qc learning note from Koni-ERP-02 (ERP LESSONS §213) found that running koni-qc

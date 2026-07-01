@@ -8,6 +8,13 @@ for the tools your repo uses, or use more than one.
 For the checks themselves see [`gate-catalog.md`](gate-catalog.md). For the
 non-destructive install procedure see [`adoption.md`](adoption.md).
 
+> This file wires **the gate**. Wiring **multi-agent execution** (spawning one worker
+> per story in its own worktree) is a separate adapter documented in
+> [`parallel-orchestration.md`](parallel-orchestration.md#portability--fallback): Claude
+> spawns via the Agent tool (`isolation:'worktree'`) / a Workflow; other tools run the
+> same `swarm.sh plan` sequentially. The gate adapters below are unchanged either way —
+> the gate simply runs inside each worktree and once more at integration.
+
 ---
 
 ### git

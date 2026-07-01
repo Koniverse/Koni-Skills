@@ -9,7 +9,10 @@ description: >
   even if they don't name koni-harness. Also use when a change risks a bad
   version bump, a missing changelog anchor, leaked secrets, or broken doc
   references, when deciding how much process a change needs, or when picking the
-  next dependency-ready story to work on.
+  next dependency-ready story to work on. Also use to run work **multi-agent / in
+  parallel** — "run the sprint in parallel", "swarm the ready stories", "run
+  multiple stories at once", "fan out the review/tests across agents", or "the loop
+  only runs one thing at a time — parallelize it" (the swarm planner + worktree-per-story).
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -22,7 +25,8 @@ never reproduces:
 
 | Concern | Owner |
 |---|---|
-| Loop definition, gates, gate-runner | **koni-harness** (this) |
+| Loop definition, gates, gate-runner, parallel-swarm orchestration (`swarm.sh` planner) | **koni-harness** (this) |
+| Spawning the parallel agents themselves (worktree isolation) | the tool runtime (invoked — Claude Agent/Workflow; koni-harness only *plans* the wave) |
 | Doc bodies, 12 rules, `validate` CLI | koni-docs (invoked) |
 | Repo scaffold, skill wiring | koni-setup (invoked) |
 | Plan / brainstorm | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**) |
@@ -41,6 +45,12 @@ context load order (`AGENTS.md` → `CLAUDE.md` → `LESSONS.md` → `CONTEXT.md
 `.active-context.md`), and a portability contract (a capability is "in the
 harness" only if its core is tool-neutral and its adapter is thin). Full text:
 [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md).
+
+The loop runs in **two execution modes** over the *same* stages and gates:
+**single-agent** (one story at a time — [`loop-runner.md`](references/loop-runner.md))
+and **parallel swarm** (many stories/sub-tasks at once, worktree per story —
+[`parallel-orchestration.md`](references/parallel-orchestration.md)). Parallelism is
+orchestration *around* the loop; it adds no stage and weakens no gate.
 
 ## Install the gate
 
@@ -118,6 +128,28 @@ Defaults sprint from `CLAUDE.md` `active_sprint`, root to the git toplevel, docs
 to `docs/`. Full behavior, flags, and limits in
 [`references/sprint-sequencer.md`](references/sprint-sequencer.md).
 
+## Run a sprint in parallel (multi-agent swarm)
+
+The default loop is single-agent (one story at a time). To run **multi-agent**, the
+**swarm planner** turns the dependency-ready set into a parallel dispatch plan — one
+worker per ready story, each in its own **git worktree**, all running the full loop
+concurrently — then an integrate + re-plan step for the next wave. It is **read-only**
+(it plans; it never spawns an agent or adds a worktree) and single-sources readiness
+from `sprint.sh`:
+
+```sh
+sh .koni-harness/swarm.sh plan            # current wave: per-worker worktree + loop.sh cmd + integrate/re-plan
+sh .koni-harness/swarm.sh plan --cap 3    # cap concurrency at 3 workers (default 4)
+sh .koni-harness/swarm.sh status          # wave view (done / ready / blocked-by)
+```
+
+The six stages + gates are unchanged — parallelism is orchestration *around* the loop,
+and spawning is the thin per-tool adapter (Claude **Agent `isolation:'worktree'`** /
+**Workflow**; other tools run the same plan sequentially). The full standard — the two
+tiers (sprint swarm + within-story fan-out), the isolation + integration contract,
+orchestrator/worker roles, and the portable fallback — is in
+[`references/parallel-orchestration.md`](references/parallel-orchestration.md).
+
 ## Load session context
 
 The **context-loader** emits a concise, deterministic digest of the repo's
@@ -165,6 +197,7 @@ Load on demand based on what you're doing:
 |---|---|
 | [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
+| [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
 | [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |

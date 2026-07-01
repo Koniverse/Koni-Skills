@@ -1116,3 +1116,45 @@ so "looks tracked but is empty" stops being the default outcome of a fresh adopt
 **Date**: 2026-07-01
 **Version**: 0.26.0
 **Reference**: [whole-project-qc.md](../skills/koni-qc/references/whole-project-qc.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§Frame), [test-organization.md](../skills/koni-qc/references/test-organization.md) (§0), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (depth bar), [US-5.7](sprints/stories/US-5.7-whole-project-qc.md), CHANGELOG [0.26.0].
+
+### D24. koni-harness gains a multi-agent execution mode: a parallel sprint swarm (worktree per story) + within-story fan-out — orchestration around the loop, not a new loop
+
+**Context**: koni-harness drove work **single-agent** — `loop.sh` runs one story through
+the six stages; `sprint.sh` (read-only) only *suggests* the next dependency-ready story,
+so an agent runs them one at a time even when several independent, ready stories could run
+concurrently. Two enabling pieces already existed: `sprint.sh` computes the ready set over
+the `depends_on` DAG, and `loop.sh` takes `--state PATH` (N concurrent loops, zero shared
+state). What was missing was the orchestration layer + an isolation model for parallel
+writers (the harness is additive-only, so parallel edits to one tree are unsafe).
+
+**Decision** (v0.27.0, US-3.8, FR-33; extends FR-21/FR-22/FR-24):
+
+- **Two tiers of parallelism** (both, per the user's choice): **Tier A — sprint swarm**
+  runs whole *stories* concurrently, wave-by-wave over the DAG (one worker per ready
+  story); **Tier B — within-story fan-out** runs a stage's *independent sub-tasks* at once
+  (the four read-only Review passes, per-function TDD on disjoint files, the four
+  skill-grading dimensions). Neither changes the six stages or the gates.
+- **Isolation = one git worktree per story** (the user's choice) — matches Claude's native
+  `isolation:'worktree'` and the additive-only invariant; each worker has its own edits,
+  `--state` loop-state, and in-worktree gate. **The gate runs twice**: per worktree at
+  `work-commit`, then again on an **integration branch** after the wave merges (integration
+  is where cross-story conflicts surface). A **human owns the final merge** to the default
+  branch — the swarm never auto-pushes `main`.
+- **Planner in core, spawning in adapter** (the portability contract): `swarm.sh` is a
+  **read-only** wave planner (emits the worktree + `loop.sh` worker command per ready
+  story + the integrate/re-plan step); it **single-sources readiness from `sprint.sh`**
+  and never re-derives the DAG, spawns an agent, or writes state. *Spawning* is the thin
+  per-tool adapter (Claude Agent/Workflow with worktree isolation); tools without parallel
+  agents run the identical plan sequentially — parallelism is an optimization, never a
+  correctness requirement.
+
+**Why it matters**: the sprint's wall-clock drops from sum-of-stories to
+sum-of-DAG-depth-waves, while the safety model is unchanged — the gate still fires per
+worktree and again at integration, and a human still approves the merge. The harness
+stays tool-neutral (the plan is POSIX; only spawning is per-tool) and additive-only (each
+worker is isolated in its own worktree). A `set -e` bug in `swarm.sh` (a trailing
+`[ test ] && echo` returning non-zero) was caught by the new `swarm-test.sh` before ship.
+
+**Date**: 2026-07-01
+**Version**: 0.27.0
+**Reference**: [parallel-orchestration.md](../skills/koni-harness/references/parallel-orchestration.md), [swarm.sh](../skills/koni-harness/scripts/swarm.sh), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (execution modes), [loop-runner.md](../skills/koni-harness/references/loop-runner.md), [sprint-sequencer.md](../skills/koni-harness/references/sprint-sequencer.md), [US-3.8](sprints/stories/US-3.8-harness-parallel-orchestration.md), CHANGELOG [0.27.0].

@@ -58,6 +58,12 @@ through the six stages) → the gate fires at commit. The sequencer is the
 **cross-story** complement to the per-story loop-runner: it chooses *which* story
 to run; `loop.sh` runs it.
 
+For **multi-agent** work, `sprint.sh next` is also the **single source of the ready
+set** that the swarm planner consumes: `swarm.sh plan` parses this same ready list and
+turns it into a parallel wave (one worktree + `loop.sh` worker per ready story) rather
+than a single `start` suggestion — so readiness/DAG logic lives here, once, and the
+swarm never re-derives it (see [`parallel-orchestration.md`](parallel-orchestration.md)).
+
 ## Limits
 
 - **Single sprint.** It scopes to one sprint (the resolved `active_sprint` or
