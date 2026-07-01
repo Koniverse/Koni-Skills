@@ -29,7 +29,10 @@ Decide *what* is under test and *when* it is done.
   the epic is just the file container. For a backlog, build a **per-US, risk-tiered
   coverage plan** (every shipped `done` story with no covering TC, ordered
   Tier 1 security/money/external → Tier 2 core/perf → Tier 3 UI) and attack in
-  that order — not "epic by epic".
+  that order — not "epic by epic". **For a whole repo** (not one epic), first stand
+  up the QA-tracking epic + strategy + Definition-of-Done via
+  [`whole-project-qc.md`](whole-project-qc.md) — this per-epic lifecycle then runs
+  inside it, and QC is not "done" on specs alone (that file's §5 done-bar).
 - **Read the inputs** — invoke **koni-docs** to read the PRD FRs, the **story + its
   AC**, and ARCHITECTURE. These are the source of truth; AC are the units the
   matrix traces, and each TC will `maps_to` this US.

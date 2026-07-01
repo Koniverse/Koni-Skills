@@ -73,3 +73,12 @@ failing them; it must clear every *other* Band-A item. The full Band-A bar
 (including the two execution items) applies at the **Execute/Release** stage, once
 the koni-docs `test-report.md` is filled. Do not tick an execution item on an
 unrun suite — mark it deferred.
+
+**The depth bar (applies to every koni-qc artifact).** *Creating a file is not
+authoring it.* A `test-cases/EPIC-N.md` with an empty matrix, an audit with
+bullet-only findings, a one-sentence `STRATEGY.md`, or a stub story (title + a Goal
+line + a few bullets) **fails the bar regardless of the bands** — it looks tracked
+but carries no decision value. Ground each artifact in real files/commits, don't
+fill a template with generic sentences, and **spot-check 3 random outputs** before
+declaring a batch done. Full rule (incl. story-depth sections + the whole-project
+Definition-of-Done): [`whole-project-qc.md`](whole-project-qc.md) §6.

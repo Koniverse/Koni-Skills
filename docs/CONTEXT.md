@@ -1073,3 +1073,46 @@ the next repo gets the Senti-Quant-grade structure by default, not by diligence.
 **Date**: 2026-07-01
 **Version**: 0.25.0
 **Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2/§4), [traceability.md](../skills/koni-qc/references/traceability.md) (Covered-by), [scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), [onboarding-audit.md](../skills/koni-setup/references/onboarding-audit.md), [test-report.md](../skills/koni-docs/references/templates/test-report.md), [US-5.6](sprints/stories/US-5.6-test-doc-standardization.md), CHANGELOG [0.25.0].
+
+### D23. Whole-project QC needs a layer above the per-epic lifecycle: a QA-tracking epic, a Definition-of-Done, and a depth bar — else it ships specs-only and thin stubs
+
+**Context**: a koni-qc learning note from Koni-ERP-02 (`docs/tests/audits/
+koni-qc-learning-2026-07-01.md`, ERP LESSONS §213) found that running koni-qc
+end-to-end still produced a result **worse than Senti-Quant** on five whole-project
+concerns the skill left to operator memory: (1) no dedicated QA-tracking epic — QC was
+filed as 2 stories under a feature epic, vs Senti's `EPIC-37 "Test & QA Coverage
+Tracking"` (~30 `US-37.X`: one coverage story per app epic + infra/process stories);
+(2) `test-plan/`/strategy left empty (no author-the-strategy step); (3) misplaced
+artifacts (`QC-PLAN-BY-US` at root, baseline report at flat `test-reports/<date>/`);
+(4) execution never run — QC declared "done" on specs-only; (5) 21 stories bulk-
+generated as ~30-line stubs and called done (rewritten to 123-140 lines each). The
+per-epic `qc-workflow.md` is sound; what was missing is the *whole-project orchestration
++ completion gate* above it.
+
+**Decision** (v0.26.0, US-5.7, FR-32; refines FR-26/FR-28/FR-30/FR-31):
+
+- **New `references/whole-project-qc.md`** — the layer above the per-epic lifecycle:
+  §1 stand up the **QA-tracking epic** (a coverage story per app epic + infra/process
+  stories + the **QA ownership model** — dev authors spec+code, koni-qc AI owns the
+  review side); §2 **author the strategy** (`STRATEGY.md` + per-epic `test-plan/`);
+  §3 **artifact-location MUSTs** (`audits/QC-PLAN-BY-US-<date>.md`, per-epic dated
+  reports); §4 **execution required** (≥1 real `report.md`, not specs-only); §5 a
+  whole-project **Definition-of-Done** checklist; §6 the **depth bar** — "creating a
+  file is not authoring it", refuse to close a create step below bar, spot-check 3.
+- **Enforced, not just described.** The DoD is a gate koni-qc checks before declaring
+  whole-project QC done; the depth bar is cross-linked into `quality-bar.md`; the
+  QC-PLAN location is a MUST in `test-organization.md` §0; `qc-workflow.md` §Frame
+  routes whole-repo scope through the new file.
+- **Ownership holds.** koni-qc owns the method + the done-bar; the QA-epic stories are
+  authored via **koni-docs** templates, the tree scaffolded by **koni-setup**, execution
+  by **gstack** + the repo runner, the gate by **koni-harness** — koni-qc invokes, never
+  reproduces them.
+
+**Why it matters**: D22 made the *structure* generate + enforce itself; D23 does the
+same for the *process* — a QA backlog with per-epic visibility, a strategy, real run
+reports, and a depth bar mean whole-repo QC reaches the Senti-Quant bar by procedure,
+so "looks tracked but is empty" stops being the default outcome of a fresh adoption.
+
+**Date**: 2026-07-01
+**Version**: 0.26.0
+**Reference**: [whole-project-qc.md](../skills/koni-qc/references/whole-project-qc.md), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§Frame), [test-organization.md](../skills/koni-qc/references/test-organization.md) (§0), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (depth bar), [US-5.7](sprints/stories/US-5.7-whole-project-qc.md), CHANGELOG [0.26.0].

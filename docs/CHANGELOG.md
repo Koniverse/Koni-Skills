@@ -16,6 +16,40 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.26.0] — 2026-07-01 — whole-project QC: QA-tracking epic + Definition-of-Done + depth bar (US-5.7, FR-32) — v0.26.0
+
+A koni-qc learning note from Koni-ERP-02 (ERP LESSONS §213) found that running koni-qc
+end-to-end still came out **worse than Senti-Quant** on five whole-project concerns the
+skill left to operator memory — no dedicated QA-tracking epic, empty strategy, misplaced
+artifacts, no execution (specs-only declared "done"), and 21 thin-stub stories. This adds
+the layer above the per-epic lifecycle. Opens FR-32 under EPIC-5; CONTEXT D23.
+
+### Added — `skills/koni-qc/`
+
+- **`references/whole-project-qc.md`** — QC an entire repo (not one epic): §1 stand up
+  the **QA-tracking epic** (Senti `EPIC-37` model — a coverage story per app epic +
+  infra/process stories + the QA ownership model); §2 **author the strategy**
+  (`STRATEGY.md` + per-epic `test-plan/`); §3 **artifact-location MUSTs**
+  (`audits/QC-PLAN-BY-US-<date>.md`, per-epic dated reports); §4 **execution required**
+  (≥1 real `report.md`, not specs-only); §5 a whole-project **Definition-of-Done**
+  checklist; §6 the **depth bar** ("creating a file is not authoring it" — no thin stubs,
+  spot-check 3).
+
+### Changed — `skills/koni-qc/`
+
+- **`SKILL.md`** — new "QC a whole project" mode + activation + reference-index rows +
+  description trigger (856 chars, under the 1024 limit).
+- **`references/qc-workflow.md`** — §Frame routes whole-repo scope through
+  whole-project-qc (QC not "done" on specs alone).
+- **`references/test-organization.md`** — §0 makes `audits/QC-PLAN-BY-US-<date>.md` a
+  MUST (never the tests root); points at whole-project-qc.
+- **`references/quality-bar.md`** — added the depth-bar rule (no thin stubs; ground,
+  don't template; spot-check 3), cross-linked to whole-project-qc §6.
+
+Whole skill re-graded to ≥95 (CONTEXT D19).
+
+---
+
 ## [0.25.0] — 2026-07-01 — test-doc standardization: scaffold + enforce (from ERP-02-vs-Senti audit) (US-5.6, FR-31) — v0.25.0
 
 A second real deployment (Koni-ERP-02) adopted the koni-qc test-doc standard but

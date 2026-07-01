@@ -29,8 +29,10 @@ stories have a case. The honest, actionable unit is the story.
 - **The QC backlog is a per-US, risk-tiered list** — every shipped (`done`) story
   with no covering TC is a row, ordered Tier 1 (security / money / external
   surface) → Tier 2 (core data / perf) → Tier 3 (UI / lower-risk). This *by-US
-  coverage plan* is the planning artifact (an `audits/QC-PLAN-BY-US-<date>.md`),
-  not an epic checklist.
+  coverage plan* is the planning artifact, which **MUST live at
+  `audits/QC-PLAN-BY-US-<date>.md`** (never the tests root), not an epic checklist.
+  Standing up whole-repo coverage (the QA-tracking epic + this plan + the
+  done-bar) is [`whole-project-qc.md`](whole-project-qc.md).
 - **The AC↔TC matrix is anchored per story** (one block per US, its ACs → TCs) —
   this is already how `traceability.md` works.
 
