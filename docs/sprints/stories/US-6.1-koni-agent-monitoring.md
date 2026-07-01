@@ -9,7 +9,7 @@ prd_ref:
 arch_ref: []
 depends_on: []
 assignee: jindo9986
-commit: pending
+commit: de9de10
 sprint: sprint-2026-W26
 version_shipped: "0.28.0"
 created: 2026-07-01
