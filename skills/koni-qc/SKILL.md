@@ -10,8 +10,8 @@ description: >
   tests from specs, run → report → sync coverage, add a CI test gate — "test-reports
   empty, nothing runs"); standing up or auditing QC for a whole repo (a QA-tracking
   epic, "is our testing done?", "set up QC for this project"); verifying a UI against
-  DESIGN.md; or grading/scoring a skill itself ("score this SKILL.md") — even if they
-  don't name koni-qc.
+  DESIGN.md + the shadcn standard; or grading/scoring a skill itself ("score this
+  SKILL.md") — even if they don't name koni-qc.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -29,7 +29,7 @@ description: >
 | Test-design techniques, edge taxonomy, AC↔TC matrix, NFR/security, risk priority, the quality rubric | **koni-qc** (this) |
 | Test-doc templates / structure / `docs/tests/` layout | **koni-docs** — `references/templates/test-cases.md`, `test-report.md` (invoke; fill, don't redefine) |
 | Execution (browser / systematic QA, bug reports) | **gstack** — `qa` / `qa-only` / `investigate` / `browse` (invoke) |
-| UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` (invoke) |
+| UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` **and the shadcn standard** (both mandatory; criteria in `references/nfr.md` §UI) (invoke) |
 | Commit/release gate, loop, epic selection | **koni-harness** — `gate-runner.sh`, `loop.sh`, `sprint.sh` (invoke) |
 | Plan artifacts (brief → PRD → story) | **BMAD** (invoke) |
 | Repo scaffold incl. the `docs/tests/` tree at setup | **koni-setup** (invoke) — koni-qc self-scaffolds the tree only when koni-setup isn't used (see [`test-organization.md`](references/test-organization.md)) |
@@ -50,7 +50,7 @@ never re-implements the right-column owners.
 | Mode | What it does | Uses |
 |---|---|---|
 | **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N.md` with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` + koni-docs template |
-| **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md`); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
+| **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md` **+ the shadcn standard** — both mandatory); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §Release + `quality-bar.md` + koni-harness |
 | **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to the **≥95 catalog standard** (re-grade the whole skill after any change, not just the diff) | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
 | **Set up / standardize test docs** | Apply the standard `docs/tests/` taxonomy + by-epic test-code layout + the 3-place sync rule; if the repo wasn't bootstrapped by koni-setup, self-scaffold the missing tree | `test-organization.md` (+ koni-setup scaffolds at setup; koni-docs owns the templates) |
@@ -71,7 +71,7 @@ never re-implements the right-column owners.
 | "unit tests" / "test each function" / "unit coverage" / "TDD per function" | `references/unit-coverage.md` |
 | "automate the tests" / "generate tests from the spec" / "run + report + sync coverage" / "self-updating / CI-gated suite" / "set up CI for tests" / "test-reports empty, nothing runs" | `references/test-automation.md` |
 | "set up QC for this project" / "audit our test coverage" / "stand up QA tracking" / "QA epic" / "is our testing done?" / "specs written but is QC complete?" / "QC the whole repo" (**across the whole repo, not one epic** — a single epic/release is the qc-workflow row above) | `references/whole-project-qc.md` |
-| "does the UI match the design?" / "check against DESIGN.md" | `references/nfr.md` §UI / visual conformance → gstack `/design-review` |
+| "does the UI match the design?" / "check against DESIGN.md" / "shadcn conformance" | `references/nfr.md` §UI / visual conformance (DESIGN.md + shadcn) → gstack `/design-review` |
 | "run the whole QC process for **an epic / release**" (a whole *repo* → `whole-project-qc.md`) | `references/qc-workflow.md` |
 | "is this test doc good enough?" / "grade it" | `references/quality-bar.md` |
 | "grade this skill" / "score this SKILL.md" / "is this skill good enough?" / "QC a skill" | `references/skill-grading.md` |

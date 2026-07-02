@@ -31,7 +31,8 @@ sh .koni-harness/loop.sh enter frame
 ```
 
 Flip the story to `in-progress` (koni-docs). Skim `LESSONS.md`. Because this is
-UI, **read `DESIGN.md`** now — it is the Execute entry gate for UI work. If the
+UI, **read `DESIGN.md`** now (and build on **shadcn** primitives + the repo's
+tokens — the review will enforce both) — it is the Execute entry gate for UI work. If the
 shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD here — this is
 the only place those tools are used.
 
@@ -70,7 +71,7 @@ sh .koni-harness/loop.sh enter review
 
 1. **spec-compliance** subagent — does the diff satisfy AC-1…AC-4?
 2. **koni-qc** — every AC has positive + negative + boundary tests (the AC↔TC gate).
-3. **gstack `/design-review`** — the panel matches `DESIGN.md` (UI).
+3. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).
 4. **code-quality** subagent.
 
 Fix findings and re-run the relevant step until clean.

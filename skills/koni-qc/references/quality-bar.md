@@ -22,6 +22,11 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 - [ ] **AC↔TC matrix** — present and complete; the mandatory artifact.
 - [ ] **≥50% off-path** — not ~70% happy-path; at least half the cases are **off-path = negative (NEG) + boundary (BND) + edge (EDGE)** (the three off-path TYPEs in [`traceability.md`](traceability.md)). NFR types (SEC/PERF/A11Y/UI) and happy-path types (FUNC/SMK/E2E/API) do **not** count toward the 50%.
 - [ ] **NFR present** — required [`nfr.md`](nfr.md) sections filled, not <5%.
+- [ ] **UI-conformance case authored (if UI-bearing)** — every UI-bearing AC has a
+  `TC-<EPIC>.UI-<n>` (or a folded `FUNC`/`A11Y`) whose pass condition is `/design-review`
+  vs **DESIGN.md + the shadcn standard** ([`nfr.md`](nfr.md) §UI). Authoring item (the case
+  exists); its *execution* (actually passing `/design-review`) is deferrable like the other
+  execution items. `N/A` only if the suite has no UI surface.
 - [ ] **Coverage % reported** — the *execution* coverage report: % **per US** (the unit — done stories with ≥1 covering TC ÷ done stories; see `test-organization.md` §0) and by AC/type, from a run (distinct from the authoring AC↔TC matrix above; this is an execution item, deferrable on an unrun suite — see the Author-mode carve-out).
 - [ ] **Test-data strategy** — concrete, reusable values + named fixtures.
 - [ ] **Entry / exit criteria** — written before authoring; checked at the gate.

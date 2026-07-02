@@ -16,6 +16,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.30.0] — 2026-07-01 — UI design-review must pass DESIGN.md + the shadcn standard (refines FR-26 + FR-21) — v0.30.0
+
+Made shadcn conformance a **mandatory, authored, enforced** half of the UI design-review
+gate (it was an unstated expectation). Every UI-bearing case must now pass gstack
+`/design-review` against **both** `DESIGN.md` and the shadcn standard. Refines FR-26 (koni-qc)
++ FR-21 (koni-harness); CONTEXT D27.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/nfr.md`** — the canonical UI-conformance criteria are now **DESIGN.md + the
+  shadcn standard** (shadcn/ui primitives, design tokens/theme, `cva`+`cn()` variants,
+  preserved Radix a11y) — a hard requirement; everything else points here.
+- **`references/test-design.md`** — new **step 8**: a UI-bearing AC is not done until it has a
+  `TC-<EPIC>.UI-<n>` whose pass condition is passing `/design-review` vs DESIGN.md + shadcn
+  (authored up front, not discovered at Execute).
+- **`references/qc-workflow.md`** (Design + Execute), **`references/traceability.md`** (`UI`
+  type), **`SKILL.md`** (owner row / activation / Execute mode / description) — all carry the
+  two-part requirement.
+
+### Changed — `skills/koni-harness/`
+
+- **`references/agentic-loop-standard.md`** (Review stage + tool-split), **`loop-runner.md`**,
+  **`example-loop.md`**, **`references/parallel-orchestration.md`**, **`SKILL.md`** — the
+  Review stage's `/design-review` step now reads "UI vs DESIGN.md **+ the shadcn standard**,
+  both mandatory" (criteria delegated to koni-qc `nfr.md` §UI). Stays a process step, not a gate.
+
+Both changed skills re-graded ≥95 (CONTEXT D19).
+
+---
+
 ## [0.29.0] — 2026-07-01 — koni-harness: explicit lesson-capture step at the Doc + Version gate (refines FR-21) — v0.29.0
 
 An audit found the koni-harness loop only **read** `LESSONS.md` (Execute skims it) but had

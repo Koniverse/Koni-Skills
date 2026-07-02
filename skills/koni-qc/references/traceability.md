@@ -38,7 +38,7 @@ Every test case carries a stable ID: `TC-<EPIC>.<TYPE>-<n>`.
   | `SEC` | security — authn/authz, injection, data isolation |
   | `PERF` | performance — latency/throughput vs an SLA |
   | `A11Y` | accessibility — keyboard, screen-reader, contrast |
-  | `UI` | visual conformance to `DESIGN.md` (via gstack `/design-review`) |
+  | `UI` | visual conformance to `DESIGN.md` **+ the shadcn standard** (via gstack `/design-review`; criteria in [`nfr.md`](nfr.md) §UI) |
   | `NEG` | negative — invalid/error input is rejected cleanly |
   | `BND` | boundary — at/just-past a limit (min/max/zero/overflow) |
   | `EDGE` | edge — concurrency, network-failure, encoding, state races |
@@ -140,8 +140,10 @@ mandatory **`maps_to.us`** (plus `fr`/`ac`); **coverage % is computed per US** �
 
 > Every AC has **≥1 positive AND ≥1 negative AND ≥1 boundary-or-edge** TC
 > (a `BND` *or* an `EDGE` case satisfies the third slot). **No orphan AC** (an AC
-> with no TC). **No orphan TC** (a TC that maps to no AC). If any holds, the suite
-> is incomplete and does not pass the gate.
+> with no TC). **No orphan TC** (a TC that maps to no AC). **Every UI-bearing AC also
+> has a UI-conformance TC** (a `UI` case — or folded `FUNC`/`A11Y` — asserting
+> `/design-review` vs DESIGN.md + the shadcn standard, [`nfr.md`](nfr.md) §UI). If any
+> holds, the suite is incomplete and does not pass the gate.
 >
 > **No double-counting**: a single TC satisfies **at most one** of the
 > positive / negative / boundary-or-edge slots for a given AC. If an AC's only

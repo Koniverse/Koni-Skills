@@ -26,7 +26,7 @@ tool-neutral — any agent runs the same commands (see [Portable fallback](#port
 | `frame` | Find the story and flip it to `in-progress`; pick the tier; initialise the loop: `sh .koni-harness/loop.sh start <id> --tier N` | koni-docs / BMAD |
 | `execute` | `sh .koni-harness/loop.sh enter execute`; implement with **Anthropic Skills only** (`frontend-design` for UI; delegate to a subagent for tier ≥ 1) — **never Superpowers or gstack to write code** (those are brainstorm-only). **TDD stays the discipline, per function** (RED→GREEN→REFACTOR: a failing unit test for each new/changed function + branch *first*, per koni-qc `unit-coverage.md`), but the *implementation tool* is an Anthropic Skill, not the Superpowers TDD skill | Anthropic Skills |
 | `self-verify` | `sh .koni-harness/loop.sh enter self-verify`; tests + build green **and the unit-coverage gate passes** — new/changed logic-bearing functions have unit tests and meet the coverage bar (koni-qc `unit-coverage.md`; default ≥80% line-and-branch on changed code). "Build green" alone is not enough | the agent |
-| `review` | `sh .koni-harness/loop.sh enter review`; run **in this order**: **(1) spec-compliance** subagent — the diff meets the story AC; **(2) koni-qc** — the AC↔TC coverage gate (**or koni-qc skill-grading if the deliverable is a skill** — score /100 across triggering/rule-robustness/content/best-practices; **must clear ≥95 to pass** (re-grade the whole skill after any change, not just the diff)); **(3)** for UI, gstack `/design-review` vs the repo's `DESIGN.md`; **(4) code-quality** subagent | subagents · koni-qc · gstack `/design-review` |
+| `review` | `sh .koni-harness/loop.sh enter review`; run **in this order**: **(1) spec-compliance** subagent — the diff meets the story AC; **(2) koni-qc** — the AC↔TC coverage gate (**or koni-qc skill-grading if the deliverable is a skill** — score /100 across triggering/rule-robustness/content/best-practices; **must clear ≥95 to pass** (re-grade the whole skill after any change, not just the diff)); **(3)** for UI, gstack `/design-review` vs the repo's `DESIGN.md` **+ the shadcn standard** (both mandatory — criteria in koni-qc `nfr.md` §UI); **(4) code-quality** subagent | subagents · koni-qc · gstack `/design-review` |
 | `doc-gate` | `sh .koni-harness/loop.sh enter doc-gate`; koni-docs backfill (story / CHANGELOG / VERSION / CONTEXT) **+ append a `LESSONS.md` entry if Review/Execute surfaced a trap or pattern** (koni-docs `templates/lessons.md`, same commit) + `npx koni-docs validate` | koni-docs |
 | `commit` | `sh .koni-harness/loop.sh enter commit`; then `sh .koni-harness/loop.sh gate work-commit` (or `release-commit`); commit **only if the gate passes** | git + Phase-1 gate |
 
@@ -43,7 +43,7 @@ a different subset of the six stages:
 |---|---|
 | **0 — trivial / mechanical** | `frame` (light) → `execute` → `commit` + gate |
 | **1 — small feature / bugfix** | tier 0 + `self-verify` + a single-pass `review` + `doc-gate` |
-| **2 — substantial / many decisions** | the full table, incl. the four-step `review` (spec-compliance → koni-qc → `/design-review` for UI → code-quality) + koni-docs backfill at `doc-gate` |
+| **2 — substantial / many decisions** | the full table, incl. the four-step `review` (spec-compliance → koni-qc → `/design-review` for UI (DESIGN.md + shadcn) → code-quality) + koni-docs backfill at `doc-gate` |
 
 **The gate stage runs at every tier** — that is the whole point of a cheap
 deterministic backbone: even a tier-0 commit cannot leak a secret or bump a

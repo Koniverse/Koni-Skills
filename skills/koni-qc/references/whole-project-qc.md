@@ -90,8 +90,9 @@ Enforce where things land — misplaced artifacts read as "not done" and break t
 QC is **not** "done" when the specs are written. koni-qc's Execute stage
 ([`qc-workflow.md`](qc-workflow.md) §4) must actually run: at least **one execution
 report** per covered epic — the automated `report.md` from the reporter, and for
-UI-bearing cases the gstack `/design-review` / browser-QA pass with `img/`. Shipping
-specs-only and calling it "tested" is the failure this rule closes.
+UI-bearing cases the gstack `/design-review` / browser-QA pass with `img/` (vs DESIGN.md
++ the shadcn standard, [`nfr.md`](nfr.md) §UI). Shipping specs-only and calling it
+"tested" is the failure this rule closes.
 
 ## 5. Definition of Done (whole-project QC)
 

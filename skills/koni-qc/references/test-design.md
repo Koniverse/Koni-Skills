@@ -49,6 +49,15 @@ The procedure, run once per acceptance criterion:
    ([`traceability.md`](traceability.md)) requires *each AC* to end with **≥1
    positive AND ≥1 negative AND ≥1 boundary-or-edge** case (a `BND` *or* an `EDGE`
    case fills the third slot) — if any is missing, the AC is not done.
+8. **If the AC is UI-bearing, add a design-review conformance case (MANDATORY).**
+   Any AC that renders or changes UI **must** get a `TC-<EPIC>.UI-<n>` (or fold it into
+   the relevant `FUNC`/`A11Y` case, per [`nfr.md`](nfr.md) §UI) whose pass condition is:
+   **passes gstack `/design-review` against the repo's `DESIGN.md` AND the shadcn
+   standard** (the full criteria are [`nfr.md`](nfr.md) §UI). The
+   test design is **not done** for a UI AC until this case exists — a UI feature
+   that is functionally green but fails design-review (drifts from DESIGN.md, or
+   hand-rolls a component / bypasses the shadcn tokens) is a failure, so the case
+   that would catch it must be authored up front, not discovered at Execute.
 
 The output of this procedure is rows in the canonical test-case table, ready to
 fill in the koni-docs `test-cases/EPIC-N.md` container.

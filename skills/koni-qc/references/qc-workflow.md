@@ -62,6 +62,10 @@ Author the cases into the koni-docs container — fill its template, never copy 
   positive + negative + boundary; apply [`edge-coverage.md`](edge-coverage.md) so
   coverage stops at thorough, not happy-path; apply [`nfr.md`](nfr.md) for the
   security / perf / a11y / etc. rows that the trigger requires.
+- **UI ACs get a mandatory design-review case** — for any UI-bearing AC, add the
+  `TC-<EPIC>.UI-<n>` conformance case (`test-design.md` step 8): it must **pass gstack
+  `/design-review` against `DESIGN.md` AND the shadcn standard** ([`nfr.md`](nfr.md) §UI).
+  The Design stage is not complete for a UI AC until this case exists.
 - **Fill the canonical table** — every case is one rich-TC row per
   [`traceability.md`](traceability.md) (TC-ID · priority · test-data · preconditions ·
   action · expected · perf · side-effects · covered-by).
@@ -118,9 +122,10 @@ the repo's runner executes** (koni-qc never runs tests itself).
   → **write back Status + coverage % + link to the story** (§3 sync). This is the
   automation, not a hand-fill.
 - **UI-bearing cases** — additionally drive gstack `/design-review` against the repo's
-  `DESIGN.md` (a UI case isn't done until it passes; record deviations as failures
-  with the TC-ID). gstack `qa` / `qa-only` / `investigate` / `browse` remain the tools
-  for interactive/browser flows a headless runner can't cover.
+  `DESIGN.md` **and the shadcn standard** ([`nfr.md`](nfr.md) §UI); a UI case isn't done
+  until it passes **both** (record any `DESIGN.md`-or-shadcn deviation as a failure with
+  the TC-ID). gstack `qa` / `qa-only` / `investigate` / `browse` remain the tools for
+  interactive/browser flows a headless runner can't cover.
 - **Instrumentation** — coverage % **per US** and by type, pass / fail / blocked, and
   perf vs SLA ([`nfr.md`](nfr.md)) — emitted by the reporter, not typed by hand.
 

@@ -10,7 +10,7 @@
 > section only when its trigger fires — not every feature needs every category.
 
 **Contents**: [Security](#security) · [Performance](#performance) ·
-[Accessibility](#accessibility) · [UI / visual conformance to DESIGN.md](#ui--visual-conformance-to-designmd) ·
+[Accessibility](#accessibility) · [UI / visual conformance to DESIGN.md + the shadcn standard](#ui--visual-conformance-to-designmd--the-shadcn-standard) ·
 [Internationalization](#internationalization) · [Reliability & resilience](#reliability--resilience) ·
 [Compatibility](#compatibility) · [Observability](#observability)
 
@@ -66,23 +66,35 @@ WCAG 2.1 AA as the floor.
 
 ---
 
-## UI / visual conformance to DESIGN.md
+## UI / visual conformance to DESIGN.md + the shadcn standard
 
-The product's `DESIGN.md` is the visual contract; a feature that "works" but
-drifts from it is a defect.
+The visual contract has **two mandatory halves**: the repo's `DESIGN.md` (the
+product's own spec) **and** the **shadcn standard** (the Koniverse UI component
+standard, vendored by koni-setup for UI repos). A feature that "works" but drifts
+from *either* is a defect. **Every UI-bearing case MUST pass gstack `/design-review`
+against both** — this is a hard requirement, not advisory.
 
-- [ ] **Design-review pass** — for every UI-bearing case, run gstack
-  `/design-review` against the repo's `DESIGN.md` and confirm layout, spacing,
-  type hierarchy, color tokens, component states (hover/focus/disabled/loading/
-  empty/error), and motion match the spec.
-- [ ] **No AI-slop / inconsistency** — flag generic or off-system patterns
-  `/design-review` surfaces.
-- [ ] **Deviations are failures** — each mismatch is logged against its TC-ID,
-  not waved through.
+- [ ] **DESIGN.md conformance** — run gstack `/design-review` against the repo's
+  `DESIGN.md` and confirm layout, spacing, type hierarchy, color tokens, component
+  states (hover/focus/disabled/loading/empty/error), and motion match the spec.
+- [ ] **shadcn conformance (MUST)** — the UI is built from **shadcn/ui primitives**
+  (don't hand-roll a component shadcn already provides), uses the repo's **design
+  tokens / theme** (Tailwind CSS variables + `components.json`, never ad-hoc hex/px
+  or inline restyle that bypasses the token system), expresses variants with **`cva`
+  + `cn()`** (not one-off className soup), and **preserves the Radix a11y** of the
+  primitive (keyboard, focus, ARIA). The component contracts in the repo's
+  `DESIGN.md` / design-spec name these shadcn primitives.
+- [ ] **No AI-slop / off-system patterns** — flag generic or off-system UI (a
+  re-invented button, a bespoke modal, a stray palette) that `/design-review` surfaces.
+- [ ] **Deviations are failures** — each `DESIGN.md`-or-shadcn mismatch is logged
+  against its TC-ID, not waved through.
 
-> **Required when**: any UI changes. These are `TC-<EPIC>.UI-<n>` (or fold into
-> the relevant `FUNC`/`A11Y` case). koni-qc does not eyeball pixels itself — it
-> **delegates to gstack `/design-review`**; `DESIGN.md` is the source of truth.
+> **Required when**: any UI changes. These are `TC-<EPIC>.UI-<n>` (or fold into the
+> relevant `FUNC`/`A11Y` case) and are the **canonical UI-conformance criteria** the
+> rest of koni-qc + the koni-harness Review stage point at. koni-qc does not eyeball
+> pixels itself — it **delegates to gstack `/design-review`**; `DESIGN.md` + the shadcn
+> standard are the source of truth. (A repo not built on shadcn substitutes its own
+> declared component system in the shadcn slot; Koniverse UI repos default to shadcn.)
 
 ---
 

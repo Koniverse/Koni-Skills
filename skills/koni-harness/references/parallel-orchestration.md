@@ -67,7 +67,7 @@ before the stage's exit gate. The safe, high-value fan-out points:
 
 - **Review (stage 4)** — its four passes are independent and **read-only**, so run them
   concurrently: spec-compliance · **koni-qc** (AC↔TC coverage) · gstack `/design-review`
-  (UI vs `DESIGN.md`) · code-quality. Fan-out **preserves the fixed-order join semantics**
+  (UI vs `DESIGN.md` + the shadcn standard) · code-quality. Fan-out **preserves the fixed-order join semantics**
   (agentic-loop-standard): all four must return before Review exits, and a fail in *any*
   sends the story back to Execute — running them in parallel changes only wall-clock, not
   the "all-must-pass" gate or the spec-compliance→koni-qc precedence when triaging fails.

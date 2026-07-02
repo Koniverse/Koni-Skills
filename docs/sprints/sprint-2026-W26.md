@@ -53,6 +53,11 @@ koni-qc 97/100** ([LESSONS §8](LESSONS.md); CHANGELOG \[0.17.0]–\[0.17.2]).
 explicit **lesson-capture step** at the Doc + Version gate (the loop now writes `LESSONS.md`,
 not just reads it) — [CONTEXT D26](CONTEXT.md); CHANGELOG \[0.29.0].
 
+**Post-ship refinement (v0.30.0, no new story — refine FR-26 + FR-21):** UI design-review
+must pass **DESIGN.md + the shadcn standard** (mandatory) — authored in koni-qc test design
+(`nfr.md` §UI + `test-design.md` step 8) and enforced at the koni-harness Review stage —
+[CONTEXT D27](CONTEXT.md); CHANGELOG \[0.30.0].
+
 ## Sprint goal recap
 
 The W22 sprint closed EPIC-4 at 100% and left EPIC-3 as the only open epic —

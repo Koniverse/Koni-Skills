@@ -1233,3 +1233,38 @@ are deterministic, process is judgment" split.
 **Date**: 2026-07-01
 **Version**: 0.29.0
 **Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (capture rule + Doc-gate), [loop-runner.md](../skills/koni-harness/references/loop-runner.md) (doc-gate drive), [example-loop.md](../skills/koni-harness/references/example-loop.md), [templates/lessons.md](../skills/koni-docs/references/templates/lessons.md), CHANGELOG [0.29.0].
+
+### D27. UI design-review conformance requires **DESIGN.md + the shadcn standard** — mandatory, authored in test design, enforced at Review
+
+**Context**: the design-review gate (koni-qc `nfr.md`, the `UI` TC type, the koni-harness
+Review stage) only cited the repo's `DESIGN.md`. But Koniverse UI repos are built on
+**shadcn/ui** (koni-setup vendors it; the koni-docs design-spec template names shadcn
+primitives), and a UI that "works" + matches DESIGN.md can still be wrong if it hand-rolls
+a component, bypasses the design tokens, or strips the Radix a11y. shadcn conformance was an
+unstated expectation, so it wasn't a test case and wasn't gated.
+
+**Decision** (v0.30.0; refines FR-26 (koni-qc) + FR-21 (koni-harness) — no new capability):
+
+- **Two-part, mandatory visual contract.** Every UI-bearing case MUST pass gstack
+  `/design-review` against **both** `DESIGN.md` **and** the shadcn standard. The canonical
+  criteria live once in koni-qc [`nfr.md`](../skills/koni-qc/references/nfr.md) §UI: shadcn/ui
+  primitives (don't re-invent), the repo's design tokens/theme (Tailwind vars + `components.json`,
+  no ad-hoc hex/px), `cva`+`cn()` variants, preserved Radix a11y. Everything else points at it.
+- **Authored in test design, not discovered at Execute.** koni-qc `test-design.md` step 8 +
+  `qc-workflow.md` Design make it a rule: a UI AC is **not done** until it has a
+  `TC-<EPIC>.UI-<n>` whose pass condition is "passes `/design-review` vs DESIGN.md + shadcn".
+  The `UI` TC type (`traceability.md`) and Execute both carry the two-part requirement.
+- **Enforced at the harness Review stage.** The fixed four-step Review's design-review step
+  (agentic-loop-standard, loop-runner, example-loop, parallel-orchestration) now reads "UI vs
+  DESIGN.md **+ the shadcn standard**, both mandatory". It stays a **process step** (gstack
+  `/design-review` is judgment, not a deterministic gate) — consistent with the harness split.
+- **Repo-honest.** A repo not on shadcn substitutes its declared component system in the
+  shadcn slot; Koniverse UI repos default to shadcn (via koni-setup).
+
+**Why it matters**: it closes the "green + matches the mockup but off-system" gap — the exact
+AI-slop failure mode design-review exists to catch — and makes the component standard a
+*tested, authored* requirement rather than a reviewer's memory.
+
+**Date**: 2026-07-01
+**Version**: 0.30.0
+**Reference**: [nfr.md](../skills/koni-qc/references/nfr.md) §UI (canonical criteria), [test-design.md](../skills/koni-qc/references/test-design.md) (step 8), [traceability.md](../skills/koni-qc/references/traceability.md) (UI type), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (Review), CHANGELOG [0.30.0].
