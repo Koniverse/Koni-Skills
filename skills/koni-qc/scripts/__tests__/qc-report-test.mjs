@@ -8,7 +8,7 @@
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { TC_ID, TC_TOKEN, scanSpecs, classifyHandle, foldRun, normalizeRunnerJson, buildReport, renderMarkdown } from '../qc-report.mjs';
+import { TC_ID, TC_TOKEN, LIVE_CADENCE, liveCadencePath, scanSpecs, classifyHandle, foldRun, normalizeRunnerJson, buildReport, renderMarkdown } from '../qc-report.mjs';
 
 let PASS = 0, FAIL = 0;
 const ok = (m) => { PASS++; console.log('ok   - ' + m); };
@@ -120,7 +120,7 @@ const rep2 = buildReport(rows2, foldRun(normalizeRunnerJson(runner2)));
 eq(rep2.counters.passed, 1, 'report2: 1 passed');
 eq(rep2.counters.broken, 2, 'report2: missing-test + fifth-form both counted broken');
 eq(rep2.broken.some((b) => b.reason.includes('did not run')), true, 'enforce: missing cited test flagged');
-eq(rep2.broken.some((b) => b.reason.includes('four fixed forms')), true, 'enforce: fifth-form Covered-by flagged, not laundered to not-written');
+eq(rep2.broken.some((b) => b.reason.includes('five fixed forms')), true, 'enforce: out-of-set Covered-by flagged, not laundered to not-written');
 eq(rep2.orphans.length === 1 && rep2.orphans[0] === 'TC-99.GHOST-1', true, 'enforce: orphan run-ID surfaced (spec is the sole authority)');
 {
   const c = rep2.counters;
@@ -128,6 +128,75 @@ eq(rep2.orphans.length === 1 && rep2.orphans[0] === 'TC-99.GHOST-1', true, 'enfo
 }
 const md2 = renderMarkdown(rep2, { date: '2026-07-03' });
 eq(md2.includes('ORPHAN TEST IDS'), true, 'render2: orphan section present');
+
+// ── fixture 3: per-US recursive layout, DESIGN-REVIEW form, lane-aware env-pending ──
+import { mkdirSync } from 'node:fs';
+const dir3 = mkdtempSync(join(tmpdir(), 'qcrep3-'));
+mkdirSync(join(dir3, 'EPIC-03'));
+writeFileSync(join(dir3, 'EPIC-03', 'US-3.1.md'), `
+TC-03.API-1:
+  maps_to: { us: US-3.1 }
+
+| TC-ID | Name | Covered-by |
+|---|---|---|
+| TC-03.API-1 | needs live db | tests/epic/EPIC-03/rls.integration.spec.ts::TC-03.API-1 |
+| TC-03.UI-1 | matches DESIGN.md | DESIGN-REVIEW:/dashboard/settings |
+| TC-03.UI-2 | legacy design cell | gstack /design-review (DESIGN.md + shadcn conformance) |
+| TC-03.FUNC-1 | pure logic | tests/epic/EPIC-03/logic.unit.test.ts::TC-03.FUNC-1 |
+`);
+const rows3 = scanSpecs(dir3);
+eq(rows3.length, 4, 'scan3: recursive — per-US file inside EPIC-03/ found');
+eq(classifyHandle('DESIGN-REVIEW:/dashboard/settings'), 'design', 'class: DESIGN-REVIEW form (5th)');
+eq(classifyHandle('gstack /design-review (DESIGN.md + shadcn conformance)'), 'design', 'class: legacy design-review free text reads as form 5');
+eq(LIVE_CADENCE.test('tests/epic/EPIC-03/rls.integration.spec.ts::TC-03.API-1'), true, 'lane: integration cadence detected');
+
+const emptyRun = foldRun({ tests: [] });
+const repUnit = buildReport(rows3, emptyRun, { lane: 'unit' });
+eq(repUnit.counters['env-pending'], 1, 'lane unit: missing live handle folds to env-pending, not broken');
+eq(repUnit.counters.design, 2, 'lane unit: both design cells counted in the design bucket');
+eq(repUnit.counters.broken, 1, 'lane unit: missing NON-live handle (unit cadence) still broken');
+{
+  const c = repUnit.counters;
+  eq(c.passed + c.failed + c.blocked + c.broken + c['env-pending'] + c.design + c['not-written'] + c.manual + c['ops-deploy'], c.total, 'lane unit: buckets sum to total');
+}
+const repFull = buildReport(rows3, emptyRun, { lane: 'full' });
+eq(repFull.counters['env-pending'], 0, 'lane full: nothing hides as env-pending');
+eq(repFull.counters.broken, 2, 'lane full: the live handle IS enforced (missing = broken)');
+const md3 = renderMarkdown(repUnit, { date: '2026-07-03' });
+eq(md3.includes('Covered') && md3.includes('env-pending handles are verified in their own CI lane'), true, 'render3: coverage formula line present');
+
+// ── anti-laundering: classify precedence + lane fail-closed + malformed rows ──
+eq(classifyHandle('PROPOSED:add a design-review pass later'), 'proposed', 'launder: PROPOSED beats design-review free text (stays uncovered)');
+eq(classifyHandle('tests/design-review.spec.ts::TC-9.UI-1'), 'automated', 'launder: a file NAMED design-review stays automated + enforced');
+{
+  // an automated design-review-named handle missing from the run must be BROKEN, not design
+  const rowsL = [{ id: 'TC-9.UI-1', file: 'x.md', us: null, coveredBy: 'tests/design-review.spec.ts::TC-9.UI-1', klass: classifyHandle('tests/design-review.spec.ts::TC-9.UI-1') }];
+  const repL = buildReport(rowsL, foldRun({ tests: [] }), { lane: 'full' });
+  eq(repL.counters.broken, 1, 'launder: missing design-review-named automated handle = broken (enforcer intact)');
+}
+{
+  // lane fails CLOSED at the report level: only 'unit' folds to env-pending
+  const rowsB = [{ id: 'TC-9.API-1', file: 'x.md', us: null, coveredBy: 'a.integration.spec.ts::TC-9.API-1', klass: 'automated' }];
+  const repBogus = buildReport(rowsB, foldRun({ tests: [] }), { lane: 'integration' });
+  eq(repBogus.counters.broken, 1, "lane: unknown lane label ('integration') enforces, never launders to env-pending");
+}
+eq(LIVE_CADENCE.test(liveCadencePath('a.spec.ts::name mentions .integration.spec. here')), false, 'lane: cadence read from the PATH part only, not the test name');
+{
+  // malformed TC-ID first cell is flagged broken, not silently dropped
+  const dirM = mkdtempSync(join(tmpdir(), 'qcrepM-'));
+  writeFileSync(join(dirM, 'EPIC-09.md'), `
+| TC-ID | Name | Covered-by |
+|---|---|---|
+| TC-09.API-1 extra | typo row | a.spec.ts::x |
+| TC-09.API-2 | fine | — (manual) |
+`);
+  const rowsM = scanSpecs(dirM);
+  eq(rowsM.length, 2, 'malformed: typo row still counted (not vanished)');
+  const repM = buildReport(rowsM, foldRun({ tests: [] }));
+  eq(repM.broken.some((b) => b.reason.includes('frozen shape')), true, 'malformed: typo row flagged broken');
+  const c = repM.counters;
+  eq(c.passed + c.failed + c.blocked + c.broken + c['env-pending'] + c.design + c['not-written'] + c.manual + c['ops-deploy'], c.total, 'malformed: buckets still sum');
+}
 
 console.log(`\nqc-report-test: ${PASS} passed, ${FAIL} failed`);
 process.exit(FAIL === 0 ? 0 : 1);

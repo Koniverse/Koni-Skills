@@ -1412,3 +1412,49 @@ vocabulary (ops-deploy) replaced fudging; and density stopped being advisory.
 **Date**: 2026-07-03
 **Version**: 0.33.0
 **Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2 frozen contract + enforcer, §4 CI/typecheck), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [traceability.md](../skills/koni-qc/references/traceability.md) (4 forms), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (Band D), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (design-docs-first + fan-out), [live-harness.md](../skills/koni-qc/references/live-harness.md), LESSONS §10, [US-5.9](sprints/stories/US-5.9-field-hardening.md), CHANGELOG [0.33.0].
+
+### D31. koni-qc becomes a learning harness: field reorg absorbed (per-US specs, date-first reports), five Covered-by forms + lane-aware enforcement, and the regression-learning loop
+
+**Context**: three user directives on 2026-07-03: (1) absorb the ERP-02 test-doc reorg
+(their commits v1.114.57–67, made under real load at 452 authored TCs: `test-cases/EPIC-N/`
+split per US with an `index.md` frame; `test-reports/YYYY-MM-DD/` date-first with
+`auto-coverage.md` + `summary/` latest-state rollups; `test-plan/` removed; the coverage
+formula `covered = automated + env-pending + design + ops-deploy`); (2) make koni-qc
+operate as a **harness that learns from real bugs** and generates new cases from them;
+(3) a standing rule to **read CHANGELOG + git log every round** to find missed cases.
+
+**Decision** (v0.34.0, US-5.10, FR-37; extends FR-30/FR-35/FR-36):
+
+1. **The standard follows the field.** test-organization §1 adopts the ERP-02 layout as
+   canonical (per-US spec files under `EPIC-N/`, date-first reports, `summary/`,
+   `bug-bash/`, no `test-plan/` — per-epic framing lives in `index.md`); the old
+   single-file/epic-first shapes stay **legacy-accepted** (the reporter scans and
+   validates both — never strand an adopted repo).
+2. **Five fixed Covered-by forms.** `DESIGN-REVIEW:<ref>` joins as form 5 (🎨 design,
+   own column — execution = gstack `/design-review` + the static design lint), because
+   the field created it as free text; a closed set only survives if it absorbs what the
+   field genuinely needs. "Do not invent a **sixth**."
+3. **The enforcer is lane-aware (⏳ env-pending).** An automated handle with live
+   cadence (`*.integration/e2e/smoke`) missing from an env-less lane folds to
+   `env-pending` (covered — verified in its own CI lane), never broken; the full lane
+   enforces everything. This is what let ERP run 244 live handles without false-reding
+   the unit gate. `qc-report.mjs` gains `--lane`, recursive spec scan, the design class,
+   and the date-first path validator (self-test 42 → 53 assertions).
+4. **regression-learning.md — the QC harness loop** (Observe → Capture → Derive →
+   Generate → Enforce): every escaped bug becomes THREE things (a red-first REG TC +
+   a class-named finding + a step-9 generalization sweep across sibling surfaces); a
+   four-mode **miss post-mortem** (enumeration / density / layer / execution gap)
+   targets the class, never the instance; and the **change sweep** — CHANGELOG **and**
+   git log diffed every round, every fix commit must have a REG TC (a fix without one
+   is a *confirmed miss*), tracked in a change-coverage ledger in findings.md —
+   is a MANDATORY Frame input and a Release-gate exit item.
+
+**Why**: (1) a layout standard the flagship adopter has already outgrown rots every
+cross-reference — absorb reorgs promptly, version the old shape as legacy, never fork;
+(2) a suite that only grows at authoring time goes stale the day it ships — the bug
+stream and the commit stream are the two real-world signals that keep it honest, so
+they become gated loop inputs rather than good intentions.
+
+**Date**: 2026-07-03
+**Version**: 0.34.0
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) (§1 v2 layout, §5 formula), [regression-learning.md](../skills/koni-qc/references/regression-learning.md), [traceability.md](../skills/koni-qc/references/traceability.md) (5 forms), [test-automation.md](../skills/koni-qc/references/test-automation.md) (lane-aware enforcer, date-first validator), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (change sweep at Frame + learning loop at Release), [US-5.10](sprints/stories/US-5.10-field-org-learning.md), CHANGELOG [0.34.0].

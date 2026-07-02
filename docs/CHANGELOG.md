@@ -16,6 +16,54 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.34.0] — 2026-07-03 — koni-qc: field reorg absorbed + the regression-learning harness loop (US-5.10, FR-37) — v0.34.0
+
+Three user directives: absorb the ERP-02 test-doc reorg; make koni-qc a harness that
+learns from real bugs; always sweep CHANGELOG + git log for missed cases. CONTEXT D31.
+
+### Added — `skills/koni-qc/`
+
+- **`references/regression-learning.md`** — the QC harness loop (Observe → Capture →
+  Derive → Generate → Enforce): every escaped bug becomes THREE things (red-first
+  `REG` TC + class-named finding + step-9 generalization sweep); the four-mode miss
+  post-mortem (enumeration/density/layer/execution gap — fix the class, not the
+  instance); the **mandatory change sweep** (CHANGELOG **and** git log diffed every
+  round; a fix commit with no REG TC = a confirmed miss) + the change-coverage
+  ledger in findings.md; bug-bash intake.
+
+### Changed — `skills/koni-qc/`
+
+- **`test-organization.md`** — §1 adopts the ERP-02 field layout as canonical:
+  `test-cases/EPIC-N/` per-US split (`index.md` frame + `US-x.y.md` rows),
+  **date-first** `test-reports/YYYY-MM-DD/` (+ `auto-coverage.md`, per-US execution
+  docs, `summary/` latest-state rollups), `test-plan/` removed (per-epic framing →
+  `index.md`), legacy shapes accepted; §5 legend + the coverage formula
+  `covered = automated + env-pending + design + ops-deploy`.
+- **`traceability.md`** — `DESIGN-REVIEW:<ref>` is the **5th fixed Covered-by form**
+  (🎨 design, own column; /design-review + design lint); "do not invent a sixth".
+- **`test-automation.md`** — §2: the enforcer is **lane-aware** (⏳ env-pending: a
+  live-cadence handle missing in an env-less lane is covered-pending-env, never
+  broken; the full lane enforces), status map + env-pending/design rows, recursive
+  spec reconcile, date-first output + path validator (legacy accepted).
+- **`scripts/qc-report.mjs`** — `--lane` (closed set, fails closed), recursive scan
+  (generated-tree guard), design class (fallback-only free-text reading — no
+  laundering through PROPOSED/automated cells), `env-pending` bucket (unit lane
+  only; cadence read from the path part), malformed-TC-ID flagging, coverage-formula
+  line, date-first path validator (real month/day digits; date-level
+  report-manual); self-test **42 → 61 assertions**.
+- **`qc-workflow.md`** — Frame: the change sweep is a mandatory input + exit item;
+  Design: author into `EPIC-N/` (index vs US files); Release gate: "close the
+  learning loop" exit item. **`layered-suites.md`** — siblings live inside the epic
+  dir; per-run `test-reports/.../US-x.y/` docs are generated instantiations.
+  **`SKILL.md`** — learning-loop mode + activation/index rows; description rewritten
+  (1012/1024). **`quality-bar.md`/`whole-project-qc.md`** — five-form updates;
+  koni-setup vocab check updated.
+
+### Added — `docs/`
+
+- **LESSONS §11** — the standard follows the field: absorb an adopter's reorg
+  promptly, keep the old shape legacy-accepted, never fork the layout.
+
 ## [0.33.0] — 2026-07-03 — koni-qc field-hardening from the ERP 100% drive (US-5.9, FR-36) — v0.33.0
 
 Absorbs the five ERP-02 audit docs written back after their real 9.3%→100% automation

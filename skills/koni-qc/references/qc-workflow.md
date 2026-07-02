@@ -57,13 +57,20 @@ Decide *what* is under test and *when* it is done.
   When → Then* the matrix can trace). Prefer invoking **BMAD** to author the
   missing ACs back into the story; never invent untracked ACs that live only in
   the test doc. If an FR is too vague to yield an AC, raise it as a PRD/story gap.
+- **Run the change sweep (MANDATORY on any repo with a prior QC round)** — read the
+  CHANGELOG **and** `git log` since the last round, verify every feat has covering
+  TCs and every fix has a `REG` TC, and update the change-coverage ledger —
+  [`regression-learning.md`](regression-learning.md) §change-sweep. A fix with no
+  REG TC is a confirmed miss and enters the miss post-mortem before new authoring
+  starts (the miss tells you where the derivation is blind).
 - **Define scope** — in / out of scope; which surfaces; regression blast radius.
 - **Define entry / exit** — the criteria below; written before any case is authored.
 - **Define environment** — target build, data, accounts, feature flags.
 
 **Exit**: target US chosen (or a per-US tiered backlog), **design docs read in full +
-the two enumeration inputs present** (TD contract + UI-state inventory), scope +
-entry/exit + environment written. **Design may not start without them.**
+the two enumeration inputs present** (TD contract + UI-state inventory), **change
+sweep done + ledger updated** (when a prior round exists), scope + entry/exit +
+environment written. **Design may not start without them.**
 
 ---
 
@@ -71,8 +78,11 @@ entry/exit + environment written. **Design may not start without them.**
 
 Author the cases into the koni-docs container — fill its template, never copy it.
 
-- **Container** — author into **koni-docs `docs/tests/test-cases/EPIC-N.md`** (its
-  template, its file structure).
+- **Container** — author into **`docs/tests/test-cases/EPIC-N/`** (koni-docs
+  templates; [`test-organization.md`](test-organization.md) §1): the epic frame +
+  AC↔TC matrix into `index.md`, the TC rows into that story's `US-x.y.md` — never
+  rows into the index, never scope into a US file. (Legacy single `EPIC-NN.md`
+  repos: keep the file until the next epic-wide pass.)
 - **Derive cases** — for each AC, apply [`test-design.md`](test-design.md)
   (partitioning, BVA, decision tables, state, pairwise) to enumerate
   positive + negative + boundary; apply [`edge-coverage.md`](edge-coverage.md) so
@@ -147,7 +157,7 @@ the repo's runner executes** (koni-qc never runs tests itself).
 
 - **Code tests (unit / integration / e2e / smoke)** — run with the repo runner and
   the **reporter contract** ([`test-automation.md`](test-automation.md) §2): run →
-  parse the TC-ID from each test name → write `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
+  parse the TC-ID from each test name → write `test-reports/YYYY-MM-DD/EPIC-N/report.md` (+ `auto-coverage.md`, `summary/`)
   → **write back Status + coverage % + link to the story** (§3 sync). This is the
   automation, not a hand-fill.
 - **UI-bearing cases** — additionally drive gstack `/design-review` against the repo's
@@ -188,7 +198,14 @@ Turn results into a ship decision.
   decision from the run.
 - **Commit / gate** — invoke **koni-harness `gate`** to commit and gate the release.
 
-**Exit**: exit criteria met, release report produced, koni-harness gate green.
+- **Close the learning loop** — every bug this cycle surfaced (failed TC, bug-bash,
+  prod escape during the round) has its three things (REG TC + class finding +
+  generalization sweep) per [`regression-learning.md`](regression-learning.md);
+  the change-coverage ledger has this round's row. A release gate that ships bugs
+  forward without REG cases re-arms them.
+
+**Exit**: exit criteria met, release report produced, learning loop closed
+(REG cases + ledger row), koni-harness gate green.
 
 ---
 
@@ -200,7 +217,7 @@ Turn results into a ship decision.
 | **Coverage** | scope agreed | AC↔TC matrix complete, no orphans |
 | **Generation** | spec graded | every Critical/High TC has a runnable TC-ID-named test; no automatable case left `— (manual)` |
 | **Execution** | suite generated | all Critical/High run via runner/reporter; `report.md` written; stories synced; 0 Critical failures open |
-| **CI gate** | runner + coverage script exist | a `.github/workflows` runs the suite + coverage threshold on push/PR |
+| **CI gate** | runner + coverage script exist | the repo's CI runs the suite + coverage threshold on every push/PR/build (Actions, or the container build gate — `test-automation.md` §4) |
 | **NFR** | required triggers identified | required NFR sections executed |
 | **Perf** | SLA budgets set | p95 within budget or waiver logged |
 | **Decision** | — | release report + ship decision recorded |

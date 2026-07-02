@@ -32,22 +32,27 @@ Each file **opens with "What is tested" + "Out of scope (covered in <the other f
 the pair of scope blocks is the contract that nothing falls between the layers. Once the
 suite has run, each file also carries a **per-doc execution summary** under its scope
 block — the full counter set of [`test-automation.md`](test-automation.md) §2 (total ·
-pass · fail · blocked · broken · not-written · manual · ops-deploy, + %; buckets sum
-to total), written back from the run
+pass · fail · blocked · broken · env-pending · design · not-written · manual ·
+ops-deploy, + %; buckets sum to total), written back from the run
 (the exemplar docs each open with theirs; a suite doc with no summary after a run reads
 as never-executed). Both
 layers share one TC-ID space and one AC↔TC matrix (`maps_to.us` unchanged); the split is
 *presentation + column shape*, not a second numbering scheme.
 
-**Where the files live + when to split.** Sibling files live in
-`docs/tests/test-cases/` **next to** `EPIC-NN.md`, which **links them** (the epic file
-stays the container per [`test-organization.md`](test-organization.md) §0 — same
-placement rule as the `<feature>-security-test-cases.md` split in
+**Where the files live + when to split.** Under the per-US layout
+([`test-organization.md`](test-organization.md) §1) the layered pair are siblings
+**inside the epic dir**: `test-cases/EPIC-N/US-x.y-api.md` +
+`US-x.y-functional.md`, linked from that story's `US-x.y.md` row file and indexed in
+`index.md` (same placement rule as the `<feature>-security-test-cases.md` split in
 [`quality-bar.md`](quality-bar.md) Band B, which composes with this one). Split into
-files when a layer exceeds ~15 cases; below that, keep `§API` / `§Functional` sections
-inside `EPIC-NN.md`. Either way the reporter's spec-reconcile reads the epic file
-**plus its linked siblings** ([`test-automation.md`](test-automation.md) §2) — a TC in
-an unlinked stray file is invisible to coverage.
+files when a layer exceeds ~15 cases; below that, keep `§API` / `§Functional`
+sections inside `US-x.y.md`. (Legacy single-file repos: siblings sit next to
+`EPIC-NN.md` as before.) The reporter's spec-reconcile scan is **recursive over
+`test-cases/`** ([`test-automation.md`](test-automation.md) §2), but an unlinked
+stray file is still invisible to a *reader* — always index it. Distinct from these
+**authoring** docs: the per-run `test-reports/YYYY-MM-DD/EPIC-N/US-x.y/
+{api,functional}-test-cases.md` are **generated execution instantiations** of the
+same suites (reporter-written, never hand-edited).
 
 ## API suite standard
 
@@ -107,7 +112,7 @@ so a reader audits an endpoint's coverage at a glance.
 - **UI-component traceability** — the traceability table carries a `UI Component` column
   (Login page · Workspace switcher · Toast…), enabling the per-component rollup below.
 - **Evidence per executed case** — a dedicated **Evidence/Note column** (NOT `Covered-by`,
-  whose four fixed forms are [`traceability.md`](traceability.md)'s and must not be
+  whose five fixed forms are [`traceability.md`](traceability.md)'s and must not be
   extended) links the runner spec `file:line` **and** the artifact (video/screenshot
   path) for every failure, so a fail is replayable without re-running
   (`e2e/us001.spec.ts:214; …/img/TC-….webm` — artifacts live in the run folder per
@@ -180,7 +185,7 @@ cases, which guard *shipped* invariants every release):
   the bug it guards** ([`traceability.md`](traceability.md)).
 - **Where rounds live**: each round is a manual verification run → its checklist is the
   `report-manual.md` of a dated run folder
-  (`test-reports/EPIC-NN/<MMDDYYYY>/report-manual.md`, evidence in `img-manual/`), and
+  (`test-reports/YYYY-MM-DD/EPIC-N/report-manual.md`, evidence in `img-manual/`), and
   any bug still open at round end is mirrored in `docs/tests/findings.md` until fixed
   ([`test-organization.md`](test-organization.md) §1).
 - **The suite is living — every round bug feeds a spec case back.** Each bug found in a

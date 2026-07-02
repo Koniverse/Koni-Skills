@@ -86,6 +86,12 @@ against both** — this is a hard requirement, not advisory.
   `DESIGN.md` / design-spec name these shadcn primitives.
 - [ ] **No AI-slop / off-system patterns** — flag generic or off-system UI (a
   re-invented button, a bespoke modal, a stray palette) that `/design-review` surfaces.
+- [ ] **Static design lint green (when the repo has one)** — the deterministic
+  subset (token-only colors — no inline hex / off-token `bg-[#…]`, typography,
+  radius/spacing scale) is enforced by the repo's design-lint tests/script in the
+  unit gate. **A design TC counts covered only when `/design-review` passes AND the
+  static lint is green — the two together are the gate** (the ERP field rule);
+  `/design-review` alone judges only what can't be grepped.
 - [ ] **Deviations are failures** — each `DESIGN.md`-or-shadcn mismatch is logged
   against its TC-ID, not waved through.
 

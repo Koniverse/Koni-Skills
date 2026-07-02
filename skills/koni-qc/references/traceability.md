@@ -62,7 +62,7 @@ does not replace the scheme.
 > case carries a mandatory **`maps_to`** linking it to the story it covers, e.g.:
 >
 > ```yaml
-> # in docs/tests/test-cases/EPIC-NN.md, per TC
+> # in docs/tests/test-cases/EPIC-N/US-x.y.md, per TC
 > TC-02.LINK-1:
 >   maps_to: { us: US-2.1, fr: FR-12, ac: AC-1 }   # us is mandatory
 > ```
@@ -84,7 +84,7 @@ standard. Every functional/edge case is one row. The columns are fixed:
 | TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `epic/EPIC-CN/customize-network.e2e.spec.ts::TC-XX.SEC-1` |
 
 > These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
-> suite's IDs. The **`Covered-by`** handle has **four** fixed forms:
+> suite's IDs. The **`Covered-by`** handle has **five** fixed forms:
 > 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran). The
 >    path is relative to the test root (`epic/EPIC-NN/…` is fine; the `<app>/tests/`
 >    prefix may be omitted), and `<name>` may be abbreviated to the test's leading
@@ -104,8 +104,21 @@ standard. Every functional/edge case is one row. The columns are fixed:
 >    a TC is ops-deploy only for the irreducibly-prod remainder (ERP pulled 4 such TCs
 >    back into real unit tests before tagging the rest).
 >
-> Do **not** invent a fifth form — these four are the closed set (they replace ad-hoc
-> notes like the ERP-02 free-text markers).
+> 5. `DESIGN-REVIEW:<route-or-page>` — **design-verified**: a visual/design-conformance
+>    case (typically `TC-<EPIC>.UI-<n>`) whose execution mechanism is gstack
+>    **`/design-review`** against `DESIGN.md` + the shadcn standard
+>    ([`nfr.md`](nfr.md) §UI) **plus** the repo's static design lint where present —
+>    not a unit/e2e assertion. It counts as *covered* in **its own `design` column**
+>    (🎨), never lumped with `manual` (the ERP 100% drive tracked 22 such cases).
+>    Only for what a runner genuinely cannot assert — a badge state a jsdom test CAN
+>    check is automated-form, not design-form.
+>
+> Do **not** invent a sixth form — these five are the closed set (they replace ad-hoc
+> notes like the ERP-02 free-text markers; the reporter flags any other cell as a
+> broken handle). Legacy free-text cells containing `design-review` are read as form 5 **only when
+> the cell matches no fixed form and is not an automated `::` handle** (a
+> `PROPOSED:` cell or a test file merely *named* design-review stays uncovered /
+> enforced — no laundering); normalize them to `DESIGN-REVIEW:<ref>` when touched.
 >
 > **N scenarios may share one test**: a single automated test MAY assert several
 > scenarios, but the spec still carries **N distinct TC-IDs**, each `Covered-by`
@@ -126,8 +139,8 @@ Column contract:
 - **Side-effects** — DB writes, store mutations, events, files — the things a
   reviewer can't see in the UI.
 - **Covered-by** — the automation handle (`*.spec.ts::name`), `PROPOSED:<path>::name`
-  (planned, still uncovered), `— (manual)`, or `OPS-DEPLOY:<runbook-ref>` (see the four
-  fixed forms above).
+  (planned, still uncovered), `— (manual)`, `OPS-DEPLOY:<runbook-ref>`, or
+  `DESIGN-REVIEW:<ref>` (see the five fixed forms above).
 
 > The koni-docs `test-cases/EPIC-N.md` container also supports a Gherkin
 > Given/When/Then block per scenario. Use the canonical table for the dense

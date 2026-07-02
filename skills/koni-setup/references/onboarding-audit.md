@@ -44,10 +44,10 @@ profile; untagged rows apply to all.
   `test-reports/<date>/` and **not** ISO `YYYY-MM-DD` (koni-qc test-automation §2 validator)
 - [ ] **Code layout** — tests live under `<app>/tests/epic/EPIC-NN/`, **not** flat
   `tests/*.test.ts` (a flat layout is non-conformant — migrate it, koni-qc §2)
-- [ ] **Strategy home** — whole-repo strategy is in `docs/tests/STRATEGY.md`, **not**
-  overloaded into `test-plan/README.md`
+- [ ] **Strategy home** — whole-repo strategy is in `docs/tests/STRATEGY.md` (or
+  dedicated strategy stories linked from the QA README); no stale `test-plan/` folder
 - [ ] **Covered-by vocabulary** — only `<path>.spec.ts::name`, `PROPOSED:<path>::name`, `OPS-DEPLOY:<runbook>`,
-  or `— (manual)`; no ad-hoc free-text markers
+  `DESIGN-REVIEW:<ref>`, or `— (manual)`; no ad-hoc free-text markers
 
 ### Skills & agents
 - [ ] `.claude/skills/koni-docs` resolves (not dangling)

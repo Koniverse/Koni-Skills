@@ -35,9 +35,10 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 - [ ] **Test lifecycle** — active / deprecated / archived states applied.
 - [ ] **Risk-based order** — Critical/High/Medium/Low priority set by impact × likelihood.
 - [ ] **Regression scope** — `RC-` set defined as the per-release regression scope.
-- [ ] **Automation linkage** — `Covered-by` filled with one of the four fixed forms
-  (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)` · `OPS-DEPLOY:<runbook>`); `PROPOSED:` counts as
-  filled-but-uncovered (see [`traceability.md`](traceability.md)).
+- [ ] **Automation linkage** — `Covered-by` filled with one of the five fixed forms
+  (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)` · `OPS-DEPLOY:<runbook>` ·
+  `DESIGN-REVIEW:<ref>`); `PROPOSED:` counts as filled-but-uncovered
+  (see [`traceability.md`](traceability.md)).
 - [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty, and
   meeting the [`report-quality.md`](report-quality.md) content bar.
 
@@ -112,7 +113,7 @@ the koni-docs `test-report.md` is filled. Do not tick an execution item on an
 unrun suite — mark it deferred.
 
 **The depth bar (applies to every koni-qc artifact).** *Creating a file is not
-authoring it.* A `test-cases/EPIC-N.md` with an empty matrix, an audit with
+authoring it.* A `test-cases/EPIC-N/` spec with an empty matrix, an audit with
 bullet-only findings, a one-sentence `STRATEGY.md`, or a stub story (title + a Goal
 line + a few bullets) **fails the bar regardless of the bands** — it looks tracked
 but carries no decision value. Ground each artifact in real files/commits, don't

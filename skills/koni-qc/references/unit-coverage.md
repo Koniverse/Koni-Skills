@@ -18,7 +18,7 @@
 | Layer | Proves | Granularity | Owner | Where |
 |---|---|---|---|---|
 | **Unit** (this file) | each *function/method/branch* in isolation (mocked deps, no I/O) | per function | **koni-qc** owns the bar · **Dev** authors · **harness** enforces | `*.unit.test.ts` (Vitest/Jest/pytest) |
-| **AC↔TC matrix** ([`traceability.md`](traceability.md)) | each *user story's* acceptance behaviour | per US (its ACs) | koni-qc | `test-cases/EPIC-NN.md` + `.integration/.e2e/.smoke.spec` |
+| **AC↔TC matrix** ([`traceability.md`](traceability.md)) | each *user story's* acceptance behaviour | per US (its ACs) | koni-qc | `test-cases/EPIC-N/US-x.y.md` + `.integration/.e2e/.smoke.spec` |
 
 They are **complementary, not substitutes**: unit tests catch a broken branch a
 story-level e2e would miss; the AC↔TC matrix catches a missing requirement no

@@ -43,55 +43,84 @@ contract + UI-state inventory for the surfaces the US has
 ([`test-design.md`](test-design.md) step 9), and a US authored straight from its AC
 list silently lands at 1/10 density.
 
-**Epic stays the file *container*, US is the tracked *unit*.** Spec files group by
-epic (`test-cases/EPIC-NN.md`), test code by epic (`…/epic/EPIC-NN/`), reports by
-epic+date — but inside them every TC carries its `maps_to.us`, and what you
-*measure and plan* is the story. Don't confuse the folder grouping (epic) with the
-coverage unit (US).
+**Epic stays the *container*, US is the tracked *unit*.** Specs group by epic
+(`test-cases/EPIC-N/` — a directory: `index.md` + one `US-x.y.md` per story, §1),
+test code by epic (`…/epic/EPIC-NN/`), reports by date→epic — but inside them every
+TC carries its `maps_to.us`, and what you *measure and plan* is the story. Don't
+confuse the folder grouping (epic) with the coverage unit (US).
 
 ## 1. The `docs/tests/` taxonomy
+
+Adopted from the ERP-02 field reorg (2026-07-02, at ~430–450 authored TCs and
+264→531 passing tests) — **specs split per-US, reports date-first**:
 
 ```
 docs/tests/
 ├── README.md             ← QA hub (entry point; links the coverage epic)
 ├── test-organization.md  ← STANDING: this standard (points here)
 ├── STRATEGY.md           ← STANDING: whole-repo test strategy (scope · risk posture · priority order · tooling)
-├── findings.md           ← STANDING: open QA findings tracker
-├── test-plan/            ← per-EPIC plans — EPIC-NN-<slug>.md (that epic's scope · risk · priority)
-├── test-cases/           ← specs per epic — EPIC-NN.md + README.md (+ linked sibling suites: US-X.Y-api/functional- and <feature>-security-test-cases.md, per layered-suites.md)
-├── test-reports/         ← one folder per run
-│   └── EPIC-NN/<MMDDYYYY>/
-│       ├── report.md / img/            ← AUTOMATED — the test runner/reporter is the ONLY writer
-│       ├── report-notes.md             ← QC-driver narrative (impl status, recommendations, cmd ref — report-quality.md)
-│       └── report-manual.md / img-manual/  ← MANUAL run — written by its skill, not by hand
+├── findings.md           ← STANDING: open QA findings / impl-gap tracker (+ the change-coverage ledger, regression-learning.md)
+├── test-cases/           ← CANONICAL source specs (machine-read by the reporter)
+│   └── EPIC-N/           ← one DIRECTORY per epic (not a single file)
+│       ├── index.md         epic overview: scope · out-of-scope · stories-in-scope
+│       │                    table · AC↔TC matrix · US index · open/deferred scenarios
+│       └── US-x.y.md        that story's rich TC rows + Covered-by handles
+│                            (split further into US-x.y-api/functional siblings inside
+│                             the epic dir when a layer exceeds ~15 cases, layered-suites.md)
+├── test-reports/         ← per-run output, DATE-FIRST (regenerated; never hand-edited)
+│   ├── YYYY-MM-DD/          one folder per run day (a run day covers MANY epics)
+│   │   ├── auto-coverage.md    the machine coverage report (whole-repo, reporter-written)
+│   │   └── EPIC-N/
+│   │       ├── report.md          per-US index (summary + links)
+│   │       ├── report-notes.md    QC-driver narrative (report-quality.md)
+│   │       ├── report-manual.md / img-manual/   manual runs
+│   │       └── US-x.y/            detailed per-US execution docs, ONE format for
+│   │           │                  every epic (generated from the spec + the run):
+│   │           ├── functional-test-cases.md   (UI / e2e)
+│   │           └── api-test-cases.md          (backend / RLS / pure-helper)
+│   └── summary/             LATEST-STATE roll-ups (regenerated each run):
+│       ├── system-test-report.md    every TC + status, EPIC→US, for total review
+│       └── us-coverage-summary.md   per-US coverage rollup
 ├── bug-bash/             ← end-of-sprint bug-bash reports — sprint-YYYY-WNN.md
 └── audits/               ← point-in-time analyses (dated, historical; not maintained)
 ```
 
 | Folder / file | Owner | Purpose |
 |---|---|---|
-| `STRATEGY.md` | QA | **whole-repo** test strategy — the one place for cross-epic scope, risk posture, priority order, and tooling choices (do **not** overload `test-plan/README.md` with this) |
-| `test-plan/` | QA | **per-epic** plans only — `EPIC-NN-<slug>.md` (that epic's scope, out-of-scope, risk map, priority order) |
-| `test-cases/` | koni-qc (Dev/PM) | the source specs — TC-IDs, AC↔TC matrix, Given/When/Then |
-| `test-reports/` | the runner (auto) | per-run output; **never hand-edited** (manual runs use `report-manual.md`) |
-| `bug-bash/` | whole team | end-of-sprint break-it-together findings |
+| `STRATEGY.md` | QA | **whole-repo** test strategy — cross-epic scope, risk posture, priority order, tooling (a repo MAY instead keep strategy in dedicated stories, the ERP-02 variant — but then README must link them) |
+| `test-cases/EPIC-N/` | koni-qc (Dev/PM) | the source specs — `index.md` (epic frame + AC↔TC matrix) + per-US TC-row files; the **single source of truth** for TC-IDs and `Covered-by` handles |
+| `test-reports/` | the reporter (auto) | per-run output + latest-state `summary/`; **never hand-edited** (manual runs use `report-manual.md`) |
+| `bug-bash/` | whole team | end-of-sprint break-it-together findings — feeds [`regression-learning.md`](regression-learning.md) |
 | `audits/` | QA | dated one-off analyses (e.g. a koni-qc quality-bar grade); kept for history |
 
-> **Root holds only standing docs + the framework subdirs.** Dated one-offs go in
-> `audits/`; run output goes in `test-reports/EPIC-NN/<MMDDYYYY>/` — never at root.
+> **No `test-plan/` folder.** The per-epic plan content (scope, out-of-scope, risk
+> map, priority order) lives in that epic's `test-cases/EPIC-N/index.md` — one place,
+> next to the cases it frames (ERP-02 removed the folder 2026-07-02 after it went
+> stale against the index files). Whole-repo strategy stays `STRATEGY.md` (or the
+> stories variant above).
 
-> **The report path is a MUST, not a suggestion.** Every run folder is
-> `test-reports/EPIC-NN/<MMDDYYYY>/` — the **`EPIC-NN` grouping level is mandatory**
-> (a flat `test-reports/<date>/` is non-conformant) and the date is **`MMDDYYYY`**
-> (e.g. `07012026`), **not** ISO `YYYY-MM-DD`. The fixed, sortable-per-epic shape is
-> what lets the reporter and story write-back resolve a run deterministically; a
-> validator for it lives in [`test-automation.md`](test-automation.md) §2. This is the
-> #1 drift a fresh adoption makes — the first run must not invent its own layout.
+> **Why per-US spec files**: the US is the coverage unit (§0) and at real density
+> (~40–150 cases/US) a single `EPIC-N.md` blows past what a reviewer or an agent can
+> hold — the epic file's job (frame + matrix + index) and the story files' job (the
+> rows) are different documents. `index.md` NEVER carries TC rows; a `US-x.y.md`
+> NEVER re-frames scope.
+>
+> **Legacy accepted**: a repo already on the single-file `test-cases/EPIC-NN.md`
+> layout keeps working (the reporter scans both); migrate to `EPIC-N/` on the next
+> authoring pass that touches the epic. New adoptions use the directory layout.
+
+> **The report path is a MUST, not a suggestion.** A run folder is
+> **`test-reports/YYYY-MM-DD/`** (ISO date, one per run day) with per-epic subfolders
+> — a run day covers many epics, so the date owns the folder and each epic nests
+> inside (the old epic-first `EPIC-NN/<MMDDYYYY>/` shape created N duplicate date
+> folders per run; it is **legacy-accepted**, and the validator in
+> [`test-automation.md`](test-automation.md) §2 accepts both — new adoptions are
+> date-first). `auto-coverage.md` (the whole-repo machine report) lives at the date
+> level, not inside an epic. The first run must not invent its own layout.
 
 > **Relationship to koni-docs (report layout vs report body).** koni-qc owns this
-> **layout** — per-run reports live at `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
-> (+ `report-manual.md`). **koni-docs owns the report *body* templates**
-> (per-execution + per-release aggregate). This layout supersedes koni-docs' older
+> **layout**; **koni-docs owns the report *body* templates** (per-execution +
+> per-release aggregate). This layout supersedes koni-docs' older
 > `test-reports/{runs,releases}/` path wherever koni-qc is adopted; a release-level
 > rollup is still a koni-docs per-release report, placed under the same tree.
 > (koni-docs' own `sprint-system.md`/`templates.md` still reference the legacy
@@ -144,7 +173,7 @@ One TC-ID threads through **three** places; change one → change all three:
 > The reporter flags any code TC-ID absent from the spec (orphan) or bound to a different
 > case (collision).
 
-1. **Source spec** — `docs/tests/test-cases/EPIC-NN.md` (the source of truth: TC-ID + gherkin + yaml **`maps_to {us, fr, ac}`** — the `us` is mandatory; it's what makes per-US coverage computable, §0). Written *before* coding.
+1. **Source spec** — `docs/tests/test-cases/EPIC-N/US-x.y.md` (the source of truth: TC-ID + gherkin + yaml **`maps_to {us, fr, ac}`** — the `us` is mandatory; it's what makes per-US coverage computable, §0; legacy single `EPIC-NN.md` accepted, §1). Written *before* coding.
 2. **Test code** — `…/tests/epic/EPIC-NN/<slug>.<cadence>.spec.ts`; the test name **starts with the TC-ID** so the reporter can parse it.
 3. **Coverage story** — the `docs/sprints/stories/US-*.md` row: TC-ID → Status + coverage % + report link.
 
@@ -169,20 +198,30 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
 
 ## 5. Status legend
 
-- **Test-case spec files** (`test-cases/EPIC-*.md`) — icons OK: ✅ pass · ❌ fail
-  (reproducible) · ⚠️ flaky · ⏸️ blocked · 🚧 impl-gap · 📋 manual-only · 🏗️ ops-deploy ·
-  ⊘ retired · — not-written. (The word set `Not Executed / Pass / Fail / Blocked /
+- **Test-case spec files** (`test-cases/EPIC-N/*.md`) — icons OK: ✅ pass · ❌ fail
+  (reproducible) · ⚠️ flaky · ⏸️ blocked · ⏳ env-pending · 🎨 design · 🚧 impl-gap ·
+  📋 manual-only · 🏗️ ops-deploy · ⊘ retired · — not-written. (The word set `Not Executed / Pass / Fail / Blocked /
   Skipped` in [`traceability.md`](traceability.md)'s canonical Status column is the
   **pre-run** vocabulary for the same cell — `Not Executed` ≙ `— not-written` before a
   run, `Skipped` ≙ ⏸️ blocked; after a run the reporter's icon set above is
   authoritative. ⚠️ flaky and ⊘ retired are curation states the reporter never emits.)
 - **US story files** (`sprints/stories/US-*.md`) — **plain words, no icons**
   (machine-parsed, diff-able): `done` · `failed` · `blocked` · `pending` ·
-  `impl-gap` · `manual` · `ops-deploy` · `covered-by X` · `in-progress`. (`blocked` = a test ran
+  `env-pending` · `design` · `impl-gap` · `manual` · `ops-deploy` · `covered-by X` ·
+  `in-progress`. (`blocked` = a test ran
   but a precondition/dependency was unmet, distinct from `pending` = no test yet —
   the reporter write-back keeps them separate, see
   [`test-automation.md`](test-automation.md) §2.)
 - **Run reports** — icons follow what the reporter emits; do not hand-edit.
+- **The coverage formula (what counts as covered)** — field-proven at the ERP 100%
+  drive: **covered = 🟢 automated + ⏳ env-pending + 🎨 design + 🏗️ ops-deploy**.
+  `env-pending` is a **derived, lane-aware status**, not a Covered-by form: an
+  automated-form handle whose file cadence is `*.integration/*.e2e/*.smoke` counts
+  env-pending in a lane without that env (unit/Docker gate) — it is **verified in its
+  own CI lane** ([`test-automation.md`](test-automation.md) §2/§4) and never counted
+  broken locally. `design` comes from the fifth Covered-by form
+  ([`traceability.md`](traceability.md)). `manual` and `PROPOSED:` are the two
+  buckets that count as **uncovered** — driving them to zero is the 100% target.
 
 ## 6. Scaffolding: who creates the tree
 
@@ -195,24 +234,24 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
   trees (additive, only writes absent paths — **both** the doc tree and the code root):
 
 ```sh
-mkdir -p docs/tests/test-cases docs/tests/test-plan docs/tests/bug-bash docs/tests/audits
+mkdir -p docs/tests/test-cases docs/tests/bug-bash docs/tests/audits   # spec dirs test-cases/EPIC-N/ are created per epic at authoring time
 [ -f docs/tests/README.md ]            || printf '# docs/tests — QA hub\n\n> See test-organization.md for the standard.\n' > docs/tests/README.md
 [ -f docs/tests/test-organization.md ] || printf '# Test organization\n\n> Follows koni-qc references/test-organization.md.\n' > docs/tests/test-organization.md
-[ -f docs/tests/STRATEGY.md ]          || printf '# Test strategy\n\n> Whole-repo test strategy: scope · risk posture · priority order · tooling. Per-epic plans live in test-plan/EPIC-NN-<slug>.md.\n' > docs/tests/STRATEGY.md
+[ -f docs/tests/STRATEGY.md ]          || printf '# Test strategy\n\n> Whole-repo test strategy: scope · risk posture · priority order · tooling. Per-epic framing lives in test-cases/EPIC-N/index.md.\n' > docs/tests/STRATEGY.md
 [ -f docs/tests/findings.md ]          || printf '# Open QA findings\n' > docs/tests/findings.md
-[ -f docs/tests/test-cases/README.md ] || printf '# Test cases\n\n> EPIC-NN.md specs — via koni-docs templates/test-cases.md\n' > docs/tests/test-cases/README.md
+[ -f docs/tests/test-cases/README.md ] || printf '# Test cases\n\n> One EPIC-N/ dir per epic: index.md (frame + matrix) + US-x.y.md (rows) — via koni-docs templates/test-cases.md\n' > docs/tests/test-cases/README.md
 # the CODE tree — the doc scaffold historically stopped here; create it too (<app> = the package that owns tests):
 mkdir -p "${APP:-.}/tests/epic" && [ -e "${APP:-.}/tests/epic/.gitkeep" ] || : > "${APP:-.}/tests/epic/.gitkeep"
-# per-epic report folders are created on first run: docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/
+# report folders are created on first run: docs/tests/test-reports/YYYY-MM-DD/ (+ summary/)
 ```
 
 > **READMEs**: the three root standing docs always exist; `test-cases/` also
 > carries a one-line `README.md` (it's the most-edited subdir). The other empty
-> framework dirs (`test-plan/`, `bug-bash/`, `audits/`) are kept in git with a
-> `.gitkeep` rather than a stub, and `test-reports/` isn't created until a run.
+> framework dirs (`bug-bash/`, `audits/`) are kept in git with a `.gitkeep` rather
+> than a stub, and `test-reports/` isn't created until a run.
 
-Only create `test-reports/EPIC-NN/<MMDDYYYY>/` when a run actually produces a
-report — don't pre-create empty dated folders.
+Only create `test-reports/YYYY-MM-DD/` when a run actually produces a report —
+don't pre-create empty dated folders.
 
 ## 7. Ownership boundary
 

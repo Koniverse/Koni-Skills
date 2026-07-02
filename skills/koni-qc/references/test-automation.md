@@ -1,6 +1,6 @@
 # test-automation — the loop that makes authored specs run and self-update
 
-> **Load when**: you have authored `test-cases/EPIC-N.md` specs (TC-IDs + AC↔TC
+> **Load when**: you have authored `test-cases/EPIC-N/` specs (TC-IDs + AC↔TC
 > matrix) and now need to **automate** them end-to-end. The authoring refs
 > ([`traceability.md`](traceability.md), [`test-design.md`](test-design.md),
 > [`edge-coverage.md`](edge-coverage.md)) produce the specs; **this file is the
@@ -24,7 +24,7 @@ authored spec (TC-IDs)               ← authoring refs (done)
 tests/epic/EPIC-NN/<slug>.<cadence>.spec.ts   (test name STARTS with the TC-ID)
    │  run with the repo runner (vitest / jest / pytest / playwright) → JSON
    ▼  §2 REPORT (the reporter contract)
-docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md   (reporter is the ONLY writer)
+docs/tests/test-reports/YYYY-MM-DD/EPIC-N/report.md   (reporter is the ONLY writer)
    │  §3 SYNC (story write-back)
    ▼
 docs/sprints/stories/US-*.md   ← Status + coverage% + report link updated
@@ -39,7 +39,7 @@ docs/sprints/stories/US-*.md   ← Status + coverage% + report link updated
 
 ## 1. Generate: spec → runnable test
 
-For each `TC-<EPIC>.<TYPE>-<n>` row in `test-cases/EPIC-N.md`:
+For each `TC-<EPIC>.<TYPE>-<n>` row in `test-cases/EPIC-N/US-x.y.md` (legacy single `EPIC-NN.md` accepted):
 
 - **Materialize the code tree** first (it is NOT created by the doc scaffold in
   [`test-organization.md`](test-organization.md) §6): `mkdir -p <app>/tests/epic/EPIC-NN`.
@@ -58,7 +58,7 @@ For each `TC-<EPIC>.<TYPE>-<n>` row in `test-cases/EPIC-N.md`:
   (per [`traceability.md`](traceability.md)); flip the row from `— (manual)`.
 
 **Ownership.** The **AC↔TC-spec tests** (integration/e2e/smoke authored from
-`EPIC-N.md`) are **koni-qc-driven generation** — the agent generates them under this
+the `EPIC-N/` spec) are **koni-qc-driven generation** — the agent generates them under this
 step. The **per-function unit tests** ([`unit-coverage.md`](unit-coverage.md)) stay
 **Dev-authored** alongside the code. Two authorship models, one runner + reporter.
 
@@ -92,6 +92,19 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   exits non-zero, and the gate goes red. **Broken = 0 is the bar.** From the moment this
   runs, coverage cannot be faked by editing a spec cell (the ERP drive ran ~40 report
   cycles at broken = 0). Duplicate TC-IDs across files are flagged the same way.
+- **The enforcer is LANE-AWARE (env-pending, the field refinement)**: an
+  automated-form handle whose file cadence is `*.integration/*.e2e/*.smoke` needs a
+  live env — in a lane that lacks it (the unit/Docker gate, a DB-less local run) a
+  missing such test folds to **⏳ `env-pending`** (its own bucket; still *covered*),
+  **never broken** — it is verified in its own CI lane
+  ([`live-harness.md`](live-harness.md), §4 item 4). In the **full lane** (CI job with
+  services / a local live-stack run) the same handle IS enforced: missing or failing
+  ⇒ broken. This is what lets a repo flip `— (manual)` rows to live handles without
+  false-reding the unit gate (the ERP drive ran 244 env-pending handles this way).
+  The lane is an explicit reporter input, never guessed from "did anything fail" —
+  and a **closed set that fails closed**: only `unit` and `full` are valid; any other
+  label (a typo, a CI job name like `integration`) must refuse to run rather than
+  silently un-enforce (the reference reporter exits 2).
 - **Conformance flag**: a suite file living **outside `<app>/tests/epic/EPIC-NN/`** (a
   flat `tests/*.test.ts`) is **non-conformant** — surface it in the report so the
   unmigrated layout (test-organization §2) is visible, not silent.
@@ -99,8 +112,9 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   group or parametrized cases). Fold its tests: **any `failed` ⇒ the TC is `failed`**;
   else **any `skipped` ⇒ `blocked`**; else **`passed`**. One TC-ID → one report row.
 - **Reconcile against the spec, not just the run.** Enumerate every `TC-<EPIC>.<TYPE>-<n>`
-  in `test-cases/EPIC-N.md` **and in the sibling suite files it links** (the layered
-  `US-X.Y-api/functional-test-cases.md` of [`layered-suites.md`](layered-suites.md));
+  under `test-cases/EPIC-N/` — `index.md` + every `US-x.y.md` + any layered siblings
+  ([`layered-suites.md`](layered-suites.md); legacy single `EPIC-NN.md` accepted —
+  the scan is **recursive** over `test-cases/`);
   a TC with **no test in the JSON** is `not-written` (or, if
   the spec row is flagged manual-only `📋`, `manual`; or, if its `Covered-by` is
   `PROPOSED:<path>::name`, **planned automation** — still counts as *uncovered*, see
@@ -121,29 +135,38 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   | spec row flagged manual-only `📋` | spec flag | 📋 manual-only | `manual` |
   | spec row flagged impl-gap `🚧` | spec flag | 🚧 impl-gap | `impl-gap` |
   | `Covered-by` = `OPS-DEPLOY:<runbook>` | spec handle | 🏗️ ops-deploy | `ops-deploy` |
+  | automated handle, live cadence, env absent in THIS lane | lane rule (below) | ⏳ env-pending | `env-pending` |
+  | `Covered-by` = `DESIGN-REVIEW:<ref>` | spec handle | 🎨 design | `design` |
 
   The runner's fold (§2) only ever yields `passed`/`failed`/`blocked`; `manual` and
   `impl-gap` come from a **spec-row flag** (like manual-only), never guessed from an
   error string; `not-written` comes from the spec-reconcile step; `ops-deploy` comes
   from the fourth `Covered-by` form ([`traceability.md`](traceability.md)) and is
   **counted in its own column — never lumped with `manual`, never claimed as
-  CI-automated**. `broken` (missing/failing cited test, fifth-form cell, duplicate
+  CI-automated**; `design` comes from the fifth form and is resolved by the
+  `/design-review` + design-lint pass, not the runner. `broken` (missing/failing cited test, out-of-set cell, duplicate
   TC-ID) deliberately has **no row here**: a broken handle turns the gate red and the
   run stops — it lives in `report.md`'s BROKEN section + the `broken` counter and
   **never reaches the story write-back (§3)**.
 
-- **Output**: write `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` in the
-  koni-docs `test-report.md` template shape — a row per TC (id · status icon · time ·
-  failure detail) + the run header (commit, env, runner). `report.md` is the
-  **reporter's exclusive artifact**; manual `MAN-*` runs go in `report-manual.md`.
+- **Output (date-first)**: write `docs/tests/test-reports/<YYYY-MM-DD>/auto-coverage.md`
+  (the whole-repo machine report: suite totals, the coverage formula — canonical in
+  [`test-organization.md`](test-organization.md) §5 — per-epic bucket table,
+  broken list) + `<YYYY-MM-DD>/EPIC-N/report.md` per epic in the koni-docs
+  `test-report.md` template shape — a row per TC (id · status icon · time · failure
+  detail) + the run header (commit, env, runner) — and refresh the latest-state
+  rollups `test-reports/summary/{system-test-report,us-coverage-summary}.md`
+  ([`test-organization.md`](test-organization.md) §1). These are the **reporter's
+  exclusive artifacts**; manual `MAN-*` runs go in `report-manual.md`.
   These rows are the reporter's *minimum*; a decision-grade report also carries the
   content bar of [`report-quality.md`](report-quality.md) (overview %, results by
   group, skipped/blocked reason+action, perf stats, evidence links).
-- **Path validator (MUST)**: the output path must match
-  `test-reports/EPIC-[0-9A-Z]+/[0-1][0-9][0-3][0-9][0-9]{4}/report(-manual|-notes)?\.md`
-  (`EPIC-NN` grouping level present, `MMDDYYYY` date — **not** ISO `YYYY-MM-DD`, **not**
-  a flat `test-reports/<date>/`). Reject a non-matching path before writing — this is the
-  #1 fresh-adoption drift (test-organization §1).
+- **Path validator (MUST)**: the output path must match the **date-first** shape
+  `test-reports/\d{4}-\d{2}-\d{2}/(auto-coverage\.md|report(-manual|-notes)?\.md|EPIC-[0-9A-Z]+/(report(-manual|-notes)?\.md|US-[\d.]+/(api|functional)-test-cases\.md))`
+  or `test-reports/summary/(system-test-report|us-coverage-summary)\.md` — the
+  **legacy** epic-first `test-reports/EPIC-NN/<MMDDYYYY>/report*.md` is also accepted
+  on repos that already use it (never for a new adoption). Reject anything else
+  before writing — this is the #1 fresh-adoption drift (test-organization §1).
 - **Build it from the reference implementation**: koni-qc ships
   [`scripts/qc-report.mjs`](../scripts/qc-report.mjs) (node stdlib, + its contract
   self-test in `scripts/__tests__/qc-report-test.mjs`) — copy it into the repo and adapt
@@ -210,7 +233,7 @@ a cloud repo** (a fresh repo has neither by default — bootstrap both):
 > `test:cov` goes in **that package's** `package.json`, its `tests/epic/` tree and
 > config live under the package, and the workflow runs it per-app (a matrix or a
 > per-package job). Report paths stay repo-rooted at
-> `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/`.
+> `docs/tests/test-reports/YYYY-MM-DD/EPIC-N/`.
 
 **"A CI test gate exists"** is a Release-stage exit criterion (see
 [`qc-workflow.md`](qc-workflow.md) §5) — without it the suite silently rots.

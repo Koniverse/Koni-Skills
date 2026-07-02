@@ -107,7 +107,7 @@ case *by definition* — it asserts the just-valid accept AND the just-invalid r
 the same edge, per [`traceability.md`](traceability.md) §BND vs NEG — do not split it.)
 
 The output of this procedure is rows in the canonical test-case table, ready to
-fill in the koni-docs `test-cases/EPIC-N.md` container. For a US with an **API
+fill in the koni-docs `test-cases/EPIC-N/` container (`US-x.y.md` per story). For a US with an **API
 surface and/or UI**, shape those rows into the layered-suite structure
 ([`layered-suites.md`](layered-suites.md)): the API/functional split, by-endpoint
 tables, and the orthogonal coverage matrices that catch whole missing classes.

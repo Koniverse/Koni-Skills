@@ -406,3 +406,22 @@ re-introduces the same bugs — ship the reference impl WITH the frozen test.
 **Grep check**: any reference describing a machine-parsed format should contain a
 fenced regex or a fixture path — `grep -L 'regex\|fixture\|self-test' <new-ref>` on a
 parsing contract is a smell.
+
+## 11. The standard follows the field — absorb an adopter's reorg, don't outlaw it
+
+**What happened**: koni-qc shipped a layout contract (epic-first reports, single-file
+epic specs, a strict four-form Covered-by set) — and within a day the flagship adopter
+(ERP-02, under real load at 452 TCs / 794 tests) reorganized: per-US spec files,
+date-first reports with latest-state rollups, an `env-pending` lane status, and a
+free-text design-review marker. Our validator would have called the *better* layout
+non-conformant.
+
+**The lesson**: a standard's job is to encode the best-known field practice, not to
+freeze the first authored guess. When the adopting repo outgrows the contract under
+real load: (1) absorb the reorg back into the skill **promptly** (same-week, before
+cross-references rot), (2) keep the superseded shape **legacy-accepted** in every
+validator/scanner so no adopted repo is stranded, (3) extend closed sets (the form
+list) rather than letting the field invent free text — a closed set only survives if
+it absorbs what the field genuinely needs. Corollary of §10: the contract is code, so
+absorbing a reorg means updating the regex/validator + self-test in the same commit
+as the prose.

@@ -2,11 +2,13 @@
 
 > **Load when**: you want a concrete end-to-end example of an authored suite.
 > **Worked example** produced by `koni-qc` from a feature's requirements, shown
-> in the koni-docs `docs/tests/test-cases/EPIC-N.md` shape. It demonstrates the
-> standard and the uplift over the hand-made `koni-docs.backup` `customize-network`
-> suite (58 manual cases, ~70% happy-path, no TC IDs, no AC↔TC matrix, <5% NFR).
-> In a real repo this file lives at `docs/tests/test-cases/EPIC-CN.md`; here it is
-> illustrative (the SubWallet product is not in this repo).
+> as one flat document for readability — a real adoption splits it per the
+> `test-cases/EPIC-CN/` directory layout of `test-organization.md` §1 (`index.md`
+> frame + per-US row files; the single-file `EPIC-CN.md` shape shown here is
+> legacy-accepted). It demonstrates the standard and the uplift over the hand-made
+> `koni-docs.backup` `customize-network` suite (58 manual cases, ~70% happy-path,
+> no TC IDs, no AC↔TC matrix, <5% NFR). The content (rows, matrix, sections) is
+> identical in either container; the product (SubWallet) is not in this repo.
 
 ---
 

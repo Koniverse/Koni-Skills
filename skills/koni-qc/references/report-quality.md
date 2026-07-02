@@ -73,7 +73,7 @@ Every **failure and blocker** links its artifacts: the runner spec `file:line`, 
 video / screenshot / log path the run produced. Every **manual/visual verification**
 (UI conformance, bug-fix rounds) attaches the screenshot or GIF. A failure without
 evidence is a claim; with evidence it is replayable. (Store artifacts under the run
-folder — `test-reports/EPIC-NN/<MMDDYYYY>/img/` for automated runs, `img-manual/` for
+folder — `test-reports/YYYY-MM-DD/EPIC-N/img/` for automated runs, `img-manual/` for
 manual ones, per [`test-organization.md`](test-organization.md).)
 
 ## Applies to auto + manual

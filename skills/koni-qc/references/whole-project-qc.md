@@ -20,7 +20,7 @@
 ## The gap
 
 Running koni-qc on a repo correctly produces the audit, the `docs/tests/` tree, the
-`test-cases/EPIC-N.md` specs + AC↔TC matrices, and automation. But koni-qc's *method*
+`test-cases/EPIC-N/` specs + AC↔TC matrices, and automation. But koni-qc's *method*
 does not, on its own, **prescribe standing up the QA-tracking epic**, **author the
 strategy**, **enforce where artifacts land**, **require ≥1 execution**, or **hold every
 authored artifact to a depth bar** before whole-project QC is "done". Left implicit,
@@ -70,9 +70,10 @@ empty. Author it — do not scaffold-and-forget:
 - **`docs/tests/STRATEGY.md`** (the whole-repo strategy home, per
   [`test-organization.md`](test-organization.md) §1) — test types + the gate, risk
   tiers, per-epic priority, automation-wave order, cadence.
-- **Per-epic `test-plan/EPIC-N-<slug>.md`** — that epic's scope, out-of-scope, risk
-  map, priority order. (`test-plan/` is per-epic only; the whole-repo strategy is
-  `STRATEGY.md`, never `test-plan/README.md`.)
+- **Per-epic framing in `test-cases/EPIC-N/index.md`** — that epic's scope,
+  out-of-scope, risk map, priority order, stories-in-scope table (there is **no
+  `test-plan/` folder** — [`test-organization.md`](test-organization.md) §1; the
+  whole-repo strategy stays `STRATEGY.md`).
 
 ## 3. Artifact-location MUSTs
 
@@ -80,9 +81,11 @@ Enforce where things land — misplaced artifacts read as "not done" and break t
 
 - **`audits/QC-PLAN-BY-US-<date>.md`** — the per-US risk-tiered coverage plan lives in
   `docs/tests/audits/`, **never at the tests root**. Same for the coverage audit.
-- **Run reports** at `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) /
-  `report-manual.md` — **never at a flat `test-reports/<date>/`**, never ISO-dated,
-  never hand-editing the auto file (the validator is [`test-automation.md`](test-automation.md) §2).
+- **Run reports** at `test-reports/YYYY-MM-DD/EPIC-N/report.md` (auto) /
+  `report-manual.md`, with `auto-coverage.md` at the date level and the latest-state
+  `summary/` rollups — date-first per [`test-organization.md`](test-organization.md)
+  §1 (the epic-first `EPIC-NN/<MMDDYYYY>/` shape is legacy-accepted only); never
+  hand-editing the auto files (the validator is [`test-automation.md`](test-automation.md) §2).
 - **`findings.md`** populated at the tests root; dated one-offs in `audits/`.
 
 ## 4. Execution is required (not specs-only)
@@ -100,15 +103,15 @@ Whole-project QC is **NOT done** until every box is true. Add this to the comple
 check and refuse to declare done otherwise:
 
 - [ ] **QA tracking epic** + a coverage story per app epic exist and are in the sprint (§1).
-- [ ] **`STRATEGY.md`** authored + per-epic `test-plan/` where the epic warrants it (§2).
+- [ ] **`STRATEGY.md`** authored + per-epic framing in `test-cases/EPIC-N/index.md` where the epic warrants it (§2).
 - [ ] **`QC-PLAN-BY-US-<date>.md`** + the coverage audit in `audits/`; `findings.md` populated (§3).
-- [ ] **`Covered-by` handles are honest** — every cell is one of the **four fixed
+- [ ] **`Covered-by` handles are honest** — every cell is one of the **five fixed
   forms** ([`traceability.md`](traceability.md)): automated (`<path>::<name>` — and the
   cited test **exists and passes** under the broken-handle enforcer,
   [`test-automation.md`](test-automation.md) §2), `PROPOSED:<path>::name`, `— (manual)`,
-  or `OPS-DEPLOY:<runbook>`. **No phantom automation** (the ERP run had 24 fabricated
-  citations, finding F-8) and no free-text fifth form.
-- [ ] **≥1 execution report per covered epic** at `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
+  `OPS-DEPLOY:<runbook>`, or `DESIGN-REVIEW:<ref>`. **No phantom automation** (the ERP
+  run had 24 fabricated citations, finding F-8) and no free-text sixth form.
+- [ ] **≥1 execution report per covered epic** at `test-reports/YYYY-MM-DD/EPIC-N/report.md`
   (§4) — not specs-only. (This is the **Execute/Release** bar: a repo still in
   authoring-mode — specs written, nothing run yet — is *in-progress*, not *done*; that
   authoring artifact legitimately defers the execution items per the
@@ -135,7 +138,7 @@ Hold every artifact koni-qc authors (or asks a generator to author) to this bar:
   cite LESSONS/findings; backlog: the design/approach) · `## Files modified` (real
   paths) · `## Cross-references`. **Coverage stories** add the `## Coverage snapshot`
   table (§1).
-- **koni-qc's own outputs** clear the same bar — a `test-cases/EPIC-N.md` with an empty
+- **koni-qc's own outputs** clear the same bar — a `test-cases/EPIC-N/` spec with an empty
   matrix, an audit with bullet-only findings, or a one-sentence `STRATEGY.md` all fail
   it exactly as a stub story does (grade with [`quality-bar.md`](quality-bar.md)).
 - **Ground it, don't template it.** For *done* stories read the actual files + `git log`
