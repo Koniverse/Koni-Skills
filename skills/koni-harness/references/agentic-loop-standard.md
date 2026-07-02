@@ -62,6 +62,19 @@ between its stages.
 > re-verify every fix round. This is how the harness builds *and verifies the
 > building of* new skills.
 
+> **Capture lessons at the Doc + Version gate (close the read→write loop).** Execute
+> *skims* `LESSONS.md` on the way in; the Doc + Version gate is where the loop *writes* one
+> back. If Review or Execute surfaced a **trap, a library/tool quirk, a non-obvious
+> gotcha, or a fix that would save the next person time**, append a `LESSONS.md` entry —
+> via koni-docs [`templates/lessons.md`](../../koni-docs/references/templates/lessons.md)
+> (append-only, numbered `## <n>.`) — in the **same commit** as the code + `VERSION` +
+> `CHANGELOG` + `CONTEXT`. It is a **process exit-criterion, not a deterministic gate**:
+> like CONTEXT it fires only *if* a real trap/pattern surfaced (capture genuine ones, never
+> filler), and "was a lesson learned?" is a judgment the gate-runner can't make — a check
+> firing on every commit would be noise (harness principle: add a gate only for a real,
+> deterministic failure). koni-docs owns the template + the pre-commit checklist item; the
+> harness just names *when* in the loop it happens (here) and *when* to read it (Execute).
+
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:
 the entry/exit criteria that decide when work may advance from one stage to the
@@ -126,7 +139,9 @@ each one narrowing from project-canonical down to the live working state:
   config block (`docs_path` / `active_sprint` / `version_file`) and the Active
   Context pointer. Authoritative only for the Claude-Code activation surface.
 - **`LESSONS.md`** — accumulated, hard-won lessons; authoritative for "mistakes
-  we already made, don't repeat them."
+  we already made, don't repeat them." **Read** at Execute (skim) and **written** at the
+  Doc + Version gate when a trap/pattern surfaces (see the capture rule above) — the loop
+  both consumes and grows it.
 - **`CONTEXT.md`** — durable architectural/decision context (the D-numbered
   decisions); authoritative for *why* the system is shaped the way it is.
 - **`.active-context.md`** — the live working state: active sprint, in-progress

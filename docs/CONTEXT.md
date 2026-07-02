@@ -1197,3 +1197,39 @@ observability adoptable without a surveillance tradeoff.
 **Date**: 2026-07-01
 **Version**: 0.28.0
 **Reference**: [koni-agent-monitoring SKILL.md](../skills/koni-agent-monitoring/SKILL.md), [privacy-allowlist.md](../skills/koni-agent-monitoring/references/privacy-allowlist.md), [agent-report-core.mjs](../skills/koni-agent-monitoring/scripts/agent-report-core.mjs), [leak-test.mjs](../skills/koni-agent-monitoring/scripts/__tests__/leak-test.mjs), [EPIC-6](sprints/epics/EPIC-6.md), [US-6.1](sprints/stories/US-6.1-koni-agent-monitoring.md), CHANGELOG [0.28.0].
+
+### D26. The loop captures lessons, not just reads them — an explicit `LESSONS.md` step at the Doc + Version gate
+
+**Context**: an audit of the koni-harness flow found the loop only **read** `LESSONS.md`
+(Execute "skims" it; context-load indexes its titles) but never had an explicit step to
+**write** one. Lesson-writing existed only as a conditional line in koni-docs' pre-commit
+checklist ("LESSONS.md has new entry if a trap was discovered") — a koni-docs reminder, not
+a named koni-harness loop step, and the loop's Doc + Version gate never mentioned it. Ironic
+given how often recent work cited high-value lessons (ERP LESSONS §9/§213/§214) the loop
+had no step to produce.
+
+**Decision** (v0.29.0; refines FR-21 — no new capability, a process step):
+
+- **Capture lessons at the Doc + Version gate.** If Review or Execute surfaced a trap, a
+  tool/library quirk, a non-obvious gotcha, or a time-saving fix, append a `LESSONS.md`
+  entry — via koni-docs [`templates/lessons.md`](../skills/koni-docs/references/templates/lessons.md)
+  (append-only, numbered `## <n>.`) — in the **same commit** as the code + CHANGELOG +
+  CONTEXT. The loop now **reads** lessons at Execute and **writes** them at the Doc-gate.
+- **Conditional process step, deliberately not a deterministic gate.** Like CONTEXT ("new
+  entry *if* a decision was made"), it fires only when there's a real lesson — capture only
+  genuine ones, never filler. It is **not** a gate check: "was a lesson learned?" is a
+  judgment the gate-runner can't make, and a check that fired on every code commit would be
+  pure noise (harness principle: add a gate only for a real, deterministic failure).
+- **Compose, don't reproduce.** koni-docs owns the LESSONS.md template + the checklist item;
+  koni-harness only names *when in the loop* it happens (Doc-gate) and *when to read it*
+  (Execute). Wired into `agentic-loop-standard.md` (capture rule + context-layer note),
+  `loop-runner.md` (doc-gate drive), `example-loop.md` (worked write), and SKILL.md.
+
+**Why it matters**: closing the read→write loop makes the harness *accumulate* institutional
+knowledge, not just consume it — the mechanism that produced the §-numbered lessons this very
+project keeps leaning on. Keeping it a process step (not a gate) preserves the harness's "gates
+are deterministic, process is judgment" split.
+
+**Date**: 2026-07-01
+**Version**: 0.29.0
+**Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (capture rule + Doc-gate), [loop-runner.md](../skills/koni-harness/references/loop-runner.md) (doc-gate drive), [example-loop.md](../skills/koni-harness/references/example-loop.md), [templates/lessons.md](../skills/koni-docs/references/templates/lessons.md), CHANGELOG [0.29.0].

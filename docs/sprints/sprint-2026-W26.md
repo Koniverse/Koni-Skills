@@ -49,6 +49,10 @@ koni-agent-monitoring (v0.28.0) — EPIC-6, the first product/client skill.
 grading pass that hardened both non-docs skills to **koni-harness 96/100,
 koni-qc 97/100** ([LESSONS §8](LESSONS.md); CHANGELOG \[0.17.0]–\[0.17.2]).
 
+**Post-ship refinement (v0.29.0, no new story — refine FR-21):** koni-harness gains an
+explicit **lesson-capture step** at the Doc + Version gate (the loop now writes `LESSONS.md`,
+not just reads it) — [CONTEXT D26](CONTEXT.md); CHANGELOG \[0.29.0].
+
 ## Sprint goal recap
 
 The W22 sprint closed EPIC-4 at 100% and left EPIC-3 as the only open epic —

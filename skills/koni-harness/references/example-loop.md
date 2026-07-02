@@ -80,11 +80,16 @@ Fix findings and re-run the relevant step until clean.
 ```sh
 sh .koni-harness/loop.sh enter doc-gate
 # story AC all [x]; bump VERSION; add the CHANGELOG entry; backfill the story SHA later
+# review surfaced a trap (the RPC probe hung with no timeout) → capture it as a lesson:
+#   append "## <n>. Always timeout an external RPC probe" to docs/LESSONS.md
+#   (koni-docs templates/lessons.md, same commit) — skip this if nothing was learned
 npx koni-docs validate --docs-path docs/
 # → ✓ all references resolve
 ```
 
-Entry requires review clean **and** every story AC checked `[x]`.
+Entry requires review clean **and** every story AC checked `[x]`. Capturing a `LESSONS.md`
+entry is part of this gate **when** a trap/pattern surfaced (append-only, same commit) — it
+mirrors the CONTEXT "new entry if a decision was made" rule; here the timeout trap earns one.
 
 ## 6. `commit` — the gate decides
 

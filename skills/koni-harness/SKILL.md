@@ -45,6 +45,9 @@ context load order (`AGENTS.md` → `CLAUDE.md` → `LESSONS.md` → `CONTEXT.md
 `.active-context.md`), and a portability contract (a capability is "in the
 harness" only if its core is tool-neutral and its adapter is thin). Full text:
 [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md).
+The loop **reads** `LESSONS.md` at Execute and **writes** one back at the Doc/Version
+gate when a trap/pattern surfaces (via koni-docs `templates/lessons.md`, same commit) —
+a conditional process step, not a gate.
 
 The loop runs in **two execution modes** over the *same* stages and gates:
 **single-agent** (one story at a time — [`loop-runner.md`](references/loop-runner.md))

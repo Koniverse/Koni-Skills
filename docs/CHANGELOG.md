@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.29.0] — 2026-07-01 — koni-harness: explicit lesson-capture step at the Doc + Version gate (refines FR-21) — v0.29.0
+
+An audit found the koni-harness loop only **read** `LESSONS.md` (Execute skims it) but had
+no explicit step to **write** one — lesson-writing lived only as a conditional koni-docs
+pre-commit checklist line, not a named loop step. This adds the capture step, closing the
+read→write loop. Refines FR-21 (a process step, no new capability); CONTEXT D26.
+
+### Changed — `skills/koni-harness/`
+
+- **`references/agentic-loop-standard.md`** — added the **capture-lessons rule** at the
+  Doc + Version gate (append a `LESSONS.md` entry via koni-docs `templates/lessons.md`, same
+  commit, **if** Review/Execute surfaced a trap/pattern) + noted the `LESSONS.md`
+  context-layer is now **read at Execute, written at Doc-gate**. Deliberately a **process
+  exit-criterion, not a deterministic gate** ("was a lesson learned?" is a judgment; a check
+  firing on every commit would be noise).
+- **`references/loop-runner.md`** — the `doc-gate` drive step now includes the conditional
+  `LESSONS.md` append (alongside story/CHANGELOG/VERSION/CONTEXT).
+- **`references/example-loop.md`** — the worked example captures a lesson at the doc-gate.
+- **`SKILL.md`** — notes the loop reads `LESSONS.md` at Execute and writes at the Doc-gate.
+
+koni-docs is unchanged (it already owns the LESSONS.md template + checklist item; the harness
+just names *when in the loop* it happens). Whole koni-harness re-graded ≥95 (CONTEXT D19).
+
+---
+
 ## [0.28.0] — 2026-07-01 — koni-agent-monitoring: content-free Claude Code usage reporter (US-6.1, FR-34) — v0.28.0
 
 The catalog's **first product/client skill**: a per-machine Claude Code monitor that streams
