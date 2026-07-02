@@ -1318,3 +1318,42 @@ backup practice), not invented criteria — the same evidence-first route as D16
 **Date**: 2026-07-02
 **Version**: 0.31.0
 **Reference**: [layered-suites.md](../skills/koni-qc/references/layered-suites.md), [report-quality.md](../skills/koni-qc/references/report-quality.md), [traceability.md](../skills/koni-qc/references/traceability.md) (orthogonal-matrices note), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§Design/§Execute), [quality-bar.md](../skills/koni-qc/references/quality-bar.md), [US-5.8](sprints/stories/US-5.8-layered-suites-report-quality.md), CHANGELOG [0.31.0].
+
+### D29. Case volume is a derivation rule, not a hope — cross-multiply shared classes × surfaces (closing the 10× gap)
+
+**Context**: the user asked why the exemplar suites and the backup's real practice carry
+**~10× more test cases** than koni-qc generates (US-001.001: **154 cases for one US**;
+koni-qc on ERP-02: 452 cases across 155 stories ≈ **3/US**). Root-cause analysis found the
+gap is mechanical, not diligence: (a) the 3-slot completeness rule (≥1 pos/neg/bnd per AC)
+is a **floor that functions as a stopping criterion** — agents stop when the gate is green;
+(b) koni-qc derives **per-AC only**, while the exemplar derives **per-AC × per-surface** —
+auth-guard × every endpoint, validation × every field × every rule, RLS × every table × 3
+checks, error-code/status/event/provider/UI-state × each element — the cross-products ARE
+the volume; (c) bundled assertions deflate the case count; (d) the backup's suites are
+**living** (every round bug feeds a case back), koni-qc's were one-shot.
+
+**Decision** (v0.32.0; refines FR-26 + FR-35 — no new capability, derivation rules):
+
+- **`test-design.md` step 9 — the volume step (mandatory)**: after per-AC derivation,
+  enumerate the US's surfaces and **cross-multiply every shared class across them** (a
+  7-row class×surface table with example counts); the orthogonal matrices *verify* the
+  multiplication but only step 9 *generates* it.
+- **Atomicity rule**: one case = one observable behaviour; bundling different behaviours
+  into one Expected hides which broke and deflates real coverage.
+- **Density sanity check** at Self-review (`qc-workflow.md` §3) — **warn, not a gate**: an
+  API/UI-bearing US under ~30 atomic cases is presumed under-derived until justified
+  (re-run step 9 or record why in `## Open Questions`). Kept judgment-side per the
+  harness's gates-are-deterministic split.
+- **Living-suite rule** (`layered-suites.md`): every round bug adds the case that would
+  have caught it back into `test-cases/` before graduation; auth-guard wording fixed so
+  "one shared section" reads as document placement, not one-case-total.
+- **Floor-not-ceiling** stated at the point of stopping (`traceability.md` completeness
+  rule): a green matrix with an unmultiplied surface is an under-derived suite.
+
+**Why it matters**: D28 gave suites the exemplar *shape*; D29 gives them the exemplar
+*density* — and makes the 10× volume a reproducible derivation output instead of an
+expert's instinct. The floor stays a floor; the multiplication becomes the method.
+
+**Date**: 2026-07-03
+**Version**: 0.32.0
+**Reference**: [test-design.md](../skills/koni-qc/references/test-design.md) (step 9 + atomicity), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§3 density sanity), [layered-suites.md](../skills/koni-qc/references/layered-suites.md) (living suite + auth-guard), [traceability.md](../skills/koni-qc/references/traceability.md) (floor-not-ceiling), CHANGELOG [0.32.0].

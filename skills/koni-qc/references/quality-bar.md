@@ -19,7 +19,9 @@ Score each item as a checkbox. The **Pass rule** at the bottom is the gate.
 The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 
 - [ ] **Explicit TC IDs** — every case has a stable `TC-<EPIC>.<TYPE>-<n>` ([`traceability.md`](traceability.md)).
-- [ ] **AC↔TC matrix** — present and complete; the mandatory artifact.
+- [ ] **AC↔TC matrix** — present and complete; the mandatory artifact. (Complete = the
+  **floor** — case *volume* is judged by the density sanity in
+  [`qc-workflow.md`](qc-workflow.md) §3, not by this box.)
 - [ ] **≥50% off-path** — not ~70% happy-path; at least half the cases are **off-path = negative (NEG) + boundary (BND) + edge (EDGE)** (the three off-path TYPEs in [`traceability.md`](traceability.md)). NFR types (SEC/PERF/A11Y/UI) and happy-path types (FUNC/SMK/E2E/API) do **not** count toward the 50%.
 - [ ] **NFR present** — required [`nfr.md`](nfr.md) sections filled, not <5%.
 - [ ] **UI-conformance case authored (if UI-bearing)** — every UI-bearing AC has a

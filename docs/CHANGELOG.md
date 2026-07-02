@@ -16,6 +16,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.32.0] — 2026-07-03 — koni-qc case-volume derivation: cross-multiply classes × surfaces (refines FR-26 + FR-35) — v0.32.0
+
+Closes the **10× case-volume gap** between koni-qc output (~3 TC/US on ERP-02) and the
+exemplar/backup reality (154 TC for one US): the 3-slot rule was a floor acting as a
+stopping criterion, and derivation was per-AC only. CONTEXT D29.
+
+### Changed — `skills/koni-qc/`
+
+- **`references/test-design.md`** — new **step 9 (the volume step)**: after per-AC
+  derivation, **cross-multiply every shared class across every surface** (auth-guard ×
+  endpoints · validation × fields × rules · RLS × tables × 3 · error-codes/statuses/
+  events/providers/UI-states × each), with a class×surface table; plus the **atomicity
+  rule** (one case = one observable behaviour — no bundled Expecteds).
+- **`references/qc-workflow.md`** — §3 Self-review gains a **density sanity check**
+  (warn, not gate): an API/UI US under ~30 atomic cases is presumed under-derived until
+  justified (exemplar density ~150/US).
+- **`references/layered-suites.md`** — **living-suite rule** (every round bug feeds the
+  case that would have caught it back into `test-cases/` before graduation); auth-guard
+  wording fixed (cases multiply per endpoint; only the section placement is shared).
+- **`references/traceability.md`** — the completeness rule now states **the 3-slot rule
+  is a floor, not a stopping criterion** (points at step 9 + the density sanity).
+
+Whole koni-qc re-graded ≥95 (CONTEXT D19).
+
+---
+
 ## [0.31.0] — 2026-07-02 — koni-qc layered suites + report-quality bar (from the US-001.001 exemplars + backup checklist rounds) (US-5.8, FR-35) — v0.31.0
 
 Lifts koni-qc's test-case authoring and execution reports to the bar set by two exemplar

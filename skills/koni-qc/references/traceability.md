@@ -196,6 +196,12 @@ It is the single most important difference between a koni-qc suite and the backu
 > HTTP-status-code / error-code (API) and pages / components / validation+a11y
 > (functional) matrices from [`layered-suites.md`](layered-suites.md) — a status code
 > or page with zero TCs is a whole untested class the AC axis cannot see.
+>
+> **And the 3-slot rule is a FLOOR, not a stopping criterion.** A matrix can be green
+> at ~3 cases/AC while the suite is 10× under-derived — the volume comes from
+> [`test-design.md`](test-design.md) **step 9** (cross-multiply shared classes ×
+> surfaces; exemplar density ~150 cases/US), checked by the Self-review density
+> sanity ([`qc-workflow.md`](qc-workflow.md) §3).
 
 ---
 

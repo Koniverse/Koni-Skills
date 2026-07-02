@@ -77,8 +77,11 @@ so a reader audits an endpoint's coverage at a glance.
   each of these sections (mark N/A explicitly if truly absent; these are *structure*
   slots — the case content inside them derives from [`nfr.md`](nfr.md) §Security +
   [`test-design.md`](test-design.md), stated once there):
-  1. **Auth guard** — expired / missing / malformed / wrong-issuer token on every
-     protected endpoint (one shared section, not per-endpoint copies).
+  1. **Auth guard** — expired / missing / malformed / wrong-issuer token **× every
+     protected endpoint** — the case count multiplies per endpoint (each endpoint's
+     guard is a separate implementation risk; `test-design.md` step 9); only the
+     *document placement* is shared (one Auth Guard section holding all the rows,
+     not the prose duplicated per endpoint).
   2. **RLS / permission isolation** — per protected table: owner-scoped read, cross-user
      isolation (the *other* user's rows do NOT appear), and client write-rejection.
   3. **Events / messaging** — each domain event: emitted-on-trigger, payload shape,
@@ -147,6 +150,8 @@ on network X" — the backup's *Cách lấy data* guideline pattern). This imple
 Every spec ambiguity the derivation surfaces becomes a **checkbox in an `## Open
 Questions` section** of the suite — named, specific, and pointing at the doc that must
 answer it ("GIF avatar support — TD only shows PNG/JPEG; confirm accepted MIME types").
+The section also holds **recorded derivation-scope justifications** (e.g. why a small US
+legitimately sits under the density sanity of [`qc-workflow.md`](qc-workflow.md) §3).
 Never resolve an ambiguity silently inside a TC's Expected: the suite records the
 assumption *and* the open question, and Frame routes it back as a PRD/story gap
 ([`qc-workflow.md`](qc-workflow.md) §1).
@@ -170,6 +175,13 @@ cases, which guard *shipped* invariants every release):
   (`test-reports/EPIC-NN/<MMDDYYYY>/report-manual.md`, evidence in `img-manual/`), and
   any bug still open at round end is mirrored in `docs/tests/findings.md` until fixed
   ([`test-organization.md`](test-organization.md) §1).
+- **The suite is living — every round bug feeds a spec case back.** Each bug found in a
+  round adds (or sharpens) a case in `test-cases/` **before** graduation — the case that
+  *would have caught it* — so the suite accretes with every round instead of staying a
+  one-shot Design artifact. **The fed-back case IS normally the one that graduates**
+  (it gains the `REG` type / `RC-` tag citing the bug) — don't author a second case for
+  the same invariant. This is how the backup's checklists grew to their real density:
+  bugs → cases, round after round.
 
 ## Ownership
 

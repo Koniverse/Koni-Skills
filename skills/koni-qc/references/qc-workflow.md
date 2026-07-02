@@ -92,6 +92,13 @@ Grade the suite before anyone executes it.
 - **No orphans** — no AC without a TC; no TC without an AC (per the completeness
   rule in [`traceability.md`](traceability.md)).
 - **Coverage classes present** — edge taxonomy applied; required NFR sections filled.
+- **Density sanity check (warn, not a gate)** — the 3-slot matrix is a floor; a US
+  with an API surface and/or UI that lands **under ~30 atomic cases** is presumed
+  **under-derived** until justified: re-run [`test-design.md`](test-design.md) step 9
+  (cross-multiply shared classes × surfaces — the exemplar density is ~150/US) and
+  either derive the missing products or record *why* this US is genuinely small in
+  `## Open Questions`. A green matrix with an unmultiplied surface still fails this
+  check.
 
 **Exit**: Band A fully cleared; zero orphans. Fail → return to **Design**.
 

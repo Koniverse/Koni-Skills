@@ -60,6 +60,11 @@ must pass **DESIGN.md + the shadcn standard** (mandatory) — authored in koni-q
 (`nfr.md` §UI + `test-design.md` step 8) and enforced at the koni-harness Review stage —
 [CONTEXT D27](CONTEXT.md); CHANGELOG \[0.30.0].
 
+**Post-ship refinement (v0.32.0, no new story — refine FR-26 + FR-35):** koni-qc closes the
+**10× case-volume gap** — `test-design.md` step 9 (cross-multiply shared classes × surfaces)
++ atomicity rule + a Self-review density sanity + the living-suite rule —
+[CONTEXT D29](CONTEXT.md); CHANGELOG \[0.32.0].
+
 ## Sprint goal recap
 
 The W22 sprint closed EPIC-4 at 100% and left EPIC-3 as the only open epic —

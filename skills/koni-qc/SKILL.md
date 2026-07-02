@@ -4,7 +4,8 @@ description: >
   Use when building test documentation or running quality control — writing test
   cases, a test plan, a coverage matrix, or traceability; covering edge cases and
   checking every acceptance criterion has positive/negative/boundary tests; QA-ing
-  a release or asking if testing is thorough enough; deciding where test files and
+  a release, asking if testing is thorough enough or the suite too thin; deciding
+  where test files and
   reports live or how to organize tests (docs/tests layout, coverage per user
   story); setting the unit-test / coverage bar; automating the test loop (generate
   tests from specs, run → report → sync coverage, add a CI test gate — "test-reports

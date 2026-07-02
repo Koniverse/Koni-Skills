@@ -58,6 +58,43 @@ The procedure, run once per acceptance criterion:
    that is functionally green but fails design-review (drifts from DESIGN.md, or
    hand-rolls a component / bypasses the shadcn tokens) is a failure, so the case
    that would catch it must be authored up front, not discovered at Execute.
+9. **Cross-multiply the shared classes across every surface (the volume step).**
+   Steps 1–8 derive *per AC* — that alone yields the 3-slot minimum and stops ~10×
+   short of a real suite (the US-001.001 exemplar: **154 cases for one US**; the
+   per-AC floor alone gives ~15). After per-AC derivation, enumerate the US's
+   **surfaces** and multiply each **shared class** across them — every product cell
+   is its own case:
+
+   | Shared class | × every | Example count |
+   |---|---|---|
+   | auth-guard (missing/expired/malformed/wrong-issuer token) | protected **endpoint** | 4 × 7 endpoints |
+   | validation rule (empty/too-short/too-long/boundary/special-chars) | input **field** | 5 × each field |
+   | RLS/permission (owner-read · cross-user isolation · write-rejection) | protected **table** | 3 × 5 tables |
+   | error code / HTTP status | each one the design defines | 1+ each |
+   | domain event (emitted · payload shape · idempotency) | **event** | 3 × each |
+   | provider/platform variant (wallet, browser, OS) | **provider** | 1 × each flow |
+   | UI state (loading/disabled/toast-success/toast-error/empty/persist) | **form/component** | 6 × each |
+
+   Multiplication is **per single surface dimension** (one class × one enumerated
+   surface). When shared classes combine **with each other** (platform × chain-type ×
+   fee-override…), do NOT take the full product — reduce the combination via
+   **pairwise** (step 4), exactly as [`traceability.md`](traceability.md)'s
+   platform-fan-out rule says. Full product across one dimension; pairwise across
+   dimensions.
+
+   The [orthogonal matrices](layered-suites.md) then *verify* this multiplication —
+   but they can only catch what this step *generates*. The 3-slot rule is a **floor,
+   not a stopping criterion**: a green matrix with an unmultiplied surface is an
+   under-derived suite.
+
+**One case = one observable behaviour (atomicity).** Never bundle assertions for
+*different* behaviours into one Expected cell — "name too short rejected AND counter
+shows 2/50 AND button disabled" is three cases (one per behaviour) unless they are a
+single indivisible outcome. Atomic cases are countable, individually reportable, and
+fail one-at-a-time; bundled cases hide which behaviour broke and silently deflate the
+suite's real coverage count. (One named exception: the **two-sided `BND` probe** is one
+case *by definition* — it asserts the just-valid accept AND the just-invalid reject of
+the same edge, per [`traceability.md`](traceability.md) §BND vs NEG — do not split it.)
 
 The output of this procedure is rows in the canonical test-case table, ready to
 fill in the koni-docs `test-cases/EPIC-N.md` container. For a US with an **API
