@@ -51,10 +51,11 @@ docs/tests/
 ├── STRATEGY.md           ← STANDING: whole-repo test strategy (scope · risk posture · priority order · tooling)
 ├── findings.md           ← STANDING: open QA findings tracker
 ├── test-plan/            ← per-EPIC plans — EPIC-NN-<slug>.md (that epic's scope · risk · priority)
-├── test-cases/           ← specs per epic — EPIC-NN.md + README.md (koni-qc authored: TC-IDs + AC↔TC matrix + gherkin)
+├── test-cases/           ← specs per epic — EPIC-NN.md + README.md (+ linked sibling suites: US-X.Y-api/functional- and <feature>-security-test-cases.md, per layered-suites.md)
 ├── test-reports/         ← one folder per run
 │   └── EPIC-NN/<MMDDYYYY>/
 │       ├── report.md / img/            ← AUTOMATED — the test runner/reporter is the ONLY writer
+│       ├── report-notes.md             ← QC-driver narrative (impl status, recommendations, cmd ref — report-quality.md)
 │       └── report-manual.md / img-manual/  ← MANUAL run — written by its skill, not by hand
 ├── bug-bash/             ← end-of-sprint bug-bash reports — sprint-YYYY-WNN.md
 └── audits/               ← point-in-time analyses (dated, historical; not maintained)

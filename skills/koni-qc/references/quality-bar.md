@@ -36,7 +36,8 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 - [ ] **Automation linkage** — `Covered-by` filled with one of the three fixed forms
   (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)`); `PROPOSED:` counts as
   filled-but-uncovered (see [`traceability.md`](traceability.md)).
-- [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty.
+- [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty, and
+  meeting the [`report-quality.md`](report-quality.md) content bar.
 
 ---
 

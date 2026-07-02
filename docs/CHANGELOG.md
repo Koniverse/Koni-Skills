@@ -16,6 +16,46 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.31.0] — 2026-07-02 — koni-qc layered suites + report-quality bar (from the US-001.001 exemplars + backup checklist rounds) (US-5.8, FR-35) — v0.31.0
+
+Lifts koni-qc's test-case authoring and execution reports to the bar set by two exemplar
+suites (US-001.001 API + functional) and the matured SubWallet checklist-round practice in
+`koni-docs.backup`. Opens FR-35 under EPIC-5; CONTEXT D28.
+
+### Added — `skills/koni-qc/`
+
+- **`references/layered-suites.md`** — the suite-structure standard: **API + functional
+  layer split** with mutual scope contracts; API **by-endpoint** tables (Request
+  Headers/Payload, **real Actual Response**, **Response Time**, **DB Changes**) + four
+  required API classes (auth guard · RLS isolation incl. write-rejection · events +
+  idempotency · audit); functional **category prefixes** (`[Happy Path]/[Error]/
+  [Validation]/[Verification]`) + UI-component traceability + per-case evidence; the
+  **orthogonal coverage matrices** (endpoint / HTTP status-code / error-code · pages /
+  components / validation+a11y — surface coverage next to the AC↔TC's requirements
+  coverage); the **named test-data registry** (fixture → state → Used-In + acquisition
+  notes); **`## Open Questions`**; **round-based bug-fix retest** (rounds until clean →
+  survivors graduate to `RC-`).
+- **`references/report-quality.md`** — the execution-report **content bar**: the
+  **honest-actuals rule** (Actual = real observed output, never a copy of Expected),
+  nine required sections (overview % · results-by-group · skipped/blocked with
+  reason+action · failed-by-category root cause · contract-coverage verification · perf
+  min/max/avg · implementation status · recommendations · command reference), and the
+  evidence rule (every failure links spec `file:line` + video/screenshot/log). Applies to
+  auto `report.md` + manual `report-manual.md`.
+
+### Changed — `skills/koni-qc/`
+
+- **`SKILL.md`** (Author mode + activation + index), **`test-design.md`** (output shapes
+  into the layers), **`traceability.md`** (requirements- vs surface-coverage pairing),
+  **`qc-workflow.md`** (§Design shapes by layer; §Execute exits only with a bar-meeting
+  report), **`test-automation.md`** (§2 output → the content bar), **`quality-bar.md`**
+  ("Real execution reports" graded against report-quality) — criteria live once, all
+  point at the two new references.
+
+Whole koni-qc re-graded ≥95 (CONTEXT D19).
+
+---
+
 ## [0.30.0] — 2026-07-01 — UI design-review must pass DESIGN.md + the shadcn standard (refines FR-26 + FR-21) — v0.30.0
 
 Made shadcn conformance a **mandatory, authored, enforced** half of the UI design-review

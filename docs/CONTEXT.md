@@ -1268,3 +1268,53 @@ AI-slop failure mode design-review exists to catch — and makes the component s
 **Date**: 2026-07-01
 **Version**: 0.30.0
 **Reference**: [nfr.md](../skills/koni-qc/references/nfr.md) §UI (canonical criteria), [test-design.md](../skills/koni-qc/references/test-design.md) (step 8), [traceability.md](../skills/koni-qc/references/traceability.md) (UI type), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md), [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (Review), CHANGELOG [0.30.0].
+
+### D28. Suites are authored by layer and reports are decision-grade — the exemplar bar (US-001.001 suites + the backup's checklist rounds)
+
+**Context**: reviewed via koni-harness: the `koni-docs.backup` `Checklist - Test case`
+practice (round-based bug-fix retest — each bug an Actual/Expect pair + screenshot/GIF +
+build link, re-verified per round; Checklist↔Testcase pairing; a test-data acquisition
+guideline) and two user-supplied exemplar suites (US-001.001 API + functional). The
+exemplars are structurally ahead of what koni-qc prescribed: API cases **by endpoint**
+with real Actual Responses / Response Time / DB Changes; **orthogonal coverage matrices**
+(endpoint, HTTP status-code, error-code · pages, components, validation+a11y); category
+prefixes (`[Happy Path]/[Error]/[Validation]/[Verification]`); per-failure **evidence
+links** (spec `file:line` + video); a **named test-data registry** with Used-In; `## Open
+Questions`; and execution reports carrying skipped/blocked **reason + action**,
+failed-by-category **root cause**, perf min/max/avg, implementation status, and
+recommendations. koni-qc's canonical table + AC↔TC matrix covered none of the suite
+*structure* or report *content* dimensions.
+
+**Decision** (v0.31.0, US-5.8, FR-35; extends FR-26/FR-28/FR-30):
+
+- **`references/layered-suites.md`** — the suite-structure standard: split a mixed
+  surface into **API + functional sibling suites** with mutual scope contracts; API
+  by-endpoint tables (headers/payload split, real actuals, response time, DB changes) +
+  four required API classes (auth guard, RLS isolation incl. write-rejection, events +
+  idempotency, audit); functional category prefixes + UI-component traceability +
+  evidence per executed case; the **orthogonal matrices** (surface coverage — a status
+  code or page with zero TCs is a visible gap the AC↔TC axis can't see); the **named
+  test-data registry** (fixture → state → Used-In + acquisition notes); **Open
+  Questions** as a first-class artifact; **round-based bug-fix retest** (rounds until
+  clean → survivors graduate to `RC-`).
+- **`references/report-quality.md`** — the execution-report **content bar**: the
+  **honest-actuals rule** (Actual = real observed output, never a paraphrase or a copy of
+  Expected — a copy-of-expected actual is a review finding), nine required sections
+  (overview %, results-by-group, skipped/blocked reason+action, failed-by-category root
+  cause, contract-coverage verification, perf stats, implementation status,
+  recommendations, command reference), and the evidence rule (every failure/blocker links
+  spec `file:line` + video/screenshot/log). Applies to auto `report.md` and manual
+  `report-manual.md` alike.
+- **Single-source wiring**: SKILL.md routes; test-design shapes its output into the
+  layers; traceability pairs requirements-coverage with surface-coverage; qc-workflow
+  Design/Execute carry the steps; test-automation §2 points its output at the bar;
+  quality-bar grades "Real execution reports" against it. Criteria live once.
+
+**Why it matters**: the AC↔TC matrix made suites *requirements-complete*; D28 makes them
+*surface-complete* and makes reports answer "what do we do next?" instead of tallying
+pass/fail. The bar comes from real, working artifacts (the exemplar suites + the matured
+backup practice), not invented criteria — the same evidence-first route as D16/D22.
+
+**Date**: 2026-07-02
+**Version**: 0.31.0
+**Reference**: [layered-suites.md](../skills/koni-qc/references/layered-suites.md), [report-quality.md](../skills/koni-qc/references/report-quality.md), [traceability.md](../skills/koni-qc/references/traceability.md) (orthogonal-matrices note), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§Design/§Execute), [quality-bar.md](../skills/koni-qc/references/quality-bar.md), [US-5.8](sprints/stories/US-5.8-layered-suites-report-quality.md), CHANGELOG [0.31.0].

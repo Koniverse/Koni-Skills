@@ -81,11 +81,14 @@ standard. Every functional/edge case is one row. The columns are fixed:
 | TC-ID | Name | Priority | Test data | Preconditions | Action/Request | Expected | Actual | Status | Perf | Side-effects | Covered-by |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | TC-XX.FUNC-1 | Add reachable EVM network | Critical | `https://rpc.ankr.com/eth` | Manage Network open, network not present | + → paste RPC → auto-detect → Save | EVM detected; name/symbol/decimals/chainId auto-filled; network appears in selector | — | Not Executed | detect < 2.0s | 1 row added to custom-network store | — (manual) |
-| TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `e2e/customize-network.spec.ts::xss-name` |
+| TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `epic/EPIC-CN/customize-network.e2e.spec.ts::TC-XX.SEC-1` |
 
 > These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
 > suite's IDs. The **`Covered-by`** handle has **three** fixed forms:
-> 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran);
+> 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran). The
+>    path is relative to the test root (`epic/EPIC-NN/…` is fine; the `<app>/tests/`
+>    prefix may be omitted), and `<name>` may be abbreviated to the test's leading
+>    TC-ID token (`…spec.ts::TC-01.WS-5`) since that token is the reporter's parse key;
 > 2. `PROPOSED:<path>::<name>` — **planned automation**: the test is intended at that
 >    path/name but the file does **not exist yet** (dominant on a fresh adoption). It
 >    records author intent so the target survives in the spec, but it counts as
@@ -187,6 +190,12 @@ How it is enforced:
 This matrix is checked in **Self-review** against
 [`quality-bar.md`](quality-bar.md) (Band-A) and again by the author-blind review.
 It is the single most important difference between a koni-qc suite and the backup.
+
+> **The AC↔TC matrix proves *requirements* coverage; the orthogonal matrices prove
+> *surface* coverage.** For an API/UI suite, pair it with the endpoint /
+> HTTP-status-code / error-code (API) and pages / components / validation+a11y
+> (functional) matrices from [`layered-suites.md`](layered-suites.md) — a status code
+> or page with zero TCs is a whole untested class the AC axis cannot see.
 
 ---
 

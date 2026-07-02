@@ -60,7 +60,10 @@ The procedure, run once per acceptance criterion:
    that would catch it must be authored up front, not discovered at Execute.
 
 The output of this procedure is rows in the canonical test-case table, ready to
-fill in the koni-docs `test-cases/EPIC-N.md` container.
+fill in the koni-docs `test-cases/EPIC-N.md` container. For a US with an **API
+surface and/or UI**, shape those rows into the layered-suite structure
+([`layered-suites.md`](layered-suites.md)): the API/functional split, by-endpoint
+tables, and the orthogonal coverage matrices that catch whole missing classes.
 
 ---
 

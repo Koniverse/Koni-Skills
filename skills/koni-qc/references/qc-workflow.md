@@ -69,6 +69,11 @@ Author the cases into the koni-docs container — fill its template, never copy 
 - **Fill the canonical table** — every case is one rich-TC row per
   [`traceability.md`](traceability.md) (TC-ID · priority · test-data · preconditions ·
   action · expected · perf · side-effects · covered-by).
+- **Shape the suite by layer** — a US with an API surface and/or UI splits into the
+  API + functional suites of [`layered-suites.md`](layered-suites.md): by-endpoint
+  tables, category-prefixed functional cases, the orthogonal coverage matrices
+  (endpoint/status-code/error-code · pages/components/a11y), the named test-data
+  registry, and an `## Open Questions` section for every spec ambiguity found.
 - **Build the AC↔TC matrix** — the mandatory artifact, per
   [`traceability.md`](traceability.md): every AC → ≥1 positive AND ≥1 negative AND
   ≥1 **boundary-or-edge** TC (a `BND` *or* `EDGE` case fills the third slot),
@@ -128,6 +133,10 @@ the repo's runner executes** (koni-qc never runs tests itself).
   interactive/browser flows a headless runner can't cover.
 - **Instrumentation** — coverage % **per US** and by type, pass / fail / blocked, and
   perf vs SLA ([`nfr.md`](nfr.md)) — emitted by the reporter, not typed by hand.
+- **The report meets the content bar** — honest actuals, skipped/blocked with
+  reason + action, failed-by-category root cause, perf stats, evidence links
+  ([`report-quality.md`](report-quality.md)); a bare pass/fail tally does not exit
+  this stage.
 
 **Exit**: every Critical/High case executed via the runner/reporter (or `/design-review`
 for UI); `report.md` written; stories synced.

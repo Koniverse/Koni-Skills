@@ -82,7 +82,9 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   group or parametrized cases). Fold its tests: **any `failed` ⇒ the TC is `failed`**;
   else **any `skipped` ⇒ `blocked`**; else **`passed`**. One TC-ID → one report row.
 - **Reconcile against the spec, not just the run.** Enumerate every `TC-<EPIC>.<TYPE>-<n>`
-  in `test-cases/EPIC-N.md`; a TC with **no test in the JSON** is `not-written` (or, if
+  in `test-cases/EPIC-N.md` **and in the sibling suite files it links** (the layered
+  `US-X.Y-api/functional-test-cases.md` of [`layered-suites.md`](layered-suites.md));
+  a TC with **no test in the JSON** is `not-written` (or, if
   the spec row is flagged manual-only `📋`, `manual`; or, if its `Covered-by` is
   `PROPOSED:<path>::name`, **planned automation** — still counts as *uncovered*, see
   [`traceability.md`](traceability.md)) — emit the row anyway. This is mandatory:
@@ -110,6 +112,9 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   koni-docs `test-report.md` template shape — a row per TC (id · status icon · time ·
   failure detail) + the run header (commit, env, runner). `report.md` is the
   **reporter's exclusive artifact**; manual `MAN-*` runs go in `report-manual.md`.
+  These rows are the reporter's *minimum*; a decision-grade report also carries the
+  content bar of [`report-quality.md`](report-quality.md) (overview %, results by
+  group, skipped/blocked reason+action, perf stats, evidence links).
 - **Path validator (MUST)**: the output path must match
   `test-reports/EPIC-[0-9A-Z]+/[0-1][0-9][0-3][0-9][0-9]{4}/report(-manual)?\.md`
   (`EPIC-NN` grouping level present, `MMDDYYYY` date — **not** ISO `YYYY-MM-DD`, **not**

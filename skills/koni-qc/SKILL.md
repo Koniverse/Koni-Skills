@@ -9,9 +9,11 @@ description: >
   story); setting the unit-test / coverage bar; automating the test loop (generate
   tests from specs, run → report → sync coverage, add a CI test gate — "test-reports
   empty, nothing runs"); standing up or auditing QC for a whole repo (a QA-tracking
-  epic, "is our testing done?", "set up QC for this project"); verifying a UI against
-  DESIGN.md + the shadcn standard; or grading/scoring a skill itself ("score this
-  SKILL.md") — even if they don't name koni-qc.
+  epic, "is our testing done?", "set up QC for this project"); making a run report
+  decision-grade (skipped/blocked reasons, honest actuals) or running retest rounds
+  after bug fixes; verifying a UI against DESIGN.md + the shadcn standard; or
+  grading/scoring a skill itself ("score this SKILL.md") — even if they don't name
+  koni-qc.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -49,8 +51,8 @@ never re-implements the right-column owners.
 
 | Mode | What it does | Uses |
 |---|---|---|
-| **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N.md` with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` + koni-docs template |
-| **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md` **+ the shadcn standard** — both mandatory); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + gstack (`qa`/`/design-review`) + koni-docs |
+| **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N.md` with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered; a mixed API+UI surface splits into **layered suites** (API by-endpoint + functional) with the orthogonal coverage matrices | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` · `layered-suites.md` + koni-docs template |
+| **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md` **+ the shadcn standard** — both mandatory); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §Execute + `report-quality.md` (the report content bar) + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §Release + `quality-bar.md` + koni-harness |
 | **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to the **≥95 catalog standard** (re-grade the whole skill after any change, not just the diff) | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
 | **Set up / standardize test docs** | Apply the standard `docs/tests/` taxonomy + by-epic test-code layout + the 3-place sync rule; if the repo wasn't bootstrapped by koni-setup, self-scaffold the missing tree | `test-organization.md` (+ koni-setup scaffolds at setup; koni-docs owns the templates) |
@@ -65,6 +67,8 @@ never re-implements the right-column owners.
 | User intent | Load |
 |---|---|
 | "how do I turn this AC into test cases?" | `references/test-design.md` |
+| "structure the suite" / "API test cases" / "functional/UI test cases" / "status-code / error-code coverage" / "test-data registry / fixtures **in the suite doc**" / "bug-fix retest rounds" | `references/layered-suites.md` |
+| "what goes in the test report?" / "make the report decision-grade" / "report quality" / "skipped/blocked reasons" | `references/report-quality.md` |
 | "am I missing edge cases?" / "make coverage thorough" | `references/edge-coverage.md` |
 | "trace AC to tests" / "TC IDs" / "coverage matrix" | `references/traceability.md` |
 | "security / performance / accessibility / i18n testing" | `references/nfr.md` |
@@ -98,6 +102,8 @@ before review; do not restate the bands here.
 |---|---|
 | [`references/qc-workflow.md`](references/qc-workflow.md) | Running the QC lifecycle end-to-end (frame → design → review → execute → release gate); how it composes koni-docs / gstack / koni-harness |
 | [`references/test-design.md`](references/test-design.md) | Deriving positive/negative/boundary cases from an AC (partitioning, BVA, decision tables, state-transition, pairwise, error-guessing) |
+| [`references/layered-suites.md`](references/layered-suites.md) | Structuring the suite **by layer** to the exemplar bar — API by-endpoint tables (headers/payload/DB-changes/response-time), functional category-prefixed cases + UI-component rollups, the orthogonal coverage matrices (endpoint/status-code/error-code · pages/components/a11y), the named test-data registry, Open Questions, bug-fix retest rounds |
+| [`references/report-quality.md`](references/report-quality.md) | The execution-report **content bar** — honest actuals, skipped/blocked with reason+action, failed-by-category root cause, perf stats, implementation status, recommendations, evidence links. Load when producing or grading a run report |
 | [`references/edge-coverage.md`](references/edge-coverage.md) | The edge-case taxonomy applied to every feature so coverage stops at thorough, not happy-path |
 | [`references/traceability.md`](references/traceability.md) | The TC-ID scheme, the canonical rich-TC table, and the **mandatory AC↔TC coverage matrix** + risk/regression tagging |
 | [`references/unit-coverage.md`](references/unit-coverage.md) | The **per-function unit-test** layer below the AC↔TC matrix — the per-function rule, the TDD cycle, and the unit-coverage bar (koni-qc owns the bar · Dev authors · harness Self-verify enforces) |
