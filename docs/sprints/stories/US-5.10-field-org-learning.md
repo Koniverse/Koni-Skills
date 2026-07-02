@@ -10,7 +10,7 @@ arch_ref: []
 depends_on:
   - US-5.9
 assignee: jindo9986
-commit: pending
+commit: 0414183
 sprint: sprint-2026-W26
 version_shipped: "0.34.0"
 created: 2026-07-03
