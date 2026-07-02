@@ -35,8 +35,8 @@ The 12 gaps of the backup corpus, each closed. Every box must be ticked.
 - [ ] **Test lifecycle** — active / deprecated / archived states applied.
 - [ ] **Risk-based order** — Critical/High/Medium/Low priority set by impact × likelihood.
 - [ ] **Regression scope** — `RC-` set defined as the per-release regression scope.
-- [ ] **Automation linkage** — `Covered-by` filled with one of the three fixed forms
-  (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)`); `PROPOSED:` counts as
+- [ ] **Automation linkage** — `Covered-by` filled with one of the four fixed forms
+  (`*.spec.ts::name` · `PROPOSED:<path>::name` · `— (manual)` · `OPS-DEPLOY:<runbook>`); `PROPOSED:` counts as
   filled-but-uncovered (see [`traceability.md`](traceability.md)).
 - [ ] **Real execution reports** — koni-docs `test-report.md` filled, not empty, and
   meeting the [`report-quality.md`](report-quality.md) content bar.
@@ -50,7 +50,10 @@ The production strengths to codify. Must demonstrably match.
 - [ ] **Rich per-TC metadata** — the full canonical table (test-data · preconditions · action · expected · actual · status · perf · side-effects · covered-by).
 - [ ] **Dedicated security suite** — SEC cases present; standalone `<feature>-security-test-cases.md` when ≥5.
 - [ ] **Concrete reusable test data** — every TC carries a real, re-runnable value.
-- [ ] **Execution instrumentation** — coverage % by AC/type, pass/fail/blocked, perf vs SLA.
+- [ ] **Execution instrumentation** — coverage % by AC/type, pass/fail/blocked, perf vs
+  SLA. A bare `Pass` is the floor, not the target: an exemplar row carries the
+  **captured actual response/behaviour + the timing** (the reporter already extracts
+  `durationMs` + failure detail — surface them, don't drop them).
 
 ---
 
@@ -66,12 +69,38 @@ What Koni-Finance lacked; koni-qc must exceed here.
 
 ---
 
+## Band D — density & exhaustiveness (the gate that stops the 10× gap recurring)
+
+A suite can clear Bands A–C at ~3 cases/AC and still be **1/10 of real density** (the
+ERP field finding: 100% of 431 enumerated cases resolved, while the exemplar carries
+154 cases for ONE US — resolution and enumeration are orthogonal axes). Band D gates
+the enumeration axis:
+
+- [ ] **Cross-multiplication done** — [`test-design.md`](test-design.md) **step 9** ran:
+  every shared class × every surface (the class and surface lists live in step 9, not here).
+- [ ] **Matrix completeness = 100%** — every cell of the applicable
+  [`layered-suites.md`](layered-suites.md) matrices (incl. field × validation and
+  state-transition) is a TC-ID or an **explicit N/A** — never blank.
+- [ ] **Full BVA per bounded field** — the step-9 discrete BVA rows present in the
+  field × validation matrix (not one collapsed "edge" row).
+- [ ] **Full error-code + status coverage** — every status/error an action can return
+  has a TC.
+- [ ] **One row per scenario** — no spec-level bundling (a test may assert N scenarios;
+  the spec then carries N TC-IDs — [`traceability.md`](traceability.md)).
+- [ ] **Density plausible** — cases/US in the neighborhood the surfaces imply
+  (typically **40–150 for an API+UI US**; the ~30-case Self-review warn of
+  [`qc-workflow.md`](qc-workflow.md) §3 cleared or explicitly justified).
+
+---
+
 ## Pass rule
 
-> **A suite passes only if it clears every item of Band A, and demonstrably
-> exceeds Band B and Band C.** Any unticked Band-A box is a hard fail — return to
-> **Design**. A Band-B/C item that is merely matched, not exceeded, is a finding to
-> raise in review.
+> **A suite passes only if it clears every item of Band A, every item of Band D, and
+> demonstrably exceeds Band B and Band C.** Any unticked Band-A box is a hard fail —
+> return to **Design**. **A suite that clears Band A but fails Band D is *thin*** —
+> also return to Design and expand (100%-resolution must never masquerade as
+> 100%-enumeration). A Band-B/C item that is merely matched, not exceeded, is a
+> finding to raise in review.
 
 **Author-mode vs Execute-mode bar.** Two Band-A items — **Real execution reports**
 and **Coverage % reported** — depend on the suite having been *run*. An

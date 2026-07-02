@@ -16,6 +16,71 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.33.0] — 2026-07-03 — koni-qc field-hardening from the ERP 100% drive (US-5.9, FR-36) — v0.33.0
+
+Absorbs the five ERP-02 audit docs written back after their real 9.3%→100% automation
+drive — incl. TWO real bugs in our own reporter contract. Supersedes D21's no-vendored-
+reporter clause. CONTEXT D30; LESSONS §10.
+
+### Added — `skills/koni-qc/`
+
+- **`scripts/qc-report.mjs`** — the reference reporter (node stdlib): frozen TC-token
+  regex, header-skip spec scan, **broken-handle enforcer** (automated Covered-by must
+  resolve to a PASSING test; broken = 0 or exit non-zero), duplicate-ID guard, 4-class
+  counters, density telemetry, denominator-honesty line. + **contract self-test**
+  (`scripts/__tests__/qc-report-test.mjs`, 42 assertions) freezing both field bugs.
+- **`references/live-harness.md`** — the live-stack recipes: 2-credential RLS-as-user,
+  per-test tenant isolation, self-seeding e2e, boot exclusions, prod-safety rules.
+
+### Changed — `skills/koni-qc/`
+
+- **`test-automation.md`** — §2: exact parse regex (`TC-[0-9A-Z]+\.[A-Z][A-Z0-9]*-\d+`
+  — `[A-Z]+` silently dropped E2E/A11Y), spec-scan first-cell rule, the enforcer,
+  reference-impl pointer; status map + ops-deploy row; §4: CI job with services for the
+  live suites + a `typecheck` passthrough gate.
+- **`traceability.md`** — `OPS-DEPLOY:<runbook>` is the **4th fixed Covered-by form**
+  (own column, never lumped with manual, exhaust-local-first) + "N scenarios may share
+  one test" (spec carries N TC-IDs).
+- **`quality-bar.md`** — **Band D — density & exhaustiveness** (gate): step-9 done,
+  matrix completeness 100%, full BVA discrete rows, full error/status coverage,
+  one-row-per-scenario, density plausible; pass rule updated (Band A green + Band D
+  red = thin → Design).
+- **`qc-workflow.md`** — §Frame: **read the system-design docs IN FULL before test
+  design** + the two enumeration inputs (TD contract w/ error-code table + UI-state
+  inventory), authored from code if absent — Design may not start without them; §Execute:
+  per-epic fan-out with the JSON repoint contract (orchestrator-only spec edits).
+- **`layered-suites.md`** (+field×validation & state-transition matrices),
+  **`test-design.md`** (full-BVA discrete rows + legal/illegal transitions),
+  **`report-quality.md`** (density telemetry + denominator honesty),
+  **`test-organization.md`** (ops-deploy in the US legend), **`SKILL.md`** (live-harness
+  routing + enforcer/index notes); koni-setup vocab check updated.
+
+### Changed — re-grade round (D19, 4 graders + adversarial re-verify)
+
+- **`qc-report.mjs` hardening from the D2/D3 findings**: `broken` is its own counter
+  (buckets now SUM to total), fifth-form/free-text Covered-by flagged broken (never
+  laundered to not-written), orphan run-IDs surfaced, duplicates counted once,
+  Covered-by resolved from the header column (Notes-after-Covered-by safe), timing +
+  first-failure captured per TC and rendered, en-dash manual tolerated, --out path
+  validator; self-test 25→42 assertions.
+- **Consistency fixes**: test-automation §Ownership rewritten (ships-the-reference
+  stance — the old "no vendored reporter" text contradicted §2), "first TC token in
+  the full name" wording, live-lane-must-not-all-skip rule (test-automation §4 ↔
+  live-harness prop 4), traceability "three→four fixed forms", whole-project-qc DoD
+  4-form + enforcer, quality-bar Band B captured-actual+timing target + Band D
+  de-duplicated to step-9 pointers, qc-workflow §3 names Band D + Frame inputs scoped
+  to the US's real surfaces, report-quality honest reference-scope, test-organization
+  density-is-doc-driven note + status-vocab reconciliation + 🏗️, layered-suites
+  per-doc execution summary, description +NFR triggers (1012/1024).
+
+### Added — `docs/`
+
+- **LESSONS §10** — machine-parse contracts ship as exact regex + self-test fixture.
+
+Whole koni-qc re-graded ≥95 (CONTEXT D19).
+
+---
+
 ## [0.32.0] — 2026-07-03 — koni-qc case-volume derivation: cross-multiply classes × surfaces (refines FR-26 + FR-35) — v0.32.0
 
 Closes the **10× case-volume gap** between koni-qc output (~3 TC/US on ERP-02) and the

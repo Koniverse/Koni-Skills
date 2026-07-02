@@ -28,9 +28,15 @@ is what makes a failure diagnosable from the report alone.
 An execution report is decision-grade when it carries all of these (N/A allowed only
 where the class genuinely doesn't apply):
 
-1. **Execution overview** — totals with percentages: total · executed · passed · failed
-   · skipped · blocked · not-executed, plus date / environment / runner / build under
-   test. Percentages, not just counts — "70 passed" means nothing without "of 98".
+1. **Execution overview — with the denominator named** — totals with percentages: total
+   · executed · passed · failed · skipped · blocked · not-executed, plus date /
+   environment / runner / build under test. Percentages, not just counts — and **any
+   "100%" must name its denominator and what the number does NOT measure in the same
+   sentence** ("100% of 431 *enumerated* cases resolved — this measures resolution, not
+   enumeration density"). The ERP field lesson: an operator drove 431/431 = 100% and
+   presented it as completeness while the suite was 1/10 of reference density —
+   resolution and enumeration are orthogonal axes and the report must say which one a
+   number is on.
 2. **Results by group** — one row per endpoint / page / suite group with its own
    pass-rate, so the weak area is visible (not one global number).
 3. **Skipped + blocked, each with Reason AND Action Required** — every non-executed case
@@ -56,6 +62,10 @@ where the class genuinely doesn't apply):
    `/onboarding/workspace` — unblocks 6 TCs"), not "fix the failures".
 9. **Command reference** — the exact commands to reproduce the run (env vars included),
    so the next person reruns it without archaeology.
+10. **Density telemetry** — cases/US distribution (and cases/AC where computable), with
+   any US below the Self-review density warn flagged — so 100%-resolution can never
+   masquerade as 100%-enumeration again. The reference reporter
+   ([`test-automation.md`](test-automation.md) §2) emits this table.
 
 ## Evidence rule
 
@@ -71,7 +81,12 @@ manual ones, per [`test-organization.md`](test-organization.md).)
 - The **auto `report.md`** stays the **reporter's exclusive artifact** (its rows +
   the rollups it computes — sections 1–4 and 6 from run data; section 5's
   contract matrices additionally need the suite's status/error-code enumerations,
-  which the reconcile step already reads from the spec).
+  which the reconcile step already reads from the spec). Scope honestly: the shipped
+  reference ([`../scripts/qc-report.mjs`](../scripts/qc-report.mjs)) implements the
+  **parse + classify + enforce + density core** (§1's denominator line, the case rows
+  with timing + failure detail, broken/orphan lists, item 10's density table); the
+  per-group / failed-by-category / perf rollups here are **adapt-on-copy** — the repo's
+  copy adds them, they are not free.
 - **Driver-authored sections live in `report-notes.md`** — a named sibling in the
   same run folder for sections the reporter cannot know (7 implementation status,
   8 recommendations, 9 command reference, and any skipped-scope decisions). This

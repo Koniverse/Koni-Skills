@@ -36,6 +36,13 @@ stories have a case. The honest, actionable unit is the story.
 - **The AC↔TC matrix is anchored per story** (one block per US, its ACs → TCs) —
   this is already how `traceability.md` works.
 
+**Case *volume* per US is doc-driven, not invented at the keyboard**: authoring for a
+US may only start once Frame has secured its enumeration inputs — the technical-design
+contract + UI-state inventory for the surfaces the US has
+([`qc-workflow.md`](qc-workflow.md) §1) — because density is *derived* from those docs
+([`test-design.md`](test-design.md) step 9), and a US authored straight from its AC
+list silently lands at 1/10 density.
+
 **Epic stays the file *container*, US is the tracked *unit*.** Spec files group by
 epic (`test-cases/EPIC-NN.md`), test code by epic (`…/epic/EPIC-NN/`), reports by
 epic+date — but inside them every TC carries its `maps_to.us`, and what you
@@ -163,11 +170,15 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
 ## 5. Status legend
 
 - **Test-case spec files** (`test-cases/EPIC-*.md`) — icons OK: ✅ pass · ❌ fail
-  (reproducible) · ⚠️ flaky · ⏸️ blocked · 🚧 impl-gap · 📋 manual-only · ⊘ retired ·
-  — not-written.
+  (reproducible) · ⚠️ flaky · ⏸️ blocked · 🚧 impl-gap · 📋 manual-only · 🏗️ ops-deploy ·
+  ⊘ retired · — not-written. (The word set `Not Executed / Pass / Fail / Blocked /
+  Skipped` in [`traceability.md`](traceability.md)'s canonical Status column is the
+  **pre-run** vocabulary for the same cell — `Not Executed` ≙ `— not-written` before a
+  run, `Skipped` ≙ ⏸️ blocked; after a run the reporter's icon set above is
+  authoritative. ⚠️ flaky and ⊘ retired are curation states the reporter never emits.)
 - **US story files** (`sprints/stories/US-*.md`) — **plain words, no icons**
   (machine-parsed, diff-able): `done` · `failed` · `blocked` · `pending` ·
-  `impl-gap` · `manual` · `covered-by X` · `in-progress`. (`blocked` = a test ran
+  `impl-gap` · `manual` · `ops-deploy` · `covered-by X` · `in-progress`. (`blocked` = a test ran
   but a precondition/dependency was unmet, distinct from `pending` = no test yet —
   the reporter write-back keeps them separate, see
   [`test-automation.md`](test-automation.md) §2.)

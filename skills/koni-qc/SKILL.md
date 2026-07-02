@@ -3,18 +3,18 @@ name: koni-qc
 description: >
   Use when building test documentation or running quality control — writing test
   cases, a test plan, a coverage matrix, or traceability; covering edge cases and
-  checking every acceptance criterion has positive/negative/boundary tests; QA-ing
-  a release, asking if testing is thorough enough or the suite too thin; deciding
-  where test files and
-  reports live or how to organize tests (docs/tests layout, coverage per user
-  story); setting the unit-test / coverage bar; automating the test loop (generate
-  tests from specs, run → report → sync coverage, add a CI test gate — "test-reports
-  empty, nothing runs"); standing up or auditing QC for a whole repo (a QA-tracking
-  epic, "is our testing done?", "set up QC for this project"); making a run report
-  decision-grade (skipped/blocked reasons, honest actuals) or running retest rounds
-  after bug fixes; verifying a UI against DESIGN.md + the shadcn standard; or
-  grading/scoring a skill itself ("score this SKILL.md") — even if they don't name
-  koni-qc.
+  checking every AC has positive/negative/boundary tests; security, performance, or
+  accessibility (NFR) testing; QA-ing a release, asking if testing is thorough
+  enough or the suite too thin; where test files/reports
+  live (docs/tests layout, coverage per US); the unit-test/coverage bar; automating
+  the test loop (generate tests from specs, run → report → sync, CI gate, a
+  reporter dropping cases or broken Covered-by handles); standing up the
+  integration/e2e live-stack test harness (test RLS as a real user, seed e2e
+  users); QC-ing a whole repo (QA-tracking epic, "is our testing done?"); making a
+  run report decision-grade (skipped/blocked reasons, honest actuals, "is our 100%
+  honest?") or retest rounds after bug fixes; verifying UI against DESIGN.md + the
+  shadcn standard; or grading a skill ("score this SKILL.md") — even if they don't
+  name koni-qc.
 ---
 # koni-qc — QC methodology & coverage intelligence
 
@@ -69,12 +69,13 @@ never re-implements the right-column owners.
 |---|---|
 | "how do I turn this AC into test cases?" | `references/test-design.md` |
 | "structure the suite" / "API test cases" / "functional/UI test cases" / "status-code / error-code coverage" / "test-data registry / fixtures **in the suite doc**" / "bug-fix retest rounds" | `references/layered-suites.md` |
-| "what goes in the test report?" / "make the report decision-grade" / "report quality" / "skipped/blocked reasons" | `references/report-quality.md` |
+| "what goes in the test report?" / "make the report decision-grade" / "report quality" / "skipped/blocked reasons" / "is our 100% honest?" | `references/report-quality.md` |
+| "stand up the integration/e2e harness" / "test RLS as a real user" / "e2e can't log in" / "the local stack won't boot for tests" | `references/live-harness.md` |
 | "am I missing edge cases?" / "make coverage thorough" | `references/edge-coverage.md` |
-| "trace AC to tests" / "TC IDs" / "coverage matrix" | `references/traceability.md` |
+| "trace AC to tests" / "TC IDs" / "coverage matrix" / "mark a TC deploy-only / ops-deploy" | `references/traceability.md` |
 | "security / performance / accessibility / i18n testing" | `references/nfr.md` |
 | "unit tests" / "test each function" / "unit coverage" / "TDD per function" | `references/unit-coverage.md` |
-| "automate the tests" / "generate tests from the spec" / "run + report + sync coverage" / "self-updating / CI-gated suite" / "set up CI for tests" / "test-reports empty, nothing runs" | `references/test-automation.md` |
+| "automate the tests" / "generate tests from the spec" / "run + report + sync coverage" / "self-updating / CI-gated suite" / "set up CI for tests" / "test-reports empty, nothing runs" / "the reporter is dropping cases" / "broken Covered-by handles / coverage honesty" | `references/test-automation.md` |
 | "set up QC for this project" / "audit our test coverage" / "stand up QA tracking" / "QA epic" / "is our testing done?" / "specs written but is QC complete?" / "QC the whole repo" (**across the whole repo, not one epic** — a single epic/release is the qc-workflow row above) | `references/whole-project-qc.md` |
 | "does the UI match the design?" / "check against DESIGN.md" / "shadcn conformance" | `references/nfr.md` §UI / visual conformance (DESIGN.md + shadcn) → gstack `/design-review` |
 | "run the whole QC process for **an epic / release**" (a whole *repo* → `whole-project-qc.md`) | `references/qc-workflow.md` |
@@ -104,11 +105,12 @@ before review; do not restate the bands here.
 | [`references/qc-workflow.md`](references/qc-workflow.md) | Running the QC lifecycle end-to-end (frame → design → review → execute → release gate); how it composes koni-docs / gstack / koni-harness |
 | [`references/test-design.md`](references/test-design.md) | Deriving positive/negative/boundary cases from an AC (partitioning, BVA, decision tables, state-transition, pairwise, error-guessing) |
 | [`references/layered-suites.md`](references/layered-suites.md) | Structuring the suite **by layer** to the exemplar bar — API by-endpoint tables (headers/payload/DB-changes/response-time), functional category-prefixed cases + UI-component rollups, the orthogonal coverage matrices (endpoint/status-code/error-code · pages/components/a11y), the named test-data registry, Open Questions, bug-fix retest rounds |
-| [`references/report-quality.md`](references/report-quality.md) | The execution-report **content bar** — honest actuals, skipped/blocked with reason+action, failed-by-category root cause, perf stats, implementation status, recommendations, evidence links. Load when producing or grading a run report |
+| [`references/report-quality.md`](references/report-quality.md) | The execution-report **content bar** — honest actuals + denominator honesty, skipped/blocked with reason+action, failed-by-category root cause, perf stats, density telemetry, evidence links. Load when producing or grading a run report |
+| [`references/live-harness.md`](references/live-harness.md) | Standing up the **live-stack harness** — 2-credential RLS-as-user testing, per-test tenant isolation, self-seeding e2e, boot resilience, prod-safety rules. Load when integration/e2e needs a real stack that doesn't exist yet |
 | [`references/edge-coverage.md`](references/edge-coverage.md) | The edge-case taxonomy applied to every feature so coverage stops at thorough, not happy-path |
 | [`references/traceability.md`](references/traceability.md) | The TC-ID scheme, the canonical rich-TC table, and the **mandatory AC↔TC coverage matrix** + risk/regression tagging |
 | [`references/unit-coverage.md`](references/unit-coverage.md) | The **per-function unit-test** layer below the AC↔TC matrix — the per-function rule, the TDD cycle, and the unit-coverage bar (koni-qc owns the bar · Dev authors · harness Self-verify enforces) |
-| [`references/test-automation.md`](references/test-automation.md) | Load the moment specs are authored but `test-reports/` is empty — the generate → report → sync → CI spine (with the reporter parse/aggregate/status-map contract + the runner/CI bootstrap) |
+| [`references/test-automation.md`](references/test-automation.md) | Load the moment specs are authored but `test-reports/` is empty — the generate → report → sync → CI spine (frozen parse contract + the **broken-handle enforcer** + the runner/CI bootstrap; reference reporter shipped at [`scripts/qc-report.mjs`](scripts/qc-report.mjs) with its contract self-test) |
 | [`references/whole-project-qc.md`](references/whole-project-qc.md) | Load when **standing up or auditing QC for a whole repo** (not one epic) — the layer above `qc-workflow.md`; the Modes row lists what it does |
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |

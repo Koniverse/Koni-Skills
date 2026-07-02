@@ -1357,3 +1357,58 @@ expert's instinct. The floor stays a floor; the multiplication becomes the metho
 **Date**: 2026-07-03
 **Version**: 0.32.0
 **Reference**: [test-design.md](../skills/koni-qc/references/test-design.md) (step 9 + atomicity), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (§3 density sanity), [layered-suites.md](../skills/koni-qc/references/layered-suites.md) (living suite + auth-guard), [traceability.md](../skills/koni-qc/references/traceability.md) (floor-not-ceiling), CHANGELOG [0.32.0].
+
+### D30. Field-hardening from the ERP 100% drive: frozen parse contract + broken-handle enforcer + ops-deploy class + Band D + design-docs-first (+ D21 clause superseded)
+
+**Context**: the ERP-02 team ran koni-qc + koni-harness through a real 9.3%→100%
+automation drive (~34h, ~70 commits, 217→794 tests, 6 real product bugs found) and wrote
+five audit docs back — the improvement spec (`koni-qc-improvement-spec-2026-07-02.md`,
+"the actionable form of ERP LESSONS §231"), the density retrospective, and the journey
+chronicles. Diffed against koni-qc v0.32: part of Track B was already shipped
+(layered suites, orthogonal matrices, cross-multiplication, honest actuals); the rest was
+new — including **two real parse bugs in our own reporter contract** and the user's
+standing directive that **koni-qc must read the system-design docs in detail before any
+test design**.
+
+**Decision** (v0.33.0, US-5.9, FR-36; hardens FR-30/FR-35, supersedes one D21 clause):
+
+- **Frozen parse contract + shipped reference reporter.** The TC-token rule is now an
+  exact regex (`TC-[0-9A-Z]+\.[A-Z][A-Z0-9]*-\d+` — TYPE allows digits; `[A-Z]+` silently
+  dropped every E2E/A11Y case) + a spec-scan rule (only rows whose first cell matches
+  count — headers inflated ERP's total by 30). koni-qc now SHIPS the reference
+  implementation (`scripts/qc-report.mjs` + a 25-assertion contract self-test) —
+  **explicitly superseding D21's "no vendored reporter" clause**: field evidence showed
+  every prose re-implementation re-introduces the bugs (LESSONS §10).
+- **The broken-handle enforcer is the core contract**: every automated `Covered-by` MUST
+  resolve to an existing AND passing test; broken = 0 is the bar; duplicates flagged.
+  This is what made ERP's 100% trustworthy across ~40 report runs.
+- **`OPS-DEPLOY:<runbook>` is the fourth Covered-by form** — deploy-verified,
+  not-CI-reproducible cases (infra migration, prod topology, one-time integration setup)
+  count as covered via the runbook, in their own column, never lumped with `manual` —
+  with the hard rule *exhaust the locally-testable core first*. Legend/status mapping
+  updated end-to-end.
+- **Band D — density & exhaustiveness** joins the quality bar as a GATE (evolving D29's
+  warn): cross-multiplication done, matrix completeness 100% (incl. the new field ×
+  validation + state-transition matrices), full BVA as discrete rows, full error/status
+  coverage, one-row-per-scenario (N TC-IDs may share one test handle), density plausible.
+  Pass rule: clears Band A but fails Band D = **thin** → back to Design.
+- **Design-docs-first is a Frame MANDATE** (the user's directive): read the system-design
+  docs in full before test design, and secure the two enumeration inputs — a
+  technical-design contract (routes/schemas/error-code table) + a UI-state inventory —
+  **authoring them from code if absent**. Design may not start without them.
+- **`live-harness.md` (new)**: the proven live-stack recipes — 2-credential RLS-as-user
+  testing, per-test tenant isolation, self-seeding e2e, boot exclusions, prod-safety
+  rules. **CI wiring**: live suites run in a CI job with services (not the container
+  build) + a `typecheck` passthrough gate. **Fan-out repoint contract** in Execute: one
+  agent per epic returns `{tcId → handle, deferred[], prodBugs[]}`; only the orchestrator
+  edits specs. **Report**: density telemetry + the denominator-honesty rule ("any 100%
+  names its denominator and what it does NOT measure").
+
+**Why it matters**: this is the full loop working as designed — the skill shipped, a real
+deployment stress-tested it, the field wrote back evidence, and the skill absorbed it:
+two silent-data-loss bugs became a frozen, self-tested contract; an honest-100%
+vocabulary (ops-deploy) replaced fudging; and density stopped being advisory.
+
+**Date**: 2026-07-03
+**Version**: 0.33.0
+**Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2 frozen contract + enforcer, §4 CI/typecheck), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [traceability.md](../skills/koni-qc/references/traceability.md) (4 forms), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (Band D), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (design-docs-first + fan-out), [live-harness.md](../skills/koni-qc/references/live-harness.md), LESSONS §10, [US-5.9](sprints/stories/US-5.9-field-hardening.md), CHANGELOG [0.33.0].

@@ -32,14 +32,15 @@ duplicating it.
 | US-3.8 | koni-harness parallel orchestration — multi-agent swarm + fan-out    | EPIC-3 | P1  | 3      | ✅ done | v0.27.0         | [stories/US-3.8-harness-parallel-orchestration.md](stories/US-3.8-harness-parallel-orchestration.md) |
 | US-6.1 | koni-agent-monitoring — content-free Claude Code usage reporter      | EPIC-6 | P1  | 5      | ✅ done | v0.28.0         | [stories/US-6.1-koni-agent-monitoring.md](stories/US-6.1-koni-agent-monitoring.md)                   |
 | US-5.8 | layered suites + report quality — exemplar-bar authoring + reports   | EPIC-5 | P1  | 3      | ✅ done | v0.31.0         | [stories/US-5.8-layered-suites-report-quality.md](stories/US-5.8-layered-suites-report-quality.md)   |
+| US-5.9 | field-hardening — frozen contract + enforcer + Band D (ERP drive)    | EPIC-5 | P1  | 5      | ✅ done | v0.33.0         | [stories/US-5.9-field-hardening.md](stories/US-5.9-field-hardening.md)                               |
 
-**Total**: **13 stories / 58 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
+**Total**: **14 stories / 63 points** — US-3.2 koni-setup (v0.9.0) · US-3.3
 koni-harness (16 pts across v0.10.0–v0.14.0, 5 phases) · US-3.1 plugin pattern +
 koni-nextjs (v0.15.0) · US-5.1 koni-qc (v0.16.0) · US-5.2 skill-grading (v0.18.0)
 · US-5.3 test-organization (v0.19.0) · US-5.4 unit-coverage (v0.23.0) · US-5.5
 test-automation (v0.24.0) · US-5.6 test-doc standardization (v0.25.0) · US-5.7
-whole-project QC (v0.26.0) · US-5.8 layered suites + report quality (v0.31.0) —
-eight EPIC-5 · US-3.8 koni-harness parallel orchestration (v0.27.0) — an EPIC-3
+whole-project QC (v0.26.0) · US-5.8 layered suites + report quality (v0.31.0) · US-5.9 field-hardening
+(v0.33.0) — nine EPIC-5 · US-3.8 koni-harness parallel orchestration (v0.27.0) — an EPIC-3
 post-completion enhancement · US-6.1 koni-agent-monitoring (v0.28.0) — EPIC-6, the
 first product/client skill.
 **EPIC-3 fully delivered** + EPIC-5 (QC tooling) + EPIC-6 (Agent Ops client) delivered.
@@ -62,8 +63,9 @@ must pass **DESIGN.md + the shadcn standard** (mandatory) — authored in koni-q
 
 **Post-ship refinement (v0.32.0, no new story — refine FR-26 + FR-35):** koni-qc closes the
 **10× case-volume gap** — `test-design.md` step 9 (cross-multiply shared classes × surfaces)
-+ atomicity rule + a Self-review density sanity + the living-suite rule —
-[CONTEXT D29](CONTEXT.md); CHANGELOG \[0.32.0].
+
+- atomicity rule + a Self-review density sanity + the living-suite rule —
+  [CONTEXT D29](CONTEXT.md); CHANGELOG \[0.32.0].
 
 ## Sprint goal recap
 

@@ -84,7 +84,7 @@ standard. Every functional/edge case is one row. The columns are fixed:
 | TC-XX.SEC-1 | Reject script in network name | Critical | name `<script>alert(1)</script>` | Manage Network open | enter name → Save | name stored escaped; rendered as literal text; no script executes | — | Not Executed | n/a | no DOM injection in selector | `epic/EPIC-CN/customize-network.e2e.spec.ts::TC-XX.SEC-1` |
 
 > These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
-> suite's IDs. The **`Covered-by`** handle has **three** fixed forms:
+> suite's IDs. The **`Covered-by`** handle has **four** fixed forms:
 > 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran). The
 >    path is relative to the test root (`epic/EPIC-NN/…` is fine; the `<app>/tests/`
 >    prefix may be omitted), and `<name>` may be abbreviated to the test's leading
@@ -95,9 +95,22 @@ standard. Every functional/edge case is one row. The columns are fixed:
 >    **uncovered** for coverage % until it becomes form 1 — the reporter treats it as
 >    `not-written` ([`test-automation.md`](test-automation.md) §2);
 > 3. `— (manual)` — **manual-only**, never automated.
+> 4. `OPS-DEPLOY:<runbook-ref>` — **deploy-verified**: the case checks infra-migration /
+>    deploy-topology / one-time external-integration setup (prod parity, real object
+>    store, multi-replica, credential config, one-shot backfill) that is **not
+>    CI-reproducible**. It counts as *covered* — verified by the referenced deploy
+>    runbook — tracked in **its own column**, never lumped with `manual` and never
+>    claimed as CI-automated. **Hard rule: exhaust the locally-testable core first** —
+>    a TC is ops-deploy only for the irreducibly-prod remainder (ERP pulled 4 such TCs
+>    back into real unit tests before tagging the rest).
 >
-> Do **not** invent a fourth form; `PROPOSED:` is the one blessed way to say "planned,
-> not yet built" (it replaces ad-hoc notes like the ERP-02 free-text markers).
+> Do **not** invent a fifth form — these four are the closed set (they replace ad-hoc
+> notes like the ERP-02 free-text markers).
+>
+> **N scenarios may share one test**: a single automated test MAY assert several
+> scenarios, but the spec still carries **N distinct TC-IDs**, each `Covered-by`
+> pointing at that same `file::name` handle — bundling at the *spec* layer is what
+> hides missing sub-scenarios; bundling at the *test* layer is fine.
 
 Column contract:
 - **Priority** — `Critical / High / Medium / Low`, derived from risk (see §Risk-based priority). (Matches the Koni-Finance production standard.)
@@ -113,7 +126,8 @@ Column contract:
 - **Side-effects** — DB writes, store mutations, events, files — the things a
   reviewer can't see in the UI.
 - **Covered-by** — the automation handle (`*.spec.ts::name`), `PROPOSED:<path>::name`
-  (planned, still uncovered), or `— (manual)` (see the three fixed forms above).
+  (planned, still uncovered), `— (manual)`, or `OPS-DEPLOY:<runbook-ref>` (see the four
+  fixed forms above).
 
 > The koni-docs `test-cases/EPIC-N.md` container also supports a Gherkin
 > Given/When/Then block per scenario. Use the canonical table for the dense

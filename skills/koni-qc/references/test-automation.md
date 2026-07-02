@@ -69,12 +69,29 @@ Turns a run into `report.md` — deterministic, no hand-editing.
 - **Input**: the runner's machine output — `vitest run --reporter=json`,
   `jest --json`, `pytest --json-report` (needs the `pytest-json-report` plugin
   installed — it is **not** in pytest core), or `playwright test --reporter=json`.
-- **Parse rule (per test)**: take the **leading `TC-<EPIC>.<TYPE>-<n>` token** of the
-  test name → `{tcId, result: passed|failed|skipped, durationMs, error?}`. A test whose
+- **Parse rule (per test) — FROZEN as an exact regex, not prose**: the TC token is
+  `TC-[0-9A-Z]+\.[A-Z][A-Z0-9]*-\d+` — the TYPE slot is `[A-Z][A-Z0-9]*`, **digits allowed
+  after the first letter**. A `[A-Z]+` TYPE regex silently drops every `E2E` and `A11Y`
+  case (a real field bug — ERP lost 9 cases before catching it). Match the **first TC
+  token in the runner's full test name** — runners prefix `describe` titles, so a strict
+  leading anchor breaks on `fullName`; §1's naming rule (test title STARTS with the
+  TC-ID) is what keeps "first token" and "the case's own ID" the same thing. Extract →
+  `{tcId, result: passed|failed|skipped, durationMs, error?}`. A test whose
   name has no TC-ID is an **orphan test**; a test whose TC-ID is **absent from the spec**
   is an **orphan ID**, and one whose TC-ID exists in the spec but asserts a *different*
   case is a **collision** (the ERP-02 F-12 bug) — flag all three, the spec is the sole
   authority for TC-IDs (test-organization §3).
+- **Spec-scan rule — only real TC rows count**: when enumerating spec tables, a row counts
+  as a case **only if its first cell matches the frozen TC regex** — the `| TC-ID |`
+  header, separator rows, and prose lines are skipped (counting them inflated ERP's
+  total by 30). The parse contract MUST ship with a **self-test fixture** so a regressed
+  reporter is caught, not discovered in production counts.
+- **The broken-handle enforcer (what makes any "100%" trustworthy)**: every `Covered-by`
+  handle in **automated form** MUST resolve to a test that exists in the run **and
+  passed** — a cited test that is missing or failing is a **broken handle**, the report
+  exits non-zero, and the gate goes red. **Broken = 0 is the bar.** From the moment this
+  runs, coverage cannot be faked by editing a spec cell (the ERP drive ran ~40 report
+  cycles at broken = 0). Duplicate TC-IDs across files are flagged the same way.
 - **Conformance flag**: a suite file living **outside `<app>/tests/epic/EPIC-NN/`** (a
   flat `tests/*.test.ts`) is **non-conformant** — surface it in the report so the
   unmigrated layout (test-organization §2) is visible, not silent.
@@ -103,10 +120,17 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   | no test for a spec TC | spec-reconcile | — not-written | `pending` |
   | spec row flagged manual-only `📋` | spec flag | 📋 manual-only | `manual` |
   | spec row flagged impl-gap `🚧` | spec flag | 🚧 impl-gap | `impl-gap` |
+  | `Covered-by` = `OPS-DEPLOY:<runbook>` | spec handle | 🏗️ ops-deploy | `ops-deploy` |
 
   The runner's fold (§2) only ever yields `passed`/`failed`/`blocked`; `manual` and
   `impl-gap` come from a **spec-row flag** (like manual-only), never guessed from an
-  error string; `not-written` comes from the spec-reconcile step.
+  error string; `not-written` comes from the spec-reconcile step; `ops-deploy` comes
+  from the fourth `Covered-by` form ([`traceability.md`](traceability.md)) and is
+  **counted in its own column — never lumped with `manual`, never claimed as
+  CI-automated**. `broken` (missing/failing cited test, fifth-form cell, duplicate
+  TC-ID) deliberately has **no row here**: a broken handle turns the gate red and the
+  run stops — it lives in `report.md`'s BROKEN section + the `broken` counter and
+  **never reaches the story write-back (§3)**.
 
 - **Output**: write `docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` in the
   koni-docs `test-report.md` template shape — a row per TC (id · status icon · time ·
@@ -116,13 +140,18 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   content bar of [`report-quality.md`](report-quality.md) (overview %, results by
   group, skipped/blocked reason+action, perf stats, evidence links).
 - **Path validator (MUST)**: the output path must match
-  `test-reports/EPIC-[0-9A-Z]+/[0-1][0-9][0-3][0-9][0-9]{4}/report(-manual)?\.md`
+  `test-reports/EPIC-[0-9A-Z]+/[0-1][0-9][0-3][0-9][0-9]{4}/report(-manual|-notes)?\.md`
   (`EPIC-NN` grouping level present, `MMDDYYYY` date — **not** ISO `YYYY-MM-DD`, **not**
   a flat `test-reports/<date>/`). Reject a non-matching path before writing — this is the
   #1 fresh-adoption drift (test-organization §1).
-- **Build it as**: a thin script over the runner's JSON reporter (≈40 lines), or a
-  repo `/run-test EPIC-NN` skill that wraps `<runner> → parse → aggregate → reconcile →
-  write`. koni-qc specifies the *contract*; the repo owns the *script*.
+- **Build it from the reference implementation**: koni-qc ships
+  [`scripts/qc-report.mjs`](../scripts/qc-report.mjs) (node stdlib, + its contract
+  self-test in `scripts/__tests__/qc-report-test.mjs`) — copy it into the repo and adapt
+  paths, or wrap it in a `/run-test EPIC-NN` skill. The *contract* above stays canonical;
+  the repo owns its copy. (This supersedes the earlier "no vendored reporter" stance —
+  CONTEXT D30, reversing D21 on this point: field experience showed every repo re-implementing the contract from
+  prose re-introduces the parse bugs; a reference implementation with a frozen self-test
+  does not.)
 
 ## 3. Story write-back (Code → story)
 
@@ -161,7 +190,21 @@ a cloud repo** (a fresh repo has neither by default — bootstrap both):
      because it isn't on GitHub Actions.
    This is the server-side counterpart to koni-harness's `pre-push` hook.
 3. **Local gate rows**: add the `tests` + `unit-coverage` `passthrough` rows to
-   `.koni-harness/gates.conf` (koni-harness [`gate-catalog.md`](../../koni-harness/references/gate-catalog.md)).
+   `.koni-harness/gates.conf` (koni-harness [`gate-catalog.md`](../../koni-harness/references/gate-catalog.md)),
+   **plus a `typecheck` passthrough row** (`tsc --noEmit`) — the vitest/esbuild `tests`
+   gate does NOT type-check, so a TS error in a generated test can pass the git gate and
+   fail only at deploy (ERP hit 6 such build-breakers).
+4. **Integration + e2e run in a CI job with services, not the deploy gate**: a container
+   build can't host a DB or a browser, so the live suites run in a CI job that (a) boots
+   the local stack (with the boot exclusions of [`live-harness.md`](live-harness.md)),
+   (b) **self-seeds** its own e2e user (never gates on hand-configured secrets), (c) runs
+   the integration + e2e suites on every push/PR, and (d) exposes a `test:all` script for
+   the same run locally. **The live lane must fail if it skipped everything**: the
+   `hasIntegrationEnv` skip-guard ([`live-harness.md`](live-harness.md) property 4) is for
+   env-less lanes — in the *designated* live job, env absent / all live suites skipped
+   (`blocked > 0` for them) is a red run, otherwise a misconfigured env yields a green
+   gate that asserted nothing live. Note: actually *blocking* a merge additionally
+   requires branch protection — a repo setting, not a workflow file.
 
 > **Monorepo / multi-app.** `<app>` is the epic's owning package, not the repo root:
 > `test:cov` goes in **that package's** `package.json`, its `tests/epic/` tree and
@@ -172,12 +215,15 @@ a cloud repo** (a fresh repo has neither by default — bootstrap both):
 **"A CI test gate exists"** is a Release-stage exit criterion (see
 [`qc-workflow.md`](qc-workflow.md) §5) — without it the suite silently rots.
 
-## Ownership — why a *contract*, not a vendored tool
+## Ownership — the contract is canonical, the reference makes it safe
 
 koni-qc **defines these contracts + the procedure** (portable across vitest / jest /
 pytest / playwright); the **repo's runner executes**; **koni-harness / CI enforces**.
-It does not ship a vendored reporter binary — the parse rule (TC-ID = the test-name
-prefix) and the report/story shapes are specified tightly enough that an agent builds
-the ≈40-line script deterministically on any repo. What it must **not** do is what the
+The skill **ships the reference implementation** ([`scripts/qc-report.mjs`](../scripts/qc-report.mjs)
++ its self-test) precisely because "specified tightly enough that an agent rebuilds it
+from prose" proved false in the field — two rebuilt reporters re-introduced the parse
+bugs (CONTEXT D30, reversing D21 on this point). The repo owns its *copy* (adapted
+paths, extra rollups); the contract in §2 stays the single source of truth, and any
+copy must keep the self-test green. What this section must **not** do is what the
 old wording did: assert that "gstack `qa` or a repo `/run-test`" already automates this
 when a fresh repo has neither.

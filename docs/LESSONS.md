@@ -382,3 +382,27 @@ block under the user's shell.
 
 **Cross-references**:
 - Found via [§8](#8-grading-a-skill-is-iterative-author-blind-review--variance-averaged-rubric-and-expect-your-own-fix-to-introduce-the-next-finding)'s author-blind dimension — concrete proof that the grading method catches real execution bugs, not just prose.
+
+## 10. A machine-parse contract written in prose breeds silent data loss — freeze it as an exact regex + a shipped self-test
+
+**What happened**: koni-qc's reporter contract (v0.24.0) specified the TC-token parse
+rule as prose — *"the leading `TC-<EPIC>.<TYPE>-<n>` token"*. A field implementation
+(Koni-ERP-02) reasonably wrote the TYPE slot as `[A-Z]+` — which silently drops every
+digit-bearing type: all `E2E` and `A11Y` cases vanished from the counts (9 lost before
+anyone noticed — ERP LESSONS §227). A second prose gap: nothing said to skip the
+`| TC-ID |` table-header row when scanning specs, so headers were counted as cases
+(total inflated by 30). Both bugs produced *plausible* numbers — the worst kind.
+
+**The lesson**: when a contract will be parsed by code, prose is not a contract.
+Specify the **exact regex** (`TC-[0-9A-Z]+\.[A-Z][A-Z0-9]*-\d+`), state the negative
+rules ("a row counts only if its first cell matches"), and **ship a self-test fixture
+with the contract** so a regressed implementation fails a test instead of shipping
+wrong counts. Applied in v0.33.0: the parse contract is frozen in
+`test-automation.md` §2 and enforced by `skills/koni-qc/scripts/qc-report.mjs` + its
+25-assertion self-test. Corollary (same release): a "no vendored reference
+implementation" stance (D21) loses to field evidence when every re-implementation
+re-introduces the same bugs — ship the reference impl WITH the frozen test.
+
+**Grep check**: any reference describing a machine-parsed format should contain a
+fenced regex or a fixture path — `grep -L 'regex\|fixture\|self-test' <new-ref>` on a
+parsing contract is a smell.

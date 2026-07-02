@@ -46,7 +46,7 @@ profile; untagged rows apply to all.
   `tests/*.test.ts` (a flat layout is non-conformant — migrate it, koni-qc §2)
 - [ ] **Strategy home** — whole-repo strategy is in `docs/tests/STRATEGY.md`, **not**
   overloaded into `test-plan/README.md`
-- [ ] **Covered-by vocabulary** — only `<path>.spec.ts::name`, `PROPOSED:<path>::name`,
+- [ ] **Covered-by vocabulary** — only `<path>.spec.ts::name`, `PROPOSED:<path>::name`, `OPS-DEPLOY:<runbook>`,
   or `— (manual)`; no ad-hoc free-text markers
 
 ### Skills & agents

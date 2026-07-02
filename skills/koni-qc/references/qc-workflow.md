@@ -33,9 +33,24 @@ Decide *what* is under test and *when* it is done.
   up the QA-tracking epic + strategy + Definition-of-Done via
   [`whole-project-qc.md`](whole-project-qc.md) — this per-epic lifecycle then runs
   inside it, and QC is not "done" on specs alone (that file's §5 done-bar).
-- **Read the inputs** — invoke **koni-docs** to read the PRD FRs, the **story + its
-  AC**, and ARCHITECTURE. These are the source of truth; AC are the units the
+- **Read the system-design docs IN DETAIL — BEFORE any test design (MANDATORY).**
+  Invoke **koni-docs** to read the PRD FRs, the **story + its AC**, ARCHITECTURE,
+  `DESIGN.md`, and every per-US design artifact (technical design, UI/UX spec) —
+  **in full, not skimmed**. These are the source of truth; AC are the units the
   matrix traces, and each TC will `maps_to` this US.
+- **Secure the two enumeration inputs (author them from code if absent).** 10× density
+  cannot be conjured from a 17-line AC list — the exemplar's 154 rows are *mechanically
+  derived* from richer per-US docs. Before Design, the US must have:
+  1. a **technical-design contract** — routes/RPCs/RLS policies + request/response
+     schemas + an **error-code table** (feeds the endpoint/status/error enumerations);
+  2. a **UI-state inventory** — components × states (loading/disabled/empty/error/
+     toast/focus) (feeds the functional enumerations).
+  If either doesn't exist as a doc, **derive and write it from the code first** (a
+  stub in `docs/design/` or the story), then design tests from it. Skipping this is
+  how density silently defaults to the AC list. **Scope the inputs to the surfaces the
+  US actually has** — a US with no UI owes no UI-state inventory, a US with no API/RPC
+  surface owes no endpoint contract; only the inputs for surfaces that exist are
+  mandatory.
 - **Derive ACs if none are written** — the whole method is AC-anchored, so if the
   story has FRs but no story-level acceptance criteria, derive them first: turn
   each FR / user-facing behaviour into one testable, observable AC (a *Given →
@@ -46,8 +61,9 @@ Decide *what* is under test and *when* it is done.
 - **Define entry / exit** — the criteria below; written before any case is authored.
 - **Define environment** — target build, data, accounts, feature flags.
 
-**Exit**: target US chosen (or a per-US tiered backlog), inputs read, scope +
-entry/exit + environment written.
+**Exit**: target US chosen (or a per-US tiered backlog), **design docs read in full +
+the two enumeration inputs present** (TD contract + UI-state inventory), scope +
+entry/exit + environment written. **Design may not start without them.**
 
 ---
 
@@ -87,8 +103,8 @@ Author the cases into the koni-docs container — fill its template, never copy 
 
 Grade the suite before anyone executes it.
 
-- **Grade against [`quality-bar.md`](quality-bar.md)** — all of Band A; demonstrably
-  exceed Band B and Band C.
+- **Grade against [`quality-bar.md`](quality-bar.md)** — all of Band A **and Band D
+  (density/exhaustiveness)**; demonstrably exceed Band B and Band C.
 - **No orphans** — no AC without a TC; no TC without an AC (per the completeness
   rule in [`traceability.md`](traceability.md)).
 - **Coverage classes present** — edge taxonomy applied; required NFR sections filled.
@@ -100,7 +116,8 @@ Grade the suite before anyone executes it.
   `## Open Questions`. A green matrix with an unmultiplied surface still fails this
   check.
 
-**Exit**: Band A fully cleared; zero orphans. Fail → return to **Design**.
+**Exit**: Band A fully cleared; **Band D cleared or explicitly justified**; zero
+orphans. Fail → return to **Design**.
 
 ---
 
@@ -144,6 +161,15 @@ the repo's runner executes** (koni-qc never runs tests itself).
   reason + action, failed-by-category root cause, perf stats, evidence links
   ([`report-quality.md`](report-quality.md)); a bare pass/fail tally does not exit
   this stage.
+- **Scaling a whole-repo conversion: fan out per epic/domain with a repoint
+  contract.** The pattern that took ERP 9.3%→100% in ~34h: spawn **one agent per
+  epic/domain** (koni-harness [`parallel-orchestration.md`](../../koni-harness/references/parallel-orchestration.md)
+  Tier B), each authoring real tests against the live stack
+  ([`live-harness.md`](live-harness.md)) + self-verifying, returning a **JSON repoint
+  contract** — `{tcId → handle, deferred[], prodBugs[]}` — while the **orchestrator
+  alone** re-points the specs centrally, re-runs the full suites under the
+  broken-handle enforcer, fixes surfaced bugs through the gate, and commits per
+  round. Workers never edit specs directly (single-writer, no repoint races).
 
 **Exit**: every Critical/High case executed via the runner/reporter (or `/design-review`
 for UI); `report.md` written; stories synced.

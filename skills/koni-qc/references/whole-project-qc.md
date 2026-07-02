@@ -102,9 +102,12 @@ check and refuse to declare done otherwise:
 - [ ] **QA tracking epic** + a coverage story per app epic exist and are in the sprint (§1).
 - [ ] **`STRATEGY.md`** authored + per-epic `test-plan/` where the epic warrants it (§2).
 - [ ] **`QC-PLAN-BY-US-<date>.md`** + the coverage audit in `audits/`; `findings.md` populated (§3).
-- [ ] **`Covered-by` handles are honest** — the cited file actually exists, else it is
-  `PROPOSED:<path>::name` ([`traceability.md`](traceability.md)). **No phantom
-  automation** (the ERP run had 24 fabricated citations, finding F-8).
+- [ ] **`Covered-by` handles are honest** — every cell is one of the **four fixed
+  forms** ([`traceability.md`](traceability.md)): automated (`<path>::<name>` — and the
+  cited test **exists and passes** under the broken-handle enforcer,
+  [`test-automation.md`](test-automation.md) §2), `PROPOSED:<path>::name`, `— (manual)`,
+  or `OPS-DEPLOY:<runbook>`. **No phantom automation** (the ERP run had 24 fabricated
+  citations, finding F-8) and no free-text fifth form.
 - [ ] **≥1 execution report per covered epic** at `test-reports/EPIC-NN/<MMDDYYYY>/report.md`
   (§4) — not specs-only. (This is the **Execute/Release** bar: a repo still in
   authoring-mode — specs written, nothing run yet — is *in-progress*, not *done*; that

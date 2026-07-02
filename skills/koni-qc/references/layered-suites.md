@@ -29,7 +29,13 @@ one flat table forces API detail and UI detail into the same columns and both su
 | **Functional / UI** | `US-X.Y-functional-test-cases.md` (or §Functional) | UI flows, validation feedback, states, a11y, visual conformance | endpoint responses, DB records, event publishing |
 
 Each file **opens with "What is tested" + "Out of scope (covered in <the other file>)"** —
-the pair of scope blocks is the contract that nothing falls between the layers. Both
+the pair of scope blocks is the contract that nothing falls between the layers. Once the
+suite has run, each file also carries a **per-doc execution summary** under its scope
+block — the full counter set of [`test-automation.md`](test-automation.md) §2 (total ·
+pass · fail · blocked · broken · not-written · manual · ops-deploy, + %; buckets sum
+to total), written back from the run
+(the exemplar docs each open with theirs; a suite doc with no summary after a run reads
+as never-executed). Both
 layers share one TC-ID space and one AC↔TC matrix (`maps_to.us` unchanged); the split is
 *presentation + column shape*, not a second numbering scheme.
 
@@ -101,7 +107,7 @@ so a reader audits an endpoint's coverage at a glance.
 - **UI-component traceability** — the traceability table carries a `UI Component` column
   (Login page · Workspace switcher · Toast…), enabling the per-component rollup below.
 - **Evidence per executed case** — a dedicated **Evidence/Note column** (NOT `Covered-by`,
-  whose three fixed forms are [`traceability.md`](traceability.md)'s and must not be
+  whose four fixed forms are [`traceability.md`](traceability.md)'s and must not be
   extended) links the runner spec `file:line` **and** the artifact (video/screenshot
   path) for every failure, so a fail is replayable without re-running
   (`e2e/us001.spec.ts:214; …/img/TC-….webm` — artifacts live in the run folder per
@@ -122,6 +128,8 @@ is a visible gap":
 | **Endpoint coverage** | every endpoint × its TC count | API |
 | **HTTP status-code coverage** | every status the design can return (200/201/400/401/403/404/409/410/413/415/5xx) → the TCs that assert it | API |
 | **Error-code coverage** | every error code in the design (`WALLET_NOT_OWNED`, …) → the TCs that assert it | API |
+| **Field × validation coverage** | rows = input fields; cols = {empty · min−1 · min · max · max+1 · wrong-type · format · injection} — **every cell a TC-ID or an explicit N/A** | API + Functional |
+| **State-transition coverage** | every legal transition AND every illegal attempt → its TC | API + Functional |
 | **Page coverage** | every page/route → its TCs | Functional |
 | **Component coverage** | every UI component touched → its TCs | Functional |
 | **Validation + a11y coverage** | every validation rule; keyboard/screen-reader/focus | Functional |

@@ -82,6 +82,16 @@ The procedure, run once per acceptance criterion:
    platform-fan-out rule says. Full product across one dimension; pairwise across
    dimensions.
 
+   Two expansions inside the table deserve spelling out:
+   - **Full BVA per bounded field**: the AC↔TC boundary *slot* is satisfied by ONE
+     two-sided `BND` probe — but the **field × validation matrix** enumerates the
+     full point set as **discrete rows**: `min−1 · min · max · max+1` (add
+     `min+1`/`max−1` where off-by-one logic exists). "One edge row" at the density
+     layer is the collapse that cost the 10×.
+   - **Every state transition, legal AND illegal**: not one case per lifecycle — one
+     per legal transition plus one per *illegal* attempt (edit-after-delete,
+     act-on-archived, re-accept a consumed token…), from step 5's transition walk.
+
    The [orthogonal matrices](layered-suites.md) then *verify* this multiplication —
    but they can only catch what this step *generates*. The 3-slot rule is a **floor,
    not a stopping criterion**: a green matrix with an unmultiplied surface is an
