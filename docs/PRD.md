@@ -636,7 +636,7 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 
 **Goal:** Give the catalog a quality-control capability — a skill that turns koni-docs inputs into Silicon-Valley-grade, fully-traceable test documentation and drives QC execution.
 
-**Status:** ✅ done (sprint-2026-W26 — v0.16.0 ships `koni-qc`, FR-26). See [EPIC-5.md](sprints/epics/EPIC-5.md).
+**Status:** ✅ done (sprint-2026-W27 — v0.16.0 → v0.34.0 ship `koni-qc` + its hardening rounds, FR-26 → FR-37 excl. FR-33/34). See [EPIC-5.md](sprints/epics/EPIC-5.md).
 
 | Story                                                             | Title                                                                                                                  | Status | Version |
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------ | ------- |
@@ -653,7 +653,7 @@ See [EPIC-4.md](sprints/epics/EPIC-4.md) for the full 36-story breakdown organiz
 
 **Goal:** Give the catalog a client-side agent-observability skill — a per-machine Claude Code monitor that streams a content-free projection of session usage to the Koni ERP Agent Ops dashboard.
 
-**Status:** ✅ done (sprint-2026-W26 — v0.28.0 ships `koni-agent-monitoring`, FR-34). See [EPIC-6.md](sprints/epics/EPIC-6.md).
+**Status:** ✅ done (sprint-2026-W27 — v0.28.0 ships `koni-agent-monitoring`, FR-34). See [EPIC-6.md](sprints/epics/EPIC-6.md).
 
 | Story                                                     | Title                                                                                      | Status | Version |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------ | ------- |

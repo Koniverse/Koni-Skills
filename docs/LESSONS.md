@@ -425,3 +425,28 @@ list) rather than letting the field invent free text — a closed set only survi
 it absorbs what the field genuinely needs. Corollary of §10: the contract is code, so
 absorbing a reorg means updating the regex/validator + self-test in the same commit
 as the prose.
+
+## 12. The doc layer is only trustworthy if every field is true at write time — honesty beats completeness theater
+
+**What happened**: a 3-day audit found the per-version records (CHANGELOG / CONTEXT /
+FR / commit SHA) complete and correct, but the sprint layer quietly false: 12 stories
+executed after sprint-2026-W26's end date (06-28) had been appended to the closed
+sprint's table — its totals rewritten to "15 stories / 66 points" while its own goal
+text still said "3 stories / 24 pts" — and 8 stories were created without the
+mandatory `points:` field. Each individual edit looked like diligent bookkeeping;
+the aggregate was a false record (CONTEXT D32).
+
+**The lesson**: filling a template is not documenting — **a field you fill wrong is
+worse than a field left visibly empty**, because it reads as verified. Concretely:
+
+1. **Check the container before filing into it.** "Add the story to the active
+   sprint" requires checking the sprint's *dates*, not its `active` label — a sprint
+   past its end date is closed; open the next file, even mid-flow, even for one story.
+2. **Fill every mandatory field at creation** (`points:`, `sprint:`, `commit:` as
+   `pending` → backfilled same-day). A missing field discovered by a *reader* is an
+   honesty bug, not a chore.
+3. **Correct forward, never rewrite history**: fixes leave a visible correction note
+   (the W26 note, D32); dated editHistory/CHANGELOG entries stay as written.
+4. **Audit on cadence**: the same change-sweep discipline koni-qc mandates for test
+   coverage (regression-learning.md) applies to the doc layer itself — periodically
+   diff what the records *claim* against what git *shows*.

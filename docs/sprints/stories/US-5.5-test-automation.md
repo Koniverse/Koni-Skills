@@ -13,10 +13,11 @@ depends_on:
   - US-5.4
 assignee: jindo9986
 commit: bd3985e
-sprint: sprint-2026-W26
+points: 3
+sprint: sprint-2026-W27
 version_shipped: "0.24.0"
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-03
 ---
 
 ## Goal

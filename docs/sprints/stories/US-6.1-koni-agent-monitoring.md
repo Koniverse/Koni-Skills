@@ -10,10 +10,11 @@ arch_ref: []
 depends_on: []
 assignee: jindo9986
 commit: de9de10
-sprint: sprint-2026-W26
+points: 5
+sprint: sprint-2026-W27
 version_shipped: "0.28.0"
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-03
 ---
 
 ## Goal

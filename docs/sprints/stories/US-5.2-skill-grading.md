@@ -5,7 +5,7 @@ epic: EPIC-5
 status: done
 priority: P1
 points: 3
-sprint: sprint-2026-W26
+sprint: sprint-2026-W27
 version_shipped: "0.18.0"
 prd_ref:
   - FR-27
@@ -16,7 +16,7 @@ depends_on:
 assignee: jindo9986
 commit: 1298899
 created: 2026-06-30
-updated: 2026-06-30
+updated: 2026-07-03
 ---
 
 ## Goal

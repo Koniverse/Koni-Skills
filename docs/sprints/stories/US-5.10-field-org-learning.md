@@ -11,7 +11,8 @@ depends_on:
   - US-5.9
 assignee: jindo9986
 commit: 0414183
-sprint: sprint-2026-W26
+points: 3
+sprint: sprint-2026-W27
 version_shipped: "0.34.0"
 created: 2026-07-03
 updated: 2026-07-03

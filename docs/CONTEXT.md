@@ -1458,3 +1458,44 @@ they become gated loop inputs rather than good intentions.
 **Date**: 2026-07-03
 **Version**: 0.34.0
 **Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) (§1 v2 layout, §5 formula), [regression-learning.md](../skills/koni-qc/references/regression-learning.md), [traceability.md](../skills/koni-qc/references/traceability.md) (5 forms), [test-automation.md](../skills/koni-qc/references/test-automation.md) (lane-aware enforcer, date-first validator), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (change sweep at Frame + learning loop at Release), [US-5.10](sprints/stories/US-5.10-field-org-learning.md), CHANGELOG [0.34.0].
+
+### D32. Documentation-honesty audit: the sprint layer lied — W26 was stretched past its end date and 8 stories shipped without points
+
+**Context**: a user-requested audit (2026-07-03) of the last 3 days of work found the
+per-version doc layer complete (every v0.16.0 → v0.34.0 ship has its CHANGELOG entry,
+CONTEXT decision, FR row, and story with a real commit SHA — verified), but the
+**sprint layer dishonest**: `sprint-2026-W26` ended 2026-06-28, yet all 12 stories
+executed 06-29 → 07-05 (US-5.1 → US-5.10, US-3.8, US-6.1) had been appended to its
+table — inflating it to "15 stories / 66 points" while its own frontmatter goal still
+said "3 stories / 24 pts" — instead of opening `sprint-2026-W27`. Additionally, 8 of
+those stories (US-3.8, US-5.5 → US-5.10, US-6.1) were created **without the mandatory
+`points:` field** (the koni-docs story template requires Fibonacci points), and the
+sprint frontmatter used a non-template status value (`active`; the template set is
+`planned | in-progress | closed`).
+
+**Decision** (docs-only correction, no version bump):
+
+1. **`sprint-2026-W26` restored to the truth**: status `closed`, the 3 stories /
+   24 pts it actually shipped in-window (US-3.2 06-26; US-3.3 + US-3.1 06-28), plus a
+   visible correction note — the record of the error is kept, not erased.
+2. **`sprint-2026-W27` opened retroactively** (06-29 → 07-05, `in-progress`): the 12
+   stories ordered by ship date (42 pts), the in-window no-story refinements
+   (v0.17.x, v0.20.0–v0.22.0, v0.29.0, v0.30.0, v0.32.0) listed per D14.
+3. **Story frontmatter fixed**: `sprint:` → W27 on the 12 moved stories; `points:`
+   added to the 8 that lacked it (values matching the sprint table).
+4. **Sprint membership rule (standing)**: a story belongs to the sprint window in
+   which its ship commit lands. A sprint that has ended is **immutable except for
+   corrections** — new work opens the next sprint file, even mid-flow. `points:` is
+   filled at story creation, never deferred.
+5. CLAUDE.md `active_sprint` → W27; PRD current-status lines corrected (historical
+   editHistory entries and CHANGELOG entries left as written — history is not
+   rewritten, it is corrected forward).
+
+**Why**: the doc layer is only worth its cost if every field is true at write time.
+An agent that pattern-matches "add the story to the active sprint" without checking
+the sprint's end date produces records that *look* disciplined and are wrong — worse
+than no record, because they read as verified. LESSONS §12.
+
+**Date**: 2026-07-03
+**Version**: 0.34.0 (docs-only correction)
+**Reference**: [sprint-2026-W26](sprints/sprint-2026-W26.md), [sprint-2026-W27](sprints/sprint-2026-W27.md), [story template](../skills/koni-docs/references/templates/story.md), LESSONS §12.
