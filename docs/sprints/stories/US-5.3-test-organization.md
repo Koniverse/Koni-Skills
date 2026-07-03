@@ -1,19 +1,20 @@
 ---
 id: US-5.3
-title: "test-organization — standard docs/tests taxonomy + scaffolding, synthesized from Senti-Quant"
+title: "test-organization — standard docs/tests taxonomy + scaffolding; round 2: standardize + enforce across the catalog (absorbs US-5.6)"
 epic: EPIC-5
 status: done
 priority: P1
-points: 3
+points: 6
 sprint: sprint-2026-W27
-version_shipped: "0.19.0"
+version_shipped: "0.19.0 + 0.25.0"
 prd_ref:
   - FR-28
+  - FR-31
 arch_ref: []
 depends_on:
   - US-5.1
 assignee: jindo9986
-commit: 30111fa
+commit: 30111fa + 16392cd
 created: 2026-06-30
 updated: 2026-07-03
 ---
@@ -86,3 +87,14 @@ No scope change to FR-28; see [CONTEXT D18](../../CONTEXT.md):
 - [Epic EPIC-5](../epics/EPIC-5.md)
 - [CONTEXT D16 — test-org standard + ownership split](../../CONTEXT.md)
 - [CHANGELOG 0.19.0](../../CHANGELOG.md)
+
+## Round 2 — test-doc standardization: scaffold + enforce (v0.25.0, FR-31 — absorbs US-5.6)
+
+Consolidated here 2026-07-03 per the story-granularity rule ([CONTEXT D33](../../CONTEXT.md)):
+US-5.6 was a second round of THIS story's theme, not a new deliverable. Shipped
+v0.25.0 (commit `16392cd`, 3 pts): the ERP-02-vs-Senti audit showed the standard
+drifts on fresh adoption, so it became **scaffolded + enforced**, not just written —
+koni-setup scaffolds the full `docs/tests/` tree + code root at bootstrap (and its
+onboarding audit checks it), koni-qc self-scaffolds when koni-setup is absent, and
+the report-path/location MUSTs entered the standard. Details: CHANGELOG [0.25.0],
+CONTEXT D22. The ID **US-5.6 is retired — never reuse it.**

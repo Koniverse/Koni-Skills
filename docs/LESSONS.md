@@ -450,3 +450,21 @@ worse than a field left visibly empty**, because it reads as verified. Concretel
 4. **Audit on cadence**: the same change-sweep discipline koni-qc mandates for test
    coverage (regression-learning.md) applies to the doc layer itself — periodically
    diff what the records *claim* against what git *shows*.
+
+## 13. Story count is not progress — one story = one deliverable; rounds extend the anchor
+
+**What happened**: in one two-day drive the same theme (absorb ERP-02 field evidence
+into koni-qc) produced three separate stories (US-5.8, US-5.9, US-5.10), and a
+standardization round of an existing standard got its own US-5.6. The user called it:
+"đỡ vụn vặt" — the board was fragmenting. The D32 audit had already shown the cost:
+the sprawled stories were exactly the ones with missing fields.
+
+**The lesson**: a user story is a *deliverable*, not a work-session or a version
+bump. Before creating a US, ask what NEW capability it names — if the honest Goal
+sentence repeats an existing story's Goal with a newer version, it is a **round of
+that story**: add a `## Round N` section, sum the points, append the version/commit.
+Refinements of an existing FR need no story at all (D14). When sprawl already exists,
+consolidate and **retire the IDs forever** with visible "was US-X.Y" notes — immutable
+history (commit messages, old CHANGELOG entries) keeps citing the old IDs, so the
+retirement note is what keeps those citations resolvable. Full rule: CONTEXT D33 +
+koni-harness `agentic-loop-standard.md` §Story granularity.

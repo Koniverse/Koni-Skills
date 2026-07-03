@@ -9,7 +9,7 @@ prd_ref:
 arch_ref: []
 depends_on:
   - US-5.5
-  - US-5.6
+  - US-5.3   # round 2 (was US-5.6, consolidated per D33)
 assignee: jindo9986
 commit: 5b0ed16
 points: 3

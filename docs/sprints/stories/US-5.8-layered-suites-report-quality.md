@@ -1,21 +1,23 @@
 ---
 id: US-5.8
-title: "layered suites + report quality — lift test-case authoring and execution reports to the exemplar bar"
+title: "koni-qc field absorption — exemplar bar, ERP 100%-drive hardening, field reorg + regression-learning loop (3 rounds; absorbs US-5.9 + US-5.10)"
 epic: EPIC-5
 status: done
 priority: P1
 prd_ref:
   - FR-35
+  - FR-36
+  - FR-37
 arch_ref: []
 depends_on:
   - US-5.1
   - US-5.3
   - US-5.5
 assignee: jindo9986
-commit: e169603
-points: 3
+commit: e169603 + 286a107 + 0414183
+points: 11
 sprint: sprint-2026-W27
-version_shipped: "0.31.0"
+version_shipped: "0.31.0 + 0.33.0 + 0.34.0"
 created: 2026-07-02
 updated: 2026-07-03
 ---
@@ -98,3 +100,32 @@ CONTEXT D28.
 
 - [Epic EPIC-5](../epics/EPIC-5.md) · [CONTEXT D28](../../CONTEXT.md) · [CHANGELOG 0.31.0](../../CHANGELOG.md)
 - Sources: `koni-docs.backup` `converted/notion/10-product/product-management/ba-qc-document/checklist-test-case/` · exemplar suites `US-001.001-api-test-cases.md` + `US-001.001-functional-test-cases.md` (user-supplied)
+
+## Round 2 — field-hardening from the ERP 100% drive (v0.33.0, FR-36 — absorbs US-5.9)
+
+Consolidated here 2026-07-03 per [CONTEXT D33](../../CONTEXT.md) (5 pts, commit
+`286a107`). Absorbed the five ERP-02 audit docs from the real 9.3%→100% automation
+drive — including **two real parse bugs in our own reporter contract**: the frozen
+TC-token regex + header-skip scan + shipped reference reporter `scripts/qc-report.mjs`
+with the **broken-handle enforcer** (supersedes D21's no-vendored-reporter clause,
+D30); `OPS-DEPLOY:` as the 4th Covered-by form; **Band D** density gate;
+**design-docs-first** Frame mandate (the user's standing directive); live-harness
+recipes (2-credential RLS-as-user, tenant isolation, self-seed e2e); CI-with-services
++ typecheck gate; fan-out repoint contract. Re-graded ≥95 (4 graders + adversarial
+re-verify). Details: CHANGELOG [0.33.0], CONTEXT D30, LESSONS §10.
+
+## Round 3 — field reorg + the regression-learning harness loop (v0.34.0, FR-37 — absorbs US-5.10)
+
+(3 pts, commit `0414183`.) Three user directives: **(1)** the ERP-02 test-doc reorg
+absorbed as canonical (per-US spec split `test-cases/EPIC-N/`, date-first
+`test-reports/YYYY-MM-DD/` + `summary/` rollups, no `test-plan/`; legacy accepted
+everywhere); **(2)** koni-qc as a **learning harness** — `regression-learning.md`:
+every escaped bug becomes a red-first REG TC + a class-named finding + a step-9
+generalization sweep, with the four-mode miss post-mortem; **(3)** the **mandatory
+CHANGELOG + git-log change sweep** every QC round (a fix with no REG TC = a confirmed
+miss) + the change-coverage ledger. Plus `DESIGN-REVIEW:` as the 5th Covered-by form
+and lane-aware `env-pending` enforcement (fails closed); qc-report self-test 42 → 61
+assertions; re-graded ≥95 after 2 RED anti-laundering bugs were probe-found and
+fixed. Details: CHANGELOG [0.34.0], CONTEXT D31, LESSONS §11.
+
+The IDs **US-5.9 and US-5.10 are retired — never reuse them.**

@@ -8,8 +8,9 @@ description: >
   process", or "make the loop portable across Claude / Cursor / Codex / Gemini" —
   even if they don't name koni-harness. Also use when a change risks a bad
   version bump, a missing changelog anchor, leaked secrets, or broken doc
-  references, when deciding how much process a change needs, or when picking the
-  next dependency-ready story to work on. Also use to run work **multi-agent / in
+  references, when deciding how much process a change needs, when stories get
+  too small/fragmented (consolidate / merge user stories, story sprawl), or
+  when picking the next dependency-ready story to work on. Also use to run work **multi-agent / in
   parallel** — "run the sprint in parallel", "swarm the ready stories", "run
   multiple stories at once", "fan out the review/tests across agents", or "the loop
   only runs one thing at a time — parallelize it" (the swarm planner + worktree-per-story).

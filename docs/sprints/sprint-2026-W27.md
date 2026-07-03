@@ -19,25 +19,24 @@ work below executed 06-29 → 07-05 but had been appended to the already-ended
 [sprint-2026-W26](sprint-2026-W26.md) instead of opening this file — see
 [LESSONS §12](LESSONS.md). Rows are ordered by ship date.
 
-| US      | Title                                                                 | Epic   | Pri | Points | Status | Ship    | Story file                                                                                           |
-| ------- | --------------------------------------------------------------------- | ------ | --- | ------ | ------ | ------- | ---------------------------------------------------------------------------------------------------- |
-| US-5.1  | koni-qc — QC methodology & coverage-intelligence skill                | EPIC-5 | P1  | 5      | ✅ done | v0.16.0 | [stories/US-5.1-koni-qc.md](stories/US-5.1-koni-qc.md)                                               |
-| US-5.2  | skill-grading — QC for skill artifacts, wired into the loop           | EPIC-5 | P1  | 3      | ✅ done | v0.18.0 | [stories/US-5.2-skill-grading.md](stories/US-5.2-skill-grading.md)                                   |
-| US-5.3  | test-organization — standard docs/tests taxonomy + scaffolding        | EPIC-5 | P1  | 3      | ✅ done | v0.19.0 | [stories/US-5.3-test-organization.md](stories/US-5.3-test-organization.md)                           |
-| US-5.4  | unit-coverage — per-function unit-test process + Self-verify gate     | EPIC-5 | P1  | 3      | ✅ done | v0.23.0 | [stories/US-5.4-unit-coverage.md](stories/US-5.4-unit-coverage.md)                                   |
-| US-5.5  | test-automation — spec→test→run→report→sync→CI spine                  | EPIC-5 | P1  | 3      | ✅ done | v0.24.0 | [stories/US-5.5-test-automation.md](stories/US-5.5-test-automation.md)                               |
-| US-5.6  | test-doc standardization — scaffold + enforce (ERP-vs-Senti audit)    | EPIC-5 | P1  | 3      | ✅ done | v0.25.0 | [stories/US-5.6-test-doc-standardization.md](stories/US-5.6-test-doc-standardization.md)             |
-| US-5.7  | whole-project QC — QA-tracking epic + DoD + depth bar (ERP learning)  | EPIC-5 | P1  | 3      | ✅ done | v0.26.0 | [stories/US-5.7-whole-project-qc.md](stories/US-5.7-whole-project-qc.md)                             |
-| US-3.8  | koni-harness parallel orchestration — multi-agent swarm + fan-out     | EPIC-3 | P1  | 3      | ✅ done | v0.27.0 | [stories/US-3.8-harness-parallel-orchestration.md](stories/US-3.8-harness-parallel-orchestration.md) |
-| US-6.1  | koni-agent-monitoring — content-free Claude Code usage reporter       | EPIC-6 | P1  | 5      | ✅ done | v0.28.0 | [stories/US-6.1-koni-agent-monitoring.md](stories/US-6.1-koni-agent-monitoring.md)                   |
-| US-5.8  | layered suites + report quality — exemplar-bar authoring + reports    | EPIC-5 | P1  | 3      | ✅ done | v0.31.0 | [stories/US-5.8-layered-suites-report-quality.md](stories/US-5.8-layered-suites-report-quality.md)   |
-| US-5.9  | field-hardening — frozen contract + enforcer + Band D (ERP drive)     | EPIC-5 | P1  | 5      | ✅ done | v0.33.0 | [stories/US-5.9-field-hardening.md](stories/US-5.9-field-hardening.md)                               |
-| US-5.10 | field reorg + regression-learning loop — ERP layout + learn-from-bugs | EPIC-5 | P1  | 3      | ✅ done | v0.34.0 | [stories/US-5.10-field-org-learning.md](stories/US-5.10-field-org-learning.md)                       |
+| US     | Title                                                                                                        | Epic   | Pri | Points | Status | Ship                        | Story file                                                                                           |
+| ------ | ------------------------------------------------------------------------------------------------------------ | ------ | --- | ------ | ------ | --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill                                                       | EPIC-5 | P1  | 5      | ✅ done | v0.16.0                     | [stories/US-5.1-koni-qc.md](stories/US-5.1-koni-qc.md)                                               |
+| US-5.2 | skill-grading — QC for skill artifacts, wired into the loop                                                  | EPIC-5 | P1  | 3      | ✅ done | v0.18.0                     | [stories/US-5.2-skill-grading.md](stories/US-5.2-skill-grading.md)                                   |
+| US-5.3 | test-organization — taxonomy + scaffolding; round 2: standardize + enforce (absorbs US-5.6)                  | EPIC-5 | P1  | 6      | ✅ done | v0.19.0 + v0.25.0           | [stories/US-5.3-test-organization.md](stories/US-5.3-test-organization.md)                           |
+| US-5.4 | unit-coverage — per-function unit-test process + Self-verify gate                                            | EPIC-5 | P1  | 3      | ✅ done | v0.23.0                     | [stories/US-5.4-unit-coverage.md](stories/US-5.4-unit-coverage.md)                                   |
+| US-5.5 | test-automation — spec→test→run→report→sync→CI spine                                                         | EPIC-5 | P1  | 3      | ✅ done | v0.24.0                     | [stories/US-5.5-test-automation.md](stories/US-5.5-test-automation.md)                               |
+| US-5.7 | whole-project QC — QA-tracking epic + DoD + depth bar (ERP learning)                                         | EPIC-5 | P1  | 3      | ✅ done | v0.26.0                     | [stories/US-5.7-whole-project-qc.md](stories/US-5.7-whole-project-qc.md)                             |
+| US-3.8 | koni-harness parallel orchestration — multi-agent swarm + fan-out                                            | EPIC-3 | P1  | 3      | ✅ done | v0.27.0                     | [stories/US-3.8-harness-parallel-orchestration.md](stories/US-3.8-harness-parallel-orchestration.md) |
+| US-6.1 | koni-agent-monitoring — content-free Claude Code usage reporter                                              | EPIC-6 | P1  | 5      | ✅ done | v0.28.0                     | [stories/US-6.1-koni-agent-monitoring.md](stories/US-6.1-koni-agent-monitoring.md)                   |
+| US-5.8 | koni-qc field absorption — exemplar bar + ERP hardening + reorg/learning (3 rounds; absorbs US-5.9, US-5.10) | EPIC-5 | P1  | 11     | ✅ done | v0.31.0 + v0.33.0 + v0.34.0 | [stories/US-5.8-layered-suites-report-quality.md](stories/US-5.8-layered-suites-report-quality.md)   |
 
-**Total**: **12 stories / 42 points** — ten EPIC-5 (the koni-qc drive,
+**Total**: **9 stories / 42 points** — seven EPIC-5 (the koni-qc drive,
 v0.16.0 → v0.34.0), one EPIC-3 post-completion enhancement (US-3.8 parallel
 orchestration), one EPIC-6 (US-6.1, the first product/client skill).
-Ships **FR-26 → FR-37**.
+Ships **FR-26 → FR-37**. (Consolidated 2026-07-03 per the story-granularity
+rule, [CONTEXT D33](CONTEXT.md): US-5.6 → US-5.3, US-5.9 + US-5.10 → US-5.8 —
+retired IDs are never reused. Points preserved: 42.)
 
 **Post-ship refinements shipped in-window, no new story (story-sprawl rule,
 [CONTEXT D14](CONTEXT.md)):**
@@ -58,6 +57,10 @@ Ships **FR-26 → FR-37**.
 - **v0.32.0** (07-03, refine FR-26 + FR-35): the 10× case-volume gap closed —
   step-9 cross-multiplication + atomicity + density sanity —
   [CONTEXT D29](CONTEXT.md).
+- **v0.35.0** (07-03, refine FR-21): the **story-granularity rule** in koni-harness
+  (one story = one deliverable; rounds extend the anchor) + the D33 consolidation
+  of this very sprint's board (12 → 9 rows, points preserved) —
+  [CONTEXT D33](CONTEXT.md).
 
 ## Sprint goal recap
 

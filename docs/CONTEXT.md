@@ -1072,7 +1072,7 @@ the next repo gets the Senti-Quant-grade structure by default, not by diligence.
 
 **Date**: 2026-07-01
 **Version**: 0.25.0
-**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2/§4), [traceability.md](../skills/koni-qc/references/traceability.md) (Covered-by), [scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), [onboarding-audit.md](../skills/koni-setup/references/onboarding-audit.md), [test-report.md](../skills/koni-docs/references/templates/test-report.md), [US-5.6](sprints/stories/US-5.6-test-doc-standardization.md), CHANGELOG [0.25.0].
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md), [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2/§4), [traceability.md](../skills/koni-qc/references/traceability.md) (Covered-by), [scaffold-checklist.md](../skills/koni-setup/references/scaffold-checklist.md), [onboarding-audit.md](../skills/koni-setup/references/onboarding-audit.md), [test-report.md](../skills/koni-docs/references/templates/test-report.md), [US-5.3 round 2 (was US-5.6)](sprints/stories/US-5.3-test-organization.md), CHANGELOG [0.25.0].
 
 ### D23. Whole-project QC needs a layer above the per-epic lifecycle: a QA-tracking epic, a Definition-of-Done, and a depth bar — else it ships specs-only and thin stubs
 
@@ -1411,7 +1411,7 @@ vocabulary (ops-deploy) replaced fudging; and density stopped being advisory.
 
 **Date**: 2026-07-03
 **Version**: 0.33.0
-**Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2 frozen contract + enforcer, §4 CI/typecheck), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [traceability.md](../skills/koni-qc/references/traceability.md) (4 forms), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (Band D), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (design-docs-first + fan-out), [live-harness.md](../skills/koni-qc/references/live-harness.md), LESSONS §10, [US-5.9](sprints/stories/US-5.9-field-hardening.md), CHANGELOG [0.33.0].
+**Reference**: [test-automation.md](../skills/koni-qc/references/test-automation.md) (§2 frozen contract + enforcer, §4 CI/typecheck), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [traceability.md](../skills/koni-qc/references/traceability.md) (4 forms), [quality-bar.md](../skills/koni-qc/references/quality-bar.md) (Band D), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (design-docs-first + fan-out), [live-harness.md](../skills/koni-qc/references/live-harness.md), LESSONS §10, [US-5.8 round 2](sprints/stories/US-5.8-layered-suites-report-quality.md), CHANGELOG [0.33.0].
 
 ### D31. koni-qc becomes a learning harness: field reorg absorbed (per-US specs, date-first reports), five Covered-by forms + lane-aware enforcement, and the regression-learning loop
 
@@ -1457,7 +1457,7 @@ they become gated loop inputs rather than good intentions.
 
 **Date**: 2026-07-03
 **Version**: 0.34.0
-**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) (§1 v2 layout, §5 formula), [regression-learning.md](../skills/koni-qc/references/regression-learning.md), [traceability.md](../skills/koni-qc/references/traceability.md) (5 forms), [test-automation.md](../skills/koni-qc/references/test-automation.md) (lane-aware enforcer, date-first validator), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (change sweep at Frame + learning loop at Release), [US-5.10](sprints/stories/US-5.10-field-org-learning.md), CHANGELOG [0.34.0].
+**Reference**: [test-organization.md](../skills/koni-qc/references/test-organization.md) (§1 v2 layout, §5 formula), [regression-learning.md](../skills/koni-qc/references/regression-learning.md), [traceability.md](../skills/koni-qc/references/traceability.md) (5 forms), [test-automation.md](../skills/koni-qc/references/test-automation.md) (lane-aware enforcer, date-first validator), [qc-report.mjs](../skills/koni-qc/scripts/qc-report.mjs), [qc-workflow.md](../skills/koni-qc/references/qc-workflow.md) (change sweep at Frame + learning loop at Release), [US-5.8 round 3](sprints/stories/US-5.8-layered-suites-report-quality.md), CHANGELOG [0.34.0].
 
 ### D32. Documentation-honesty audit: the sprint layer lied — W26 was stretched past its end date and 8 stories shipped without points
 
@@ -1499,3 +1499,36 @@ than no record, because they read as verified. LESSONS §12.
 **Date**: 2026-07-03
 **Version**: 0.34.0 (docs-only correction)
 **Reference**: [sprint-2026-W26](sprints/sprint-2026-W26.md), [sprint-2026-W27](sprints/sprint-2026-W27.md), [story template](../skills/koni-docs/references/templates/story.md), LESSONS §12.
+
+### D33. Story granularity is a hard rule: one story = one deliverable — rounds extend the anchor story, sprawl is consolidated, retired IDs never return
+
+**Context**: after the D32 honesty audit, the user's next directive (2026-07-03):
+"Không cần tổ chức quá nhiều US không cần thiết để đỡ vụn vặt" — don't fragment work
+into unnecessary stories; consolidate where possible; teach koni-harness the lesson.
+The W27 board showed the smell: three same-theme ERP-absorption rounds (US-5.8 →
+US-5.10) created in two days, and US-5.6 which was round 2 of US-5.3's theme.
+
+**Decision** (v0.35.0, no new story — the rule applied to itself; refines FR-21):
+
+1. **The rule (koni-harness `agentic-loop-standard.md`, Frame)**: a new US only for a
+   new FR-worthy deliverable. A round/phase/hardening/absorption of an existing
+   story's theme **extends the anchor story** (`## Round N` section + AC + points +
+   appended `version_shipped`/`commit`). Refinements of an existing FR get **no
+   story** (sprint note + CHANGELOG + CONTEXT — the D14 pattern). Litmus test: two
+   stories that share one Goal sentence with only the version changing are one story.
+2. **Consolidation applied**: US-5.6 → US-5.3 round 2 (6 pts); US-5.9 + US-5.10 →
+   US-5.8 rounds 2–3 (11 pts). EPIC-5: 10 → 7 stories; W27: 12 → 9 rows, 42 pts
+   preserved. Every reference repointed; absorbed files deleted (content lives in the
+   anchor stories' Round sections).
+3. **Retired IDs are permanent**: `US-5.6`, `US-5.9`, `US-5.10` join the D14 phase
+   IDs — never reused, always noted as "was US-X.Y" where history (commit messages,
+   old CHANGELOG entries) cites them.
+
+**Why**: story count is not progress — each US costs frontmatter, sprint rows, epic
+rows, FR links, and audit surface (D32 found 8 of the sprawled stories missing
+points). Fewer, deliverable-shaped stories keep the board readable and the doc layer
+auditable. Extends D14 from "phases of one build" to "rounds of one theme".
+
+**Date**: 2026-07-03
+**Version**: 0.35.0
+**Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md), [US-5.3](sprints/stories/US-5.3-test-organization.md), [US-5.8](sprints/stories/US-5.8-layered-suites-report-quality.md), [sprint-2026-W27](sprints/sprint-2026-W27.md), LESSONS §13, CHANGELOG [0.35.0]. (Known follow-up: `koni-docs validate` does not check markdown links inside CONTEXT.md Reference lines — the re-grade found a broken one it had passed; extend the validator.)

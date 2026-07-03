@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.35.0] — 2026-07-03 — story-granularity rule in koni-harness + US consolidation (refines FR-21) — v0.35.0
+
+User directive: stop fragmenting work into unnecessary tiny stories; consolidate
+where possible. CONTEXT D33; LESSONS §13.
+
+### Changed — `skills/koni-harness/`
+
+- **`agentic-loop-standard.md`** — new hard rule at Frame: **one story = one
+  deliverable, not one work-session**. A follow-up round extends the anchor story
+  (`## Round N` + points + appended version/commit), never a new US; refinements of
+  an existing FR get no story at all; existing sprawl is consolidated (merge, repoint
+  every reference, sum points, retire IDs forever with a visible "was US-X.Y" note).
+- **`SKILL.md`** — description gains the consolidate/merge-stories/story-sprawl
+  triggers (1015/1024).
+
+### Changed — `docs/` (the consolidation itself)
+
+- **US-5.6 → US-5.3 round 2** (test-doc standardization was a second round of the
+  test-organization theme; 3+3 = 6 pts).
+- **US-5.9 + US-5.10 → US-5.8 rounds 2–3** (three same-theme ERP-absorption rounds
+  in 2 days; 3+5+3 = 11 pts). EPIC-5 now 7 stories; sprint-2026-W27 now 9 rows /
+  42 pts (points preserved). Retired IDs `US-5.6`/`US-5.9`/`US-5.10` are never
+  reused; epic pillars/FR/story tables, PRD index, CONTEXT links, and `depends_on`
+  all repointed.
+
 ## [0.34.0] — 2026-07-03 — koni-qc: field reorg absorbed + the regression-learning harness loop (US-5.10, FR-37) — v0.34.0
 
 Three user directives: absorb the ERP-02 test-doc reorg; make koni-qc a harness that

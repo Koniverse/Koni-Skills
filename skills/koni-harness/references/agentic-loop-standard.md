@@ -33,6 +33,32 @@ between its stages.
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
 
+> **Story granularity — one story = one deliverable, not one work-session
+> (anti-sprawl, a hard rule at Frame).** Before creating a new US, ask: *is this
+> a new FR-worthy deliverable, or a round/phase/hardening/absorption of an
+> existing story's theme?* A follow-up round **extends the anchor story** — a
+> new `## Round N` section + AC, points added, `version_shipped`/`commit`
+> appended — it does NOT get its own US. Post-ship refinements that refine an
+> existing FR get **no story at all** (a sprint-file note + CHANGELOG + CONTEXT
+> suffice). When sprawl has already happened, **consolidate**: merge the rounds
+> into the anchor story, delete the absorbed files, repoint every reference
+> (epic pillars/FR/story tables, sprint rows, CONTEXT links, `depends_on`), sum
+> the points, and **retire the absorbed IDs forever** (never reuse). Deleting
+> the absorbed *files* is not erasing *history*: immutable citations (commit
+> messages, old CHANGELOG entries) keep the old IDs, so every absorbing story
+> and repointed row carries a visible "was US-X.Y" note that keeps them
+> resolvable. **Close out with verification**: grep the repo for the retired
+> filenames (expect zero links) and run the doc validator — the one time this
+> rule was first applied, one stale link survived the manual repoint. A new
+> Round on a shipped story flips its status back to `in-progress` until the
+> round's AC are `[x]` (dependents' readiness in the sprint sequencer follows
+> the status, as usual). Refinements-without-a-story do not violate stage 1's
+> "a story exists" entry gate — they enter as tier-0/1 changes (see the
+> right-sizing tier table), which skip Frame. Precedents: CONTEXT D14 (5
+> harness phase-stories → US-3.3), D33 (koni-qc rounds → US-5.3 / US-5.8).
+> Test: if two stories would share one Goal sentence with only the version
+> changing, they are one story.
+>
 > **Tool split — brainstorm vs implement vs review (a hard rule).**
 > *Brainstorm / plan* uses **Superpowers** (brainstorming, writing-plans) and
 > **gstack** (plan-reviews, office-hours). *Implement* uses **Anthropic Skills
