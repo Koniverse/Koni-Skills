@@ -5,7 +5,7 @@ epic: EPIC-1
 status: done
 priority: P0
 points: 2
-sprint: sprint-2026-W21
+sprint: sprint-2026-W22
 version_shipped: 0.2.0
 prd_ref: FR-12
 assignee: saltict

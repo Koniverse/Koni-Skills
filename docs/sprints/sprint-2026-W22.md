@@ -18,6 +18,13 @@ Stories are listed by ID; the `Pillar` column shows the natural execution group 
 
 | US      | Title                                                                 | Epic   | Pri | Points | Status | Pillar | Ship         | Story file                                                                                               |
 | ------- | --------------------------------------------------------------------- | ------ | --- | ------ | ------ | ------ | ------------ | -------------------------------------------------------------------------------------------------------- |
+| US-1.2  | Add file-extracted active-context pattern (skill)                     | EPIC-1 | P0  | 3      | ✅ done | A      | v0.2.0       | [stories/US-1.2-active-context-split-pattern.md](stories/US-1.2-active-context-split-pattern.md)         |
+| US-1.3  | Add RULE-15: assignee = GitHub login                                  | EPIC-1 | P0  | 2      | ✅ done | A      | v0.2.0       | [stories/US-1.3-rule-15-assignee-github-login.md](stories/US-1.3-rule-15-assignee-github-login.md)       |
+| US-1.4  | Document AGENTS-canonical convention in skill                         | EPIC-1 | P1  | 1      | ✅ done | A      | v0.2.0       | [stories/US-1.4-agents-canonical-convention.md](stories/US-1.4-agents-canonical-convention.md)           |
+| US-2.1  | Bootstrap docs/ scaffolding                                           | EPIC-2 | P0  | 5      | ✅ done | A      | v0.2.0       | [stories/US-2.1-bootstrap-docs-structure.md](stories/US-2.1-bootstrap-docs-structure.md)                 |
+| US-2.2  | Wire CLAUDE.md + AGENTS.md integration (Pattern B)                    | EPIC-2 | P0  | 3      | ✅ done | A      | v0.2.0       | [stories/US-2.2-wire-integration-blocks.md](stories/US-2.2-wire-integration-blocks.md)                   |
+| US-2.3  | Seed VERSION + CHANGELOG from git history                             | EPIC-2 | P1  | 2      | ✅ done | A      | v0.2.0       | [stories/US-2.3-version-changelog-seed.md](stories/US-2.3-version-changelog-seed.md)                     |
+| US-2.4  | Apply AGENTS-canonical convention to this repo                        | EPIC-2 | P1  | 1      | ✅ done | A      | v0.2.0       | [stories/US-2.4-apply-agents-canonical.md](stories/US-2.4-apply-agents-canonical.md)                     |
 | US-1.5  | Real-world template + script audit (KFF + senti\_quant)               | EPIC-1 | P0  | 8      | ✅ done | A      | v0.3.0       | [stories/US-1.5-real-world-template-script-audit.md](stories/US-1.5-real-world-template-script-audit.md) |
 | US-4.5  | Lib core — corpus + doc module                                        | EPIC-4 | P0  | 5      | ✅ done | B      | v0.4.0-dev.0 | [stories/US-4.5-lib-corpus-doc.md](stories/US-4.5-lib-corpus-doc.md)                                     |
 | US-4.6  | Lib core — sections + tables (column-by-NAME, W22 fix)                | EPIC-4 | P0  | 5      | ✅ done | B      | v0.4.0-dev.0 | [stories/US-4.6-lib-sections-tables.md](stories/US-4.6-lib-sections-tables.md)                           |
@@ -55,7 +62,10 @@ Stories are listed by ID; the `Pillar` column shows the natural execution group 
 | US-4.35 | Viewer `/project` `?view=` URL persist + `?warn=1` shim               | EPIC-4 | P1  | 1      | ✅ done | G      | v0.8.0       | [stories/US-4.35-viewer-url-view-persist.md](stories/US-4.35-viewer-url-view-persist.md)                 |
 | US-4.36 | Viewer `/project` footer + UNION buckets + default sort               | EPIC-4 | P1  | 2      | ✅ done | G      | v0.8.0       | [stories/US-4.36-viewer-footer-union-sort.md](stories/US-4.36-viewer-footer-union-sort.md)               |
 
-**Total**: **36 stories / 124 points** — all shipped (28 at v0.7.0 + US-4.29 at v0.7.2 + US-4.30 at v0.7.3 + US-4.31..4.36 at v0.8.0). EPIC-1 closes at 100% via US-1.5 (5/5 stories, 27/27 pts cumulative including W21 + W19); EPIC-4 closes at 100% (36/36 stories, 116/116 pts) across Pillars B–G.
+**Total**: **43 stories / 141 points** — the 7 v0.2.0 stories moved here from
+W21 per the sprint-membership rule (shipped 05-27, inside this window —
+[CONTEXT D34](CONTEXT.md)) + the 36 original W22 stories (28 at v0.7.0 +
+US-4.29 at v0.7.2 + US-4.30 at v0.7.3 + US-4.31..4.36 at v0.8.0). EPIC-1 closes at 100% via US-1.5 (5/5 stories, 27/27 pts cumulative including W21 + W19); EPIC-4 closes at 100% (36/36 stories, 116/116 pts) across Pillars B–G.
 
 ## Sprint goal recap (post-mortem)
 

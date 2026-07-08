@@ -1532,3 +1532,38 @@ auditable. Extends D14 from "phases of one build" to "rounds of one theme".
 **Date**: 2026-07-03
 **Version**: 0.35.0
 **Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md), [US-5.3](sprints/stories/US-5.3-test-organization.md), [US-5.8](sprints/stories/US-5.8-layered-suites-report-quality.md), [sprint-2026-W27](sprints/sprint-2026-W27.md), LESSONS §13, CHANGELOG [0.35.0]. (Known follow-up: `koni-docs validate` does not check markdown links inside CONTEXT.md Reference lines — the re-grade found a broken one it had passed; extend the validator.)
+
+### D34. US field completeness is a gate, not a habit — `story-lint` blocks release commits on incomplete stories (and its first run caught two-month-old drift)
+
+**Context**: after D32 (incomplete/mis-filed stories) the user directed: koni-harness
+must ALWAYS check that US files are fully filled — the incident must be structurally
+unrepeatable. Per LESSONS §10 ("a contract written in prose breeds silent loss"), the
+requirement ships as an executable check with a frozen self-test, wired into the gate.
+
+**Decision** (v0.36.0, no new story — refines FR-21 + FR-22):
+
+1. **`checks/story-lint.sh`** (POSIX sh, + 13-assertion self-test): mandatory
+   frontmatter present; `points` a positive integer (Fibonacci single-round; summed
+   when consolidated per D33); `id` = filename prefix; the `sprint:` file exists and
+   **did not end before `created:`** (the exact D32 bug, now mechanical); `done` ⇒
+   real `commit:`, with `pending` tolerated only while `updated:` is today (the
+   same-day backfill window D32 codified).
+2. **Default `release-commit` / `block`** — the one new check that starts at block,
+   not warn: an incomplete story is never a judgment call. Wired into `gates.conf`,
+   gate-catalog (check 7), the Doc + Version gate entry criteria, and the D33
+   story-granularity callout.
+3. **First-run evidence**: run against this repo, the check immediately caught the
+   same class from 2026-05 — the 7 v0.2.0 stories filed in W21 (ended 05-24) but
+   shipped 05-27 (the W22 window). Corrected: stories → sprint-2026-W22 (43 stories /
+   141 pts), correction notes in both sprint files. The recurrence two months apart
+   is the proof this needed a gate, not a lesson.
+
+**Why**: D32's lesson said "check the container before filing into it" — but a lesson
+is advice, and advice decays. A blocking check with a self-test is the only form in
+which "always kiểm tra US đã fill đầy đủ chưa" stays true after everyone forgets this
+week. Extends the D26 principle (the loop writes lessons) to: the loop **enforces**
+the lessons it can mechanize.
+
+**Date**: 2026-07-03
+**Version**: 0.36.0
+**Reference**: [story-lint.sh](../skills/koni-harness/scripts/checks/story-lint.sh), [story-lint-test.sh](../skills/koni-harness/scripts/__tests__/story-lint-test.sh), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md), [sprint-2026-W21](sprints/sprint-2026-W21.md) / [W22](sprints/sprint-2026-W22.md) correction notes, LESSONS §12, CHANGELOG [0.36.0].

@@ -1,7 +1,7 @@
 # Gate catalog — the built-in checks
 
 The gate is driven by `gates.conf`, a line-oriented config read by
-`gate-runner.sh`. This file documents the six built-in checks that ship in the
+`gate-runner.sh`. This file documents the seven built-in checks that ship in the
 default `gates.conf`, the config grammar, and how to add your own check.
 
 For how the runner is wired into git / Claude Code / Gemini / Codex, see
@@ -10,7 +10,7 @@ For how the runner is wired into git / Claude Code / Gemini / Codex, see
 
 **Contents**: [Phases and severities](#phases-and-severities) ·
 [Invoking the release-commit phase](#invoking-the-release-commit-phase) ·
-[The six built-in checks](#the-six-built-in-checks) ·
+[The seven built-in checks](#the-seven-built-in-checks) ·
 [Config grammar](#config-grammar) · [Adding a custom check](#adding-a-custom-check)
 
 ---
@@ -61,18 +61,19 @@ What that means for what fires automatically on a normal `git commit`:
 | `credential-scan` | `work-commit`, `pre-push` | **Yes** — on commit and on push |
 | `changelog-anchor` | `release-commit` | No — release-commit only |
 | `story-status` | `release-commit` | No — release-commit only |
+| `story-lint` | `release-commit` | No — release-commit only |
 | `koni-docs-validate` | `release-commit` | No — release-commit only |
 
 So `version-phase` — the critical 2-phase versioning gate — **does** run on
-every commit through the `pre-commit` hook. The three release-commit-only checks
-(`changelog-anchor`, `story-status`, `koni-docs-validate`) do **not** fire from
+every commit through the `pre-commit` hook. The four release-commit-only checks
+(`changelog-anchor`, `story-status`, `story-lint`, `koni-docs-validate`) do **not** fire from
 an ordinary commit; they are opt-in at release time, run only when you (or CI)
 invoke `--phase release-commit`. Installing the hooks does not, on its own,
 enforce release-time checks.
 
 ---
 
-## The six built-in checks
+## The seven built-in checks
 
 ### `version-phase`
 
@@ -142,6 +143,31 @@ enforce release-time checks.
 - **`gates.conf` row**:
   ```
   story-status         | checks/story-status-consistency.sh | release-commit             | warn  |
+  ```
+
+### `story-lint`
+
+- **What it asserts**: every US story's frontmatter is **complete and true at
+  write time** — mandatory fields present (`id · title · epic · status ·
+  priority · points · sprint · assignee · commit · created · updated`, +
+  `version_shipped` when done); `points` a positive integer (Fibonacci for a
+  single-round story; a consolidated story carries the sum of its rounds); `id`
+  matches the filename prefix; the `sprint:` file exists **and did not end
+  before `created:`** (the "filed into a closed sprint" bug); `status: done` ⇒
+  a real `commit:` (`pending` tolerated only while `updated:` is today — the
+  same-day backfill window). Missing stories directory → pass.
+- **Phase(s)**: `release-commit`
+- **Default severity**: `block` — unlike style checks, an incomplete story is
+  never a judgment call.
+- **Generalizes from**: the Koni-Skills honesty audit (CONTEXT D32: 8 stories
+  shipped without `points:`, 12 filed into an ended sprint; LESSONS §12). On
+  its **first run** it caught the same drift from two months earlier (7
+  v0.2.0 stories, D34) — the class recurs whenever it isn't gated.
+- **Self-test**: `__tests__/story-lint-test.sh` (13 assertions freezing the
+  D32 failure classes).
+- **`gates.conf` row**:
+  ```
+  story-lint           | checks/story-lint.sh               | release-commit             | block |
   ```
 
 ### `koni-docs-validate`

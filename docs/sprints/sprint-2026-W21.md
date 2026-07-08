@@ -13,15 +13,13 @@ goal: >-
 
 | US     | Title                                              | Epic   | Pri | Points | Status | Pillar | Ship   | Story file                                                                                         |
 | ------ | -------------------------------------------------- | ------ | --- | ------ | ------ | ------ | ------ | -------------------------------------------------------------------------------------------------- |
-| US-1.2 | Add file-extracted active-context pattern (skill)  | EPIC-1 | P0  | 3      | ✅ done | A      | v0.2.0 | [stories/US-1.2-active-context-split-pattern.md](stories/US-1.2-active-context-split-pattern.md)   |
-| US-1.3 | Add RULE-15: assignee = GitHub login               | EPIC-1 | P0  | 2      | ✅ done | A      | v0.2.0 | [stories/US-1.3-rule-15-assignee-github-login.md](stories/US-1.3-rule-15-assignee-github-login.md) |
-| US-1.4 | Document AGENTS-canonical convention in skill      | EPIC-1 | P1  | 1      | ✅ done | A      | v0.2.0 | [stories/US-1.4-agents-canonical-convention.md](stories/US-1.4-agents-canonical-convention.md)     |
-| US-2.1 | Bootstrap docs/ scaffolding                        | EPIC-2 | P0  | 5      | ✅ done | A      | v0.2.0 | [stories/US-2.1-bootstrap-docs-structure.md](stories/US-2.1-bootstrap-docs-structure.md)           |
-| US-2.2 | Wire CLAUDE.md + AGENTS.md integration (Pattern B) | EPIC-2 | P0  | 3      | ✅ done | A      | v0.2.0 | [stories/US-2.2-wire-integration-blocks.md](stories/US-2.2-wire-integration-blocks.md)             |
-| US-2.3 | Seed VERSION + CHANGELOG from git history          | EPIC-2 | P1  | 2      | ✅ done | A      | v0.2.0 | [stories/US-2.3-version-changelog-seed.md](stories/US-2.3-version-changelog-seed.md)               |
-| US-2.4 | Apply AGENTS-canonical convention to this repo     | EPIC-2 | P1  | 1      | ✅ done | A      | v0.2.0 | [stories/US-2.4-apply-agents-canonical.md](stories/US-2.4-apply-agents-canonical.md)               |
-
-**Total**: **7 stories / 17 points** — all shipped in **v0.2.0**. EPIC-1 partial close at the end of W21 (3 of 4 EPIC-1 stories shipped; US-1.5 carries to W22 as v0.3.0); EPIC-2 closes at 100% (4/4 stories, 11/11 points).
+> **Correction note (2026-07-03, [CONTEXT D34](CONTEXT.md))**: the 7 v0.2.0
+> stories planned here (US-1.2 → US-1.4, US-2.1 → US-2.4, 17 pts) actually
+> shipped **2026-05-27** — inside the W22 window — and their story files were
+> created that same day. Per the sprint-membership rule (D32) they now live in
+> [sprint-2026-W22](sprint-2026-W22.md). W21's narrative below is kept as
+> history of the planning/work that started here; the v0.2.0 *ship* belongs to
+> W22. The first run of the `story-lint` gate caught this months-old drift.
 
 ## Sprint goal recap (post-mortem)
 

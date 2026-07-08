@@ -136,6 +136,14 @@ editHistory:
       (EPIC-5 10 -> 7 stories, points preserved). CONTEXT D33; LESSONS §13.
   - date: '2026-07-03'
     changes: >-
+      Refine FR-21 + FR-22 (story-lint, v0.36.0): US frontmatter completeness
+      becomes a blocking release-commit gate — checks/story-lint.sh + a
+      13-assertion self-test (mandatory fields, integer points, id-filename
+      match, sprint-window sanity, same-day pending window). First run caught
+      the 2026-05 W21->W22 drift (7 v0.2.0 stories moved; correction notes).
+      CONTEXT D34.
+  - date: '2026-07-03'
+    changes: >-
       Refine FR-26 + FR-35 (no new capability — derivation rules): close the 10x
       case-volume gap (exemplar 154 TC/US vs koni-qc ~3 TC/US on ERP-02).
       test-design step 9 makes cross-multiplying shared classes x surfaces

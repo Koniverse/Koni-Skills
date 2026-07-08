@@ -61,6 +61,9 @@ retired IDs are never reused. Points preserved: 42.)
   (one story = one deliverable; rounds extend the anchor) + the D33 consolidation
   of this very sprint's board (12 → 9 rows, points preserved) —
   [CONTEXT D33](CONTEXT.md).
+- **v0.36.0** (07-03, refine FR-21 + FR-22): **`story-lint`** — US field
+  completeness becomes a blocking release-commit gate (13-assertion self-test);
+  first run caught the W21→W22 drift from 2026-05 — [CONTEXT D34](CONTEXT.md).
 
 ## Sprint goal recap
 

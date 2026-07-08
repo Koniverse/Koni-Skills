@@ -30,7 +30,7 @@ between its stages.
 | 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; LESSONS skimmed; DESIGN read if UI |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
-| 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]` |
+| 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`) |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
 
 > **Story granularity — one story = one deliverable, not one work-session
@@ -57,7 +57,11 @@ between its stages.
 > right-sizing tier table), which skip Frame. Precedents: CONTEXT D14 (5
 > harness phase-stories → US-3.3), D33 (koni-qc rounds → US-5.3 / US-5.8).
 > Test: if two stories would share one Goal sentence with only the version
-> changing, they are one story.
+> changing, they are one story. **Field completeness is mechanically gated**:
+> the `story-lint` check ([`gate-catalog.md`](gate-catalog.md)) blocks a
+> release commit while any story is missing a mandatory field, sits in a sprint
+> that ended before it was created, or holds a stale `commit: pending` — fill
+> every field at creation, don't wait for the gate to catch you.
 >
 > **Tool split — brainstorm vs implement vs review (a hard rule).**
 > *Brainstorm / plan* uses **Superpowers** (brainstorming, writing-plans) and

@@ -16,6 +16,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.36.0] — 2026-07-03 — story-lint: US field completeness is a blocking gate (refines FR-21 + FR-22) — v0.36.0
+
+User directive: koni-harness must always verify story fields are fully filled —
+never repeat the D32 incomplete-US incident. Per LESSONS §10, the rule ships as
+code + gate, not prose. CONTEXT D34.
+
+### Added — `skills/koni-harness/`
+
+- **`scripts/checks/story-lint.sh`** (+ `__tests__/story-lint-test.sh`, 10
+  assertions): per US story — mandatory frontmatter present (id/title/epic/
+  status/priority/points/sprint/assignee/commit/created/updated +
+  version_shipped when done), points a positive integer, id matches filename,
+  the sprint file exists **and did not end before `created:`**, done ⇒ real
+  commit (`pending` only within the same-day backfill window). Default
+  `release-commit` / **block** in `gates.conf`; gate-catalog gains check §7
+  (six → seven built-ins); the Doc + Version gate entry and the
+  story-granularity callout point at it.
+
+### Changed — `docs/` (first-run catch)
+
+- On its first run against this very repo, story-lint caught the **same D32
+  drift from two months earlier**: the 7 v0.2.0 stories (US-1.2 → US-1.4,
+  US-2.1 → US-2.4) were filed in sprint-2026-W21 (ended 05-24) but shipped
+  05-27, inside W22. Moved to sprint-2026-W22 (now 43 stories / 141 pts) with
+  correction notes in both sprint files (D34). Repo now lints clean.
+
 ## [0.35.0] — 2026-07-03 — story-granularity rule in koni-harness + US consolidation (refines FR-21) — v0.35.0
 
 User directive: stop fragmenting work into unnecessary tiny stories; consolidate
