@@ -151,6 +151,19 @@ updated: 2026-07-01
 EOF
 assert_exit 1 "quoted missing sprint fails" "$d"
 
+# 14. story created ON/AFTER 2026-07-04 without a "Lessons applied:" line → fail (D35)
+d=$(scaffold); story "$d" US-9.1-good.md US-9.1 done 3 sprint-2026-W27 abc1234 2026-07-04 2026-07-04
+assert_exit 1 "new story without Lessons-applied fails" "$d"
+
+# 15. same story WITH the line → pass
+d=$(scaffold); story "$d" US-9.1-good.md US-9.1 done 3 sprint-2026-W27 abc1234 2026-07-04 2026-07-04
+printf '\n**Lessons applied**: §9, §12 — POSIX iteration + honest fields.\n' >> "$d/docs/sprints/stories/US-9.1-good.md"
+assert_exit 0 "new story with Lessons-applied passes" "$d"
+
+# 16. story created BEFORE the adoption date needs no line (no retro-fail)
+d=$(scaffold); story "$d" US-9.1-good.md US-9.1 done 3 sprint-2026-W27 abc1234 2026-07-01 2026-07-01
+assert_exit 0 "pre-adoption story exempt from Lessons-applied" "$d"
+
 echo
 echo "story-lint-test: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

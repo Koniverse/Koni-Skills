@@ -14,6 +14,9 @@
 #      story's created date (the D32 bug: filing new work into a closed sprint)
 #   5. status: done ⇒ commit is a real ref — `pending` tolerated only while
 #      updated == today (the same-day backfill window)
+#   6. stories created on/after 2026-07-04 (the D35 adoption date) carry a
+#      "Lessons applied:" line — evidence the repo's LESSONS.md was READ at
+#      Frame (cited sections or an explicit "none — <why>"), not skimmed
 set -eu
 dir=docs/sprints/stories
 [ -d "$dir" ] || exit 0
@@ -58,6 +61,12 @@ for f in "$dir"/US-*.md; do
         fail "$f: created $created but sprint '$sprint' ended $send — open the next sprint file (LESSONS §12)"
       fi
     fi
+  fi
+
+  # rule 6 — read-evidence (date-gated: applies to stories born after the rule)
+  if [ -n "$created" ] && [ ! "$created" \< "2026-07-04" ]; then
+    grep -Eq '^[[:space:]>*-]*\**Lessons applied\**:' "$f" ||
+      fail "$f: created $created but no 'Lessons applied:' line — cite the LESSONS.md sections read at Frame (or 'none — <why>'); D35"
   fi
 
   if [ "$status" = done ]; then

@@ -64,6 +64,10 @@ retired IDs are never reused. Points preserved: 42.)
 - **v0.36.0** (07-03, refine FR-21 + FR-22): **`story-lint`** — US field
   completeness becomes a blocking release-commit gate (13-assertion self-test);
   first run caught the W21→W22 drift from 2026-05 — [CONTEXT D34](CONTEXT.md).
+- **v0.37.0** (07-04, refine FR-21 + FR-22): the **lessons loop always-on** —
+  read-with-citation at entry (`Lessons applied:`, story-lint rule 6) +
+  write-with-verdict at exit (`lesson-capture` gate: a LESSONS entry or
+  `Lessons: none new — <reason>` in the release commit) — [CONTEXT D35](CONTEXT.md).
 
 ## Sprint goal recap
 

@@ -23,7 +23,10 @@ Five sections, in order:
 3. **Decisions** — the `### D<n>.` decision titles from `docs/CONTEXT.md`
    (titles only), followed by a pointer to the full bodies.
 4. **Lessons** — the `## <n>.` lesson titles from `docs/LESSONS.md`
-   (titles only), followed by a pointer to the full bodies.
+   (titles only), followed by a pointer to the full bodies. The digest is the
+   **read index**, not the read: at Frame/Execute entry the loop opens the
+   sections whose titles touch the task and cites them (`Lessons applied:` —
+   the lessons-loop rule in [`agentic-loop-standard.md`](agentic-loop-standard.md)).
 5. **Canonical references** — fixed pointers to `AGENTS.md`, the
    `skills/koni-harness` standard, and a reminder that the digest is a summary.
 

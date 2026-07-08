@@ -5,12 +5,12 @@ description: >
   commit/release safety net — e.g. the user says "set up the harness", "install
   the gate", "add the gate", "wire verification gates", "pre-commit gate",
   "pre-push gate", "agentic loop", "harness engineering", "right-size the
-  process", or "make the loop portable across Claude / Cursor / Codex / Gemini" —
-  even if they don't name koni-harness. Also use when a change risks a bad
-  version bump, a missing changelog anchor, leaked secrets, or broken doc
-  references, when deciding how much process a change needs, when stories get
-  too small/fragmented (consolidate / merge user stories, story sprawl), or
-  when picking the next dependency-ready story to work on. Also use to run work **multi-agent / in
+  process", or "make the loop portable across Claude / Cursor / Codex / Gemini". Also use when a change risks a bad version bump, a
+  missing changelog anchor, leaked secrets, or broken doc references; to
+  right-size process; when stories get too small/fragmented (consolidate /
+  merge stories, story sprawl); to learn from past mistakes (always read +
+  write LESSONS.md, lesson verdict); or to pick the next dependency-ready
+  story. Also use to run work **multi-agent / in
   parallel** — "run the sprint in parallel", "swarm the ready stories", "run
   multiple stories at once", "fan out the review/tests across agents", or "the loop
   only runs one thing at a time — parallelize it" (the swarm planner + worktree-per-story).
@@ -46,9 +46,13 @@ context load order (`AGENTS.md` → `CLAUDE.md` → `LESSONS.md` → `CONTEXT.md
 `.active-context.md`), and a portability contract (a capability is "in the
 harness" only if its core is tool-neutral and its adapter is thin). Full text:
 [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md).
-The loop **reads** `LESSONS.md` at Execute and **writes** one back at the Doc/Version
-gate when a trap/pattern surfaces (via koni-docs `templates/lessons.md`, same commit) —
-a conditional process step, not a gate.
+The **lessons loop is always-on and gated** (v0.37.0): the loop **reads**
+`LESSONS.md` at Frame/Execute entry and **cites** what applied (`Lessons applied:`
+— story-lint enforces it on new stories), and every completed task **records a
+verdict** at the Doc/Version gate — a `LESSONS.md` entry (koni-docs
+`templates/lessons.md`, same commit) or an explicit `Lessons: none new — <reason>`
+line, enforced by the blocking `lesson-capture` release-commit check. The gate
+enforces that the verdict is recorded, never which way it went.
 
 The loop runs in **two execution modes** over the *same* stages and gates:
 **single-agent** (one story at a time — [`loop-runner.md`](references/loop-runner.md))
@@ -89,7 +93,7 @@ sh .koni-harness/gate-runner.sh --phase pre-push
 ```
 
 A failing `block` check exits non-zero (stop and fix); a failing `warn` check
-prints `WARN:` and lets the commit through. The six built-in checks, the config
+prints `WARN:` and lets the commit through. The seven built-in checks, the config
 grammar, and how to add your own are in
 [`references/gate-catalog.md`](references/gate-catalog.md); how to wire the
 runner into git / Claude Code / Gemini / Codex / Cursor is in
@@ -203,7 +207,7 @@ Load on demand based on what you're doing:
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
 | [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
-| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the six built-in checks, the `gates.conf` grammar, or adding a custom check |
+| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the seven built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
 | [`references/sprint-sequencer.md`](references/sprint-sequencer.md) | Picking the next dependency-ready story or reading sprint status with `sprint.sh` (`next`/`status`, readiness + ordering, CLI flags/defaults, exit codes, limits) |

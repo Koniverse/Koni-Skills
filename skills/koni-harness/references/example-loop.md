@@ -30,7 +30,9 @@ sh .koni-harness/loop.sh start US-7.3 --tier 2
 sh .koni-harness/loop.sh enter frame
 ```
 
-Flip the story to `in-progress` (koni-docs). Skim `LESSONS.md`. Because this is
+Flip the story to `in-progress` (koni-docs). **Read `LESSONS.md` and cite it** —
+add `Lessons applied: §<n> — <how>` (or `none — <why>`) to the story; story-lint
+checks the line on new stories. Because this is
 UI, **read `DESIGN.md`** now (and build on **shadcn** primitives + the repo's
 tokens — the review will enforce both) — it is the Execute entry gate for UI work. If the
 shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD here — this is
@@ -83,7 +85,10 @@ sh .koni-harness/loop.sh enter doc-gate
 # story AC all [x]; bump VERSION; add the CHANGELOG entry; backfill the story SHA later
 # review surfaced a trap (the RPC probe hung with no timeout) → capture it as a lesson:
 #   append "## <n>. Always timeout an external RPC probe" to docs/LESSONS.md
-#   (koni-docs templates/lessons.md, same commit) — skip this if nothing was learned
+#   (koni-docs templates/lessons.md, same commit). Had NOTHING been learned, you
+#   would instead add the honest verdict line to the story/sprint note:
+#   "Lessons: none new — routine wiring, no trap surfaced" — the lesson-capture
+#   gate blocks a task-bearing release commit that records neither.
 npx koni-docs validate --docs-path docs/
 # → ✓ all references resolve
 ```

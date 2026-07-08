@@ -139,7 +139,15 @@ editHistory:
       Refine FR-21 + FR-22 (story-lint, v0.36.0): US frontmatter completeness
       becomes a blocking release-commit gate — checks/story-lint.sh + a
       13-assertion self-test (mandatory fields, integer points, id-filename
-      match, sprint-window sanity, same-day pending window). First run caught
+      match, sprint-window sanity, same-day pending window).
+  - date: '2026-07-04'
+    changes: >-
+      Refine FR-21 + FR-22 (lessons loop always-on, v0.37.0): read-with-citation
+      at Frame/Execute entry (Lessons applied: line; story-lint rule 6,
+      date-gated 2026-07-04) + write-with-verdict at the Doc gate (new
+      lesson-capture release-commit check: a LESSONS.md entry or an explicit
+      "Lessons: none new" with reason). The gate enforces recording, never
+      judgment. CONTEXT D35; LESSONS §14. First run caught
       the 2026-05 W21->W22 drift (7 v0.2.0 stories moved; correction notes).
       CONTEXT D34.
   - date: '2026-07-03'

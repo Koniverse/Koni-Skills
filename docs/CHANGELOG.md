@@ -16,6 +16,38 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.37.0] — 2026-07-04 — the lessons loop is always-on: read-with-citation + write-with-verdict, both gated (refines FR-21 + FR-22) — v0.37.0
+
+Two user directives: (1) always READ the repo's LESSONS.md before a development
+task; (2) always WRITE LESSONS.md on task completion so the loop re-learns.
+Built by dogfooding koni-harness on itself. CONTEXT D35.
+
+### Changed — `skills/koni-harness/`
+
+- **`agentic-loop-standard.md`** — the lessons-loop callout replaces the old
+  capture note: **read at entry is evidenced** (open the LESSONS sections whose
+  titles touch the task — the context-load digest is the index — and cite them in
+  the plan/story: `Lessons applied: §N — <how>` or `none — <why>`; per-repo when
+  working across repos) and **write at exit is a verdict** (same commit as
+  code+VERSION+CHANGELOG+CONTEXT: a LESSONS entry, or the honest
+  `Lessons: none new — <reason>` line). The gate enforces that the verdict was
+  recorded, never which way it went — forced lessons breed filler.
+- **NEW `scripts/checks/lesson-capture.sh`** (release-commit, block): a staged
+  diff touching anything outside docs/ must stage a LESSONS.md change or a
+  staged `Lessons: none new — <reason>` line; docs-only commits exempt.
+  + `__tests__/lesson-capture-test.sh` (12 assertions, bash + dash green).
+- **`checks/story-lint.sh`** — rule 6 (read evidence): stories created on/after
+  2026-07-04 must carry a `Lessons applied:` line; self-test 13 → 16 assertions.
+- **`gate-catalog.md`** §lesson-capture + updated §story-lint; **`gates.conf`**
+  lesson-capture row; **`context-load.md`** digest = read *index*, not the read;
+  **`SKILL.md`** description gains learn-from-past-mistakes / LESSONS triggers
+  (1009/1024).
+
+### Added — `docs/`
+
+- **LESSONS §14** — a lessons file only works as memory if reading is evidenced
+  and writing is a verdict; skimming and silence are the failure modes.
+
 ## [0.36.0] — 2026-07-03 — story-lint: US field completeness is a blocking gate (refines FR-21 + FR-22) — v0.36.0
 
 User directive: koni-harness must always verify story fields are fully filled —

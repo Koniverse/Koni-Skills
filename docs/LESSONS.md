@@ -468,3 +468,21 @@ consolidate and **retire the IDs forever** with visible "was US-X.Y" notes — i
 history (commit messages, old CHANGELOG entries) keeps citing the old IDs, so the
 retirement note is what keeps those citations resolvable. Full rule: CONTEXT D33 +
 koni-harness `agentic-loop-standard.md` §Story granularity.
+
+## 14. A lessons file is only memory if reading is evidenced and writing is a verdict
+
+**What happened**: the loop nominally "skimmed LESSONS on the way in" and "captured
+lessons if a trap surfaced" — yet the D32 audit and story-lint's first real run (D34)
+caught the *same field-hygiene class* recurring months apart. Nothing forced the loop
+to actually look, and nothing distinguished "no lesson this time" from "forgot to
+write".
+
+**The lesson**: for any cross-session memory file (LESSONS, CONTEXT, a change
+ledger), the two failure modes are **skimming** and **silence** — and both are fixed
+by making the invisible step produce an artifact: reading produces a **citation**
+(`Lessons applied: §N — <how>` / `none — <why>`), writing produces a **verdict**
+(the entry, or `Lessons: none new — <reason>`). Gate the artifact, never the
+judgment — a check can verify "the verdict was recorded", only a human can decide
+"a lesson was learned", and forcing entries breeds filler. Corollary: date-gate any
+new evidence rule at its adoption date (the D33 pattern) so history doesn't
+retro-fail.

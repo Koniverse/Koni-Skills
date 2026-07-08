@@ -27,7 +27,7 @@ between its stages.
 | # | Stage | Owned by | Entry gate (must be true to enter) |
 |---|---|---|---|
 | 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
-| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; LESSONS skimmed; DESIGN read if UI |
+| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; **LESSONS read + cited** (see the lessons-loop callout); DESIGN read if UI |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`) |
@@ -93,18 +93,31 @@ between its stages.
 > re-verify every fix round. This is how the harness builds *and verifies the
 > building of* new skills.
 
-> **Capture lessons at the Doc + Version gate (close the read→write loop).** Execute
-> *skims* `LESSONS.md` on the way in; the Doc + Version gate is where the loop *writes* one
-> back. If Review or Execute surfaced a **trap, a library/tool quirk, a non-obvious
-> gotcha, or a fix that would save the next person time**, append a `LESSONS.md` entry —
-> via koni-docs [`templates/lessons.md`](../../koni-docs/references/templates/lessons.md)
-> (append-only, numbered `## <n>.`) — in the **same commit** as the code + `VERSION` +
-> `CHANGELOG` + `CONTEXT`. It is a **process exit-criterion, not a deterministic gate**:
-> like CONTEXT it fires only *if* a real trap/pattern surfaced (capture genuine ones, never
-> filler), and "was a lesson learned?" is a judgment the gate-runner can't make — a check
-> firing on every commit would be noise (harness principle: add a gate only for a real,
-> deterministic failure). koni-docs owns the template + the pre-commit checklist item; the
-> harness just names *when* in the loop it happens (here) and *when* to read it (Execute).
+> **The lessons loop — ALWAYS read at entry, ALWAYS record a verdict at exit
+> (a hard rule, both halves gated).** The loop's memory is the target repo's
+> `LESSONS.md` — it only works if reading is evidenced and writing is a verdict,
+> because *skimming* and *silence* are the two failure modes that let old
+> mistakes recur.
+>
+> **Read (Frame/Execute entry)**: read the target repo's `LESSONS.md` — the
+> `context-load.sh` digest gives the title index; open the sections whose titles
+> touch the task's surfaces — and **cite the applicable ones in the plan/story**:
+> a `Lessons applied: §N, §M — <how>` line (or `Lessons applied: none — <why
+> nothing matches>`). Working across repos? Each repo's own `LESSONS.md`. The
+> citation is the evidence; `story-lint` enforces the line on new stories.
+>
+> **Write (Doc + Version gate)**: every completed task ends with an explicit
+> **lesson verdict**, in the **same commit** as the code + `VERSION` +
+> `CHANGELOG` + `CONTEXT`: **either** append the `LESSONS.md` entry — via
+> koni-docs [`templates/lessons.md`](../../koni-docs/references/templates/lessons.md)
+> (append-only, numbered `## <n>.`) — when Review/Execute surfaced a trap, a
+> tool quirk, a non-obvious gotcha, or a fix that saves the next person time;
+> **or** record the honest no-lesson verdict where the round is documented
+> (story / sprint note): `Lessons: none new — <reason>`. "Was a lesson
+> learned?" stays a judgment no runner can make (forced lessons breed filler) —
+> so the [`lesson-capture`](gate-catalog.md) gate enforces **that the verdict
+> was recorded**, never which way it went. koni-docs owns the template; the
+> harness owns when to read (entry), when to write (here), and the two checks.
 
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:
@@ -170,9 +183,9 @@ each one narrowing from project-canonical down to the live working state:
   config block (`docs_path` / `active_sprint` / `version_file`) and the Active
   Context pointer. Authoritative only for the Claude-Code activation surface.
 - **`LESSONS.md`** — accumulated, hard-won lessons; authoritative for "mistakes
-  we already made, don't repeat them." **Read** at Execute (skim) and **written** at the
-  Doc + Version gate when a trap/pattern surfaces (see the capture rule above) — the loop
-  both consumes and grows it.
+  we already made, don't repeat them." **Read + cited** at Frame/Execute entry and
+  **closed with a verdict** at the Doc + Version gate (see the lessons-loop rule
+  above) — the loop both consumes and grows it.
 - **`CONTEXT.md`** — durable architectural/decision context (the D-numbered
   decisions); authoritative for *why* the system is shaped the way it is.
 - **`.active-context.md`** — the live working state: active sprint, in-progress

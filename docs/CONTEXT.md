@@ -1567,3 +1567,42 @@ the lessons it can mechanize.
 **Date**: 2026-07-03
 **Version**: 0.36.0
 **Reference**: [story-lint.sh](../skills/koni-harness/scripts/checks/story-lint.sh), [story-lint-test.sh](../skills/koni-harness/scripts/__tests__/story-lint-test.sh), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md), [sprint-2026-W21](sprints/sprint-2026-W21.md) / [W22](sprints/sprint-2026-W22.md) correction notes, LESSONS §12, CHANGELOG [0.36.0].
+
+### D35. The lessons loop is always-on: read-with-citation at entry, write-with-verdict at exit — both halves gated
+
+**Context**: two user directives (2026-07-04): koni-harness must (1) **always read**
+the repo's LESSONS.md when starting a development task, to stop repeating known
+mistakes, and (2) **always write** LESSONS.md when completing a task, so the next
+session re-learns. The loop already had both halves in weak form — "LESSONS skimmed"
+as an Execute entry line and the D26 capture step "if a trap surfaced" — but skimming
+leaves no evidence and "if" makes silence indistinguishable from "nothing learned".
+
+**Decision** (v0.37.0, no new story — refines FR-21 + FR-22; dogfooded through the
+loop itself):
+
+1. **Read = citation.** Frame/Execute entry requires reading the target repo's
+   LESSONS.md — the `context-load.sh` title digest is the *index*; the sections whose
+   titles touch the task are opened in full — and citing the result in the plan/story:
+   `Lessons applied: §N, §M — <how>` or `Lessons applied: none — <why>`. Cross-repo
+   work reads each repo's own LESSONS.md. Enforced by `story-lint` rule 6 on stories
+   created ≥ 2026-07-04 (date-gated — no retro-fail, the D33 pattern).
+2. **Write = verdict.** Every completed task ends, in the release commit itself, with
+   either a LESSONS entry (koni-docs template, append-only) or the honest
+   `Lessons: none new — <reason>` line in the story/sprint note. NEW
+   `checks/lesson-capture.sh` (release-commit, block): task-bearing diff (anything
+   outside docs/) ⇒ verdict staged; docs-only commits exempt; the *reason* is
+   mandatory (a bare "none new" fails).
+3. **The gate enforces recording, never judgment** — "was a lesson learned?" stays
+   human (D26's insight survives: forced lessons breed filler); what is no longer
+   optional is *saying which*. Self-tests: lesson-capture 12/12, story-lint 16/16
+   (bash + dash).
+
+**Why**: a lessons file is the loop's only cross-session memory. Memory that is
+skimmed on the way in and optionally written on the way out decays into decoration —
+D32/D34 proved the same field-hygiene mistakes recur exactly where nothing forces the
+loop to look. Citation makes reading falsifiable; the verdict makes not-writing
+visible. Extends D26 (which named the write step) to both halves, always-on.
+
+**Date**: 2026-07-04
+**Version**: 0.37.0
+**Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (lessons-loop callout), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md) (§lesson-capture, §story-lint rule 6), [lesson-capture.sh](../skills/koni-harness/scripts/checks/lesson-capture.sh), [context-load.md](../skills/koni-harness/references/context-load.md), LESSONS §14, CHANGELOG [0.37.0].

@@ -62,11 +62,13 @@ What that means for what fires automatically on a normal `git commit`:
 | `changelog-anchor` | `release-commit` | No — release-commit only |
 | `story-status` | `release-commit` | No — release-commit only |
 | `story-lint` | `release-commit` | No — release-commit only |
+| `lesson-capture` | `release-commit` | No — release-commit only |
 | `koni-docs-validate` | `release-commit` | No — release-commit only |
 
 So `version-phase` — the critical 2-phase versioning gate — **does** run on
-every commit through the `pre-commit` hook. The four release-commit-only checks
-(`changelog-anchor`, `story-status`, `story-lint`, `koni-docs-validate`) do **not** fire from
+every commit through the `pre-commit` hook. The five release-commit-only checks
+(`changelog-anchor`, `story-status`, `story-lint`, `lesson-capture`,
+`koni-docs-validate`) do **not** fire from
 an ordinary commit; they are opt-in at release time, run only when you (or CI)
 invoke `--phase release-commit`. Installing the hooks does not, on its own,
 enforce release-time checks.
@@ -155,7 +157,9 @@ enforce release-time checks.
   matches the filename prefix; the `sprint:` file exists **and did not end
   before `created:`** (the "filed into a closed sprint" bug); `status: done` ⇒
   a real `commit:` (`pending` tolerated only while `updated:` is today — the
-  same-day backfill window). Missing stories directory → pass.
+  same-day backfill window); stories created on/after 2026-07-04 carry a
+  `Lessons applied:` line — the **read half** of the lessons loop (cited
+  sections or an explicit none-with-reason). Missing stories directory → pass.
 - **Phase(s)**: `release-commit`
 - **Default severity**: `block` — unlike style checks, an incomplete story is
   never a judgment call.
@@ -163,11 +167,42 @@ enforce release-time checks.
   shipped without `points:`, 12 filed into an ended sprint; LESSONS §12). On
   its **first run** it caught the same drift from two months earlier (7
   v0.2.0 stories, D34) — the class recurs whenever it isn't gated.
-- **Self-test**: `__tests__/story-lint-test.sh` (13 assertions freezing the
-  D32 failure classes).
+- **Self-test**: `__tests__/story-lint-test.sh` (16 assertions freezing the
+  D32 failure classes + the D35 read-evidence rule).
 - **`gates.conf` row**:
   ```
   story-lint           | checks/story-lint.sh               | release-commit             | block |
+  ```
+
+### `lesson-capture`
+
+- **What it asserts**: a **task-bearing release commit records a lesson
+  verdict** — the write half of the lessons loop
+  ([`agentic-loop-standard.md`](agentic-loop-standard.md)). If the staged diff
+  touches anything outside `docs/` (a development task), the commit must stage
+  **either** a `LESSONS.md` change (a staged *deletion* does not count) **or**
+  an **added line** `Lessons: none new — <reason>` in this commit's staged .md
+  diff (the honest no-lesson verdict; em-dash form, the reason is mandatory and
+  may not contain `<` — placeholder quotes never count, and pre-existing lines
+  never count, so one old example cannot neutralize the gate). Known residual
+  (adversarial-only): a pure **rename to `.md`** of a file whose old content
+  held a concrete verdict line surfaces as all-added lines and would pass —
+  no cheap POSIX fix; accepted and recorded here rather than hidden. Docs-only commits (backfills, sprint
+  bookkeeping) are exempt; outside a git repo / nothing staged → pass. The
+  check enforces **that the verdict was recorded, never which way it went** —
+  "was a lesson learned?" stays human judgment (forced lessons breed filler).
+- **Phase(s)**: `release-commit`
+- **Default severity**: `block` — silence is the failure mode; the verdict
+  costs one honest line.
+- **Generalizes from**: the Koni-Skills lessons loop (CONTEXT D26 named the
+  write step; D35 made both halves always-on after the user rule "luôn ghi
+  LESSONS khi hoàn thành nhiệm vụ"). The read half is enforced by
+  `story-lint`'s `Lessons applied:` rule on new stories.
+- **Self-test**: `__tests__/lesson-capture-test.sh` (12 assertions: exemptions,
+  both verdict forms, unstaged-verdict and missing-reason failures).
+- **`gates.conf` row**:
+  ```
+  lesson-capture       | checks/lesson-capture.sh           | release-commit             | block |
   ```
 
 ### `koni-docs-validate`
