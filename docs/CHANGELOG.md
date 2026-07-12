@@ -16,6 +16,44 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.38.0] — 2026-07-04 — design-first UI + the doc-completeness bar (refines FR-21 + FR-26) — v0.38.0
+
+Two user directives: (1) always learn from the project's own documents — LESSONS
+**and DESIGN.md** — so known mistakes never recur and UI never gets reworked after
+review; (2) finish the project docs meticulously after every feature, never "just
+enough". CONTEXT D36.
+
+### Changed — `skills/koni-harness/`
+
+- **`agentic-loop-standard.md`** — two new hard-rule callouts:
+  - **Design-first UI (Execute)**: conformance *discovered* by `/design-review` is
+    rework; before the first line of UI code — read `DESIGN.md` in full + the
+    component contracts, enumerate the component × state matrix, name the shadcn
+    primitives, tokens only — then cite it: `Design applied: <sections +
+    primitives + tokens>`. Review *confirms*; a first-pass failure on a stated
+    rule is a process failure → lesson.
+  - **The doc-completeness bar (Doc + Version gate)**: every completed feature
+    updates its whole doc surface, mapped from the diff (CHANGELOG = behaviour
+    never file lists · CONTEXT for decisions · ARCHITECTURE for structure ·
+    DESIGN for UI patterns · README/SETUP for usage · koni-qc surface for
+    coverage), judged by koni-qc's depth bar — each doc must let the next reader
+    act **without opening the diff**; evidence, not adjectives.
+- **NEW `scripts/checks/design-first.sh`** (release-commit, block): staged UI
+  source (`tsx/jsx/vue/svelte/css/scss`) in a repo with `DESIGN.md` requires an
+  **added** `Design applied:` citation — same anti-gaming mechanics as
+  lesson-capture (added-lines only, placeholder guard, loop-free).
+  + `__tests__/design-first-test.sh` (11 assertions, bash + dash green).
+- **`gate-catalog.md`** §design-first (eight built-in checks; six
+  release-commit-only); **`gates.conf`** design-first row; **`loop-runner.md`**
+  doc-gate row carries the doc-completeness bar; **`example-loop.md`** UI step
+  cites; **`SKILL.md`** description gains design-first / doc-bar triggers
+  (1003/1024).
+
+### Added — `docs/`
+
+- **LESSONS §15** — a contract discovered at review is rework; feed contracts in
+  at entry with citation, review only confirms.
+
 ## [0.37.0] — 2026-07-04 — the lessons loop is always-on: read-with-citation + write-with-verdict, both gated (refines FR-21 + FR-22) — v0.37.0
 
 Two user directives: (1) always READ the repo's LESSONS.md before a development

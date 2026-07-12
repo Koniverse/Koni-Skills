@@ -68,6 +68,10 @@ retired IDs are never reused. Points preserved: 42.)
   read-with-citation at entry (`Lessons applied:`, story-lint rule 6) +
   write-with-verdict at exit (`lesson-capture` gate: a LESSONS entry or
   `Lessons: none new — <reason>` in the release commit) — [CONTEXT D35](CONTEXT.md).
+- **v0.38.0** (07-04, refine FR-21 + FR-26): **design-first UI** (`Design applied:`
+  citation gated by `design-first`; review confirms, never discovers) + the
+  **doc-completeness bar** at the Doc gate (diff → mandatory doc surface; depth =
+  act-without-the-diff) — [CONTEXT D36](CONTEXT.md).
 
 ## Sprint goal recap
 

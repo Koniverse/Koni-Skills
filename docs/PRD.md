@@ -147,7 +147,16 @@ editHistory:
       date-gated 2026-07-04) + write-with-verdict at the Doc gate (new
       lesson-capture release-commit check: a LESSONS.md entry or an explicit
       "Lessons: none new" with reason). The gate enforces recording, never
-      judgment. CONTEXT D35; LESSONS §14. First run caught
+      judgment. CONTEXT D35; LESSONS §14.
+  - date: '2026-07-04'
+    changes: >-
+      Refine FR-21 + FR-26 (design-first UI + doc-completeness bar, v0.38.0):
+      DESIGN.md is an Execute input — component x state matrix enumerated and
+      "Design applied:" cited before UI code (new design-first release-commit
+      check, added-lines only); /design-review confirms instead of discovers.
+      Doc gate gains the doc-completeness bar: diff-mapped doc surface,
+      depth judged by koni-qc whole-project-qc §6 (act without the diff,
+      evidence not adjectives). CONTEXT D36; LESSONS §15. First run caught
       the 2026-05 W21->W22 drift (7 v0.2.0 stories moved; correction notes).
       CONTEXT D34.
   - date: '2026-07-03'

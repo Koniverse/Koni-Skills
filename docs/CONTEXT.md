@@ -1606,3 +1606,45 @@ visible. Extends D26 (which named the write step) to both halves, always-on.
 **Date**: 2026-07-04
 **Version**: 0.37.0
 **Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (lessons-loop callout), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md) (§lesson-capture, §story-lint rule 6), [lesson-capture.sh](../skills/koni-harness/scripts/checks/lesson-capture.sh), [context-load.md](../skills/koni-harness/references/context-load.md), LESSONS §14, CHANGELOG [0.37.0].
+
+### D36. Design-first UI + the doc-completeness bar: contracts feed in at Execute entry, docs finish at decision-grade — not at "enough"
+
+**Context**: two user directives (2026-07-04): (1) koni-harness must always learn
+from the project's own documents — LESSONS **and especially DESIGN.md** — so known
+mistakes never recur and the UI never enters the build → `/design-review` fail →
+redo loop ("làm đi làm lại phần giao diện"); (2) after completing a feature, the
+project docs must be finished **thoroughly and meticulously**, never "viết cho đủ"
+(filled just to pass).
+
+**Decision** (v0.38.0, no new story — refines FR-21 + FR-26; the D35 citation
+pattern generalized from LESSONS to every project contract):
+
+1. **Design-first UI (Execute hard rule)**: `DESIGN.md` + the shadcn standard are
+   **inputs to Execute, not discoveries at Review**. Before any UI code: read the
+   contract in full, enumerate the component × state matrix (a state discovered
+   while coding is an off-contract design decision), name the primitives, tokens
+   only — and cite it (`Design applied: <sections + primitives + tokens>`). NEW
+   `checks/design-first.sh` (release-commit, block): staged UI source + a repo
+   `DESIGN.md` ⇒ an added citation required (added-lines-only + placeholder guard —
+   the lesson-capture mechanics reused). `/design-review` then confirms; a
+   first-pass failure on a stated rule is a process failure → lesson (§15).
+2. **The doc-completeness bar (Doc-gate hard rule)**: the diff maps to its
+   mandatory doc surface (CHANGELOG behaviour-not-file-list · CONTEXT for decisions
+   · ARCHITECTURE for structure · DESIGN.md for UI patterns — the contract the next
+   design-first read depends on · README/SETUP for usage · the koni-qc surface for
+   coverage), and **depth is judged by koni-qc's depth bar** (whole-project-qc §6):
+   each updated doc must let the next reader act **without opening the diff** —
+   what changed, why, how verified, with evidence not adjectives. Gates verify the
+   surface (changelog-anchor · story-lint · lesson-capture · design-first); depth
+   stays a human exit-criterion, which is exactly why stories must carry evidence.
+
+**Why**: D35 proved the pattern — an invisible obligation becomes real when it
+produces an artifact. Reading DESIGN.md "when relevant" produced rework; docs
+written "to pass the gate" produced D32. Both fixes are the same move: the
+contract is consumed *upstream* with citation, and the output is judged by what
+the *next* reader/agent can do with it (the docs are the next session's input —
+the loop eats its own output).
+
+**Date**: 2026-07-04
+**Version**: 0.38.0
+**Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (design-first + doc-completeness callouts), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md) (§design-first), [design-first.sh](../skills/koni-harness/scripts/checks/design-first.sh), [whole-project-qc.md](../skills/koni-qc/references/whole-project-qc.md) §6, LESSONS §15, CHANGELOG [0.38.0].

@@ -2,18 +2,19 @@
 name: koni-harness
 description: >
   Use when setting up or running a Koniverse repo's development loop or its
-  commit/release safety net — e.g. the user says "set up the harness", "install
-  the gate", "add the gate", "wire verification gates", "pre-commit gate",
-  "pre-push gate", "agentic loop", "harness engineering", "right-size the
-  process", or "make the loop portable across Claude / Cursor / Codex / Gemini". Also use when a change risks a bad version bump, a
+  commit/release safety net — e.g. "set up the harness", "install the gate",
+  "wire verification gates", "pre-commit gate", "pre-push gate", "agentic
+  loop", "harness engineering", or "make the loop portable across Claude /
+  Cursor / Codex / Gemini". Also use when a change risks a bad version bump, a
   missing changelog anchor, leaked secrets, or broken doc references; to
   right-size process; when stories get too small/fragmented (consolidate /
   merge stories, story sprawl); to learn from past mistakes (always read +
-  write LESSONS.md, lesson verdict); or to pick the next dependency-ready
+  write LESSONS.md, lesson verdict); when UI keeps getting reworked after
+  review (design-first: build to DESIGN.md up front); when docs are filled
+  "just enough" (doc-completeness bar); or to pick the next dependency-ready
   story. Also use to run work **multi-agent / in
-  parallel** — "run the sprint in parallel", "swarm the ready stories", "run
-  multiple stories at once", "fan out the review/tests across agents", or "the loop
-  only runs one thing at a time — parallelize it" (the swarm planner + worktree-per-story).
+  parallel** — "run the sprint in parallel", "swarm the ready stories", "fan
+  out the review/tests across agents" (swarm planner + worktree-per-story).
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -93,7 +94,7 @@ sh .koni-harness/gate-runner.sh --phase pre-push
 ```
 
 A failing `block` check exits non-zero (stop and fix); a failing `warn` check
-prints `WARN:` and lets the commit through. The seven built-in checks, the config
+prints `WARN:` and lets the commit through. The eight built-in checks, the config
 grammar, and how to add your own are in
 [`references/gate-catalog.md`](references/gate-catalog.md); how to wire the
 runner into git / Claude Code / Gemini / Codex / Cursor is in
@@ -207,7 +208,7 @@ Load on demand based on what you're doing:
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
 | [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
-| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the seven built-in checks, the `gates.conf` grammar, or adding a custom check |
+| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the eight built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
 | [`references/sprint-sequencer.md`](references/sprint-sequencer.md) | Picking the next dependency-ready story or reading sprint status with `sprint.sh` (`next`/`status`, readiness + ordering, CLI flags/defaults, exit codes, limits) |

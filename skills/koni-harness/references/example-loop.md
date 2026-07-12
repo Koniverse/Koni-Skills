@@ -10,7 +10,7 @@ written in `docs/sprints/stories/US-7.3-custom-rpc-panel.md`.
 
 **Contents**: [1. frame](#1-frame--pick-the-work-open-the-loop) ·
 [2. execute](#2-execute--implement-with-anthropic-skills-only) ·
-[3. self-verify](#3-self-verify--green-before-advancing) ·
+[3. self-verify](#3-self-verify--green-and-unit-covered-before-advancing) ·
 [4. review](#4-review--the-fixed-four-step-order) ·
 [5. doc-gate](#5-doc-gate--docs--version-then-validate) ·
 [6. commit](#6-commit--the-gate-decides) ·
@@ -33,8 +33,11 @@ sh .koni-harness/loop.sh enter frame
 Flip the story to `in-progress` (koni-docs). **Read `LESSONS.md` and cite it** —
 add `Lessons applied: §<n> — <how>` (or `none — <why>`) to the story; story-lint
 checks the line on new stories. Because this is
-UI, **read `DESIGN.md`** now (and build on **shadcn** primitives + the repo's
-tokens — the review will enforce both) — it is the Execute entry gate for UI work. If the
+UI, **read `DESIGN.md` in full now**, enumerate the component × state matrix,
+and build on **shadcn** primitives + the repo's tokens — then cite it in the
+story: `Design applied: DESIGN.md §tokens/§buttons; shadcn Button+Dialog;
+6 states enumerated` (the `design-first` gate blocks UI code shipped without
+an added citation; `/design-review` later confirms, it must not discover). If the
 shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD here — this is
 the only place those tools are used.
 
@@ -109,8 +112,9 @@ sh .koni-harness/loop.sh complete
 ```
 
 The `work-commit` phase runs only the two checks wired to it in the default
-`gates.conf` (`version-phase`, `credential-scan`). The release-only checks
-(`changelog-anchor`, `story-status`, `koni-docs-validate`) fire on
+`gates.conf` (`version-phase`, `credential-scan`). The six release-only checks
+(`changelog-anchor`, `story-status`, `story-lint`, `lesson-capture`,
+`design-first`, `koni-docs-validate`) fire on
 `release-commit`, and `tests` fires on `pre-push` — see
 [`gate-catalog.md`](gate-catalog.md). If any `block` check fails the commit is
 stopped — fix and re-run the gate. Never `git commit --no-verify`.

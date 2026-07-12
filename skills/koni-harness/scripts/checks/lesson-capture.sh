@@ -34,7 +34,7 @@ fi
 # old concrete example in a routinely-staged file neutralizes the gate forever).
 # Placeholder forms quoting the syntax (<reason>, <why…>) never count, so a real
 # reason must not contain '<' — fails closed; reword the reason.
-if git diff --cached -U0 -- '*.md' 2>/dev/null \
+if git diff --cached -U0 -- '*.md' '*.mdx' 2>/dev/null \
      | grep -E '^\+[[:space:]>*-]*Lessons:[[:space:]]*none new[[:space:]]*—' \
      | grep -vq '<'; then
   exit 0

@@ -486,3 +486,20 @@ judgment — a check can verify "the verdict was recorded", only a human can dec
 "a lesson was learned", and forcing entries breeds filler. Corollary: date-gate any
 new evidence rule at its adoption date (the D33 pattern) so history doesn't
 retro-fail.
+
+## 15. A contract discovered at review is rework — feed it in at entry with a citation; review only confirms
+
+**What happened**: UI work kept cycling build → `/design-review` fails on a rule
+`DESIGN.md` had stated all along → redo. The contract existed; nothing forced it to
+be an *input*. The same shape as §14 (skimmed lessons), one stage later and paid in
+rework instead of regressions.
+
+**The lesson**: for every standing contract a stage must obey (DESIGN.md for UI,
+LESSONS for traps, ARCHITECTURE for boundaries), the cheap fix is always the same
+three-step: **read it in full at stage entry → cite what applies (an artifact:
+`Design applied:` / `Lessons applied:`) → let the reviewer confirm instead of
+discover**. Enumerate decisions the contract governs (the component × state matrix)
+*before* producing, because a decision made mid-production defaults to off-contract.
+Corollary for the write side: a doc is finished when the next reader can act
+without opening the diff — docs written "to pass" are D32's class with a green
+checkmark (the doc-completeness bar, D36).

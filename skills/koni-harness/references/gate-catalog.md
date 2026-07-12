@@ -1,7 +1,7 @@
 # Gate catalog — the built-in checks
 
 The gate is driven by `gates.conf`, a line-oriented config read by
-`gate-runner.sh`. This file documents the seven built-in checks that ship in the
+`gate-runner.sh`. This file documents the eight built-in checks that ship in the
 default `gates.conf`, the config grammar, and how to add your own check.
 
 For how the runner is wired into git / Claude Code / Gemini / Codex, see
@@ -10,7 +10,7 @@ For how the runner is wired into git / Claude Code / Gemini / Codex, see
 
 **Contents**: [Phases and severities](#phases-and-severities) ·
 [Invoking the release-commit phase](#invoking-the-release-commit-phase) ·
-[The seven built-in checks](#the-seven-built-in-checks) ·
+[The eight built-in checks](#the-eight-built-in-checks) ·
 [Config grammar](#config-grammar) · [Adding a custom check](#adding-a-custom-check)
 
 ---
@@ -63,19 +63,20 @@ What that means for what fires automatically on a normal `git commit`:
 | `story-status` | `release-commit` | No — release-commit only |
 | `story-lint` | `release-commit` | No — release-commit only |
 | `lesson-capture` | `release-commit` | No — release-commit only |
+| `design-first` | `release-commit` | No — release-commit only |
 | `koni-docs-validate` | `release-commit` | No — release-commit only |
 
 So `version-phase` — the critical 2-phase versioning gate — **does** run on
-every commit through the `pre-commit` hook. The five release-commit-only checks
+every commit through the `pre-commit` hook. The six release-commit-only checks
 (`changelog-anchor`, `story-status`, `story-lint`, `lesson-capture`,
-`koni-docs-validate`) do **not** fire from
+`design-first`, `koni-docs-validate`) do **not** fire from
 an ordinary commit; they are opt-in at release time, run only when you (or CI)
 invoke `--phase release-commit`. Installing the hooks does not, on its own,
 enforce release-time checks.
 
 ---
 
-## The seven built-in checks
+## The eight built-in checks
 
 ### `version-phase`
 
@@ -181,7 +182,7 @@ enforce release-time checks.
   ([`agentic-loop-standard.md`](agentic-loop-standard.md)). If the staged diff
   touches anything outside `docs/` (a development task), the commit must stage
   **either** a `LESSONS.md` change (a staged *deletion* does not count) **or**
-  an **added line** `Lessons: none new — <reason>` in this commit's staged .md
+  an **added line** `Lessons: none new — <reason>` in this commit's staged .md/.mdx
   diff (the honest no-lesson verdict; em-dash form, the reason is mandatory and
   may not contain `<` — placeholder quotes never count, and pre-existing lines
   never count, so one old example cannot neutralize the gate). Known residual
@@ -203,6 +204,37 @@ enforce release-time checks.
 - **`gates.conf` row**:
   ```
   lesson-capture       | checks/lesson-capture.sh           | release-commit             | block |
+  ```
+
+### `design-first`
+
+- **What it asserts**: UI code complies with the repo's design contract **at
+  write time, not review time** — the other half of preventing UI rework
+  ([`agentic-loop-standard.md`](agentic-loop-standard.md) design-first
+  callout). A release commit staging UI source (`*.tsx *.jsx *.vue *.svelte
+  *.css *.scss`), in a repo that has `DESIGN.md` (root or `docs/`), must also
+  stage an **added** `Design applied: <sections + primitives + tokens>` line
+  in a markdown file. Same anti-gaming mechanics as `lesson-capture`:
+  added-lines only, placeholder forms containing `<` never count, loop-free
+  path handling — and the same **documented residuals**: a rename-to-`.md`
+  carrying an old citation passes (adversarial-only), and the extension
+  boundary is deliberate — styling embedded in `.ts` template literals is
+  invisible to this gate (adding `.ts` would false-positive all server code);
+  `/design-review` remains the judge of what a grep cannot see. Deletion-only
+  UI commits are exempt (`--diff-filter=d` — removing UI needs no citation).
+  No `DESIGN.md` → pass (nothing to comply with; on a UI repo
+  that absence is a koni-setup gap, not a license). `/design-review` at
+  Review then **confirms** conformance rather than discovering violations.
+- **Phase(s)**: `release-commit`
+- **Default severity**: `block` — a stated design rule violated in shipped UI
+  is never a judgment call.
+- **Generalizes from**: the Koniverse UI rework loop the user named ("làm đi
+  làm lại phần giao diện") — CONTEXT D36; the citation-evidence pattern of
+  D35 (LESSONS §14/§15).
+- **Self-test**: `__tests__/design-first-test.sh` (11 assertions, bash + dash).
+- **`gates.conf` row**:
+  ```
+  design-first         | checks/design-first.sh             | release-commit             | block |
   ```
 
 ### `koni-docs-validate`

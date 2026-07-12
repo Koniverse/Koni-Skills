@@ -27,10 +27,10 @@ between its stages.
 | # | Stage | Owned by | Entry gate (must be true to enter) |
 |---|---|---|---|
 | 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
-| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; **LESSONS read + cited** (see the lessons-loop callout); DESIGN read if UI |
+| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; **LESSONS read + cited** (lessons-loop callout); for UI work **DESIGN.md read + cited before any UI code** (design-first callout) |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
-| 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`) |
+| 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`); every touched doc surface updated to the **doc-completeness bar** (callout below) |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
 
 > **Story granularity — one story = one deliverable, not one work-session
@@ -118,6 +118,46 @@ between its stages.
 > so the [`lesson-capture`](gate-catalog.md) gate enforces **that the verdict
 > was recorded**, never which way it went. koni-docs owns the template; the
 > harness owns when to read (entry), when to write (here), and the two checks.
+
+> **Design-first UI — comply at write time, confirm at review (a hard rule at
+> Execute).** Conformance *discovered* by `/design-review` is **rework** — the
+> build → review-fail → redo loop is the failure mode this kills. Before the
+> first line of UI code: (1) **read the repo's `DESIGN.md` in full** + the
+> component contracts for the surfaces you'll touch, and the shadcn standard
+> (koni-qc [`nfr.md`](../../koni-qc/references/nfr.md) §UI); (2) **enumerate the
+> component × state matrix** (hover / focus / disabled / loading / empty /
+> error) *before* code — a state discovered while coding is a design decision
+> made off-contract; (3) **name the shadcn primitives you will compose** and
+> use tokens only — never hand-roll what the system provides; (4) **cite it**
+> in the story: `Design applied: <DESIGN.md sections + primitives + tokens>`.
+> The [`design-first`](gate-catalog.md) check blocks a release commit that
+> ships UI code without an added citation (added-lines-only, same mechanics as
+> lesson-capture). At Review, `/design-review` then **confirms**; a first-pass
+> failure on a rule `DESIGN.md` states is a process failure — capture it as a
+> lesson (LESSONS §15).
+
+> **The doc-completeness bar — finish the docs meticulously, never "just
+> enough" (a hard rule at the Doc + Version gate).** Filling a template to
+> pass the gate is D32's failure class wearing a green checkmark. Every
+> completed feature updates its **whole doc surface**, mapped from the diff:
+>
+> | The change touches… | MUST update |
+> |---|---|
+> | code behaviour | `CHANGELOG` (what changed *for the user/agent*, never a file list) + the story's Implementation notes (what/why + **evidence**: test output, probe results, grades) |
+> | a decision with alternatives | `CONTEXT.md` D-entry (context → decision → why) |
+> | module boundaries / data flow | `ARCHITECTURE.md` |
+> | UI patterns / tokens / components | `DESIGN.md` (the contract the next design-first read depends on) |
+> | usage / setup / commands | `README` / `SETUP` |
+> | test coverage | the koni-qc doc surface ([`test-organization.md`](../../koni-qc/references/test-organization.md)) |
+>
+> Depth is judged by koni-qc's depth bar ([`whole-project-qc.md`](../../koni-qc/references/whole-project-qc.md)
+> §6 — *creating a file is not authoring it*): each updated doc must let the
+> next reader **act without opening the diff** — what changed, why, how it was
+> verified. Self-check before the commit: reread each doc as the next
+> developer; if it only makes sense next to the diff, it is filler. The gates
+> verify the *surface* (`changelog-anchor`, `story-lint`, `lesson-capture`,
+> `design-first`); depth stays a human exit-criterion — which is exactly why
+> the story must carry evidence, not adjectives.
 
 The stages themselves are not the contribution — they are existing tools that
 every Koni repo already runs. **The value is the gates *between* the stages**:
