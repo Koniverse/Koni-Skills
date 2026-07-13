@@ -12,7 +12,7 @@ prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
 assignee: jindo9986
-commit: 1511dd9
+commit: 1511dd9, b9c5dc3
 created: 2026-07-13
 updated: 2026-07-13
 external_deps:
