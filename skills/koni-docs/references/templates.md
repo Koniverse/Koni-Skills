@@ -12,25 +12,12 @@
 
 ## Template files
 
-| Template | File | Use when |
-|---|---|---|
-| **CHANGELOG entry** | [templates/changelog.md](templates/changelog.md) | Writing a changelog entry, shipping a version, closing a story |
-| **CONTEXT.md — Decision Log** | [templates/context.md](templates/context.md) | Recording a product/architecture decision or revision (append-only, RULE-7) |
-| **LESSONS.md — Lessons Learned** | [templates/lessons.md](templates/lessons.md) | Codifying a recurring trap, library quirk, or pattern that would save someone 30 minutes |
-| **BRIEF.md — Product Brief** | [templates/brief.md](templates/brief.md) | Creating/updating the executive brief (precedes PRD §1) |
-| **PRD — Product Requirements Document** | [templates/prd.md](templates/prd.md) | Creating/updating the full PRD section set; FR table rows; the PRD `Epics & User Stories` index |
-| **ARCHITECTURE.md — System Architecture** | [templates/architecture.md](templates/architecture.md) | Documenting tech stack, components, data flow, AD-N summary table |
-| **DESIGN Spec for a Story** | [templates/design-spec.md](templates/design-spec.md) | A story has visual/interaction complexity warranting a dedicated spec |
-| **Epic File — Full Template** | [templates/epic.md](templates/epic.md) | Creating/updating an epic (BMad-grade: Mermaid maps, invariants, budgets) |
-| **Story File — Full Template** | [templates/story.md](templates/story.md) | Creating/stubbing/updating a story (AC + Tasks + Verification commands) |
-| **Sprint File** | [templates/sprint.md](templates/sprint.md) | Opening a sprint, planning scope, closing with retrospective |
-| **SETUP.md + DEPLOY.md + .env.example** | [templates/setup.md](templates/setup.md) | Adding an env var (RULE-11 — all three files in same commit) |
-| **OKR — File-Native Quarterly Ledger** | [templates/okr.md](templates/okr.md) | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md` |
-| **CLAUDE.md + AGENTS.md integration blocks** | [templates/integration.md](templates/integration.md) | Wiring koni-docs into a new project, refreshing Active Context |
-| **Test Cases — per-epic scenarios** | [templates/test-cases.md](templates/test-cases.md) | Capturing end-to-end + regression + smoke scenarios at the EPIC level (complements per-story AC) |
-| **Test Report — per-execution + per-release** | [templates/test-report.md](templates/test-report.md) | Recording an execution run (`test-reports/EPIC-NN/<MMDDYYYY>/report.md`) or aggregating a release (`releases/`) |
+**Single source: [SKILL.md §5](../SKILL.md)** routes a user's intent to exactly one
+template; **§6** says when to load each reference. Every template lives at
+[`templates/`](templates/), one file per doc type.
 
----
+This file exists for the two things §5 and §6 cannot carry: the **conventions every
+template follows** (below), and the pointers that replaced deleted mirrors.
 
 ## Conventions every template follows
 

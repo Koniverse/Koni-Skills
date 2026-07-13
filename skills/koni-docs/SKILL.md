@@ -159,10 +159,7 @@ Run through every item before committing:
 [ ] `version_shipped` is BARE semver, `assignee` is a GitHub login, ID fields are bare IDs (RULE-16, RULE-15, RULE-17)
 [ ] npx koni-docs sync --docs-path docs/  (5-layer sync)
 [ ] npx koni-docs status --docs-path docs/  (STATUS.md — RULE-5)
-[ ] Touched a skill or its references? → python3 skills/koni-docs/scripts/check-references.py <skill-dir>
-    Its `0` is only evidence because two other scripts prove it can still speak:
-    test-check-references.py (27 planted defects, all must be caught) and
-    test-mutations.py (11 broken checkers, all must be killed). The gate runs all three.
+[ ] Touched a skill or its references? → python3 skills/koni-docs/scripts/check-references.py <skill-dir>  (the gate runs it, plus the two scripts that prove it still works)
 [ ] CLAUDE.md Active Context block updated (see §4)
 ```
 
@@ -238,9 +235,10 @@ before reading it.
 | [`references/sprint-system.md`](references/sprint-system.md) | Sprints, story sizing, deadlines vs cadence, the 5-layer consistency check, test artifacts |
 | [`references/cli.md`](references/cli.md) | Installing, upgrading, or running the CLI; a subcommand, a flag, the commit loops, the typed lib |
 | [`references/templates.md`](references/templates.md) | You want the index of every template, or just the frontmatter shape |
-| [`references/templates/*.md`](references/templates/) | Writing the artifact itself — one file per doc type, each with a section index and one filled example |
+| [`references/templates/*.md`](references/templates/) | Writing the artifact itself — one file per doc type, each with a filled example; the larger ones open with a section index |
 | [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project sets `plugins:` under its `koni-docs:` block and you need how plugin skills compose |
 | [`references/bmad-template-analysis.md`](references/bmad-template-analysis.md) | Migrating from BMad, or mapping BMad artifacts into koni-docs |
+| [`evals/`](evals/) | You changed a rule, a template, or the description — run the behavioural evals. They measure what the skill *causes*: does an agent holding it produce a conformant story, resist a `due` that is really just the sprint end, write the CONTEXT entry when a date moves, refuse `--amend`, resolve an assignee to a login? The scripts below test the linter; these test the skill. |
 | [`scripts/check-references.py`](scripts/check-references.py) | **Run it after editing any skill doc** — it asserts that every link, anchor, section pointer, and named script resolves. The `skill-references` gate runs it on every commit that touches a skill. |
 
 **Plugin skills**: if the project's CLAUDE.md sets `plugins:` under its `koni-docs:` block, load those

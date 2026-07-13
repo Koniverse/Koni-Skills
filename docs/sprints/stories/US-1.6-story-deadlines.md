@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0 + 0.50.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -421,6 +421,21 @@ anchors and were not collected, so a live link read as dead. The repo root was f
 counting directory levels rather than locating `.git`.
 
 27 defect classes, 12 mutants, all killed; six skills clean.
+
+## Round 12 — behavioural evals (2026-07-13, v0.50.0)
+
+**D1 25/25 · D2 25/25 · D4 22/25** (a new high). D2 also answered the question I was most
+worried about: single-sourcing RULE-18's rationale into `rules.md` did **not** create a
+LESSONS §18 gap. Three agents pointed at `sprint-system.md` refused the CEO's instruction
+*before* opening `rules.md` — because I removed the *rationale*, not the *obligation*.
+Obligation where the reader stands, rationale owned in one place, a pointer between them.
+
+The finding that mattered came from both D4 graders at once: **655 lines test the linter;
+zero lines test what the skill causes.** Three tiers of rigor around a tool the skill
+happens to ship, and nothing at all around the thing it exists to produce — behaviour in
+another agent. So this round adds `evals/`: five scenarios, each with the pressure that
+makes its rule hard, each scored on observable facts about the artifact rather than
+impressions. LESSONS §26: verify the output, not the apparatus.
 
 ## Implementation notes
 

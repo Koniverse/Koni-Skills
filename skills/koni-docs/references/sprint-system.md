@@ -56,8 +56,8 @@ To minimize confusion:
   `id:` exactly (`EPIC-08.md` ↔ `id: EPIC-08`, not `id: EPIC-8`).
 - When `npx koni-docs backfill-fields` infers epic from story id, it emits
   plain `EPIC-N`. On a padded-ID project, hand-correct after backfill.
-  Filed as followup for a future story (auto-detect pad-style from
-  existing epic files).
+  (`backfill-fields` does not auto-detect the padding style; on a padded-ID project,
+  hand-correct after running it.)
 
 ## Deadlines vs sprint cadence
 

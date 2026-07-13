@@ -16,6 +16,47 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.50.0] — 2026-07-13 — koni-docs: behavioural evals — verify the output, not the apparatus — v0.50.0
+
+Round 9: **D1 25/25 · D2 25/25 · D4 22/25** (22.5 + 21.5 — a new high). Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Added
+- **`evals/` — five behavioural scenarios.** Two independent graders named the same
+  absence: *"655 lines test the linter; zero lines test whether an agent handed this skill
+  actually produces a conformant story file, appends a CONTEXT entry instead of editing
+  one, or resists setting `due:` for 'must land this sprint'."* The three tiers of rigor
+  verified **a tool the skill ships**; the skill's actual product is **behaviour in
+  another agent**, and that had no test at all.
+
+  Each scenario is a realistic request **with the pressure that makes the rule hard** —
+  a delivery manager who wants the empty Deadlines board "fixed", a CEO pushing a date
+  before a flight, a tech lead who says to just `--amend` the SHA in. Pass criteria are
+  observable facts about the artifact ("zero `+due:` lines in the diff"), never
+  impressions. Two hard rules: never tell the agent what is being measured, and a partial
+  pass is a fail — these test BLOCKERs, and a BLOCKER that holds four times in five ships
+  the fifth. See [LESSONS §26](LESSONS.md).
+
+### Fixed
+- **SKILL.md's own sentence about the guard said "11 broken checkers". There are 12.** The
+  one sentence whose job is to vouch for the guard's trustworthiness carried a stale
+  integer — and `bmad-template-analysis.md`, the file *just rewritten to purge staleness*,
+  still said "the 12 enforced rules" (there are 13). Third drift of the same class. The
+  durable fix is not to correct the numbers but to **stop writing them in prose**: the
+  scripts assert their own floors, and the docs now say so instead of restating a count
+  they cannot keep in sync.
+- `templates.md`'s file table was a third statement of a map SKILL.md §5 and §6 already
+  carry. 59 → 46 lines; it now holds only what those two cannot: the conventions every
+  template follows.
+- The pre-commit checklist had grown four lines explaining the checker's self-validation
+  architecture. That belongs in the script's docstring; the checklist gets one line.
+- An unowned "filed as followup for a future story" in `sprint-system.md` — the same class
+  of fossil removed from `bmad-template-analysis.md` last round (LESSONS §25).
+
+koni-docs CLI **0.11.7 → 0.11.8**.
+
+---
+
 ## [0.49.0] — 2026-07-13 — koni-docs: a closed to-do list is not a reference — v0.49.0
 
 Continuing to the ≥95 bar. Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).

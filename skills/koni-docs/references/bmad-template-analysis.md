@@ -210,7 +210,7 @@ migration retired. What remains is the outcome.
   `prd_ref` / `arch_ref` / `depends_on` as typed ID lists.
 - The **Changelog entry** section inside the story — the mechanism that makes RULE-1
   (docs ship in the same commit) practical rather than aspirational.
-- The explicit sprint scope table, and the 12 enforced rules with their grep checks.
+- The explicit sprint scope table, and the enforced rule set with their grep checks.
 
 **The one thing BMad does that koni-docs deliberately does not**: BMad numbers its PRD
 sections. koni-docs addresses them by **label** (`## Functional Requirements`), because a

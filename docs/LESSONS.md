@@ -948,3 +948,45 @@ Same class as LESSONS §21 (the cheatsheet that restates a contract) and §18 (a
 where you look, not where the fact lives): **the artifact that nobody re-reads is the
 artifact that lies**, and it lies most convincingly to whoever trusted the directory it
 was filed in.
+
+---
+
+## 26. I built three tiers of rigor around my tools and zero around what the skill causes
+
+**What happened**: `koni-docs` shipped a reference checker, a suite planting 27 defect
+classes to prove the checker works, and a mutation test breaking the checker 12 ways to
+prove the suite works. Three tiers, ~650 lines, each one killing a failure the tier below
+demonstrably permitted. I was proud of it.
+
+Two independent graders, on the same round, named the same absence: **655 lines test the
+linter; zero lines test whether an agent handed this skill actually produces a conformant
+story file, appends a CONTEXT entry instead of editing one, or resists setting `due:` for
+"must land this sprint."**
+
+They were right, and the shape of the mistake is worth naming precisely. The three tiers
+verify a **tool the skill happens to ship**. The skill's actual product is **behaviour in
+another agent** — and that had no test at all. I had poured all the rigor into the part I
+could see failing (a checker that printed the wrong number) and none into the part that
+matters (a rule that quietly fails to hold under pressure, in someone else's session, six
+months from now).
+
+**The lesson**: **verify the output, not the apparatus.** A skill is not prose and it is
+not tooling — it is a *cause*. The only honest question is: *given this skill and nothing
+else, what does an agent actually write to disk?* Everything else — the linting, the
+cross-references, the anchors, the mutation tests — is hygiene on the delivery mechanism.
+Necessary, and not the thing.
+
+So `evals/` now holds five behavioural scenarios, each a realistic request **with the
+pressure that makes the rule hard**, each with pass criteria stated as observable facts
+about the artifact produced ("zero `+due:` lines in the diff"), not impressions ("the
+agent seemed to understand"). Two rules that they must never break:
+
+- **Never tell the agent what is being measured.** An eval that names the trap measures
+  nothing but reading comprehension.
+- **A partial pass is a fail.** These test BLOCKERs. A BLOCKER that holds four times in
+  five is a BLOCKER that ships the fifth.
+
+**The corollary that stings**: it is *easier* to build elaborate verification for the
+thing you built than to test the thing you were asked for. The apparatus is legible, it is
+yours, and every layer feels like progress. Ask, before adding the next tier: **is this
+verifying my work, or my product?**
