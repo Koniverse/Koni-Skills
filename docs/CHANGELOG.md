@@ -16,6 +16,51 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.48.0] — 2026-07-13 — koni-docs: a mutation suite is a lock, not a net — v0.48.0
+
+Round 8: **D1 25/25 · D2 25/25 · D3 18/25 · D4 20.5/25.** D1 and D2 are maxed and stable.
+D3 rose 14 → 18. D4 slipped 1.5 for one reason, and it was right to. Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The mutation suite proved six mutants die and printed "all mutants killed".** A
+  reviewer planted eight; **five survived both suites** — including one that deleted,
+  verbatim, the `#fragment` check shipped the round before. Nothing in the corpus planted
+  a dead *fragment*, only dead *paths*, so the fix was unverified by the very suite that
+  existed to verify it. A mutation test measures the **corpus**, not the code: a
+  surviving mutant is a named hole in your test data. Fixtures now pin every claimed
+  behaviour — **27 defect classes, 11 mutants, all killed.**
+- **The guard was writing to the thing it guards.** `test-mutations.py` wrote each mutant
+  into the live, git-tracked `check-references.py` and restored it in a `finally` — inside
+  a *blocking pre-commit hook*. One Ctrl-C and the working tree keeps a deliberately
+  blinded checker that still prints `0`. (`import tempfile` sat at the top of that file,
+  unused: the safe design had been considered and dropped.) It now mutates a **sandbox
+  copy** and never touches the tree.
+- **The tower had no bottom turtle.** Emptying `MUST_CATCH` printed *"✓ 0 planted defect
+  classes all caught"*, rc=0, gate green, checker fully blind. `MIN_CLASSES` /
+  `MIN_MUTANTS` floors close it — a corpus that shrinks is a corpus that lies.
+- **Two more false greens, both live**: the checker resolved references **into its own
+  fake fixtures** (a real doc citing `ok.md` §Alive was quietly satisfied by a test file),
+  and `Path.exists()` on macOS is **case-blind**, so `](References/ok.md)` passed locally
+  and 404s on GitHub and every Linux CI checkout. A checker whose thesis is "a link that
+  looks fine to its author is dead in production" cannot itself depend on the author's
+  filesystem.
+- Setext detection read a YAML frontmatter `---` as a heading underline, inventing
+  anchors; `cli.md` pinned versions in a live table while SKILL.md refuses to pin any;
+  `sprint-system.md` carried roadmap rot; `bmad-template-analysis.md` cited an
+  `examples/` directory that does not exist.
+
+### Changed
+- SKILL.md §3c now names **all three** scripts. The checker's `0` is evidence only
+  because two others prove it can still speak. See [LESSONS §24](LESSONS.md).
+
+All six skills: **0 dangling references** — including two in `koni-agent-monitoring` that
+only the case-sensitive resolver could see.
+
+koni-docs CLI **0.11.5 → 0.11.6**.
+
+---
+
 ## [0.47.0] — 2026-07-13 — koni-docs: the test suite that formalized the blind spot — v0.47.0
 
 Round 7: **D4 22/25** (both graders — the highest yet). **D3 14/25**, and its Critical is

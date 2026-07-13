@@ -864,3 +864,50 @@ prove the planted defects can still speak.** Each layer of verification is itsel
 unverified claim until something adversarial pushes on it. There is no bottom turtle —
 there is only the discipline of asking, at every layer, *"what would I see if this were
 broken?"* If the answer is *"exactly what I see now"*, you have learned nothing.
+
+---
+
+## 24. A mutation suite is a lock, not a net — and the guard must never write to the thing it guards
+
+**What happened**: LESSONS §23 shipped `test-mutations.py` — break the checker on
+purpose, assert the suite kills each mutant. Six mutants, all killed, and I called the
+tower finished.
+
+An author-blind reviewer planted **eight** plausible narrowings. **Five survived both
+suites.** The worst deleted, verbatim, a fix I had shipped *the round before* — the
+`#fragment` check inside HTML `href`s and reference-style definitions. Nothing in my
+corpus planted a dead *fragment*; only dead *paths*. So the fix was unverified by the
+very suite that existed to verify it, and the mutation test **attested to a coverage it
+did not have**.
+
+The reviewer's phrasing is the lesson: *"the mutation suite is a lock, not a net. It
+proves that these six hand-picked mutants die. It then prints `all mutants killed` — a
+sentence a reader parses as 'narrowings die'. They do not."*
+
+**Three lessons, all bought at the same price.**
+
+1. **A mutation test measures the corpus, not the code.** A mutant survives when no
+   fixture pins the behaviour it deletes — so a surviving mutant is not a bug in the
+   checker, it is a **named hole in your test data**. That makes it the best tool
+   available, and also a liar the moment you read its green as coverage. Every claim in
+   a docstring needs a fixture, or the claim is decoration.
+2. **Every layer needs a floor.** I emptied `MUST_CATCH` and the suite printed
+   *"✓ 0 planted defect classes all caught"*, rc=0, gate green — with a fully blind
+   checker underneath. §19 → §20 → §22 → §23 built a tower of verification, and the
+   tower had **no bottom turtle**. `MIN_CLASSES` and `MIN_MUTANTS` are that bottom: a
+   corpus that shrinks is a corpus that lies.
+3. **A guard must never write to the thing it guards.** My mutation test wrote each
+   mutant into the live, git-tracked `check-references.py` and restored it in a
+   `finally` — inside a *blocking pre-commit hook*. One Ctrl-C, OOM, or killed hook and
+   the working tree is left holding a deliberately blinded checker that still prints
+   `0`. `import tempfile` sat at the top of that file, imported and never used: I had
+   thought of the safe design and abandoned it. Mutate a **copy**, always.
+
+**The recursion, restated once more, because it keeps being the answer**: §19 don't
+trust a validator you wrote → §20 prove it can speak → §22 ship its planted defects →
+§23 prove the planted defects can still speak → §24 **and prove the proof is a net, not
+a lock, and that it cannot be emptied, and that it cannot corrupt what it checks.**
+
+There is no final turtle. There is only a discipline: at every layer, ask *"what would
+I see if this were broken?"* — and if the honest answer is *"exactly what I see now"*,
+you have built a more elaborate way to print zero.

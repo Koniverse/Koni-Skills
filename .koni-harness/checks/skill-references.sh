@@ -38,6 +38,10 @@ python3 "$MUTANTS" >/dev/null 2>&1 || {
   exit 1
 }
 
+# Both suites enforce their own floor (MIN_CLASSES / MIN_MUTANTS), because emptying a
+# corpus used to read as passing it: "0 planted defect classes all caught", rc=0. The
+# floors are the bottom turtle — without them the whole tower is a way to print 0.
+
 # Touch ANY skill and every skill is swept. Scanning only what the commit touched
 # let a sibling sit red indefinitely while SKILL.md advertised the guard as
 # covering "every link, anchor, section pointer, and named script". A guard with a

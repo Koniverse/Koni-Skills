@@ -174,11 +174,11 @@ The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unifi
 | Symptom | Cause | Fix |
 |---|---|---|
 | `koni-docs --version` reports an older number than `package.json` | Build/install drift after editing source | `cd packages/koni-docs && npm run build && npm pack && npm install -g ./koniverse-koni-docs-<v>.tgz` |
-| `sync` warns `PRD Functional Requirements FR <id>: section "## Functional Requirements" not found` | PRD has no `## Functional Requirements` heading and no legacy `## 8.` heading either | Rename the H2 to `## Functional Requirements` (canonical label form). Legacy numbered headings (`## 8. Functional Requirements`, with or without `(FR)` suffix) are still matched by the v0.7.2 fallback, but new PRDs should use the label form |
+| `sync` warns `PRD Functional Requirements FR <id>: section "## Functional Requirements" not found` | PRD has no `## Functional Requirements` heading and no legacy `## 8.` heading either | Rename the H2 to `## Functional Requirements` (canonical label form). Legacy numbered headings (`## 8. Functional Requirements`, with or without `(FR)` suffix) are still matched by the legacy fallback, but new PRDs should use the label form |
 | `validate` exits non-zero with `(not_found)` warnings | Story references a sprint / epic file that doesn't exist | Either create the missing file or fix the story's `sprint:` / `epic:` frontmatter |
-| `preview` shows 500 SyntaxError on `/` | Stale `dist/` shipped with v0.6.0 shebang leak | Upgrade to v0.6.1+ — `npm install -g @koniverse/koni-docs@latest` |
+| `preview` shows 500 SyntaxError on `/` | A stale `dist/` from an old build | Reinstall: `npm install -g @koniverse/koni-docs@latest` |
 | `preview --watch` browser doesn't auto-reload | Browser cached page from before `--watch` was passed | Open DevTools, disable cache, reload once; afterwards SSE works |
-| `writeDoc` adds/removes quotes in git diff | gray-matter normalization (fixed in v0.7.0 — preserves the original quote style per key) | Upgrade to v0.7.0+ |
+| `writeDoc` adds/removes quotes in git diff | gray-matter normalization — fixed in a later release, which preserves the original quote style per key | Upgrade to the current release |
 
 ## 9. Skill ↔ CLI relationship
 

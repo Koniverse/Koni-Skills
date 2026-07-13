@@ -56,7 +56,26 @@ MUST_CATCH = {
     'dead anchor in an uppercase-stemmed file': 'dead anchor references/Guide.md#not-a-heading',
     'dead uppercase-stemmed file link': 'dead link -> references/GONE8.md',
     'dead §-pointer into an uppercase-stemmed file': 'dead §-pointer -> Guide.md §Ghostly',
+    # These five were CLAIMED behaviours with no fixture behind them. A reviewer
+    # deleted each one from the checker and both suites stayed green — including the
+    # fragment check shipped the round before, which the suite existing to verify it
+    # did not verify. A mutation test over an incomplete corpus certifies memory as
+    # coverage (LESSONS §23).
+    'dead #fragment inside an HTML href': 'dead anchor references/ok.md#no-such-fragment',
+    'dead #fragment in a reference-style definition': 'dead anchor references/ok.md#also-no-such-fragment',
+    'dead anchor to a nonexistent setext heading': 'dead anchor #setext-ghost',
+    'dead anchor to a nonexistent duplicate-heading suffix': 'dead anchor #alive-2',
+    'dead emoji anchor (GitHub keeps the gap the emoji leaves)': 'dead anchor #deploy-it',
+    'wrong-case path (dead on Linux/GitHub, alive on a case-blind macOS FS)': 'dead link -> References/ok.md',
+    # Without this, removing the in_fence guard from the ANCHOR_LINK pass broke nothing
+    # the suite could see — a surviving mutant names its own hole.
+    'phantom anchor from a ``` fence': 'dead anchor #a-heading-that-only-exists-inside-a-backtick-fence',
 }
+
+# Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
+# all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
+# sixteenth way to print 0.
+MIN_CLASSES = 27
 
 
 def run(target: Path) -> tuple[int, str]:
@@ -69,6 +88,12 @@ def run(target: Path) -> tuple[int, str]:
 
 def main() -> int:
     failures: list[str] = []
+
+    # An emptied corpus must not read as a clean one.
+    if len(MUST_CATCH) < MIN_CLASSES:
+        print(f'the corpus has shrunk to {len(MUST_CATCH)} classes (floor: {MIN_CLASSES}). '
+              f'A suite that asserts nothing passes everything.')
+        return 1
 
     # 1. The clean control must pass. A checker that cries wolf gets ignored,
     #    which is the same outcome as one that stays silent.

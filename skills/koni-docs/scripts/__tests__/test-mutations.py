@@ -17,6 +17,7 @@ So: break the checker on purpose, one rule at a time, and assert the suite
 """
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -59,23 +60,68 @@ MUTATIONS: list[tuple[str, str, str]] = [
         "    if '*' in target:\n        return True          # `*.spec.ts` is a glob — a shape, not a file",
         "    if '*' in target or Path(target).stem[:1].isupper():\n        return True",
     ),
+    # These five SURVIVED both suites when an author-blind reviewer planted them. Each
+    # deletes a behaviour the checker's docstring claims — including, in the first case,
+    # the fix shipped the round before. Nothing in the corpus pinned them, so the
+    # mutation test certified a coverage it did not have. The fixtures now cover them;
+    # these mutants are what keeps that true.
+    (
+        'the #fragment check in HTML hrefs / reference definitions is deleted (last round’s fix)',
+        "                if frag and tgt.suffix in ('', '.md') and frag not in anchors:",
+        "                if False:",
+    ),
+    (
+        'in-fence anchors stop being skipped — fenced sample headings become real',
+        "        for m in ANCHOR_LINK.finditer(text):\n            if in_fence(text, m.start()):",
+        "        for m in ANCHOR_LINK.finditer(text):\n            if False:",
+    ),
+    (
+        'the slugger collapses whitespace runs (GitHub does not) — em-dash + emoji anchors break',
+        "    return h.replace(' ', '-')",
+        "    return re.sub(r'\\s+', '-', h.strip())",
+    ),
+    (
+        'setext headings stop emitting anchors — live links read as dead',
+        '    for h in HEADING.findall(body) + SETEXT.findall(body):',
+        '    for h in HEADING.findall(body):',
+    ),
+    (
+        'the duplicate-heading -N suffix is dropped — #heading-1 becomes unreachable',
+        "        out.add(slug if n == 0 else f'{slug}-{n}')",
+        "        out.add(slug)",
+    ),
 ]
 
 
 def run_suite(checker_source: str) -> tuple[int, str]:
-    """Run the real suite against a temporarily-mutated checker."""
-    original = CHECKER.read_text(encoding='utf-8')
-    try:
-        CHECKER.write_text(checker_source, encoding='utf-8')
+    """Run the suite against a mutated checker — in a COPY, never in the working tree.
+
+    An earlier version wrote the mutant into the live, git-tracked `check-references.py`
+    and restored it in a `finally`. That runs inside a *blocking pre-commit hook*: one
+    Ctrl-C, OOM, or killed hook and the working tree is left holding a deliberately
+    blinded checker — one that still prints `0`. The guard would have corrupted the
+    thing it guards, in exactly the silent way this whole file exists to prevent.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        sandbox = Path(tmp) / 'scripts'
+        shutil.copytree(CHECKER.parent, sandbox)
+        (sandbox / CHECKER.name).write_text(checker_source, encoding='utf-8')
         p = subprocess.run(
-            [sys.executable, str(SUITE)], capture_output=True, text=True,
+            [sys.executable, str(sandbox / '__tests__' / SUITE.name)],
+            capture_output=True, text=True,
         )
         return p.returncode, p.stdout + p.stderr
-    finally:
-        CHECKER.write_text(original, encoding='utf-8')
+
+
+MIN_MUTANTS = 11
 
 
 def main() -> int:
+    if len(MUTATIONS) < MIN_MUTANTS:
+        print(f'the mutant set has shrunk to {len(MUTATIONS)} (floor: {MIN_MUTANTS}). '
+              f'"All 0 mutants killed" is not a result.')
+        return 1
+
     source = CHECKER.read_text(encoding='utf-8')
     survivors: list[str] = []
 

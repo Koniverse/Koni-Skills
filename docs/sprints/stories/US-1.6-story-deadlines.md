@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -385,6 +385,26 @@ silence a `Next.js` false positive blinded the checker to `SKILL.md`, and theref
 RULE-16's brand-new blocker was enforced on **1 of 57 stories**, because I nested it
 inside an unrelated rule's date gate — it would not have caught the very `vv0.7.0` bug
 its own comment cites.
+
+## Round 10 — skill-grading re-grade (2026-07-13, v0.48.0)
+
+**D1 25/25 · D2 25/25 · D3 18/25 (from 14) · D4 20.5/25.**
+
+D4 slipped 1.5, and it deserved to: **the round's headline addition shipped a defect of
+exactly the class this whole skill exists to prevent.** `test-mutations.py` wrote its
+mutants into the live, git-tracked checker and restored them in a `finally` — inside a
+blocking pre-commit hook. One Ctrl-C and the tree keeps a blinded checker that still
+prints `0`. `import tempfile` was at the top of the file, unused: I had thought of the
+safe design and dropped it.
+
+And the mutation suite itself: it proved six mutants die, then printed "all mutants
+killed" — which reads as *narrowings die*. A reviewer planted eight; **five survived**,
+including one that deleted the `#fragment` fix I had shipped the round before. **A
+mutation test measures the corpus, not the code.** A surviving mutant is a named hole in
+the test data, and my green was memory dressed as coverage.
+
+Now: 27 defect classes, 11 mutants, floors on both so an emptied suite cannot read as a
+passing one, and a sandbox so the guard can never corrupt what it guards. LESSONS §24.
 
 ## Implementation notes
 

@@ -21,6 +21,7 @@ Exits non-zero if anything dangles. Silence means every pointer resolves.
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -28,7 +29,7 @@ from pathlib import Path
 HEADING = re.compile(r'^#{1,6} (.+)$', re.M)   # H1 too — `](#title)` is a legal link
 # Setext form: a line underlined by === or ---. GitHub emits an anchor for it; a
 # checker that only knows ATX headings calls a live link dead.
-SETEXT = re.compile(r'^(?!\s*$)([^\n]+)\n(?:=+|-{2,})[ \t]*$', re.M)
+SETEXT = re.compile(r'^(?!\s*$)(?!---)([^\n|>#-][^\n]*)\n(?:=+|-+)[ \t]*$', re.M)
 ANCHOR_LINK = re.compile(r'\]\(\s*#([^)\s"]+)(?:\s+"[^"]*")?\s*\)')
 # Every destination form CommonMark allows, because each has hidden a dead link here:
 #   ](path)   ](path#anchor)   ](path "Title")   ](<path>)   ](<path> "Title")
@@ -161,6 +162,26 @@ def comment_spans(text: str) -> list[tuple[int, int]]:
     return [(m.start(), m.end()) for m in re.finditer(r'<!--.*?-->', text, re.S)]
 
 
+def exists_case_sensitively(path: Path) -> bool:
+    """`Path.exists()` on macOS/APFS is case-blind, so `](References/ok.md)` passes
+    locally and 404s on GitHub and on any Linux CI checkout. A checker whose whole
+    thesis is "a link that looks fine to its author is dead in production" must not
+    itself depend on the author's filesystem. Walk each component for real.
+    """
+    path = path.resolve()
+    if not path.exists():
+        return False
+    cur = Path(path.anchor)
+    for part in path.relative_to(cur).parts:
+        try:
+            if part not in os.listdir(cur):
+                return False
+        except OSError:
+            return False
+        cur = cur / part
+    return True
+
+
 def in_fence(text: str, index: int) -> bool:
     """A link inside a fence belongs to the *generated* document, not this one.
     A link inside an HTML comment belongs to nobody."""
@@ -204,7 +225,7 @@ def check(root: Path) -> list[str]:
             if Path(target_raw).name in CONSUMER_DOCS:
                 continue          # lives in the consumer's docs/, not in the skill
             target = (md.parent / m.group(1)).resolve()
-            if not target.exists():
+            if not exists_case_sensitively(target):
                 problems.append(f'{md}: dead link -> {m.group(1)}')
                 continue
             if m.group(2) and target.suffix == '.md':
@@ -222,7 +243,7 @@ def check(root: Path) -> list[str]:
                 if Path(path).name in CONSUMER_DOCS:
                     continue
                 tgt = md.parent / path
-                if path and not tgt.exists():
+                if path and not exists_case_sensitively(tgt):
                     problems.append(f'{md}: dead link -> {t}')
                     continue
                 # The fragment was previously split off and thrown away, so a dead
@@ -243,11 +264,23 @@ def check(root: Path) -> list[str]:
             cited = m.group(2) or m.group(1)
             cited = cited.split('#')[0]
             target = md.parent / cited
-            if not target.exists():
+            if not exists_case_sensitively(target):
                 if '/' in cited:
                     problems.append(f'{md}: §-pointer path does not resolve -> {cited}')
                     continue
-                matches = list(root.rglob(cited)) or list(siblings.rglob(cited))
+                def outside_fixtures(q: Path) -> bool:
+                    # Only the deliberately-FAKE files are excluded — `__tests__/fixtures`.
+                    # A skill's real tests (koni-agent-monitoring ships `leak-test.mjs`)
+                    # are legitimate targets; excluding all of `__tests__` reported them
+                    # as ghosts. Relative to the scan root, so the fixtures still resolve
+                    # normally when they are themselves the target.
+                    try:
+                        return 'fixtures' not in q.relative_to(root).parts
+                    except ValueError:
+                        return 'fixtures' not in q.parts
+
+                matches = ([q for q in root.rglob(cited) if outside_fixtures(q)]
+                           or [q for q in siblings.rglob(cited) if outside_fixtures(q)])
                 if not matches:
                     problems.append(f'{md}: §-pointer to a file that does not exist -> {cited}')
                     continue
@@ -283,10 +316,16 @@ def check(root: Path) -> list[str]:
                     or is_prose_not_a_script(m.group(1))):
                 continue
             name = Path(m.group(1)).name
-            found = list(root.rglob(name)) or [
-                q for q in repo.rglob(name)
-                if 'node_modules' not in q.parts and '.git' not in q.parts
-            ]
+            def script_ok(q: Path) -> bool:
+                if {'node_modules', '.git'} & set(q.parts):
+                    return False
+                try:
+                    return 'fixtures' not in q.relative_to(root).parts
+                except ValueError:
+                    return 'fixtures' not in q.parts
+
+            found = ([q for q in root.rglob(name) if script_ok(q)]
+                     or [q for q in repo.rglob(name) if script_ok(q)])
             if not found:
                 problems.append(f'{md}: names a script that does not exist -> {m.group(1)}')
 

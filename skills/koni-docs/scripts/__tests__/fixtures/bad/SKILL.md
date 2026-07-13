@@ -25,6 +25,11 @@ The `ghost-lib.sh` helper runs it.
 ~~~
 [link to the phantom](#phantom-heading-in-a-tilde-fence)
 
+````markdown
+## A heading that only exists inside a backtick fence
+````
+[dead anchor to a backtick-fenced heading](#a-heading-that-only-exists-inside-a-backtick-fence)
+
 ```yaml
 key: value
    ```
@@ -34,3 +39,12 @@ key: value
 [dead anchor in an uppercase-stemmed file](references/Guide.md#not-a-heading)
 [dead uppercase-stemmed file](references/GONE8.md)
 See `Guide.md` §Ghostly for details.
+
+<a href="references/ok.md#no-such-fragment">dead fragment in an HTML href</a>
+
+[deadfrag]: references/ok.md#also-no-such-fragment
+
+[dead anchor to a setext heading that does not exist](#setext-ghost)
+[dead anchor near a duplicate heading](#alive-2)
+[dead emoji anchor](#deploy-it)
+[wrong-case path](References/ok.md)

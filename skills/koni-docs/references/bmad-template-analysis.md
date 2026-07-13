@@ -2,7 +2,7 @@
 
 > **Purpose**: Maps every stage of the BMad product development pipeline to the koni-docs `docs/` structure. Use this to update koni-docs templates to match BMad output standards.
 >
-> **Based on**: `examples/bmad-raw-sample/` — a complete PlantCare Pro example executed through the full BMad pipeline.
+> **Based on**: the BMad templates themselves (this analysis was derived from them)
 >
 
 

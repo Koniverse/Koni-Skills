@@ -219,7 +219,7 @@ The Stories-in-scope / Goals / Quick-reference triad up front lets a tester unde
 
 **Folder layout**: the `docs/tests/` taxonomy (test-cases + test-reports) is owned by **koni-qc** — see its `references/test-organization.md`. koni-docs owns the templates that fill those folders, not the folders' shape.
 
-**Phase 1 is manual-only.** A test-sync script, a RULE (epic must have test-cases before close), and a Playwright → markdown converter for CI are planned for phase 2 once the manual pattern stabilizes.
+**These artifacts are authored by hand today.** Automation (a test-sync script, a RULE requiring test-cases before an epic closes, a Playwright → markdown converter) is not built; koni-qc owns that roadmap.
 
 ## How to set up in a new project
 

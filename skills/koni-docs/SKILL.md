@@ -159,7 +159,10 @@ Run through every item before committing:
 [ ] `version_shipped` is BARE semver, `assignee` is a GitHub login, ID fields are bare IDs (RULE-16, RULE-15, RULE-17)
 [ ] npx koni-docs sync --docs-path docs/  (5-layer sync)
 [ ] npx koni-docs status --docs-path docs/  (STATUS.md — RULE-5)
-[ ] Touched a skill or its references? → python3 skills/koni-docs/scripts/check-references.py <skill-dir>  (every link, anchor, §-pointer, and named script must resolve)
+[ ] Touched a skill or its references? → python3 skills/koni-docs/scripts/check-references.py <skill-dir>
+    Its `0` is only evidence because two other scripts prove it can still speak:
+    test-check-references.py (27 planted defects, all must be caught) and
+    test-mutations.py (11 broken checkers, all must be killed). The gate runs all three.
 [ ] CLAUDE.md Active Context block updated (see §4)
 ```
 
