@@ -24,7 +24,7 @@ env-var propagation rule) — those still apply unchanged, and koni-docs remains
 their single source of truth.
 
 Load both skills when the project declares `plugins: [nextjs]` under its
-CLAUDE.md `koni-docs:` block (the `koni-docs-plugins` declaration): the
+CLAUDE.md `koni-docs:` block: the
 core 12 from koni-docs plus the `NX-` rules below. For the ship gate, this
 plugin **references the existing koni-harness gate** (it prescribes a
 `gates.conf` row) rather than building a gate of its own.
@@ -45,7 +45,7 @@ plugin **references the existing koni-harness gate** (it prescribes a
 ## Composes with koni-docs
 
 - **Discovery.** A project opts in by declaring `plugins: [nextjs]` under its
-  CLAUDE.md `koni-docs:` block (the `koni-docs-plugins` declaration); the agent
+  CLAUDE.md `koni-docs:` block; the agent
   then loads this skill alongside koni-docs:
 
   ```yaml
@@ -68,10 +68,10 @@ plugin **references the existing koni-harness gate** (it prescribes a
 Use this skill for any Next.js work in a Koni repo — App Router changes, env /
 `NEXT_PUBLIC_` handling, server-vs-client component decisions, or wiring the
 ship gate — especially when the project declares `plugins: [nextjs]` in its
-`koni-docs:` block (the `koni-docs-plugins` declaration).
+`koni-docs:` block.
 
 **Wire note:** declare `plugins: [nextjs]` under the project's CLAUDE.md
-`koni-docs:` block (the `koni-docs-plugins` declaration):
+`koni-docs:` block:
 
 ```yaml
 koni-docs:

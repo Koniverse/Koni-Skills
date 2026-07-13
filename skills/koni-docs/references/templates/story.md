@@ -53,7 +53,7 @@ title: "<Story title>"
 epic: EPIC-X
 status: backlog            # backlog | ready | in-progress | review | done | blocked | deprecated
 priority: P1               # P0 | P1 | P2 | P3
-points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md §3a-bis for scale + consult /sales-engineer or /marketing-ops on non-eng work
+points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see sprint-system.md §Story sizing for the scale; consult /sales-engineer or /marketing-ops on non-eng work
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 due:                       # OPTIONAL — hard deadline from OUTSIDE the sprint cadence (contract / demo / audit date), bare YYYY-MM-DD. Leave EMPTY when "this sprint" is the only requirement — sprint.end is NOT inherited. Explain the date in §Deadline, never in this value.
 version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
@@ -64,7 +64,7 @@ assignee:                  # MANDATORY (RULE-15): the commit author's GitHub LOG
 commit:                    # SHA of the landing commit. A commit cannot contain its own SHA — do NOT `--amend` it in (that rewrites the commit and orphans the SHA). Backfill it in a follow-up commit (RULE-2). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-external_deps:             # OPTIONAL — third-party systems / partners / legal reviews this story waits on, e.g. [payment_gateway, resend_api, legal_review]. Planning-only: no tooling reads it yet. Populate when calendar-time outside dev control is on the critical path — these stories are the most commonly undersized (SKILL.md §3a-bis).
+external_deps:             # OPTIONAL — third-party systems / partners / legal reviews this story waits on, e.g. [payment_gateway, resend_api, legal_review]. Planning-only: no tooling reads it yet. Populate when calendar-time outside dev control is on the critical path — these stories are the most commonly undersized (see sprint-system.md §Story sizing).
 ---
 
 ## Story refresh — YYYY-MM-DD *(optional, recurring)*
@@ -313,8 +313,7 @@ per file explaining what changed and why — not just what was added.>
   reviewed in full. **For non-engineering stories (sales / marketing /
   content / ops), consult `/sales-engineer` or `/marketing-ops` before
   sizing** — gut-feel + Fibonacci alone systematically undersizes ~30-40%
-  on these tracks (see SKILL.md §3a + §3a-bis for the routing matrix and
-  calibration scale).
+  on these tracks (see [`sprint-system.md`](../sprint-system.md) §Story sizing).
 - `prd_ref` / `arch_ref` / `depends_on`: ID-typed list fields. Each
   entry MUST be a bare canonical ID matching the regex for its namespace
   (`^FR-\d+$` or `^NFR-\d+$` for `prd_ref`; `^AD-\d+$` for `arch_ref`;

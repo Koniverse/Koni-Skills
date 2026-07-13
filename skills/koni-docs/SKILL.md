@@ -105,8 +105,8 @@ These 13 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-17 | Frontmatter ID fields = bare canonical IDs only, never prose  | During     |
 | RULE-18 | `due` = a commitment from outside the sprint cadence — sparse, bare date, never moved silently | During |
 
-**Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
-See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugin skills are structured, discovered (`koni-docs-plugins:`), and composed; `koni-nextjs` is the reference.
+**Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project's CLAUDE.md declares them under the `koni-docs:` block (`koni-docs:` → `plugins: [supabase, nextjs]`), load those plugin skills for the additional rules.
+See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugin skills are structured, discovered (the `plugins:` key under `koni-docs:`), and composed; `koni-nextjs` is the reference.
 
 ---
 
@@ -190,7 +190,7 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive/codebase-discovered stories, set `assignee` to the commit author's GitHub **login** (`gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login`) — never `git log --format=%an` (that is git `user.name`, which RULE-15 forbids) and never the session user | `templates/story.md` §1                    |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive / codebase-discovered stories, resolve `assignee` to the commit author's GitHub **login** — never git `user.name`, never the session user (RULE-15 has the command) | `templates/story.md` §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + `npx koni-docs sync` then `status`                                          | `sprint-system.md` §5-layer                |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |
@@ -236,11 +236,11 @@ before reading it.
 | [`references/cli.md`](references/cli.md) | Installing, upgrading, or running the CLI; a subcommand, a flag, the commit loops, the typed lib |
 | [`references/templates.md`](references/templates.md) | You want the index of every template, or just the frontmatter shape |
 | [`references/templates/*.md`](references/templates/) | Writing the artifact itself — one file per doc type, each with a section index and one filled example |
-| [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project declares `koni-docs-plugins:` and you need how plugin skills compose |
+| [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project sets `plugins:` under its `koni-docs:` block and you need how plugin skills compose |
 | [`references/bmad-template-analysis.md`](references/bmad-template-analysis.md) | Migrating from BMad, or mapping BMad artifacts into koni-docs |
-| [`scripts/check-references.py`](scripts/check-references.py) | **Run it after editing any skill doc.** It asserts that every markdown link, every in-page anchor, every section pointer, and every script the docs name by filename actually resolves. It knows headings inside code fences are not headings, and that GitHub hyphenates each space rather than collapsing runs — the two mistakes that once certified 150 dead anchors as green (LESSONS §19) |
+| [`scripts/check-references.py`](scripts/check-references.py) | **Run it after editing any skill doc** — it asserts that every link, anchor, section pointer, and named script resolves. The `skill-references` gate runs it on every commit that touches a skill. |
 
-**Plugin skills**: if the project's CLAUDE.md declares `koni-docs-plugins`, load those
+**Plugin skills**: if the project's CLAUDE.md sets `plugins:` under its `koni-docs:` block, load those
 skills for technology-specific rules that extend this rule set. `koni-nextjs` is the
 worked example.
 
@@ -264,7 +264,7 @@ The seven subcommands, in one line each:
 | `backfill-commits` | **Repair only** — a CHANGELOG that already shipped with `pending` SHAs |
 | `preview` | Astro SSR docs viewer (`--watch` for live-reload) |
 
-**Everything else — install modes, upgrade, global flags, the exact commit
-loops, the typed lib API, troubleshooting — lives in
-[`references/cli.md`](references/cli.md).** Load it when you need to run, install,
+**The authoritative inventory — with flags, install modes, the commit loops, the
+typed lib API, and troubleshooting — is [`references/cli.md`](references/cli.md).**
+The table above is a menu, not a second source: when they disagree, cli.md wins. Load it when you need to run, install,
 or import the CLI; you do not need it to decide *what* to document.

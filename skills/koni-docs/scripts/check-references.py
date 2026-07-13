@@ -34,8 +34,13 @@ FILE_LINK = re.compile(r'\]\(([^)#\s]+)(?:#([^)]+))?\)')
 # earlier version of this script could not see at all. It certified 9 such pointers
 # green, one of which was dead, on a BLOCKER rule's See line. The bug this script
 # exists to catch, in the script itself.
+# Three forms, all of which have shipped dead in this repo:
+#   `file.md` §Section          — the bare-backtick form
+#   [`file.md`](path) §Section  — the linked form (a false green certified 9 of these)
+#   SKILL.md §3a-bis            — no backticks at all, and it lived INSIDE a template
+#                                 skeleton, so it was copied into every generated story
 SECTION_POINTER = re.compile(
-    r'\[?`([\w./-]+\.md)`(?:\]\([^)]*\))?,?\s*§([^\n,.;()\[\]|`+]+)'
+    r'\[?`?([A-Za-z][\w./-]*\.md)`?(?:\]\([^)]*\))?,?\s*§([^\n,.;()\[\]|`+]+)'
 )
 
 # A script the skill names as tooling must exist. `agile-sync-up.mjs` was cited as
@@ -46,6 +51,14 @@ SCRIPT_NAME = re.compile(r'`([\w./-]+\.(?:mjs|py|sh))`')
 def is_external(target: str) -> bool:
     """An http(s) URL is not ours to resolve."""
     return target.startswith(('http://', 'https://'))
+
+
+# Docs that live in the CONSUMER's repo (docs/), not in the skill. A template may
+# legitimately point a generated document at them; the skill cannot resolve them.
+CONSUMER_DOCS = {
+    'DESIGN.md', 'LESSONS.md', 'CONTEXT.md', 'PRD.md', 'ARCHITECTURE.md',
+    'CHANGELOG.md', 'SETUP.md', 'BRIEF.md', 'DEPLOY.md', 'STATUS.md', 'VERSION',
+}
 
 
 def is_placeholder(target: str) -> bool:
@@ -156,7 +169,7 @@ def check(root: Path) -> list[str]:
 
         siblings = root.parent  # sibling skills — cross-skill pointers are legitimate
         for m in SECTION_POINTER.finditer(text):
-            if in_fence(text, m.start()) or is_placeholder(m.group(1)):
+            if is_placeholder(m.group(1)) or Path(m.group(1)).name in CONSUMER_DOCS:
                 continue
             target = md.parent / m.group(1)
             if not target.exists():

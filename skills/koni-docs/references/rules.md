@@ -1,6 +1,8 @@
 # Core Rules — Detailed Reference
 
-> These 12 rules apply to ALL Koniverse projects regardless of technology stack.
+> These 13 rules apply to ALL Koniverse projects regardless of technology stack.
+> (RULE-3, -4, -8, -9 and -12 were retired before v0.1; the numbers are not reused,
+> so cross-references in older docs keep resolving.)
 > Technology-specific rules live in plugin skills (koni-nextjs (and future plugin skills), etc.)
 
 
@@ -371,7 +373,7 @@ on-track. Record the slip; correct forward; never rewrite the past to look clean
     echo "due changed without a CONTEXT entry — RULE-18.3"
   ```
 
-**See**: [`sprint-system.md`](sprint-system.md) §Deadlines vs sprint cadence, [`frontmatter-spec.md`](frontmatter-spec.md) §1.1, the `## Deadline` section of [`templates/story.md`](templates/story.md), [CONTEXT D37](../../../docs/CONTEXT.md).
+**See**: [`sprint-system.md`](sprint-system.md) §Deadlines vs sprint cadence, [`frontmatter-spec.md`](frontmatter-spec.md) §1.1, the `## Deadline` section of [`templates/story.md`](templates/story.md), CONTEXT D37 (in the Koni-Skills repo, where this rule was decided).
 
 ---
 

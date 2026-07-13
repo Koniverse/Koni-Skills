@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -302,6 +302,22 @@ every pressure scenario, and a grader still marked one RED — because they were
 surface phrased the CONTEXT-entry obligation as "no story overdue-and-silent",
 conditioned on the story being **already late** — so an agent proactively pushing a
 date read past it. Correct, well-argued, and unfindable. They are now RULE-18.
+
+## Round 6 — skill-grading re-grade (2026-07-13, v0.44.0)
+
+D4 rose to **21.25** (20.5 + 22 — the highest yet; one grader: *"the skill is now, by
+Anthropic's standards, in good shape"*). RULE-18.3 held GREEN: an agent pressured to
+push a `due` before a flight refused to edit the date silently and wrote the CONTEXT
+entry.
+
+Two findings, and they are the same finding. **The skill taught a CLAUDE.md key that
+does not exist** — `koni-docs-plugins:`, in four places in the always-loaded file
+(the real key is `plugins:` under `koni-docs:`). And **the frontmatter cheatsheet, 107
+of templates.md's 169 lines, was a second contract that had drifted into teaching two
+things RULE-17 forbids** — the copy billed as the shortcut for agents in a hurry was
+the copy nobody audited. Both are LESSONS §21: duplication does not fail by going
+missing, it fails by going subtly wrong in the copy people actually reach for; and a
+name repeated confidently in prose is not a verified name.
 
 ## Implementation notes
 

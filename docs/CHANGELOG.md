@@ -16,6 +16,50 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.44.0] — 2026-07-13 — koni-docs: round 5 of skill-grading — the skill taught a config key that does not exist — v0.44.0
+
+Re-grade after v0.43.0: D4 rose to **21.25** (20.5 + 22, the highest yet; one grader
+called the skill "in good shape by Anthropic's standards"). Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **SKILL.md taught a CLAUDE.md key that does not exist.** It said a project
+  declares `koni-docs-plugins: [supabase, nextjs]`. The real key is `plugins:`
+  nested under `koni-docs:`. It was wrong in four places in the always-loaded file,
+  wrong again across `plugin-pattern.md` and `koni-nextjs`, and the plugin reference
+  had to paper over the gap ("this is the `koni-docs-plugins` declaration"). The
+  CHANGELOG had recorded the correct key years earlier. A name repeated confidently
+  in prose is not a verified name. See [LESSONS §21](LESSONS.md).
+- **The frontmatter cheatsheet — 107 of `templates.md`'s 169 lines — was a second
+  contract, and it was the wrong one.** Billed as the shortcut "for agents that just
+  need the shape without loading the full template", it had drifted from
+  `frontmatter-spec.md` and taught **two things RULE-17 forbids** (`AD-N` in
+  `prd_ref`; the banned `FR-X.1 .. FR-X.N` range). The copy designed to be obeyed in
+  a hurry was the copy nobody audited. Replaced by a pointer. `templates.md`:
+  169 → 69 lines.
+- **A dead `SKILL.md §3a-bis` pointer — inside the story template's skeleton**, so it
+  was being copied into every story generated in every consumer repo. The checker
+  could not see it: it required the filename in backticks, and skipped fenced
+  content by design. Both holes closed; the checker now also knows which docs live
+  in the *consumer's* repo (`DESIGN.md`, `LESSONS.md`, …) and are not the skill's to
+  resolve.
+- `rules.md` still said "These 12 rules" — stale in the very commit that added
+  RULE-18. Now 13, with a note that RULE-3/4/8/9/12 were retired and their numbers
+  are not reused.
+- Version annotations decorating the *live* library surface in `cli.md`; a
+  `CONTEXT D37` link that only resolves inside this repo; RULE-15's full `gh api`
+  procedure sitting in a routing-table cell.
+
+### Changed
+- The three "tombstone" paragraphs left by earlier de-duplications now state the
+  rule ("Single source: X") instead of narrating the autopsy. `cli.md` no longer
+  claims "no other file keeps a second copy" — SKILL.md §7 does keep a menu, and the
+  honest framing is "when they disagree, §4 wins".
+
+koni-docs CLI **0.11.2 → 0.11.3**.
+
+---
+
 ## [0.43.0] — 2026-07-13 — koni-docs: round 4 of skill-grading — a guard you wrote yourself is a hypothesis — v0.43.0
 
 Re-grade after v0.42.0: **79/100** (D1 22 · D2 23 · D3 14 · D4 20). D1 and D2 both

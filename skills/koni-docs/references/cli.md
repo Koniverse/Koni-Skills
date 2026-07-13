@@ -117,9 +117,8 @@ koni-docs preview docs --watch     # opens http://localhost:4321/
 
 ## 6. When to use which subcommand
 
-**Single source: [SKILL.md §5](../SKILL.md)** — the intent → action table there
-already maps every user phrasing to the command. §4 above is the inventory; §5 is
-the router. Keeping a third map here would be the mirror that drifts.
+**Single source: [SKILL.md §5](../SKILL.md)** — §4 above is the inventory; §5 is the
+router that maps a user's phrasing to a command.
 
 ## 7. Library API for programmatic use
 
@@ -134,7 +133,7 @@ import {
 
 // Markdown primitives
 import {
-  findSection, findSectionStartingWith,    // ← prefix matcher (v0.7.0)
+  findSection, findSectionStartingWith,    // ← prefix matcher
   replaceSection, appendToSection, removeSection,
   findTable, parseTable, findRow, updateCell, appendRow, removeRow,
   parseCheckboxes, setCheckboxState, appendCheckbox, replaceCheckboxes,
@@ -147,7 +146,7 @@ import { Schemas } from '@koniverse/koni-docs/lib';
 // Validators
 import {
   validateRefs,        // L3 ID graph (story→epic, story→sprint, story→PRD Epics & User Stories)
-  validateFrRefs,      // ← prd_ref reachability into PRD Functional Requirements (v0.7.0)
+  validateFrRefs,      // ← prd_ref reachability into PRD Functional Requirements
 } from '@koniverse/koni-docs/lib';
 
 // Deadlines — see sprint-system.md §Deadlines vs sprint cadence
@@ -183,6 +182,8 @@ The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unifi
 
 ## 9. Skill ↔ CLI relationship
 
-This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, §4 above is the authoritative inventory. No other file keeps a second copy — `sprint-system.md` used to mirror the agile subset and had already drifted out of date, so it now points here instead.
+This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, §4 above is where it lands — that table is
+authoritative. SKILL.md §7 carries a one-line-per-command menu so a reader can see the
+surface without loading this file; when the two disagree, §4 wins.
 
 Skill files at `skills/koni-docs/` in this repo are the canonical source. Consumer projects link to this skill (preferred: symlink each agent's `.<agent>/skills/koni-docs/` → `../../skills/koni-docs`); the `skills-lock.json` `sourceType: "github"` mechanism is for projects that can't or won't host the file locally.

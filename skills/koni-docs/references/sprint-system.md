@@ -149,9 +149,7 @@ CONTEXT.md decision entry naming the affected stories and reasoning.
 
 All automation is the `@koniverse/koni-docs` CLI (`npm install --save-dev @koniverse/koni-docs`).
 The **authoritative subcommand inventory, flags, and commit loops live in
-[`cli.md`](cli.md)** — this file does not keep a second copy, because the copy
-that used to live here had already drifted out of date (it was missing `preview`
-and `validate`).
+[`cli.md`](cli.md)**.
 
 The two you run around every story status change:
 
@@ -180,9 +178,7 @@ Inconsistency between any two layers = documentation debt. Fix in same commit as
 
 ## Pre-commit checklist
 
-**Single source: [SKILL.md §3c](../SKILL.md).** A second copy used to live here and
-had already drifted from it (different CHANGELOG wording, missing the BRIEF.md
-item) — exactly the failure a duplicated checklist is guaranteed to produce.
+**Single source: [SKILL.md §3c](../SKILL.md).**
 
 ## Test artifacts
 

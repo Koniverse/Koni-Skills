@@ -5,7 +5,7 @@
 
 How a technology-specific skill extends koni-docs without forking or
 restating its rules. Read this before authoring a `koni-<tech>` plugin, and
-when a project declares `koni-docs-plugins:` and you need to know what that
+when a project sets `plugins:` under its `koni-docs:` block and you need to know what that
 loads.
 
 ---
@@ -51,7 +51,7 @@ koni-docs:
 ```
 
 When the agent reads a project's CLAUDE.md and sees a non-empty
-`plugins:` list (this is the `koni-docs-plugins` declaration), it loads each
+`plugins:` list, it loads each
 named plugin's `SKILL.md` **alongside** koni-docs — not instead of it. Both
 rule sets are then in force for that project: the core 12 plus the plugin's
 namespaced rules.
@@ -91,7 +91,7 @@ Checklist for a new `koni-<tech>` plugin:
    "how to check" is a concrete, grep-able or review-able step.
 4. **"Composes with koni-docs" section** — state the discovery key by declaring
    `plugins: [<tech>]` under the repo's `koni-docs:` block in CLAUDE.md (the
-   `koni-docs-plugins` declaration), affirm it extends and never duplicates the
+   `plugins:` (under `koni-docs:`) declaration), affirm it extends and never duplicates the
    12 core rules, and name any koni-harness gate row the plugin relies on.
 5. **When-to-use triggers** — the stack signals that should activate the
    skill (e.g. "Next.js work in a Koni repo").
@@ -99,7 +99,7 @@ Checklist for a new `koni-<tech>` plugin:
    (`.agents/skills/koni-<tech>` → `../../skills/koni-<tech>`, then
    `.claude/skills/koni-<tech>` → `../../.agents/skills/koni-<tech>`), and have
    the consuming project declare `plugins: [<tech>]` under its CLAUDE.md
-   `koni-docs:` block (the `koni-docs-plugins` declaration):
+   `koni-docs:` block the `plugins:` declaration,:
 
    ```yaml
    koni-docs:

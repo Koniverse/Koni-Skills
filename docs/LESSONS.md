@@ -734,3 +734,45 @@ obligation as *"no story overdue-and-silent"* — conditioned on the story being
 # Every obligation stated as a MUST/NEVER in a skill should map to a numbered rule.
 rg -n 'MUST|NEVER|always requires' skills/*/references/*.md | rg -v 'RULE-\d+'
 ```
+
+---
+
+## 21. A cheatsheet that restates a contract is a second contract — and it is the copy that gets obeyed
+
+**What happened**: `templates.md` carried a "Quick frontmatter cheatsheet" — 107 of
+its 169 lines — restating the story / epic / sprint frontmatter that
+`frontmatter-spec.md` already owns. It was billed, in its own words, as the shortcut
+"for agents that just need the frontmatter shape without loading the full template."
+
+It had drifted. It described `due` in words the spec does not use. Worse, it taught
+**two things RULE-17 explicitly forbids**: `AD-N` inside `prd_ref`, and the banned
+range syntax `FR-X.1 .. FR-X.N`. So the copy that was *designed to be obeyed by an
+agent in a hurry* was the copy that was wrong — and being a convenience, nobody
+audited it.
+
+The same round found the always-loaded SKILL.md teaching a CLAUDE.md key,
+`koni-docs-plugins:`, **that does not exist** — the real key is `plugins:` nested
+under `koni-docs:`. It said so in four places, and the plugin reference had to paper
+over the gap ("this is the `koni-docs-plugins` declaration"). The CHANGELOG had
+even *recorded* the correct key years earlier. The wrong name survived because it
+lived in the file everyone reads and nobody re-derives.
+
+**The lesson**: **duplication does not fail by going missing — it fails by going
+subtly wrong in the copy people actually reach for.** A summary, a cheatsheet, a
+"quick reference", an activation table "mirroring" another — each is a promise to
+stay in sync with something you do not control, and that promise is always broken
+eventually. The correct artifact is a *pointer*: one line naming the single source.
+A pointer cannot drift.
+
+Corollary for facts, not just structure: **a name repeated in prose is not a
+verified name.** `koni-docs-plugins:` was written confidently in four files for
+months. Nothing in the system used it. If a doc names a config key, a script, a
+flag, or a section, something must fail loudly when it stops existing — otherwise
+the doc is fiction that reads like fact.
+
+**Grep check**:
+
+```bash
+# Every config key a doc claims should appear in a real config or schema.
+rg -o '`[a-z][a-z0-9_-]*:`' skills/*/SKILL.md | sort -u   # then verify each one exists
+```

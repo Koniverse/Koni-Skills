@@ -51,119 +51,19 @@
 
 ## Activation
 
-**Single source: [SKILL.md §5](../SKILL.md).** A 16-row copy of that 29-row table
-used to live here and had already drifted out of date. A mirror that must be kept
-in sync is a mirror that will not be.
+**Single source: [SKILL.md §5](../SKILL.md).** A mirror that must be kept in sync is
+a mirror that will not be.
 
 ## Quick frontmatter cheatsheet
 
-For agents that just need the frontmatter shape without loading the full
-template:
+**Single source: [`frontmatter-spec.md`](frontmatter-spec.md) §3** — the per-document
+contract, field by field, with the pattern each value must match.
 
-### Story (`docs/sprints/stories/US-X.Y-<slug>.md`)
+A second copy used to live here, and it had already drifted: it described `due` and
+`version_shipped` in words the spec does not use, and — worse — it taught two things
+RULE-17 forbids (`AD-N` inside `prd_ref`, and `FR-X.1 .. FR-X.N` range syntax). It was
+billed as the shortcut for agents who skip the full template, which made it the copy
+most likely to be obeyed and the one least likely to be checked.
 
-```yaml
----
-id: US-X.Y
-title: "<Story title>"
-epic: EPIC-X
-status: backlog            # backlog | ready | in-progress | review | done | blocked | deprecated
-priority: P1               # P0 | P1 | P2 | P3
-points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
-sprint:                    # sprint-YYYY-WNN once committed
-due:                       # OPTIONAL — a deadline imposed from OUTSIDE the sprint cadence (contract / demo / audit), bare YYYY-MM-DD. Leave EMPTY when "this sprint" is the only requirement: sprint.end is NEVER inherited. Explain the date in the body's `## Deadline`, never here.
-version_shipped:           # bare semver, set when status → done (RULE-16 — never `v`-prefixed)
-prd_ref: [FR-N]            # FR / NFR only — bare IDs, list form (RULE-17)
-arch_ref: [AD-N]           # AD only — omit if none. AD-N must NEVER go in prd_ref.
-depends_on: [US-X.Y]       # US only — omit if none
-assignee:                  # GitHub login (RULE-15) — mandatory when shipping
-commit:                    # SHA of the landing commit. A commit cannot contain its own SHA — backfill it in a follow-up commit (RULE-2). Never "pending" at rest.
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-external_deps:             # OPTIONAL — planning-only today; no tooling reads it yet
----
-```
-
-> **The ID-typed fields are the trap.** `prd_ref` / `arch_ref` / `depends_on`
-> hold **bare canonical IDs and nothing else** — no parentheticals, no ranges
-> (`FR-28 .. FR-45`), no slash-joins, no cross-namespace mixing. Every qualifier
-> you are tempted to add belongs in the body. RULE-17; full contract + the
-> anti-pattern catalog in [`frontmatter-spec.md`](frontmatter-spec.md).
-
-### Epic (`docs/sprints/epics/EPIC-N.md`)
-
-```yaml
----
-id: EPIC-X
-title: "<Epic title>"
-status: backlog            # backlog | in-progress | done
-prd_ref: [FR-1, FR-2]      # FR / NFR only — enumerate every ID; ranges (`FR-1 .. FR-9`) are INVALID (RULE-17)
-arch_ref: [AD-N]           # AD only — omit if none
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
----
-```
-
-### Sprint (`docs/sprints/sprint-YYYY-WNN.md`)
-
-```yaml
----
-id: sprint-YYYY-WNN
-status: planned            # planned | in-progress | closed
-start: YYYY-MM-DD
-end: YYYY-MM-DD
-goal: "<one sentence naming the deliverable, not the activity>"
----
-```
-
-### Test cases (`docs/tests/test-cases/EPIC-N.md`)
-
-```yaml
----
-id: EPIC-N-tests
-epic: EPIC-N
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
----
-```
-
-Each TC inside the file carries its own YAML metadata block:
-
-```yaml
-id: TC-N.E2E-1
-type: e2e                  # smoke | regression | e2e | integration | unit | performance | security
-mode: manual               # manual | automated | hybrid
-priority: P0               # P0 | P1 | P2 | P3
-maps_to:
-  fr: [FR-N]
-  ac: [US-X.Y/AC-1, US-X.Z/AC-2]
-  ad: [AD-N]               # optional
-  rule: [RULE-N]           # optional
-```
-
-### Test report — per-execution (`docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md`)
-
-```yaml
----
-epic: EPIC-N
-run_id: YYYY-MM-DD-EPIC-N-runN
-run_at: YYYY-MM-DDTHH:MM:SS+07:00
-env: staging               # local | staging | production
-version: vX.Y.Z
-commit: <full SHA>
-executor: <GitHub login | "CI">
-trigger: per-release       # per-PR | per-release | per-sprint | nightly | on-demand
----
-```
-
-### Test report — per-release (`docs/tests/test-reports/releases/vX.Y.Z.md`)
-
-```yaml
----
-version: vX.Y.Z
-released_at: YYYY-MM-DD
-commit: <SHA of the release commit>
-epics_covered: [EPIC-N, EPIC-M]
-ship_status: shipped       # shipped | held | rolled-back
----
-```
+The lesson generalizes: **a cheatsheet that restates a contract is a second contract.**
+Read the spec.
