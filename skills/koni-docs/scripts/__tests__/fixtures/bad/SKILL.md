@@ -48,3 +48,18 @@ See `Guide.md` §Ghostly for details.
 [dead anchor near a duplicate heading](#alive-2)
 [dead emoji anchor](#deploy-it)
 [wrong-case path](References/ok.md)
+
+[dead link in the same directory](gone-sibling.md)
+[dead anchor needing a backtick strip](#a-code-heading)
+[dead H1 anchor](#not-the-h1)
+<h2 id="real-id">has an id</h2>
+[dead anchor despite an id nearby](#not-that-id)
+See `nowhere.md` §Anything for details.
+See `ok.md` §3 for details.
+The `ghost-script.py` tool runs it.
+
+<!-- first comment -->
+[a dead link between two comments](references/gone9.md)
+<!-- second comment -->
+
+See PRD §8 for the requirement.

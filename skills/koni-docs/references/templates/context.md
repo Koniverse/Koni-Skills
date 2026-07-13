@@ -115,7 +115,7 @@ expanding the addressable market 30×.
 
 **Impact**: V2 requires compliance (SOC 2, regional data-residency), self-host
 option, SSO. Ship V1 first, V2 follows. Updates `BRIEF §Who This Serves` and
-PRD §5 Personas.
+the PRD `Personas` section.
 
 **Date**: 2026-04-29
 **Version**: pre-v0.1.0

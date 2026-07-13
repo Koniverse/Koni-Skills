@@ -16,6 +16,42 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.51.0] — 2026-07-13 — koni-docs: derive the corpus from the claim surface — v0.51.0
+
+Round 9 D3: **20/25** (from 18). Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The corpus covered the last bug report, not the checker's claim surface.** 27 classes
+  and 12 mutants felt complete; a reviewer planted 18 fresh narrowings and **seven
+  survived**, each deleting a behaviour the checker documents **in its own source** — H1
+  anchors, explicit `id=` attributes, numeric §-pointer precision (`§3` must never match
+  `## 30.`), same-directory links, non-greedy comment spans, a §-pointer to a file that
+  exists nowhere. The hole rate had not moved across rounds (63% → 58%): I had been adding
+  fixtures for whatever the last reviewer found and calling it coverage.
+
+  The corpus is now derived from the branches — every `problems.append` and every
+  behaviour asserted in a comment gets a fixture, and **a new branch requires a new entry
+  in the same commit**. **36 defect classes, 19 mutants, all killed.** See
+  [LESSONS §27](LESSONS.md).
+- **An equivalent mutant exposed dead code.** A mutation deleting the slugger's backtick
+  strip survived — not because a fixture was missing, but because the line did nothing:
+  the punctuation regex already removed backticks. A surviving mutant is usually a hole in
+  the tests; sometimes it is a lie in the code.
+- **`PRD §8` — the numbered form the label-only convention retired — survived in three
+  files**, including `templates/story.md`, which is **copied verbatim into every generated
+  story in every consumer repo**. The rule was updated (US-4.29); the template was updated;
+  the siblings never were. The checker could not see the class at all, because
+  `SECTION_POINTER` required a `.md` token and bare `PRD §8` has none. It now checks for
+  the retired form directly — and tolerates a doc that *names* it while explaining that it
+  is retired.
+
+All six skills: **0 dangling references.**
+
+koni-docs CLI **0.11.8 → 0.11.9**.
+
+---
+
 ## [0.50.0] — 2026-07-13 — koni-docs: behavioural evals — verify the output, not the apparatus — v0.50.0
 
 Round 9: **D1 25/25 · D2 25/25 · D4 22/25** (22.5 + 21.5 — a new high). Extends

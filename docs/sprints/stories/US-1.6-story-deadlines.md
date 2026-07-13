@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0 + 0.50.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0 + 0.50.0 + 0.51.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -436,6 +436,26 @@ happens to ship, and nothing at all around the thing it exists to produce — be
 another agent. So this round adds `evals/`: five scenarios, each with the pressure that
 makes its rule hard, each scored on observable facts about the artifact rather than
 impressions. LESSONS §26: verify the output, not the apparatus.
+
+## Round 13 — derive the corpus from the claim surface (2026-07-13, v0.51.0)
+
+**D3 20/25** (from 18). Running total: D1 25 · D2 25 · D3 20 · D4 22 = **92/100**.
+
+The finding is the fourth variation on the same theme, and the sharpest: **the corpus had
+been widened to cover the last reviewer's report, not the checker's claim surface.** 27
+classes felt like completeness; it was a count of the defects someone had named. A reviewer
+planted 18 fresh narrowings and seven survived — each deleting a behaviour the checker
+documents **in its own source**. The hole rate had not moved across rounds (63% → 58%).
+
+The corpus is now derived from the branches: every `problems.append`, every behaviour
+asserted in a comment, gets a fixture — and a new branch requires a new entry in the same
+commit. 36 classes, 19 mutants, all killed (LESSONS §27).
+
+Two things that surfaced immediately, which no reviewer had found: an **equivalent
+mutant** revealed dead code (the slugger's backtick strip did nothing — the punctuation
+regex already removed them), and **`PRD §8`**, the numbered form a migration retired,
+survived in three files — including `templates/story.md`, copied verbatim into every
+generated story in every consumer repo. The checker could not see the class at all.
 
 ## Implementation notes
 

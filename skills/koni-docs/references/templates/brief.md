@@ -7,7 +7,7 @@
 >
 > **Source**: Maps directly from BMad `brief.md` (planning artifact). The
 > Brief is the executive-facing document that defines the product vision
-> *before* detailed requirements are written. PRD §1 Executive Summary
+> *before* detailed requirements are written. the PRD `Executive Summary`
 > derives from this file.
 
 
@@ -85,7 +85,7 @@ Inspiring but grounded — 1 paragraph.]
   pipeline produces output.
 - **How**: Write the full brief. On major pivots, update in-place and record
   the change in CONTEXT.md.
-- **Cross-reference**: PRD §1 Executive summary derives from BRIEF.md. Link
+- **Cross-reference**: the PRD `Executive Summary` derives from BRIEF.md. Link
   to BRIEF.md from the PRD header.
 
 ---

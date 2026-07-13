@@ -95,6 +95,46 @@ MUTATIONS: list[tuple[str, str, str]] = [
         '    out.update(HTML_ANCHOR.findall(body))',
         '    pass',
     ),
+    # Seven of these survived when a reviewer planted them, each deleting a behaviour the
+    # checker documents in its OWN SOURCE. The corpus had been widened to cover the last
+    # report rather than the claim surface, so the hole rate never moved (63% -> 58%).
+    # These are derived from the branches now, not from a memory of what someone found.
+    (
+        'H1 headings stop emitting anchors — `](#title)` is a legal link',
+        "HEADING = re.compile(r'^#{1,6} (.+)$', re.M)",
+        "HEADING = re.compile(r'^#{2,6} (.+)$', re.M)",
+    ),
+    (
+        'HTML_ANCHOR sees name= but not id= — half the explicit anchors go missing',
+        "(?:name|id)",
+        "(?:name)",
+    ),
+    (
+        'numeric §-pointer precision is dropped — §3 starts matching `## 30.`',
+        "                ok = any(re.match(rf'{re.escape(named)}\\.\\s', h) or f'§{named}' in h",
+        "                ok = True or any(re.match(rf'{re.escape(named)}\\.\\s', h) or f'§{named}' in h",
+    ),
+    (
+        'a §-pointer to a file that exists nowhere is silently skipped',
+        "                if not matches:",
+        "                if False:",
+    ),
+    (
+        'same-directory links stop being checked — `](sibling.md)` goes blind',
+        "            if '/' not in target_raw and '.' not in target_raw:",
+        "            if '/' not in target_raw:",
+    ),
+    (
+        'HTML comment spans go greedy — everything between the first and last blinds',
+        "r'<!--.*?-->'",
+        "r'<!--.*-->'",
+    ),
+
+    (
+        'the retired-numeric-section check is deleted — `PRD §8` ships again',
+        '        for m in RETIRED_NUMERIC_SECTION.finditer(text):',
+        '        for m in ():',
+    ),
 ]
 
 
@@ -118,7 +158,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 12
+MIN_MUTANTS = 19
 
 
 def main() -> int:

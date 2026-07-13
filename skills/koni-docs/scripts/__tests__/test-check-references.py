@@ -67,6 +67,24 @@ MUST_CATCH = {
     'dead anchor to a nonexistent duplicate-heading suffix': 'dead anchor #alive-2',
     'dead emoji anchor (GitHub keeps the gap the emoji leaves)': 'dead anchor #deploy-it',
     'wrong-case path (dead on Linux/GitHub, alive on a case-blind macOS FS)': 'dead link -> References/ok.md',
+    # Derived from the CLAIM SURFACE, not from a reviewer's report. Every branch in
+    # check-references.py that can append a problem, and every behaviour its source
+    # documents, gets a fixture — because a corpus built from what someone happened to
+    # find certifies memory as coverage (LESSONS §23). A new branch in the checker
+    # requires a new entry here, in the same commit.
+    'dead link in the same directory (no slash in the path)': 'dead link -> gone-sibling.md',
+    'dead anchor whose heading contains a code span': 'dead anchor #a-code-heading',
+    'dead anchor in a file with an H1': 'dead anchor #not-the-h1',
+    'dead anchor beside an explicit id= attribute': 'dead anchor #not-that-id',
+    '§-pointer to a file that exists nowhere': '§-pointer to a file that does not exist -> nowhere.md',
+    'numeric §-pointer precision (§3 must not match a `## 30.` heading)': 'dead §-pointer -> ok.md §3',
+    'named .py script that does not exist': 'names a script that does not exist -> ghost-script.py',
+    'dead link BETWEEN two HTML comments (a greedy comment span would go blind)': 'dead link -> references/gone9.md',
+    # The label-only convention (US-4.29) retired numeric PRD/ARCHITECTURE sections. The
+    # rule and the template were updated; three siblings were not — including one copied
+    # verbatim into every generated story. The checker could not see the class at all,
+    # because bare `PRD §8` carries no `.md` token.
+    'retired numeric doc section (PRD §8, the label-only convention)': 'retired numeric doc section -> PRD §8',
     # Without this, removing the in_fence guard from the ANCHOR_LINK pass broke nothing
     # the suite could see — a surviving mutant names its own hole.
     'phantom anchor from a ``` fence': 'dead anchor #a-heading-that-only-exists-inside-a-backtick-fence',
@@ -75,7 +93,7 @@ MUST_CATCH = {
 # Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
 # all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
 # sixteenth way to print 0.
-MIN_CLASSES = 27
+MIN_CLASSES = 36
 
 
 def run(target: Path) -> tuple[int, str]:

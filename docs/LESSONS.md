@@ -990,3 +990,48 @@ agent seemed to understand"). Two rules that they must never break:
 thing you built than to test the thing you were asked for. The apparatus is legible, it is
 yours, and every layer feels like progress. Ask, before adding the next tier: **is this
 verifying my work, or my product?**
+
+---
+
+## 27. Derive the corpus from the claim surface, not from the last bug report
+
+**What happened**: after LESSONS §23 and §24, the checker had 27 planted defect classes and
+12 mutants, all killed. It felt complete. A reviewer planted 18 fresh narrowings and
+**seven survived** — and every one of them deleted a behaviour the checker **documents in
+its own source**: H1 anchors, explicit `id=` attributes, numeric §-pointer precision,
+same-directory links, non-greedy comment spans, a §-pointer to a file that exists nowhere.
+
+The hole rate had not moved between rounds: 5 of 8 (63%), then 7 of 12 (58%). I had been
+adding fixtures for **whatever the last reviewer happened to find**, and calling the result
+coverage. `MIN_CLASSES = 27` *reads* like completeness. It is a count of the defects
+someone named.
+
+The reviewer's diagnosis is the lesson: *"the corpus was widened to cover my report, not
+the checker's claim surface."*
+
+**The lesson**: **a test corpus must be derived from what the code claims, not from what
+someone found.** The claim surface is enumerable and finite — every branch that can report
+a failure, every behaviour asserted in a docstring or a comment. Walk `grep -n
+'problems.append'`, walk the comments that say "this handles X", and require a fixture for
+each. Then the standing rule: **a new branch in the checker requires a new entry in the
+corpus, in the same commit.** Coverage derived from bug reports converges on the imagination
+of whoever last looked; coverage derived from the claim surface converges on the code.
+
+Two things this immediately surfaced that no reviewer had found:
+
+- **An equivalent mutant.** A mutation deleting `heading.replace('`', '')` survived — not
+  because a fixture was missing, but because the line was **dead code**: the punctuation
+  regex on the next line already stripped backticks. A surviving mutant is usually a hole in
+  the tests; sometimes it is a lie in the code. Both are worth knowing, and only the
+  mutation test can tell you which.
+- **A whole defect class the checker could not see.** `PRD §8` — the numbered form a
+  migration retired — survived in three files, including one **copied verbatim into every
+  generated story in every consumer repo**, because `SECTION_POINTER` required a `.md` token
+  and bare `PRD §8` has none. The rule was updated. The template was updated. The siblings
+  never were: LESSONS §18, once more, in the flagship file.
+
+**The uncomfortable part**: this is the fourth consecutive round in which the honest summary
+is *"the guard was less complete than its own green suggested."* Each round it got better and
+each round that sentence stayed true. That is not a reason to stop verifying. It is the
+reason to stop trusting *any* single layer — and to make the corpus answer to the code
+rather than to memory, so the next round's finding has to be something genuinely new.

@@ -25,6 +25,18 @@ The `real-tool.py` script does the thing.
 [live duplicate-heading anchor](#real-section-1)
 [live fragment in an href](references/ok.md#alive)
 [live explicit HTML anchor](#custom-anchor)
+[live anchor on an id= attribute](#id-anchor)
+[live same-directory link](references/ok.md)
+[live H1 anchor](#fixture)
+[live anchor whose heading has code](#a-code-heading)
+See `ok.md` §3 for details.
+The old `PRD §8` form was retired by the label-only migration — naming it here is fine.
+LESSONS §17 is a real numbered entry, not a retired section.
+
+<h3 id="id-anchor">explicit id</h3>
+
+## A `code` heading
+
 
 <a name="custom-anchor"></a>
 

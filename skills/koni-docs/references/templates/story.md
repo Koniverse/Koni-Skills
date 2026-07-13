@@ -215,7 +215,7 @@ from re-litigating the scope decision.>
 chase these — a broken or missing reference is a reject signal.>
 
 - [Issue #<N>](<URL>)
-- [Source: PRD §8 FR-N](../../PRD.md#functional-requirements)
+- [Source: PRD Functional Requirements, FR-N](../../PRD.md#functional-requirements)
 - [Source: ARCHITECTURE §<section>](../../ARCHITECTURE.md)
 - [Source: CONTEXT D<N>](../../CONTEXT.md) <if a decision was recorded>
 - [Source: LESSONS §<N>](../../LESSONS.md) <if a prior trap is being avoided>

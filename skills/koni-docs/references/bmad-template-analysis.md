@@ -19,7 +19,7 @@ Brainstorm          _bmad-output/brainstorming/               (NOT in docs/ — 
                     brainstorming-session-{date}.md
 
 Product Brief       _bmad-output/planning-artifacts/          (NOT in docs/ — reference     🟡 Optional
-                    brief.md                                   only; extracts into PRD §1)
+                    brief.md                                   only; extracts into the PRD Executive Summary)
 
 PRD                 _bmad-output/planning-artifacts/          docs/PRD.md                   🔴 Required
                     prd.md

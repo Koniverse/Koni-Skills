@@ -50,6 +50,15 @@ SECTION_POINTER = re.compile(
     r'\[?`?([A-Za-z][\w./-]*\.md)`?(?:\]\(([^)]*)\))?,?\s*§([^\n,.;()\[\]|`+]+)'
 )
 
+# `PRD §8`, `ARCHITECTURE §3` — the numbered form the label-only convention retired
+# (US-4.29). These docs live in the consumer's repo, so their sections cannot be resolved
+# from here; but the retired *form* is the defect, and it is checkable. It survived in
+# three files — including one copied verbatim into every generated story — because
+# SECTION_POINTER needed a `.md` token and bare `PRD §11` has none.
+# Only PRD and ARCHITECTURE are label-only. LESSONS and CONTEXT genuinely number their
+# entries (`## 17.`, `### D37`), so `LESSONS §17` is a real address, not a retired one.
+RETIRED_NUMERIC_SECTION = re.compile(r'(?<![\w/.])(PRD|ARCHITECTURE)\s*§\s*(\d+)')
+
 # Backticked OR bare. The first version required backticks — so `agile-sync-up.mjs`,
 # the very ghost this check was written for, would still have slipped through unquoted.
 #
@@ -117,8 +126,10 @@ def github_slug(heading: str) -> str:
     """GitHub's algorithm: drop backticks and punctuation, then hyphenate EACH
     remaining space — it does not collapse runs (`a — b` → `a--b`) and it does not
     trim the gap a stripped leading emoji leaves behind (`## 🚀 Deploy` → `#-deploy`)."""
-    h = heading.replace('`', '')
-    h = re.sub(r'[^\w\s-]', '', h.lower())
+    # No separate backtick strip: the punctuation class below removes them anyway.
+    # (A mutation test proved that line was an equivalent mutant — dead code that looked
+    # load-bearing. An assertion that cannot fail is not an assertion.)
+    h = re.sub(r'[^\w\s-]', '', heading.lower())
     h = h.strip('\n\t')                 # newlines only — a leading space is significant
     return h.replace(' ', '-')
 
@@ -330,6 +341,21 @@ def check(root: Path) -> list[str]:
                          for sl in slugs)
             if not ok:
                 problems.append(f'{md}: dead §-pointer -> {m.group(1)} §{named}')
+
+        for m in RETIRED_NUMERIC_SECTION.finditer(text):
+            if in_fence(text, m.start()):
+                continue
+            # A doc may legitimately *name* the retired form while explaining that it is
+            # retired. Look at the surrounding sentence, not the line — prose wraps, and a
+            # line-sized window put the word "retired" out of view of the thing it explains.
+            window = text[max(0, m.start() - 160): m.end() + 160].lower()
+            if any(w in window for w in
+                   ('retired', 'legacy', 'instead of', 'not ', 'never', '→', 'migration')):
+                continue
+            problems.append(
+                f'{md}: retired numeric doc section -> {m.group(1)} §{m.group(2)} '
+                f'(address it by label — the label-only convention)'
+            )
 
         for m in SCRIPT_NAME.finditer(text):
             if (in_fence(text, m.start()) or is_placeholder(m.group(1))
