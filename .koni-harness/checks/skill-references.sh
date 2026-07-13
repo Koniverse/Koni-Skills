@@ -12,13 +12,14 @@ set -eu
 CHECKER=skills/koni-docs/scripts/check-references.py
 SELFTEST=skills/koni-docs/scripts/__tests__/test-check-references.py
 MUTANTS=skills/koni-docs/scripts/__tests__/test-mutations.py
+COVERAGE=skills/koni-docs/scripts/__tests__/test-coverage.py
 
 command -v python3 >/dev/null 2>&1 || { echo "skill-references: python3 not found, skipping"; exit 0; }
 
 # Their ABSENCE is a hard failure, not a skip. A guard you can disarm by deleting a
 # file is not a guard — and this check's whole thesis is that a silent guard and a
 # broken one are indistinguishable (LESSONS §19, §20, §22).
-for required in "$CHECKER" "$SELFTEST" "$MUTANTS"; do
+for required in "$CHECKER" "$SELFTEST" "$MUTANTS" "$COVERAGE"; do
   [ -f "$required" ] || {
     echo "skill-references: $required is missing — the guard cannot be trusted without it"
     exit 1
@@ -35,6 +36,17 @@ python3 "$SELFTEST" >/dev/null 2>&1 || {
 python3 "$MUTANTS" >/dev/null 2>&1 || {
   echo "skill-references: a mutant checker SURVIVED the self-test — the suite has a hole"
   python3 "$MUTANTS" || true
+  exit 1
+}
+
+# The corpus must answer to the CODE, not to memory. A hand-written fixture list always
+# lags a hand-written mutant list, because the same memory writes both — which is why the
+# hole rate never moved (63% -> 58% -> 71%) across three rounds of adding fixtures for
+# whatever the last reviewer found. A branch nothing exercises is a claim nothing pins.
+python3 "$COVERAGE" >/dev/null 2>&1 || {
+  echo "skill-references: a branch of the checker is exercised by NO fixture — the corpus"
+  echo "                  is not derived from the claim surface"
+  python3 "$COVERAGE" || true
   exit 1
 }
 

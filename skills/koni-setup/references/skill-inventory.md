@@ -34,7 +34,7 @@ Wire **all three** per-repo via symlink or lockfile (see
 [`skill-wiring.md`](skill-wiring.md)). They are the Koniverse methodology stack and
 belong in every repo with a docs/dev lifecycle:
 
-- **koni-docs** — the documentation framework (PRD/ARCH/sprints/tests + 12 rules +
+- **koni-docs** — the documentation framework (PRD/ARCH/sprints/tests + koni-docs' rules +
   `validate`). Present in 5/6 reference repos; skip only a pure design/landing repo
   with no sprint workflow (e.g. `koni-landing`).
 - **koni-harness** — the Koni Agentic Loop standard **+ the portable commit/release

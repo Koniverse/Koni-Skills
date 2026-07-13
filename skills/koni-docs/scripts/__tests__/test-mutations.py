@@ -42,7 +42,7 @@ MUTATIONS: list[tuple[str, str, str]] = [
     ),
     (
         'script names must be backticked — the agile-sync-up.mjs ghost slips through',
-        r"SCRIPT_NAME = re.compile(r'(?<![\w/.\-…*])([\w-]+(?:\.[\w-]+)*\.(?:mjs|py|sh))(?![\w-])')",
+        r"SCRIPT_NAME = re.compile(r'(?<![\w.\-…*])((?:[\w.-]+/)*[\w-]+(?:\.[\w-]+)*\.(?:mjs|py|sh))(?![\w-])')",
         r"SCRIPT_NAME = re.compile(r'`([\w./-]+\.(?:mjs|py|sh))`')",
     ),
     (
@@ -135,6 +135,11 @@ MUTATIONS: list[tuple[str, str, str]] = [
         '        for m in RETIRED_NUMERIC_SECTION.finditer(text):',
         '        for m in ():',
     ),
+    (
+        'the stated-count check is deleted — "12 rules" drifts again, unnoticed',
+        '        for m in STATED_COUNT.finditer(text):',
+        '        for m in ():',
+    ),
 ]
 
 
@@ -158,7 +163,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 19
+MIN_MUTANTS = 20
 
 
 def main() -> int:

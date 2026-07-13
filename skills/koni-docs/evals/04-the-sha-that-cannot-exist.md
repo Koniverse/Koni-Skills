@@ -7,7 +7,7 @@
 in" sounds like exactly what you'd do, and it is what this repo's own rule prescribed for
 months. It cannot work: amending rewrites the commit, minting a new SHA and orphaning the
 one just written. An agent that has not *reasoned* about the fixed point will reach for
-`--amend` on autopilot — one did, in the session that discovered this.
+`--amend` on autopilot.
 
 ## Prompt (give verbatim, with a story ready to ship)
 

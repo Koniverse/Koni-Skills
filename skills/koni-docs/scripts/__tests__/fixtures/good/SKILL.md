@@ -21,6 +21,15 @@ The `real-tool.py` script does the thing.
 <!-- [a link in a comment is not a link](references/gone.md) -->
 [the consumer repo's own docs](../../PRD.md)
 [live setext anchor](#a-setext-heading)
+[an external URL is not ours to resolve](https://example.com/x.md)
+[an http URL too](http://example.com/y.md)
+![an image](references/ok.md)
+<img src="https://example.com/z.png">
+[a bare prose illustration](...)
+[a word with no dot or slash](nothing)
+See `PRD.md` §Functional Requirements for the contract.
+See `ok.md` §0–§1 for the range.
+`PRD §8` is the retired form, quoted here so it is not flagged.
 [live emoji anchor](#-deploy-it)
 [live duplicate-heading anchor](#real-section-1)
 [live fragment in an href](references/ok.md#alive)

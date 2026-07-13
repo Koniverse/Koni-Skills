@@ -29,7 +29,7 @@ never reproduces:
 |---|---|
 | Loop definition, gates, gate-runner, parallel-swarm orchestration (`swarm.sh` planner) | **koni-harness** (this) |
 | Spawning the parallel agents themselves (worktree isolation) | the tool runtime (invoked — Claude Agent/Workflow; koni-harness only *plans* the wave) |
-| Doc bodies, 12 rules, `validate` CLI | koni-docs (invoked) |
+| Doc bodies, koni-docs' rules, `validate` CLI | koni-docs (invoked) |
 | Repo scaffold, skill wiring | koni-setup (invoked) |
 | Plan / brainstorm | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**) |
 | Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI (invoked) |

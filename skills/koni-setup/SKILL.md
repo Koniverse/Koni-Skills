@@ -17,7 +17,7 @@ description: >
 > layer: it lays down the directory skeleton, wires skills, writes the
 > CLAUDE.md / AGENTS.md / `.active-context` integration surface, `.gitignore`,
 > `VERSION`, and the `package.json` agile scripts. The moment a file needs
-> *documentation content* (a real PRD body, a story template, the 12 rules, a
+> *documentation content* (a real PRD body, a story template, koni-docs' rule set, a
 > CHANGELOG entry), **hand off to the `koni-docs` skill** and load its
 > templates. Never re-implement koni-docs templates here — that duplication is
 > exactly what we are avoiding. koni-setup gets a repo to the starting line;
@@ -249,7 +249,7 @@ Load on demand based on the step you're in:
 | [`references/skill-wiring.md`](references/skill-wiring.md) | Wiring `.claude` / `.agents` skill dirs, symlink-vs-vendor decision, repairing dangling links, the `agile:*` npm scripts + devDep block |
 | [`references/onboarding-audit.md`](references/onboarding-audit.md) | The present/missing audit matrix for onboarding an existing repo |
 
-**Boundary reminder**: anything about *documentation content* — the 12 rules,
+**Boundary reminder**: anything about *documentation content* — koni-docs' rule set,
 story/epic/PRD/CHANGELOG templates, the doc pre-commit checklist, the
 `koni-docs` CLI subcommands — belongs to the **koni-docs** skill. Invoke it;
 don't reproduce it here.

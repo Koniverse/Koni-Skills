@@ -1035,3 +1035,45 @@ is *"the guard was less complete than its own green suggested."* Each round it g
 each round that sentence stayed true. That is not a reason to stop verifying. It is the
 reason to stop trusting *any* single layer — and to make the corpus answer to the code
 rather than to memory, so the next round's finding has to be something genuinely new.
+
+---
+
+## 28. A hand-written corpus always lags, because the same memory writes the tests and the mutants
+
+**What happened**: three rounds running, an author-blind reviewer planted narrowings in the
+reference checker and most of them survived both suites. The hole rate never moved —
+**63% → 58% → 71%**. Each round I added fixtures for whatever the reviewer had just found,
+raised `MIN_CLASSES`, and reported coverage. Each round the next reviewer found more.
+
+The diagnosis, which I could not have reached alone: *"the corpus was widened to cover my
+report, not the checker's claim surface."* My standing rule — *a new branch requires a new
+fixture* — only ever guarded **future** branches. **Nobody had enumerated the existing
+ones.** And the mutation test could not save me, because I wrote the mutants from the same
+memory that wrote the fixtures. A hand-written corpus and a hand-written mutant list share
+an author, and therefore share a blind spot.
+
+The prescription was mechanical, and it is the whole lesson: **make branch coverage of the
+checker, under the fixture corpus, a gate.** A line that never executes while the checker
+runs over the fixtures is a line no fixture exercises — which is precisely the definition
+of an unpinned claim. A machine can enumerate the claim surface. A memory cannot.
+
+It took thirty seconds to run and it named **fifty unpinned lines** — more than three
+rounds of adversarial human review had found. Driving it to zero immediately produced two
+findings no reviewer had:
+
+- **A second piece of dead code.** The `Next.js` guard in the script check could never fire,
+  because the script regex matches only `.mjs`/`.py`/`.sh`. A comment defending a branch
+  against inputs it cannot receive is a claim that cannot fail. Deleted, not exempted.
+- **A drifted count in five files across two sibling skills.** "the 12 rules" — there are 13
+  — sitting in koni-setup and koni-harness, unseen for months, because nothing checked it.
+
+**The lesson**: **when a review keeps finding the same class of gap, stop patching the gaps
+and mechanize the enumeration.** The question is not "what did the last reviewer find?" but
+"what does the code claim, and what pins each claim?" The first question converges on the
+imagination of whoever last looked. The second converges on the code.
+
+**And the exemptions are where this rots.** Every line the gate cannot reach must carry a
+written reason — CLI argument parsing, an `OSError` on an unreadable directory. An
+unexplained exclusion is how a coverage gate becomes decoration. Two of mine were genuinely
+unreachable; one of those turned out to be dead code, and I deleted it rather than exempt
+it. That is the right instinct: **an exemption is a confession, not a solution.**

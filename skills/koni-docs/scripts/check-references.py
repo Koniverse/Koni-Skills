@@ -57,7 +57,26 @@ SECTION_POINTER = re.compile(
 # SECTION_POINTER needed a `.md` token and bare `PRD §11` has none.
 # Only PRD and ARCHITECTURE are label-only. LESSONS and CONTEXT genuinely number their
 # entries (`## 17.`, `### D37`), so `LESSONS §17` is a real address, not a retired one.
-RETIRED_NUMERIC_SECTION = re.compile(r'(?<![\w/.])(PRD|ARCHITECTURE)\s*§\s*(\d+)')
+# Matches the label however it is dressed: bare, `.md`-suffixed, path-prefixed, bolded, or
+# wrapped in a link — each of those broke adjacency and made the check structurally blind.
+RETIRED_NUMERIC_SECTION = re.compile(
+    r'(?:^|[\s(\[])'                        # a boundary, not a lookbehind that / and . defeat
+    r'[`*_\[]{0,2}'                         # bold / italic / link-open
+    r'(?:[\w./-]*/)?'                        # an optional path prefix (docs/PRD)
+    r'(PRD|ARCHITECTURE)'
+    r'(?:\.md)?'                             # PRD.md §8 was doubly invisible before
+    r'[`*_]{0,2}'
+    r'(?:\]\([^)]*\))?'                      # a link wrapper
+    r'[\s,]*§\s*(\d+)',
+    re.M,
+)
+
+# A count written in prose is a promise to stay in sync with something you do not control.
+# "12 rules" drifted three times, in three files, across three rounds — including in the
+# file rewritten to purge staleness. The floor technique was applied to the scripts' own
+# counts and not to the docs'. This closes it: a stated count must match what is counted.
+STATED_COUNT = re.compile(r'\b(?:These |The )?(\d+|seven|twelve|thirteen)\s+(?:core |enforced )?(rules|subcommands)\b', re.I)
+WORD_NUM = {'seven': 7, 'twelve': 12, 'thirteen': 13}
 
 # Backticked OR bare. The first version required backticks — so `agile-sync-up.mjs`,
 # the very ghost this check was written for, would still have slipped through unquoted.
@@ -67,7 +86,7 @@ RETIRED_NUMERIC_SECTION = re.compile(r'(?<![\w/.])(PRD|ARCHITECTURE)\s*§\s*(\d+
 # were in scope briefly and produced false positives on legitimate cross-repo
 # references (koni-agent-monitoring cites Koni-ERP-02's `ingest-schema.ts`) — a check
 # that cries wolf gets ignored, which ends in the same place as silence.
-SCRIPT_NAME = re.compile(r'(?<![\w/.\-…*])([\w-]+(?:\.[\w-]+)*\.(?:mjs|py|sh))(?![\w-])')
+SCRIPT_NAME = re.compile(r'(?<![\w.\-…*])((?:[\w.-]+/)*[\w-]+(?:\.[\w-]+)*\.(?:mjs|py|sh))(?![\w-])')
 
 
 def is_external(target: str) -> bool:
@@ -97,19 +116,15 @@ def is_placeholder(target: str) -> bool:
 
 
 def is_prose_not_a_script(name: str) -> bool:
-    """Only for the SCRIPT_NAME pass.
+    """Only for the SCRIPT_NAME pass — a naming convention shown in prose
+    (`crypto.test.ts`) is not a tool the docs claim to ship.
 
-    `Next.js` is a product, not a tool; `crypto.test.ts` is a naming convention shown
-    in prose. Both must be exempt — but ONLY here. An earlier version applied the
-    capitalized-stem rule to *every* reference class, which made the checker blind to
-    `SKILL.md` and `README.md` — and therefore to `[SKILL.md §5](../SKILL.md)`, the
-    pointer that had just replaced a deleted mirror. A fix that opened a bigger hole
-    than the one it closed. Scope the exemption to the pass that needs it.
+    The capitalized-stem guard that used to live here (for `Next.js`) is gone: the
+    coverage gate proved it unreachable, because SCRIPT_NAME matches only mjs/py/sh.
+    A branch defending against inputs it cannot receive is a claim that cannot fail —
+    the same class as the backtick strip a mutation test exposed. Deleted, not exempted.
     """
-    stem = Path(name).stem
-    if stem[:1].isupper():
-        return True          # `Next.js`, `React.js` — product names
-    return bool(re.search(r'\.(test|spec|integration|e2e|unit)$', stem))
+    return bool(re.search(r'\.(test|spec|integration|e2e|unit)$', Path(name).stem))
 
 
 def strip_fences(text: str) -> str:
@@ -198,10 +213,39 @@ def exists_case_sensitively(path: Path) -> bool:
     return True
 
 
+def in_code_span(text: str, index: int) -> bool:
+    """Inside a single-backtick code span on this line — i.e. quoted, not used."""
+    line_start = text.rfind('\n', 0, index) + 1
+    return text.count('`', line_start, index) % 2 == 1
+
+
 def in_fence(text: str, index: int) -> bool:
     """A link inside a fence belongs to the *generated* document, not this one.
     A link inside an HTML comment belongs to nobody."""
     return any(start <= index < end for start, end in fence_spans(text) + comment_spans(text))
+
+
+def count_of(root: Path, what: str) -> int | None:
+    """The ground truth a prose count must match."""
+    if what == 'rules':
+        rules = root / 'references' / 'rules.md'
+        if not rules.exists():
+            # A sibling skill (koni-setup, koni-nextjs) states koni-docs' rule count.
+            found = list(root.parent.glob('koni-docs/references/rules.md'))
+            if not found:
+                return None
+            rules = found[0]
+        return len(re.findall(r'^### RULE-\d+', rules.read_text(encoding='utf-8'), re.M))
+    if what == 'subcommands':
+        cli = root / 'references' / 'cli.md'
+        if not cli.exists():
+            return None
+        body = strip_fences(cli.read_text(encoding='utf-8'))
+        m = re.search(r'^## 4\..*?\n(.*?)(?=^## )', body, re.S | re.M)
+        if not m:
+            return None
+        return len(re.findall(r'^\| `[a-z-]+` \|', m.group(1), re.M))
+    return None
 
 
 def check(root: Path) -> list[str]:
@@ -342,15 +386,32 @@ def check(root: Path) -> list[str]:
             if not ok:
                 problems.append(f'{md}: dead §-pointer -> {m.group(1)} §{named}')
 
+        for m in STATED_COUNT.finditer(text):
+            # A quoted count is a *mention* — a doc describing the drift, not committing it.
+            # Same rule as the retired-form check: quote it, or own it.
+            if in_fence(text, m.start()) or in_code_span(text, m.start(1)):
+                continue
+            raw, what = m.group(1).lower(), m.group(2).lower()
+            claimed = WORD_NUM.get(raw, int(raw) if raw.isdigit() else None)
+            if claimed is None:
+                continue
+            actual = count_of(root, what)
+            if actual is not None and claimed != actual:
+                problems.append(
+                    f'{md}: stated count is wrong -> claims {claimed} {what}, there are {actual}'
+                )
+
         for m in RETIRED_NUMERIC_SECTION.finditer(text):
             if in_fence(text, m.start()):
                 continue
-            # A doc may legitimately *name* the retired form while explaining that it is
-            # retired. Look at the surrounding sentence, not the line — prose wraps, and a
-            # line-sized window put the word "retired" out of view of the thing it explains.
-            window = text[max(0, m.start() - 160): m.end() + 160].lower()
-            if any(w in window for w in
-                   ('retired', 'legacy', 'instead of', 'not ', 'never', '→', 'migration')):
+            # The ONLY exemption is a quoted mention. A doc naming the retired form to say
+            # it is retired always quotes it (`PRD §8`); prose that *uses* it never does.
+            # The previous exemption was a ±160-char window looking for words like "not"
+            # and "→" — ordinary English — so it exempted 15 of the 17 real §-pointers in
+            # this skill. An escape hatch keyed on natural language is an open door.
+            # m.start() is the boundary char BEFORE the label, which sits outside the
+            # code span — measure at the label itself.
+            if in_code_span(text, m.start(1)) or in_fence(text, m.start(1)):
                 continue
             problems.append(
                 f'{md}: retired numeric doc section -> {m.group(1)} §{m.group(2)} '

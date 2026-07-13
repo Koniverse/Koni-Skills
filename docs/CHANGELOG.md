@@ -16,6 +16,56 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.52.0] — 2026-07-13 — koni-docs: a machine enumerates the claim surface — v0.52.0
+
+Round 10: **D4 23/25** (22.5 + 23.5 — a new high). **D3 5/25** — a collapse, and correct.
+Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Added
+- **`scripts/__tests__/test-coverage.py` — a branch-coverage gate.** Three rounds running, a
+  reviewer planted narrowings and most survived both suites; the hole rate never moved
+  (**63% → 58% → 71%**). The diagnosis: *"the corpus was widened to cover my report, not the
+  checker's claim surface."* My standing rule only guarded **future** branches — nobody had
+  enumerated the existing ones — and the mutation test could not save me, because the same
+  memory wrote the fixtures and the mutants.
+
+  So: a line of `check-references.py` that never executes while the checker runs over the
+  fixtures is a line no fixture pins. The gate ran in seconds and named **50 unpinned
+  lines** — more than three rounds of adversarial human review had found. Driven to **zero**.
+  Every exemption carries a written reason; an unexplained exclusion is how a coverage gate
+  becomes decoration. See [LESSONS §28](LESSONS.md).
+
+### Fixed
+- **The retired-form check was a no-op on real prose.** Its "explanatory mention" escape
+  hatch scanned a ±160-char window for words including `not ` and `→` — **ordinary
+  English** — so it exempted **15 of the 17** real §-pointers in this skill. A reviewer
+  reinstalled the original defect in the original file and the gate reported 0. The hatch is
+  now the only one that is not a loophole: **a quoted mention**. The regex also matches the
+  label however it is dressed — `PRD.md §8`, `docs/PRD §8`, `**PRD** §8`, `[PRD](…) §8` —
+  each of which broke adjacency and was structurally invisible.
+- **The script check could not see a path-qualified script.** `agile-sync-up.mjs`, the ghost
+  it was written for, would survive today if anyone had written its path.
+- **A second piece of dead code, named by the coverage gate**: the `Next.js` guard could
+  never fire, because the script regex matches only `.mjs`/`.py`/`.sh`. Deleted, not
+  exempted — an exemption is a confession, not a solution.
+- **"the 12 rules" had drifted into five files across two sibling skills** (koni-setup,
+  koni-harness). There are 13. Nothing checked it; the new `stated count` check now does,
+  and an eval run found it independently on the same day.
+
+### Changed
+- **The evals were run.** Two of six, both PASS — and both exceeded their criteria. Eval 2
+  (resist a `due` that is really the sprint end) refused, named the signal cost in the rule's
+  own terms, and proved the change would not even have worked. Eval 6 (RULE-7 append-only)
+  appended a revision rather than editing, and found the drifted rule count nobody was
+  looking for. Results recorded — including a false claim one agent made, because an eval
+  that records only successes is a brochure.
+
+**37 defect classes · 20 mutants · full branch coverage · six skills, 0 dangling references.**
+
+koni-docs CLI **0.11.9 → 0.11.10**.
+
+---
+
 ## [0.51.0] — 2026-07-13 — koni-docs: derive the corpus from the claim surface — v0.51.0
 
 Round 9 D3: **20/25** (from 18). Extends

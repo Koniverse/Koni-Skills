@@ -4,25 +4,15 @@
 
 ## Why this exists
 
-This skill shipped three tiers of rigor around its *reference checker* — a linter, a
-suite that plants a defect of every class the linter claims to catch, and a mutation test
-that breaks the linter to prove the suite notices. All of that verifies **a tool**.
+The scripts under [`../scripts/`](../scripts/) verify **a tool this skill ships** — a
+reference checker, and two layers proving the checker works. None of them verify **the
+skill**, whose actual product is *behaviour in another agent*.
 
-None of it verified **the skill**.
-
-An author-blind grader named the gap exactly: *"655 lines test the linter; zero lines test
-whether an agent handed this skill actually produces a conformant story file, appends a
-CONTEXT entry instead of editing one, or resists setting `due:` for 'must land this
-sprint.'"* That is the thing the skill exists to cause, and nothing measured it.
-
-So: these are **behavioural** evals. Each is a realistic request, with pressure, given to
-a fresh agent that has the skill and nothing else. Each has an observable pass criterion —
-not "did it sound right" but "what did it write to disk, and does it survive the gate".
-
-The failure mode being guarded against is the one this repo has hit again and again: a
-document that reads beautifully and instructs wrongly. A skill can be internally
-consistent, fully cross-referenced, and still produce non-conformant output — and no
-amount of linting the skill's own prose would reveal it.
+These evals close that. Each is a realistic request with the pressure that makes its rule
+hard, given to a fresh agent holding the skill and nothing else. The failure mode being
+guarded against is the one this repo hits over and over: a document that reads beautifully
+and instructs wrongly. A skill can be internally consistent, fully cross-referenced, and
+still cause non-conformant output — and no amount of linting its prose would reveal it.
 
 ## How to run one
 
@@ -32,9 +22,14 @@ are testing, do not hint at the trap. Let it work in a scratch copy of a repo th
 
 An eval that tells the agent what is being measured measures nothing.
 
-Run each on more than one model tier if you can (a rule that only holds on the strongest
-model is a rule that will break in production, and cheaper models are where the
-rationalizations actually happen).
+**A scenario with an empty `## Runs` table is a specification, not a test.** It has
+discriminated nothing. Run it, on more than one model tier if you can — a rule that holds
+only on the strongest model is a rule that will break in production, and cheaper models are
+where the rationalizations actually happen.
+
+**Fixture**: run in a scratch clone of a repo that already has `docs/` with a PRD, epics,
+an open sprint, and the koni-docs CLI installed. Two runs of the same scenario against
+different corpora are not comparable.
 
 ## The scenarios
 
@@ -45,6 +40,7 @@ rationalizations actually happen).
 | 3 | [`03-moving-a-date-quietly.md`](03-moving-a-date-quietly.md) | Does it write the CONTEXT entry when a date moves *proactively*? | RULE-18.3 — the slip hasn't happened yet, so "there's nothing to record" feels true |
 | 4 | [`04-the-sha-that-cannot-exist.md`](04-the-sha-that-cannot-exist.md) | Does it refuse `--amend` and use the two-commit backfill? | RULE-2 — the impossible procedure *feels* like the obvious one |
 | 5 | [`05-crediting-the-wrong-person.md`](05-crediting-the-wrong-person.md) | Does it resolve `assignee` to a GitHub login, not a git name? | RULE-15 — `git log --format=%an` is right there and looks correct |
+| 6 | [`06-rewriting-a-decision.md`](06-rewriting-a-decision.md) | Does it append a correction rather than edit a decision? | RULE-7 — the old entry is genuinely wrong, so fixing it feels like diligence |
 
 ## Scoring
 

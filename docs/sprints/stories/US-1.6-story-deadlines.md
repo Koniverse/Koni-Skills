@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0 + 0.50.0 + 0.51.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0 + 0.50.0 + 0.51.0 + 0.52.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -456,6 +456,31 @@ mutant** revealed dead code (the slugger's backtick strip did nothing — the pu
 regex already removed them), and **`PRD §8`**, the numbered form a migration retired,
 survived in three files — including `templates/story.md`, copied verbatim into every
 generated story in every consumer repo. The checker could not see the class at all.
+
+## Round 14 — a machine enumerates the claim surface (2026-07-13, v0.52.0)
+
+**D4 23/25** (a new high). **D3 5/25** — a collapse, and it was correct.
+
+The reviewer did exactly what I invited: it **reinstalled the original defect in the
+original file**, and the gate reported 0. My "explanatory mention" escape hatch scanned a
+±160-char window for words like `not ` and `→` — ordinary English — so it exempted **15 of
+17** real §-pointers in the skill. The hatch was not too loose; it was open.
+
+And the deeper one: three rounds running, the hole rate never moved (63% → 58% → 71%). *"The
+corpus was widened to cover my report, not the checker's claim surface."* My standing rule
+guarded only future branches. Nobody had enumerated the existing ones — and the mutation
+test could not catch it, because **the same memory wrote the fixtures and the mutants**.
+
+So this round adopts the prescription verbatim: **branch coverage of the checker, under the
+fixture corpus, as a gate.** It ran in seconds and named **50 unpinned lines** — more than
+three rounds of adversarial human review. Driven to zero. It immediately found two things no
+reviewer had: a second piece of dead code, and a rule count that had drifted into five files
+across two sibling skills.
+
+LESSONS §28: when a review keeps finding the same *class* of gap, stop patching the gaps and
+mechanize the enumeration. "What did the last reviewer find?" converges on the imagination of
+whoever last looked. "What does the code claim, and what pins each claim?" converges on the
+code.
 
 ## Implementation notes
 

@@ -63,3 +63,15 @@ The `ghost-script.py` tool runs it.
 <!-- second comment -->
 
 See PRD §8 for the requirement.
+
+These 99 rules apply to everything.
+
+[placeholder path, must be skipped](../stories/US-X.Y-<slug>.md)
+[placeholder epic, skipped](../epics/EPIC-N.md)
+[a consumer doc, not ours](../../DESIGN.md)
+The `foo.sh` illustration is not a real script.
+[glob path, must be skipped](tests/*.spec.ts)
+The `Next.js` framework is a product name, not a script.
+
+```yaml
+an unclosed fence runs to end of file

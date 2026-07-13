@@ -195,5 +195,5 @@ koni-docs template examples show a root path; the repo-relative truth for these
 Koniverse repos is `docs/CHANGELOG.md`.)
 
 Everything past this point — real PRD bodies, story files, epic files,
-ARCHITECTURE content, the 12 rules — is **koni-docs territory**. Switch to that
+ARCHITECTURE content, koni-docs' rule set — is **koni-docs territory**. Switch to that
 skill and load the matching `templates/*.md`.

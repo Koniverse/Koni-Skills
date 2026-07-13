@@ -85,6 +85,9 @@ MUST_CATCH = {
     # verbatim into every generated story. The checker could not see the class at all,
     # because bare `PRD §8` carries no `.md` token.
     'retired numeric doc section (PRD §8, the label-only convention)': 'retired numeric doc section -> PRD §8',
+    # A count in prose is a promise to stay in sync with something you do not control. It
+    # drifted three times, in three files, across three rounds. Now it is checked.
+    'a stated count that does not match what is counted': 'stated count is wrong -> claims 99 rules, there are 2',
     # Without this, removing the in_fence guard from the ANCHOR_LINK pass broke nothing
     # the suite could see — a surviving mutant names its own hole.
     'phantom anchor from a ``` fence': 'dead anchor #a-heading-that-only-exists-inside-a-backtick-fence',
@@ -93,7 +96,7 @@ MUST_CATCH = {
 # Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
 # all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
 # sixteenth way to print 0.
-MIN_CLASSES = 36
+MIN_CLASSES = 37
 
 
 def run(target: Path) -> tuple[int, str]:
