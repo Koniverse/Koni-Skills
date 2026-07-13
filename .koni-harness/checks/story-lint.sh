@@ -67,12 +67,14 @@ for f in "$dir"/US-*.md; do
   if [ -n "$created" ] && [ ! "$created" \< "2026-07-04" ]; then
     grep -Eq '^[[:space:]>*-]*\**Lessons applied\**:' "$f" ||
       fail "$f: created $created but no 'Lessons applied:' line — cite the LESSONS.md sections read at Frame (or 'none — <why>'); D35"
-
-    # RULE-16 is a BLOCKER that had no blocker: `version_shipped: v0.7.0` passed, then
-    # surfaced as `vv0.7.0` in the synced Stories table (LESSONS §4).
-    grep -Eq '^version_shipped:[[:space:]]*"?v' "$f" &&
-      fail "$f: version_shipped is v-prefixed — RULE-16 requires bare semver (the sync prepends the v, producing vv0.7.0)"
   fi
+
+  # RULE-16 — bare semver. NOT date-gated: versioning has no adoption date, and the
+  # `vv0.7.0` corruption it prevents (LESSONS §4) happened in a story that predates any
+  # of these rules. It was briefly nested inside the D35 date gate above, which enforced
+  # it on 1 of 57 stories — a blocker that would not have caught the very bug it cites.
+  grep -Eq '^version_shipped:[[:space:]]*"?v' "$f" &&
+    fail "$f: version_shipped is v-prefixed — RULE-16 requires bare semver (the sync prepends the v, producing vv0.7.0)"
 
   if [ "$status" = done ]; then
     printf '%s\n' "$fm" | grep -Eq '^version_shipped:' || fail "$f: status done but no version_shipped"

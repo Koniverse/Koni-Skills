@@ -125,7 +125,7 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugi
      never inherited. When you do set it, write the date in frontmatter and the
      *reason* in the story's `## Deadline` section. See
      [`sprint-system.md` §Deadlines vs sprint cadence](references/sprint-system.md).
-   - If no story exists, create a stub using the full story template (`references/templates/story.md`) before starting.
+   - If no story exists, create a stub using the full story template ([`templates/story.md`](references/templates/story.md)) before starting.
    - **Size it.** Fibonacci only (1/2/3/5/8/13). For non-engineering work
      (sales / marketing / content / ops), invoke the domain skill to cross-check
      the estimate *before* assigning `points:` — gut-feel undersizes that work by
@@ -139,7 +139,7 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugi
 ### 3b. During implementation
 
 - Mark tasks `[x]` in the story file **as you complete them**, not all at the end (RULE-10).
-- If you make an architecture or scope decision, append a `CONTEXT.md` entry immediately (see `references/templates/context.md`).
+- If you make an architecture or scope decision, append a `CONTEXT.md` entry immediately (see [`templates/context.md`](references/templates/context.md)).
 - If you encounter a trap or discover a reusable pattern, append a `LESSONS.md` entry.
 
 ### 3c. Pre-commit checklist
@@ -190,27 +190,27 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive / codebase-discovered stories, resolve `assignee` to the commit author's GitHub **login** — never git `user.name`, never the session user (RULE-15 has the command) | `references/templates/story.md` §1                    |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive / codebase-discovered stories, resolve `assignee` to the commit author's GitHub **login** — never git `user.name`, never the session user (RULE-15 has the command) | [`templates/story.md`](references/templates/story.md) §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + `npx koni-docs sync` then `status`                                          | `sprint-system.md` §5-layer                |
-| "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `references/templates/context.md`                     |
-| "revise / correct decision D`<N>`"              | Append revision entry, never edit original (RULE-7)                                       | `references/templates/context.md` §3 (revision entry)           |
-| "add a lesson" / "log a lesson"                 | Find highest entry number, append LESSONS entry                                           | `references/templates/lessons.md`                     |
-| "write changelog for vX.Y.Z"                    | Append CHANGELOG entry, bump VERSION simultaneously                                       | `references/templates/changelog.md`                   |
-| "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                   | `references/templates/architecture.md`                |
-| "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                             | `references/templates/brief.md`                       |
-| "update PRD for [feature]"                      | Update both FR table row AND §11 story entry                                              | `references/templates/prd.md`                         |
-| "create design spec for US-X.Y"                 | Use design spec template                                                                  | `references/templates/design-spec.md`                 |
-| "create an epic"                                | Use full epic template                                                                    | `references/templates/epic.md`                        |
-| "create sprint file"                            | Use sprint template                                                                       | `references/templates/sprint.md`                      |
-| "create / update test-cases for EPIC-N"         | Use test-cases template (10-section layout: Scope / Stories in scope / Goals / Env / Cadence / Quick reference / Detail / Coverage matrix / Open) | `references/templates/test-cases.md`                  |
-| "record a test run for EPIC-N"                  | Use per-execution sub-template — write to `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) / `report-manual.md` (path owned by koni-qc test-organization) | `references/templates/test-report.md` §2 (sub-template A)              |
-| "create release test report for vX.Y.Z"         | Use per-release sub-template — write to `releases/vX.Y.Z.md`, link from CHANGELOG          | `references/templates/test-report.md` §3 (sub-template B)              |
-| "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | `references/templates/setup.md`                       |
-| "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | `references/templates/okr.md`                         |
-| "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md (+ `.active-context.md` for Pattern B) integration blocks | `references/templates/integration.md`        |
-| "adopt active-context split" / "move active context out of CLAUDE.md" | Pattern B: create `.active-context.example.md` + `.active-context.md` + gitignore + CLAUDE.md pointer | `references/templates/integration.md` §2 |
-| "make AGENTS.md canonical" / "slim CLAUDE.md" / "AGENTS-canonical convention" | Apply §3.1 convention: CLAUDE.md keeps only pointer + Koni-Docs Integration + Active Context; AGENTS.md absorbs project structure / docs links / conventions | `references/templates/integration.md` §3.1 |
+| "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | [`templates/context.md`](references/templates/context.md)                     |
+| "revise / correct decision D`<N>`"              | Append revision entry, never edit original (RULE-7)                                       | [`templates/context.md`](references/templates/context.md) §3 (revision entry)           |
+| "add a lesson" / "log a lesson"                 | Find highest entry number, append LESSONS entry                                           | [`templates/lessons.md`](references/templates/lessons.md)                     |
+| "write changelog for vX.Y.Z"                    | Append CHANGELOG entry, bump VERSION simultaneously                                       | [`templates/changelog.md`](references/templates/changelog.md)                   |
+| "create / update architecture"                  | Create or update ARCHITECTURE.md with tech stack, components, data flow                   | [`templates/architecture.md`](references/templates/architecture.md)                |
+| "create brief" / "update brief" / "product brief" | Create or update BRIEF.md from BMad brainstorm/brief output                             | [`templates/brief.md`](references/templates/brief.md)                       |
+| "update PRD for [feature]"                      | Update both FR table row AND §11 story entry                                              | [`templates/prd.md`](references/templates/prd.md)                         |
+| "create design spec for US-X.Y"                 | Use design spec template                                                                  | [`templates/design-spec.md`](references/templates/design-spec.md)                 |
+| "create an epic"                                | Use full epic template                                                                    | [`templates/epic.md`](references/templates/epic.md)                        |
+| "create sprint file"                            | Use sprint template                                                                       | [`templates/sprint.md`](references/templates/sprint.md)                      |
+| "create / update test-cases for EPIC-N"         | Use test-cases template (10-section layout: Scope / Stories in scope / Goals / Env / Cadence / Quick reference / Detail / Coverage matrix / Open) | [`templates/test-cases.md`](references/templates/test-cases.md)                  |
+| "record a test run for EPIC-N"                  | Use per-execution sub-template — write to `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) / `report-manual.md` (path owned by koni-qc test-organization) | [`templates/test-report.md`](references/templates/test-report.md) §2 (sub-template A)              |
+| "create release test report for vX.Y.Z"         | Use per-release sub-template — write to `releases/vX.Y.Z.md`, link from CHANGELOG          | [`templates/test-report.md`](references/templates/test-report.md) §3 (sub-template B)              |
+| "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | [`templates/setup.md`](references/templates/setup.md)                       |
+| "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | [`templates/okr.md`](references/templates/okr.md)                         |
+| "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md (+ `.active-context.md` for Pattern B) integration blocks | [`templates/integration.md`](references/templates/integration.md)        |
+| "adopt active-context split" / "move active context out of CLAUDE.md" | Pattern B: create `.active-context.example.md` + `.active-context.md` + gitignore + CLAUDE.md pointer | [`templates/integration.md`](references/templates/integration.md) §2 |
+| "make AGENTS.md canonical" / "slim CLAUDE.md" / "AGENTS-canonical convention" | Apply §3.1 convention: CLAUDE.md keeps only pointer + Koni-Docs Integration + Active Context; AGENTS.md absorbs project structure / docs links / conventions | [`templates/integration.md`](references/templates/integration.md) §3.1 |
 | "what templates exist?"                         | Browse the index                                                                          | `templates.md` (thin index)                |
 | "run doc checklist" / "pre-commit check"        | Walk §3c checklist item by item                                                           | `rules.md` + `sprint-system.md`            |
 | "regenerate status"                             | `npx koni-docs status --docs-path docs/` → commit                                         | `cli.md` §4                |

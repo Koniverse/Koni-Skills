@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -344,6 +344,47 @@ the unbuilt plugin epic, which will be implemented from its own text — still t
 `koni-docs-plugins` key that does not exist.
 
 All six skills in the repo now report 0 dangling references.
+
+## Round 8 — skill-grading re-grade (2026-07-13, v0.46.0)
+
+**D4 22/25** — the highest of the eight rounds: *"the skill is now genuinely good by
+Anthropic's standards … above what most skills ship"*.
+
+The finding is one I have now made three times: **the rule count was corrected in two
+files and missed in the third.** That is LESSONS §18 — a fix lands where you look, not
+where the fact lives — and the answer is not to be more careful, it is to sweep. Also:
+my own find/replace left ungrammatical wreckage behind, including a sentence claiming
+to complement itself. A regex sweep changes text, not meaning; the meaning has to be
+re-read. And I *rewrote* the tombstones the graders asked me to *delete* — a pointer
+needs no autopsy.
+
+The gate caught the one dead anchor this round introduced, before it shipped.
+
+## Round 9 — skill-grading re-grade (2026-07-13, v0.47.0)
+
+**D4 22/25 from both graders** — the highest of nine rounds. **D3 14/25**, and its
+Critical is the one worth keeping.
+
+**My test suite was a fifteenth way to print `0`, and a reviewer proved it.** All three
+§-pointer syntaxes asserted on the same substring, so any one surviving satisfied all
+three. It regressed `SECTION_POINTER` to backticks-only — blinding the checker to two of
+three forms, in the exact class the checker exists for — and **my suite passed**. LESSONS
+§22's fix did not close the hole. It formalized it.
+
+So this round ships `test-mutations.py`: break the checker on purpose, one rule at a
+time, and assert the suite *notices*. Six mutants, all killed. The gate runs it — a
+surviving mutant blocks the commit, because a suite that a broken checker can pass is not
+a suite. That is LESSONS §23, and it is the through-line of this whole story: §19 don't
+trust a validator you wrote → §20 prove it can speak → §22 ship its planted defects →
+§23 and then prove the planted defects can still speak. Every layer of verification is
+itself an unverified claim until something adversarial pushes on it.
+
+Also fixed: the **fifth false green, self-inflicted** — exempting capitalized stems to
+silence a `Next.js` false positive blinded the checker to `SKILL.md`, and therefore to
+`[SKILL.md §5](../SKILL.md)`, the pointer that had just replaced a deleted mirror. And
+RULE-16's brand-new blocker was enforced on **1 of 57 stories**, because I nested it
+inside an unrelated rule's date gate — it would not have caught the very `vv0.7.0` bug
+its own comment cites.
 
 ## Implementation notes
 

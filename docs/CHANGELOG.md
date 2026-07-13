@@ -16,6 +16,83 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.47.0] — 2026-07-13 — koni-docs: the test suite that formalized the blind spot — v0.47.0
+
+Round 7: **D4 22/25** (both graders — the highest yet). **D3 14/25**, and its Critical is
+the one that matters. Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **My own test suite was a fifteenth way to print `0` — and a reviewer proved it.** All
+  three §-pointer syntaxes (backticked / linked / bare) asserted on the same substring,
+  so *any one surviving satisfied all three*. The reviewer regressed `SECTION_POINTER`
+  to backticks-only — blinding the checker to two of three forms, in the exact class it
+  was written for — and **the suite passed**. LESSONS §22's fix ("ship the planted
+  defects") did not close the hole; it formalized it. Every needle now asserts on the
+  **classified report line** (`dead §-pointer -> ok.md §GhostLinked`), unique per planted
+  line.
+- **The fifth false green, self-inflicted.** To stop `Next.js` being flagged as a missing
+  script, I exempted every capitalized stem — which blinded the checker to `SKILL.md`,
+  `README.md`, and therefore to `[SKILL.md §5](../SKILL.md)`: **the very pointer that had
+  just replaced a deleted mirror.** A fix that opened a bigger hole than it closed. The
+  exemption is now scoped to the script pass alone.
+- **RULE-16's new blocker was enforced on 1 of 57 stories.** I nested it inside the
+  `created >= 2026-07-04` gate that exists for an unrelated rule. Versioning has no
+  adoption date — and the `vv0.7.0` corruption it cites (LESSONS §4) happened in a story
+  that predates the gate, so the blocker **would not have caught the very bug its own
+  comment names**. Dedented; verified against a 2026-05-27 story.
+- **The gate could be disarmed by deleting a file.** A missing checker or self-test made
+  it print "skipping" and return 0. Their absence is now a hard failure — a guard you can
+  quietly remove is not a guard.
+- Linked §-pointers resolved the backticked *label* instead of the link *href*; setext
+  headings (`Title\n====`) were invisible, so live anchors read as dead; GitHub keeps the
+  gap a stripped leading emoji leaves (`## 🚀 Deploy` → `#-deploy`) and the slugger did
+  not; `#fragments` inside HTML `href`s and reference-style definitions were split off
+  and never validated.
+
+### Added
+- **`scripts/__tests__/test-mutations.py` — a test for the tests.** It deliberately
+  narrows the checker one rule at a time (fences to backticks-only, script names to
+  backticked-only, the §-pointer regex to one of three forms) and asserts the suite
+  **kills** each mutant. All 6 mutants die. The gate now runs it: a surviving mutant
+  blocks the commit, because a suite a broken checker can pass is not a suite.
+  See [LESSONS §23](LESSONS.md).
+
+20 planted defect classes, all caught. 6 mutant checkers, all killed. All six skills:
+**0 dangling references.**
+
+koni-docs CLI **0.11.4 → 0.11.5**.
+
+---
+
+## [0.46.0] — 2026-07-13 — koni-docs: D4 hits 22/25 — the same defect, in the third file nobody re-read — v0.46.0
+
+D4 run A: **22/25** — the highest yet, with the verdict *"the skill is now genuinely
+good by Anthropic's standards"*. Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The rule count was corrected in two files and missed in the third.**
+  `plugin-pattern.md` still said "the core 12" and "`RULE-1` … `RULE-17`" — the same
+  stale-count defect the previous round fixed in `rules.md` and `SKILL.md`. LESSONS
+  §18 for the third time: **a fix lands where you look, not where the fact lives.**
+  Swept across every skill this time rather than patched file by file.
+- **Prose mangled by my own find/replace.** Purging the nonexistent
+  `koni-docs-plugins:` key left ungrammatical fragments behind — including, in
+  `bmad-template-analysis.md`, a sentence saying the file "already covers the
+  migration procedure … to complement that file", i.e. complementing itself. **A regex
+  sweep changes text, not meaning; the meaning has to be re-read.**
+- **The tombstones were rewritten when the graders asked for them to be deleted.**
+  `templates.md`'s epitaphs for its removed cheatsheet were 19% of the file — a memo to
+  a future editor, sitting in the file agents load to ask "what templates exist?". A
+  pointer needs no epitaph. `templates.md`: 69 → 59 lines.
+- `rules.md` pinned live guidance to this repo's history ("since v0.37.0").
+
+All six skills in the repo: **0 dangling references.** The `skill-references` gate
+caught the one dead anchor this round introduced (a TOC entry for a renamed heading)
+before it could ship — which is the entire point of it.
+
+---
+
 ## [0.45.0] — 2026-07-13 — koni-docs: round 6 — D1 and D2 hit 25/25; the guard finally ships its own tests — v0.45.0
 
 Re-grade after v0.44.0: **D1 25/25** (blind router 18/18 — precision and recall both

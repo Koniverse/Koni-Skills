@@ -12,9 +12,9 @@
 
 [deadref]: references/gone6.md
 
-See `ok.md` §Ghost for details.
-See [`ok.md`](references/ok.md) §Ghost for details.
-See ok.md §Ghost for details.
+See `ok.md` §GhostBacktick for details.
+See [`ok.md`](references/ok.md) §GhostLinked for details.
+See ok.md §GhostBare for details.
 See `wrong/path/ok.md` §Alive for details.
 The `never-existed.mjs` script runs it.
 Run never-existed-too.mjs to sync.
@@ -30,3 +30,7 @@ key: value
    ```
 
 [dead link after an indented closing fence](references/gone7.md)
+
+[dead anchor in an uppercase-stemmed file](references/Guide.md#not-a-heading)
+[dead uppercase-stemmed file](references/GONE8.md)
+See `Guide.md` §Ghostly for details.

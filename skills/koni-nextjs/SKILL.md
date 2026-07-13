@@ -10,7 +10,7 @@ description: >
 
 > Reference plugin built on the [plugin pattern](../koni-docs/references/plugin-pattern.md).
 > It carries `NX-`-namespaced Next.js rules and rides on top of koni-docs; it
-> does not restate the 12 core rules.
+> does not restate the 13 core rules.
 
 ---
 
@@ -25,7 +25,7 @@ their single source of truth.
 
 Load both skills when the project declares `plugins: [nextjs]` under its
 CLAUDE.md `koni-docs:` block: the
-core 12 from koni-docs plus the `NX-` rules below. For the ship gate, this
+core 13 from koni-docs plus the `NX-` rules below. For the ship gate, this
 plugin **references the existing koni-harness gate** (it prescribes a
 `gates.conf` row) rather than building a gate of its own.
 
@@ -53,7 +53,7 @@ plugin **references the existing koni-harness gate** (it prescribes a
     plugins: [nextjs]
   ```
 - **Extends, never duplicates.** The `NX-` rules add a Next.js layer on top of
-  koni-docs' 12 core rules. Where an `NX-` rule builds on a core rule it
+  koni-docs' 13 core rules. Where an `NX-` rule builds on a core rule it
   *references* it (NX-2 composes with `RULE-11`; NX-4 specializes `RULE-11`) —
   it never copies core-rule text.
 - **Gate.** NX-1 plugs into the existing koni-harness gate via a `gates.conf`

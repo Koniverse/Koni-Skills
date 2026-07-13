@@ -83,7 +83,7 @@ items, most irrelevant to projects on other stacks.
 **Decision**: `koni-docs` ships with exactly 9 project-agnostic rules
 (RULE-1, 2, 5, 6, 7, 10, 11, 13, 14 — gaps preserve historical numbering).
 Tech-stack rules ship as **separate plugin skills** that a consumer
-project declares in its CLAUDE.md via `koni-docs-plugins: [supabase,
+project declares in its CLAUDE.md via `koni-docs-plugins: [supabase,   <!-- CORRECTION (2026-07-13): this key never existed. The real one is `plugins:` nested under `koni-docs:`. It was written confidently here and in four skill files for months while nothing in the system read it — see LESSONS §21. Left in place per RULE-7 (append-only); annotated, not rewritten. -->
 nextjs]`. The core skill loads those plugin skills for additional rules.
 
 **Rationale**: Keeps the core rule set sharp and grep-checkable. Lets a

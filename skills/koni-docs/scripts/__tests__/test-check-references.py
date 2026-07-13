@@ -27,21 +27,35 @@ BAD = HERE / 'fixtures' / 'bad'
 # Every defect class the checker's docstring and the gate's promise cover.
 # The key is a substring that must appear in the report for that defect.
 MUST_CATCH = {
-    'dead file link': 'gone.md',
-    'dead in-page anchor': 'no-such-heading',
-    'dead link with a title attribute': 'gone2.md',
-    'dead angle-bracket destination': 'gone3.md',
-    'dead cross-file anchor': 'not-there',
-    'dead HTML href': 'gone4.md',
-    'dead HTML img src': 'gone5.png',
-    'dead reference-style definition': 'gone6.md',
-    'dead §-pointer, backticked form': '§Ghost',
-    'dead §-pointer, wrong path': 'wrong/path/ok.md',
-    'named script that does not exist (backticked)': 'never-existed.mjs',
-    'named script that does not exist (bare)': 'never-existed-too.mjs',
-    'named helper that does not exist': 'ghost-lib.sh',
-    'phantom anchor from a ~~~ fence': 'phantom-heading',
-    'defect after an indented closing fence (the silent-trapdoor bug)': 'gone7.md',
+    'dead file link': 'dead link -> references/gone.md',
+    'dead in-page anchor': 'dead anchor #no-such-heading',
+    'dead link with a title attribute': 'dead link -> references/gone2.md',
+    'dead angle-bracket destination': 'dead link -> references/gone3.md',
+    'dead cross-file anchor': 'dead anchor references/ok.md#not-there',
+    'dead HTML href': 'dead link -> references/gone4.md',
+    'dead HTML img src': 'dead link -> references/gone5.png',
+    'dead reference-style definition': 'dead link -> references/gone6.md',
+    # Three §-pointer SYNTAXES, three distinct needles. They shared one needle once,
+    # so blinding the checker to two of the three still passed the suite — proven by an
+    # author-blind reviewer who regressed SECTION_POINTER to backticks-only and watched
+    # it go green. A suite whose assertions can be satisfied by a sibling line is a
+    # fifteenth way to print 0.
+    'dead §-pointer, backticked form': 'dead §-pointer -> ok.md §GhostBacktick',
+    'dead §-pointer, linked form': 'dead §-pointer -> ok.md §GhostLinked',
+    'dead §-pointer, bare form': 'dead §-pointer -> ok.md §GhostBare',
+    'dead §-pointer, wrong path': '§-pointer path does not resolve -> wrong/path/ok.md',
+    'named script that does not exist (backticked)': 'names a script that does not exist -> never-existed.mjs',
+    'named script that does not exist (bare)': 'names a script that does not exist -> never-existed-too.mjs',
+    'named helper that does not exist': 'names a script that does not exist -> ghost-lib.sh',
+    'phantom anchor from a ~~~ fence': 'dead anchor #phantom-heading-in-a-tilde-fence',
+    'defect after an indented closing fence (the silent-trapdoor bug)': 'dead link -> references/gone7.md',
+    # The uppercase-stem exemption — added to stop `Next.js` false positives — made the
+    # checker blind to SKILL.md / README.md, and therefore to `[SKILL.md §5](../SKILL.md)`:
+    # the very pointer that replaced a deleted mirror. A fix that opened a bigger hole
+    # than the one it closed, and the suite did not notice because nothing tested it.
+    'dead anchor in an uppercase-stemmed file': 'dead anchor references/Guide.md#not-a-heading',
+    'dead uppercase-stemmed file link': 'dead link -> references/GONE8.md',
+    'dead §-pointer into an uppercase-stemmed file': 'dead §-pointer -> Guide.md §Ghostly',
 }
 
 

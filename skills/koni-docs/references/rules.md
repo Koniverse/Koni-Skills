@@ -58,7 +58,7 @@
 
 **How to comply** — pick one, never `--amend`:
 
-1. **Omit the SHA from the CHANGELOG entry** *(preferred, and what this repo does since v0.37.0)*. The version anchor (`## [0.39.0]`) plus the git tag is already a durable join key — `git log --grep '0.39.0'` finds the commit without a self-reference. No `**Commit**:` line at all.
+1. **Omit the SHA from the CHANGELOG entry** *(preferred)*. The version anchor (`## [0.39.0]`) plus the git tag is already a durable join key — `git log --grep '0.39.0'` finds the commit without a self-reference. No `**Commit**:` line at all.
 2. **Two-commit backfill**, when a SHA really must be recorded (e.g. a story's `commit:` frontmatter). Ship the artifact, then fill the SHA in a *follow-up* commit:
    ```bash
    git commit -m "feat: ..."                     # the release commit

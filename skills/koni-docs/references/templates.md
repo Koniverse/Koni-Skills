@@ -6,7 +6,7 @@
 > file the user's request needs.
 
 
-**Contents**: [Template files](#template-files) · [Conventions every template follows](#conventions-every-template-follows) · [Activation](#activation) · [Quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet)
+**Contents**: [Template files](#template-files) · [Conventions every template follows](#conventions-every-template-follows) · [Activation](#activation) · [Frontmatter](#frontmatter)
 
 ---
 
@@ -51,19 +51,9 @@
 
 ## Activation
 
-**Single source: [SKILL.md §5](../SKILL.md).** A mirror that must be kept in sync is
-a mirror that will not be.
+**Single source: [SKILL.md §5](../SKILL.md).**
 
-## Quick frontmatter cheatsheet
+## Frontmatter
 
 **Single source: [`frontmatter-spec.md`](frontmatter-spec.md) §3** — the per-document
 contract, field by field, with the pattern each value must match.
-
-A second copy used to live here, and it had already drifted: it described `due` and
-`version_shipped` in words the spec does not use, and — worse — it taught two things
-RULE-17 forbids (`AD-N` inside `prd_ref`, and `FR-X.1 .. FR-X.N` range syntax). It was
-billed as the shortcut for agents who skip the full template, which made it the copy
-most likely to be obeyed and the one least likely to be checked.
-
-The lesson generalizes: **a cheatsheet that restates a contract is a second contract.**
-Read the spec.

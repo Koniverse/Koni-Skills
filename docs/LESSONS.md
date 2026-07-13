@@ -816,3 +816,51 @@ Two corollaries, both learned the same day:
 - **A guard that only inspects what changed hides standing rot.** The gate originally
   swept only the skills a commit touched, so a sibling sat red for four rounds while
   the skill advertised the guard as covering everything. Touch one, sweep all.
+
+---
+
+## 23. The test suite that formalized the blind spot — mutation-test the tests, or you have only moved the lie
+
+**What happened**: LESSONS §22 was written after four consecutive false greens, and its
+fix was the obvious one: **ship the guard with a corpus of planted defects.** I did. 15
+classes, one fixture each, a clean control, wired into the gate. It felt like the end of
+the story.
+
+An author-blind reviewer then did something I had not thought to do: **it attacked the
+test suite instead of the checker.** It regressed `SECTION_POINTER` to backticks-only —
+blinding the checker to two of the three §-pointer syntaxes, the exact class the checker
+was originally written for — and ran my suite.
+
+**The suite passed.**
+
+Because all three syntaxes asserted on the same substring (`§Ghost`), *any one of them
+surviving satisfied all three*. My assertions were loose enough that a real regression,
+in the flagship defect class, shipped green. The reviewer's summary was the sentence I
+should have written myself: *"the guard is validated only against defects its author
+imagined — and the suite did not fix that. It formalized it."*
+
+**The lesson**: **a test suite is a claim, and it needs a test too.** The question is not
+"do my tests pass?" — a dead test also passes. The question is **"if I break the thing on
+purpose, do my tests notice?"** That is mutation testing, and for any guard whose entire
+value is its verdict, it is not optional. So this repo now ships
+`test-mutations.py`: it deliberately narrows the checker one rule at a time — fences to
+backticks-only, script names to backticked-only, the §-pointer regex to one of three
+forms — and asserts the suite **kills** each mutant. A surviving mutant is not a hint;
+it is a hole, and it names itself.
+
+Two mechanics that made the original suite fake, both worth stealing:
+
+- **Assert on the classified line, not a substring of the report.** `'§Ghost'` is
+  satisfied by a coincidence. `'dead §-pointer -> ok.md §GhostLinked'` is satisfied only
+  by the checker doing the specific thing you claim it does — under the right
+  classification, for the right input.
+- **One unique needle per planted line.** Sharing a needle across fixtures means the
+  fixtures are not independent, and independence is the only property that makes a
+  corpus a corpus rather than a pile.
+
+**The recursion is the point.** §19: don't trust a validator you wrote. §20: prove it can
+speak before trusting its silence. §22: ship the planted defects with it. §23: **and then
+prove the planted defects can still speak.** Each layer of verification is itself an
+unverified claim until something adversarial pushes on it. There is no bottom turtle —
+there is only the discipline of asking, at every layer, *"what would I see if this were
+broken?"* If the answer is *"exactly what I see now"*, you have learned nothing.

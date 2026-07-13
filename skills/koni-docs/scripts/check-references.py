@@ -26,6 +26,9 @@ import sys
 from pathlib import Path
 
 HEADING = re.compile(r'^#{1,6} (.+)$', re.M)   # H1 too — `](#title)` is a legal link
+# Setext form: a line underlined by === or ---. GitHub emits an anchor for it; a
+# checker that only knows ATX headings calls a live link dead.
+SETEXT = re.compile(r'^(?!\s*$)([^\n]+)\n(?:=+|-{2,})[ \t]*$', re.M)
 ANCHOR_LINK = re.compile(r'\]\(\s*#([^)\s"]+)(?:\s+"[^"]*")?\s*\)')
 # Every destination form CommonMark allows, because each has hidden a dead link here:
 #   ](path)   ](path#anchor)   ](path "Title")   ](<path>)   ](<path> "Title")
@@ -39,7 +42,7 @@ HTML_SRC = re.compile(r'<(?:a|img|source)\b[^>]*?\b(?:href|src)\s*=\s*"([^"]+)"'
 # `file.md` §Section, the linked form [`file.md`](path) §Section, and the bare form
 # SKILL.md §3a-bis — all three have shipped dead in this repo.
 SECTION_POINTER = re.compile(
-    r'\[?`?([A-Za-z][\w./-]*\.md)`?(?:\]\([^)]*\))?,?\s*§([^\n,.;()\[\]|`+]+)'
+    r'\[?`?([A-Za-z][\w./-]*\.md)`?(?:\]\(([^)]*)\))?,?\s*§([^\n,.;()\[\]|`+]+)'
 )
 
 # Backticked OR bare. The first version required backticks — so `agile-sync-up.mjs`,
@@ -69,23 +72,30 @@ CONSUMER_DOCS = {
 def is_placeholder(target: str) -> bool:
     """`US-X.Y-<slug>.md` is a shape, not a path — it resolves in the generated
     document, not in the template that describes it. `checks/foo.sh` is an
-    illustration of a file the reader would author, not a claim that it exists.
-    And `Next.js` is a product name, not a script: filenames in these repos are
-    lowercase, so a capitalized stem is prose."""
+    illustration of a file the reader would author, not a claim that it exists."""
     if '<' in target or 'X.Y' in target or 'X.Z' in target or 'EPIC-N' in target:
         return True
-    raw_stem = Path(target).stem
-    if raw_stem[:1].isupper():
-        return True
-    # `crypto.test.ts` / `subscription.integration.spec.ts` are naming *conventions*
-    # illustrated in prose, not tools the docs claim to ship.
-    if re.search(r'\.(test|spec|integration|e2e|unit)$', raw_stem):
-        return True
-    if target.startswith(('*', '<')) or '*' in target:
+    if '*' in target:
         return True          # `*.spec.ts` is a glob — a shape, not a file
-    stem = raw_stem.lower()
+    stem = Path(target).stem.lower()
     return (stem in {'foo', 'bar', 'baz', 'example'}
             or stem.startswith(('your-', 'my-', 'example-', 'foo')))
+
+
+def is_prose_not_a_script(name: str) -> bool:
+    """Only for the SCRIPT_NAME pass.
+
+    `Next.js` is a product, not a tool; `crypto.test.ts` is a naming convention shown
+    in prose. Both must be exempt — but ONLY here. An earlier version applied the
+    capitalized-stem rule to *every* reference class, which made the checker blind to
+    `SKILL.md` and `README.md` — and therefore to `[SKILL.md §5](../SKILL.md)`, the
+    pointer that had just replaced a deleted mirror. A fix that opened a bigger hole
+    than the one it closed. Scope the exemption to the pass that needs it.
+    """
+    stem = Path(name).stem
+    if stem[:1].isupper():
+        return True          # `Next.js`, `React.js` — product names
+    return bool(re.search(r'\.(test|spec|integration|e2e|unit)$', stem))
 
 
 def strip_fences(text: str) -> str:
@@ -100,17 +110,20 @@ def strip_fences(text: str) -> str:
 
 def github_slug(heading: str) -> str:
     """GitHub's algorithm: drop backticks and punctuation, then hyphenate EACH
-    remaining space — it does not collapse runs. `a — b` → `a--b`, not `a-b`."""
+    remaining space — it does not collapse runs (`a — b` → `a--b`) and it does not
+    trim the gap a stripped leading emoji leaves behind (`## 🚀 Deploy` → `#-deploy`)."""
     h = heading.replace('`', '')
     h = re.sub(r'[^\w\s-]', '', h.lower())
-    return h.strip().replace(' ', '-')
+    h = h.strip('\n\t')                 # newlines only — a leading space is significant
+    return h.replace(' ', '-')
 
 
 def anchors_of(text: str) -> set[str]:
     """Every anchor GitHub will actually emit for this file."""
     seen: dict[str, int] = {}
     out: set[str] = set()
-    for h in HEADING.findall(strip_fences(text)):
+    body = strip_fences(text)
+    for h in HEADING.findall(body) + SETEXT.findall(body):
         slug = github_slug(h.strip())
         n = seen.get(slug, 0)
         seen[slug] = n + 1
@@ -205,16 +218,30 @@ def check(root: Path) -> list[str]:
                     continue
                 if '/' not in t and '.' not in t:
                     continue
-                if Path(t).name in CONSUMER_DOCS:
+                path, _, frag = t.partition('#')
+                if Path(path).name in CONSUMER_DOCS:
                     continue
-                if not (md.parent / t.split('#')[0]).exists():
+                tgt = md.parent / path
+                if path and not tgt.exists():
                     problems.append(f'{md}: dead link -> {t}')
+                    continue
+                # The fragment was previously split off and thrown away, so a dead
+                # anchor inside an HTML href or a reference definition was invisible.
+                anchors = own_anchors if not path else (
+                    anchors_of(read(tgt)) if tgt.suffix == '.md' else set())
+                if frag and tgt.suffix in ('', '.md') and frag not in anchors:
+                    problems.append(f'{md}: dead anchor {t}')
 
         siblings = root.parent  # sibling skills — cross-skill pointers are legitimate
         for m in SECTION_POINTER.finditer(text):
             if is_placeholder(m.group(1)) or Path(m.group(1)).name in CONSUMER_DOCS:
                 continue
-            cited = m.group(1)
+            # In the linked form [`label.md`](real/path.md) §Sec, the BACKTICK is a
+            # label and the HREF is the path. Resolving the label was how a correct
+            # pointer got reported dead — a false positive is the same failure as a
+            # false green: it teaches people to ignore the gate.
+            cited = m.group(2) or m.group(1)
+            cited = cited.split('#')[0]
             target = md.parent / cited
             if not target.exists():
                 if '/' in cited:
@@ -225,7 +252,7 @@ def check(root: Path) -> list[str]:
                     problems.append(f'{md}: §-pointer to a file that does not exist -> {cited}')
                     continue
                 target = matches[0]
-            named = m.group(2).strip()
+            named = m.group(3).strip()
             if '–' in named or '—' in named:
                 continue    # "§0–§1" is a range, not a heading
             # "§3 for the per-document contract" names section 3; the rest is prose.
@@ -252,7 +279,8 @@ def check(root: Path) -> list[str]:
                 problems.append(f'{md}: dead §-pointer -> {m.group(1)} §{named}')
 
         for m in SCRIPT_NAME.finditer(text):
-            if in_fence(text, m.start()) or is_placeholder(m.group(1)):
+            if (in_fence(text, m.start()) or is_placeholder(m.group(1))
+                    or is_prose_not_a_script(m.group(1))):
                 continue
             name = Path(m.group(1)).name
             found = list(root.rglob(name)) or [

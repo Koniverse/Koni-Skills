@@ -11,19 +11,32 @@ set -eu
 
 CHECKER=skills/koni-docs/scripts/check-references.py
 SELFTEST=skills/koni-docs/scripts/__tests__/test-check-references.py
-[ -f "$CHECKER" ] || { echo "skill-references: no checker at $CHECKER, skipping"; exit 0; }
+MUTANTS=skills/koni-docs/scripts/__tests__/test-mutations.py
+
 command -v python3 >/dev/null 2>&1 || { echo "skill-references: python3 not found, skipping"; exit 0; }
 
-# The guard is only trusted because its own planted-defect suite passes. A checker
-# that has quietly stopped catching things prints the same `0` as a clean corpus
-# (LESSONS §19, §20) — so prove it can still speak before believing its silence.
-if [ -f "$SELFTEST" ]; then
-  python3 "$SELFTEST" >/dev/null 2>&1 || {
-    echo "skill-references: the checker's OWN self-test fails — its green means nothing"
-    python3 "$SELFTEST" || true
+# Their ABSENCE is a hard failure, not a skip. A guard you can disarm by deleting a
+# file is not a guard — and this check's whole thesis is that a silent guard and a
+# broken one are indistinguishable (LESSONS §19, §20, §22).
+for required in "$CHECKER" "$SELFTEST" "$MUTANTS"; do
+  [ -f "$required" ] || {
+    echo "skill-references: $required is missing — the guard cannot be trusted without it"
     exit 1
   }
-fi
+done
+
+# The checker is trusted only because its planted-defect suite passes, and the suite is
+# trusted only because mutant checkers die against it. Prove both before believing a `0`.
+python3 "$SELFTEST" >/dev/null 2>&1 || {
+  echo "skill-references: the checker's OWN self-test fails — its green means nothing"
+  python3 "$SELFTEST" || true
+  exit 1
+}
+python3 "$MUTANTS" >/dev/null 2>&1 || {
+  echo "skill-references: a mutant checker SURVIVED the self-test — the suite has a hole"
+  python3 "$MUTANTS" || true
+  exit 1
+}
 
 # Touch ANY skill and every skill is swept. Scanning only what the commit touched
 # let a sibling sit red indefinitely while SKILL.md advertised the guard as
@@ -32,12 +45,13 @@ fi
 touched=$(git diff --cached --name-only | awk -F/ '$1=="skills" && NF>1 {print $2}' | sort -u)
 [ -n "$touched" ] || exit 0
 
+tmp=$(mktemp)
 rc=0
 for skill in $(ls skills); do
   [ -d "skills/$skill" ] || continue
-  python3 "$CHECKER" "skills/$skill" >/tmp/skillrefs.$$ 2>&1 || rc=1
-  grep -v '^0 dangling' /tmp/skillrefs.$$ | grep -v '^$' || true
+  python3 "$CHECKER" "skills/$skill" >"$tmp" 2>&1 || rc=1
+  grep -v '^0 dangling' "$tmp" | grep -v '^$' || true
 done
-rm -f /tmp/skillrefs.$$
+rm -f "$tmp"
 [ "$rc" -eq 0 ] || echo "skill-references: fix the dangling references above"
 exit "$rc"

@@ -265,4 +265,4 @@ BMad sprint-status.yaml              → koni-docs auto-generate     → docs/sp
 - BMad's `planning_artifacts` path = `_bmad-output/planning-artifacts/`
 - BMad's `implementation_artifacts` path = `_bmad-output/implementation-artifacts/`
 - Koni-docs canonical path = `docs/`
-- The this file (`bmad-template-analysis.md`) file already covers the migration procedure — this analysis provides the **template-level structural mapping** to complement that file.
+- This file provides the **template-level structural mapping** between the two pipelines; the step-by-step migration procedure is the koni-docs SKILL.md workflow itself (§3).
