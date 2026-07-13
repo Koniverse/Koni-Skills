@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -220,6 +220,41 @@ checks had been silently returning empty on a case-sensitive filesystem.
 Per LESSONS §13, this round **extends this story** rather than opening US-1.7 —
 one story = one deliverable, and the deliverable is not done until it passes the
 bar.
+
+## Round 3 — skill-grading re-grade (2026-07-13, v0.41.0)
+
+Re-graded all four dimensions (the rubric forbids inferring "still ≥95" from a
+review of the fix alone). **72.5/100** — D1 22→**24**, D2 25→**25**, D3 8→**5**,
+D4 17.5→**18.5**.
+
+D3 went *down*. Not because the skill got worse: a round-1 *minor* ("the story
+template's worked example breaks RULE-15") turned out on verification to be
+**Critical**. The template told agents to fill `assignee` with
+`git log -1 --format=%an <sha>` — and `%an` *is* git `user.name`, the exact value
+RULE-15 (BLOCKER) forbids. RULE-15's own rationale names the failure
+(`user.name = AnhMTV` vs login `saltict`). It survived a fix round because on this
+machine `%an`, `user.name`, and the GitHub login all coincide — a contradiction
+invisible to its author, visible immediately to a reviewer who ran it.
+
+The second theme: **the RULE-2 rewrite had landed only where the rule is
+defined.** The changelog template — the file an agent opens when asked to write a
+changelog entry, without ever loading `rules.md` — still taught the impossible
+pre-commit-SHA flow. So did SKILL.md's summary, its checklist, and story §12. A
+rule is enforced where it is *read*. Written up as LESSONS §18.
+
+That rewrite also let me find the real scar in this repo: US-4.29 carried
+`commit: e37c590`, an object that does not exist in git. Repaired to `a1ffc77`;
+the full 44-SHA corpus now passes RULE-2's reachability grep.
+
+Also fixed: a real person's name, email, and machine path shipping inside
+`templates/integration.md`; a `--include-warnings` flag `validate` declared and
+never read; `findRedundantDue` shipping undocumented; every hardcoded CLI version
+(including in the file that says "don't hardcode a version"); the description
+trimmed 1024 → 727 bytes (v0.40.0 had pushed it to 4 chars under the hard cap);
+SKILL.md 528 → 325 lines; the checklist and subcommand table de-duplicated after
+the extraction forked them; TOCs on every 100+-line reference — the first
+generator's own TOCs were broken, because it collapsed whitespace where GitHub
+does not.
 
 ## Implementation notes
 

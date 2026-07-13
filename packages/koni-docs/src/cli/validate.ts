@@ -4,7 +4,6 @@ import { getGlobalOpts } from './global-opts.ts';
 
 interface ValidateFlags {
   json: boolean;
-  includeWarnings: boolean;
 }
 
 /** Mirrors `status --due-soon-days`; only used to label warnings here. */
@@ -15,7 +14,6 @@ export function registerValidate(program: Command): void {
     .command('validate')
     .description('Validate the L3 ID graph (epic/sprint/PRD references) — exits non-zero on error')
     .option('--json', 'machine-readable output', false)
-    .option('--include-warnings', 'include FR-refs that have no PRD Functional Requirements row (default: warnings = errors)', false)
     .action(function (this: Command, cmdOpts: ValidateFlags) {
       const opts = getGlobalOpts(this);
       const corpus = loadCorpus(opts.docsPath);

@@ -12,6 +12,9 @@
 > cross-cutting concerns (those belong to the epic) or system-wide invariants
 > (those belong to ARCHITECTURE.md + CONTEXT.md).
 
+
+**Contents**: [1. Section index — what's required vs optional](#1-section-index--whats-required-vs-optional) · [2. Full template skeleton](#2-full-template-skeleton) · [Story refresh — YYYY-MM-DD *(optional, recurring)*](#story-refresh--yyyy-mm-dd-optional-recurring) · [Goal](#goal) · [Deadline *(§2b — only when `due` is set)*](#deadline-2b--only-when-due-is-set) · [Background](#background) · [Acceptance criteria](#acceptance-criteria) · [Tasks](#tasks) · [Dev notes](#dev-notes) · [Verification commands](#verification-commands) · [Changelog entry](#changelog-entry) · [Implementation notes](#implementation-notes) · [Files modified](#files-modified) · [Cross-references](#cross-references) · [3. Per-section guidance](#3-per-section-guidance) · [4. Filled mini-example (condensed)](#4-filled-mini-example-condensed) · [Goal](#goal-1) · [Background](#background-1) · [Acceptance criteria](#acceptance-criteria-1) · [Tasks](#tasks-1) · [Dev notes](#dev-notes-1) · [Verification commands](#verification-commands-1) · [Changelog entry](#changelog-entry-1) · [Implementation notes](#implementation-notes-1) · [Files modified](#files-modified-1) · [Cross-references](#cross-references-1)
+
 ---
 
 ## 1. Section index — what's required vs optional
@@ -57,7 +60,7 @@ version_shipped:           # MANDATORY (RULE-16) when status → done; bare semv
 prd_ref: [FR-N]            # PRD Functional Requirements this story materializes — list of bare IDs only (RULE-17). FR-N / NFR-N here; AD-N goes in arch_ref. See references/frontmatter-spec.md.
 arch_ref: [AD-N]           # OPTIONAL — ARCHITECTURE.md Architecture Decisions this story materializes (list of AD-N). Omit if none.
 depends_on: [US-X.Y]       # OPTIONAL — other stories whose artifacts this story consumes (list of US-X.Y). Omit if none. Cross-story narrative belongs in §7.
-assignee:                  # MANDATORY (RULE-15): commit AUTHOR — `git log -1 --format=%an <sha>`, NOT the session user (`gh api user`)
+assignee:                  # MANDATORY (RULE-15): the commit author's GitHub LOGIN — `gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login`. NOT `git log --format=%an` (that is git user.name, which RULE-15 forbids) and NOT the session user.
 commit:                    # SHA of the landing commit. A commit cannot contain its own SHA — do NOT `--amend` it in (that rewrites the commit and orphans the SHA). Backfill it in a follow-up commit (RULE-2). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -212,7 +215,7 @@ from re-litigating the scope decision.>
 chase these — a broken or missing reference is a reject signal.>
 
 - [Issue #<N>](<URL>)
-- [Source: PRD §8 FR-N](../../PRD.md#8-functional-requirements)
+- [Source: PRD §8 FR-N](../../PRD.md#functional-requirements)
 - [Source: ARCHITECTURE §<section>](../../ARCHITECTURE.md)
 - [Source: CONTEXT D<N>](../../CONTEXT.md) <if a decision was recorded>
 - [Source: LESSONS §<N>](../../LESSONS.md) <if a prior trap is being avoided>
@@ -255,7 +258,6 @@ count. For behavioral ACs, name the test file and case.>
 ### Removed
 - <What was dropped and why>
 
-**Commit**: <full SHA>
 
 ## Implementation notes
 
@@ -282,7 +284,7 @@ per file explaining what changed and why — not just what was added.>
 
 ## Cross-references
 
-- [PRD FR-N](../../PRD.md#8-functional-requirements)
+- [PRD FR-N](../../PRD.md#functional-requirements)
 - [Epic EPIC-X](../epics/EPIC-X.md)
 - [CHANGELOG vX.Y.Z](../../CHANGELOG.md)
 - [CONTEXT D<N>](../../CONTEXT.md) <if a decision was recorded>
@@ -342,15 +344,23 @@ per file explaining what changed and why — not just what was added.>
   SHA, orphaning the one you just wrote. Ship the story, then backfill the SHA in
   a follow-up `docs: backfill …` commit (RULE-2, LESSONS §17). Never `pending` at
   rest.
-- `assignee`: the person who **authored the work**, not whoever is writing
-  the doc. For a **retroactive / codebase-discovered** story, derive it from
-  the git author of the story's `commit` SHA — run
-  `git log -1 --format='%an <%ae>' <sha>` — and **never** default to the
-  current session's git user (that silently mis-credits another contributor).
-  When the story spans commits by multiple authors (e.g. main work by one
-  person + a follow-up fix by another), set `assignee` to the primary-work
-  author and credit the others explicitly in Background / Tasks next to their
-  SHA.
+- `assignee`: the **GitHub login** of the person who **authored the work**, not
+  whoever is writing the doc (RULE-15). Two traps, and they pull in opposite
+  directions:
+  - **Don't credit the session user.** For a retroactive / codebase-discovered
+    story, the author is whoever wrote the commit, not whoever is writing the doc.
+  - **Don't reach for `git log --format=%an`.** That returns the author's git
+    `user.name`, which is exactly the value RULE-15 forbids — one maintainer's
+    `user.name` is `AnhMTV` while their login is `saltict`, and the wrong one
+    silently breaks @-mentions, CODEOWNERS, and `gh api users/<login>`.
+
+  Resolve the commit's author to a login:
+  ```bash
+  gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login
+  ```
+  When the story spans commits by multiple authors, set `assignee` to the
+  primary-work author and credit the others explicitly in Background / Tasks
+  next to their SHA.
 - `external_deps` *(optional)*: list of third-party systems, partners, or
   legal-review queues this story waits on. Populate when calendar wait time
   (outside dev control) is in the critical path — e.g.
@@ -443,8 +453,9 @@ per file explaining what changed and why — not just what was added.>
   into CHANGELOG.md at ship time — keep it ship-ready.
 - Only include `### Added` / `### Changed` / `### Fixed` / `### Deprecated`
   / `### Removed` / `### Security` sections that have content.
-- `**Commit**: pending` is NEVER acceptable. Fill the full SHA at
-  pre-commit (RULE-2).
+- `**Commit**: pending` is NEVER acceptable — and neither is `--amend`-ing a
+  SHA in, which orphans it. Omit the line, or backfill the SHA in a follow-up
+  commit (RULE-2, LESSONS §17).
 
 ### §13 Implementation notes
 
@@ -578,7 +589,6 @@ without the larger abstraction.
 ### Deprecated
 - `AUDIT_APPEND_QUEUE`, `SAFE_DEPLOY_QUEUE`, ... consts — JSDoc-marked `@deprecated`, point at `QUEUE_NAMES.X`.
 
-**Commit**: a1b2c3d
 
 ## Implementation notes
 

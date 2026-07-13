@@ -581,3 +581,49 @@ grep -hoE '^commit: [0-9a-f]{7,40}' docs/sprints/stories/*.md | awk '{print $2}'
 
 `git log <sha>` succeeding proves nothing — reflog resolves orphans. Ancestry is
 the check that catches this.
+
+---
+
+## 18. A rule is only enforced where it is *read* — propagate the rewrite, or the old recipe wins
+
+**What happened**: RULE-2 was rewritten (LESSONS §17) in `rules.md`, and the fix
+was verified: pressure-tested agents refused `--amend` and reached the correct
+flow every time. It scored 25/25. Then an author-blind reviewer found that the
+*changelog template* — the file an agent actually opens when asked "write the
+changelog entry for v0.4.0" — still said **"the commit hash goes into the entry
+at pre-commit time"**. So did SKILL.md's rule summary, its pre-commit checklist,
+and the story template's §12. The rewrite had landed in the file where the rule
+is *defined* and in none of the files where the rule is *encountered*. An agent
+routed to the template never loads `rules.md`; it would have followed the
+impossible recipe and never known a correct one existed.
+
+The same round produced the same shape twice more: `git log --format=%an` was
+prescribed as the way to fill `assignee` in three places, while RULE-15 — a
+BLOCKER — forbids exactly that value; and `findRedundantDue` shipped as a live
+`validate` warning with no mention in any doc, so an agent would meet a warning
+the documentation does not know about.
+
+**The lesson**: **rules live at their point of use, not their point of
+definition.** Rewriting the canonical rule and stopping there feels complete and
+isn't — the corrected text sits in a file most invocations never load, while
+every template, checklist, and summary keeps teaching the old one. Two habits:
+
+1. **When a rule changes, grep for its *recipe*, not its *name*.** Searching
+   `RULE-2` finds the citations. Searching `pre-commit time`, `--amend`,
+   `**Commit**:`, `%an` finds the *behaviour* — which is what agents copy.
+2. **A rule with no reachable enforcement is decoration.** RULE-15 forbade git
+   `user.name` for months while three files handed out the command that produces
+   it. The contradiction was invisible on the author's machine, where `%an`,
+   `user.name`, and the GitHub login all happen to coincide — the classic shape of
+   a bug that only bites someone else.
+
+**Corollary — a rule with no machine backstop drifts.** "`due` is never
+`sprint.end`" was prose-only; a bulk edit setting every story's `due` to the
+sprint end passed every gate. It now warns. Prose states the intent; a check is
+what keeps it true.
+
+**Grep check** — after rewriting any rule, the old recipe must return nothing:
+
+```bash
+rg -n 'pre-commit time|--amend.*SHA|format=%an' skills/ docs/   # must be empty
+```

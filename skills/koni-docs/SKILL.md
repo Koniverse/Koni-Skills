@@ -1,25 +1,25 @@
 ---
 name: koni-docs
 description: >
-  Manages the koni-docs documentation artifacts — SETUP, PRD, ARCHITECTURE,
-  LESSONS, CHANGELOG, CONTEXT, DESIGN, and Sprints (epics / stories / sprint
-  files / STATUS). Use when the user asks to update docs, create or split a
-  story, record a decision, write the LESSONS entry for a trap, write a
-  changelog entry, document system architecture, or run the pre-commit doc
-  checklist. Also use for a story's **deadline** — setting or moving its `due`
-  date, "when is this due", "what's overdue or due soon", the STATUS Deadlines
-  board — and for opening/closing a sprint, regenerating STATUS.md / the
-  kanban, or running the koni-docs CLI (sync / status / validate / story
-  frontmatter fields). Also use when any planning tool (BMad, GStack,
-  Superpowers) produces artifacts that need standardization into docs/. NOT for
-  test docs, test plans, or QC coverage (koni-qc); NOT for commit gates, the
-  agentic loop, or the lesson-capture gate that forces the read/write
-  (koni-harness); NOT for repo bootstrap or scaffolding (koni-setup).
+  Use when working on any koni-docs artifact — PRD, ARCHITECTURE, CHANGELOG,
+  CONTEXT, LESSONS, SETUP, DESIGN, or Sprints (epics / stories / STATUS): update
+  docs, create or split a story, record a decision, write a LESSONS entry, write
+  a changelog entry, run the pre-commit doc checklist, open or close a sprint,
+  regenerate STATUS.md / the kanban, or run the koni-docs CLI (sync / status /
+  validate). Also for a story's deadline — setting or moving its `due` date,
+  "when is this due", "what's overdue or due soon". Also when BMad / GStack /
+  Superpowers output needs standardizing into docs/. NOT test docs or QC
+  (koni-qc); NOT commit gates or the agentic loop (koni-harness); NOT repo
+  bootstrap (koni-setup).
 ---
 # koni-docs — Documentation Management
 
 > **One rule above all others**: every code-shipping commit updates docs in
 > the SAME commit. Never defer documentation to a follow-up.
+>
+> One carve-out, and only one: a commit's own SHA cannot be inside it. If a SHA
+> is recorded at all, it is backfilled by a follow-up commit — never `--amend`-ed
+> in, which orphans it (RULE-2).
 
 ---
 
@@ -70,23 +70,6 @@ BRAINSTORM → BRIEF → PRD → ARCH → EPIC/US → DESIGN → REVIEW → QA �
 
 **Key principle**: Tools process content. Koni-docs standardizes output. When BMad, GStack, or Superpowers produce planning artifacts in their own directories (e.g., `_bmad-output/`), koni-docs maps them to the canonical `docs/` structure and ensures they follow Koniverse templates.
 
-### Vietnamese counterpart convention (`*.vi.md`)
-
-Some Koniverse projects (e.g. senti_quant) ship Vietnamese translations
-of canonical docs as `*.vi.md` siblings — e.g. `docs/PRD.vi.md` next to
-`docs/PRD.md`. **English is canonical** (per RULE-13): all sync scripts,
-grep checks, and verification commands operate on `*.md` (no `.vi`
-infix). The `.vi.md` files are:
-
-- **Optional** — projects opt in per their team's language preference.
-- **Never authoritative** — if `*.md` and `*.vi.md` disagree, `*.md` wins.
-- **Skipped by sync scripts** — `npx koni-docs status` /
-  `npx koni-docs sync` filter to `.md`-only files that DON'T match
-  `*.vi.md`. Frontmatter parsing, AC counting, status propagation: all
-  English-only.
-- **Per-story discretion** — translate the stories that need broad
-  cross-team review; leave engineering-detail stories English-only.
-
 | Pipeline Phase          | Tool                | What it produces                                               |
 | ----------------------- | ------------------- | -------------------------------------------------------------- |
 | Brainstorm              | BMad + GStack       | Raw ideas, problem framing                                     |
@@ -109,7 +92,7 @@ These 12 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | Rule    | Summary                                                       | Group      |
 | ------- | ------------------------------------------------------------- | ---------- |
 | RULE-1  | VERSION + CHANGELOG in same commit                            | Pre-commit |
-| RULE-2  | CHANGELOG commit hash mandatory, never "pending"              | Pre-commit |
+| RULE-2  | A recorded SHA is real + reachable — never "pending", never `--amend`-ed in | Pre-commit |
 | RULE-5  | STATUS.md auto-generated, never hand-edit                     | Post-gen   |
 | RULE-6  | Story id must match filename + PRD `Epics & User Stories`    | During     |
 | RULE-7  | CONTEXT.md append-only, corrections via revision entry        | During     |
@@ -142,63 +125,15 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugi
      *reason* in the story's `## Deadline` section. See
      [`sprint-system.md` §Deadlines vs sprint cadence](references/sprint-system.md).
    - If no story exists, create a stub using the full story template (`references/templates/story.md`) before starting.
-   - **Domain-skill consultation for sizing** (mandatory for non-engineering
-     projects — growth / marketing / sales-ops / content workspaces): before
-     assigning `points:`, invoke the domain-appropriate skill(s) to cross-check
-     the estimate. Skipping this leads to systematic 30-40% undersizing,
-     especially for work with external dependencies, multi-stakeholder review,
-     or repeat-batch output (validated by the koni-growth calibration analysis
-     2026-05-23 — see [§3a-bis](#3a-bis-story-sizing--calibration-scale)).
-     Routing:
-     - **B2B sales work** (proposals, sales kits, RFP/RFI, POC plans,
-       enterprise onboarding, IB / partner programs, agency partner kits) →
-       invoke `/sales-engineer`
-     - **Marketing ops work** (email sequences, CRM tagging, landing CRO,
-       content production, analytics tracking, paid ads, attribution) → invoke
-       `/marketing-ops`
-     - **Cross-domain** (e.g., payment integration + onboarding emails +
-       tracking) → invoke both
-     - **Pure engineering / product code / docs-only tooling** — skip
-       (gut-feel + Fibonacci is fine for these; consultation overhead is not
-       justified)
-   - Apply the sizing calibration scale (see §3a-bis below).
+   - **Size it.** Fibonacci only (1/2/3/5/8/13). For non-engineering work
+     (sales / marketing / content / ops), invoke the domain skill to cross-check
+     the estimate *before* assigning `points:` — gut-feel undersizes that work by
+     30-40%, especially when it waits on external parties. `/sales-engineer` for
+     B2B sales artifacts; `/marketing-ops` for lifecycle / CRO / content / ads;
+     both when the story spans them; skip for pure engineering. The calibration
+     scale and the evidence behind it:
+     [`sprint-system.md` §Story sizing](references/sprint-system.md).
 4. **Update the sprint file** — ensure the story row exists in the active sprint scope table.
-
-### 3a-bis. Story sizing — calibration scale
-
-For 1 assignee / 1-week sprint, ~10-15 pt capacity baseline. Tune per-team
-when actuals stabilize.
-
-| Pts | Effort | Scope signal |
-|---|---|---|
-| 1 | ~½ day | Single doc, 1 stakeholder, no external dep |
-| 2 | 1 day | Single template/file, internal review only |
-| 3 | 2 days | Multi-doc bundle OR 1 internal integration |
-| 5 | 3-4 days | Production deliverable (HTML / video / email seq) OR 1 external system integration |
-| 8 | 1 week | Multi-system integration OR multi-asset sales kit OR content batch ≥3 items |
-| 13 | Multi-week | Cross-product, legal/compliance loop, unknown scope — **split if possible** |
-
-**Splitting rule** — if a story estimates > 8pt, split it. A 13pt single
-story is a planning anti-pattern: it blocks a whole sprint, hides milestone
-risk, and cannot be paused/handed-off mid-flight. Reference split pattern from
-koni-growth (CONTEXT D15): the original "Ship payment + recurring billing"
-(13pt) was split into US-1.1 "payment one-shot" (8pt) + US-1.6 "recurring +
-dunning state machine" (5pt), sequenced — first story unblocks revenue, second
-unblocks lifecycle automation.
-
-**External-dependency rule** — if a story waits on a third-party system,
-partner, or legal review, populate the `external_deps:` frontmatter field
-(see [story template](references/templates/story.md) §1.frontmatter). These
-stories are the most commonly undersized because dev-time excludes calendar
-wait time. Example values: `[payment_gateway, resend_api, legal_review,
-sales_navigator_license, partner_signature]`.
-
-**Done-story recalibration rule** — sprint assignment of a done-story is
-locked history (do not move done stories across sprints), but **points may be
-recalibrated** to reflect actual effort after the fact. This is the only way
-to build a real velocity baseline; leaving inflated-optimistic estimates in
-place mis-calibrates every future story. Recalibration must be paired with a
-CONTEXT.md decision entry naming the affected stories and reasoning.
 
 ### 3b. During implementation
 
@@ -212,7 +147,7 @@ Run through every item before committing:
 
 ```
 [ ] VERSION bumped per semver rule
-[ ] CHANGELOG.md — story's "Changelog entry" section copied in, commit SHA filled (RULE-1, RULE-2)
+[ ] CHANGELOG.md — story's "Changelog entry" section copied in, SAME commit (RULE-1). A recorded SHA is backfilled in a follow-up commit, never `--amend`-ed in (RULE-2)
 [ ] PRD.md story status updated if scope changed
 [ ] BRIEF.md updated if product vision, scope, or success criteria changed
 [ ] CONTEXT.md has new entry if a decision was made
@@ -301,7 +236,7 @@ file matching the user's request.
 
 | User request                                    | Action                                                                                    | Load                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------ |
-| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive/codebase-discovered stories, set `assignee` from the commit AUTHOR (`git log -1 --format=%an <sha>`), never the session user | `templates/story.md` §1                    |
+| "create a story for US-X.Y"                     | Verify US-X.Y exists in PRD `Epics & User Stories`, use full story template. For retroactive/codebase-discovered stories, set `assignee` to the commit author's GitHub **login** (`gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login`) — never `git log --format=%an` (that is git `user.name`, which RULE-15 forbids) and never the session user | `templates/story.md` §1                    |
 | "start story US-X.Y"                            | §3a flow: read LESSONS → DESIGN.md → flip `status: in-progress`                           | `rules.md` §RULE-6                         |
 | "close / complete story US-X.Y"                 | §3c checklist + 5-layer check + run agile:status                                          | `sprint-system.md` §5-layer                |
 | "log a decision" / "record architecture choice" | Find highest D`<N>`, append decision entry                                                | `templates/context.md`                     |
@@ -368,8 +303,10 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for the patte
 
 ## 7. CLI tool — `@koniverse/koni-docs`
 
-Every `koni-docs <cmd>` this skill tells you to run comes from the companion CLI
-(**v0.9.0**), installed per repo as a devDep (`npx koni-docs …`) or globally.
+Every `koni-docs <cmd>` this skill tells you to run comes from the companion CLI,
+installed per repo as a devDep (`npx koni-docs …`) or globally. Run
+`npx koni-docs --version` to see what you actually have — this skill deliberately
+pins no version number.
 The seven subcommands, in one line each:
 
 | Subcommand | Does |

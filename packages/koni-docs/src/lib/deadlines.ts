@@ -168,20 +168,6 @@ export function getDeadlines(corpus: Corpus, today: Date, dueSoonDays: number): 
   return out;
 }
 
-/**
- * Stories whose `due` is present but unusable — prose ("end of July"), a
- * non-date string, or a date that does not exist (`2026-02-31`). These are
- * schema violations, not scheduling news: `validate` treats them as errors,
- * whereas a merely-overdue story is a warning.
- *
- * Closed stories are checked too — a malformed value is malformed whether or
- * not the story shipped.
- *
- * Known limit: an *unquoted* impossible date never reaches this function. YAML
- * parses `due: 2026-02-31` as a timestamp and silently rolls it over to
- * 2026-03-03, so the original typo is destroyed a layer below us. Only the
- * quoted form (`due: "2026-02-31"`) survives as a string and gets caught here.
- */
 export interface RedundantDue {
   id: string;
   source: string;
@@ -223,6 +209,20 @@ export function findRedundantDue(corpus: Corpus): RedundantDue[] {
   return out;
 }
 
+/**
+ * Stories whose `due` is present but unusable — prose ("end of July"), a
+ * non-date string, or a date that does not exist (`2026-02-31`). These are
+ * schema violations, not scheduling news: `validate` treats them as errors,
+ * whereas a merely-overdue story is a warning.
+ *
+ * Closed stories are checked too — a malformed value is malformed whether or
+ * not the story shipped.
+ *
+ * Known limit: an *unquoted* impossible date never reaches this function. YAML
+ * parses `due: 2026-02-31` as a timestamp and silently rolls it over to
+ * 2026-03-03, so the original typo is destroyed a layer below us. Only the
+ * quoted form (`due: "2026-02-31"`) survives as a string and gets caught here.
+ */
 export function findMalformedDue(corpus: Corpus): MalformedDue[] {
   const out: MalformedDue[] = [];
   for (const story of getStories(corpus)) {

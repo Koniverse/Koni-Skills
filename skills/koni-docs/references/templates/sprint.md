@@ -203,7 +203,7 @@ goal: "Ship US-3.7..3.12 (pod project surface — v0.45-v0.50) + Phase 1 permiss
 
 ## Sprint goal recap
 
-Ship V1 read-only per-pod project view. Reads `Docs/sprints/` from each
+Ship V1 read-only per-pod project view. Reads `docs/sprints/` from each
 repo in the pod's `selected_repo_ids` via Octokit, parses YAML frontmatter
 into typed Story / Epic / Sprint records, caches with `unstable_cache`
 keyed `(workspace_id, pod_slug)`, renders Table + Board views.

@@ -94,8 +94,10 @@ against `status` and today, so it cannot go stale:
 
 `STATUS.md` grows a `## ⏰ Deadlines` section above the kanban columns.
 `koni-docs validate` **errors** on a `due` that is not a real date (a schema
-violation) and **warns**, without failing, on a story that is merely past its
-date. Deadlines inform; they never block a commit.
+violation) and **warns**, without failing the run, on two things: a story that is
+merely past its date, and a `due` that just restates its sprint's end date — the
+machine backstop for the no-inheritance rule above. Deadlines inform; they never
+block a commit.
 
 ### Moving a deadline leaves a trace
 
@@ -107,26 +109,60 @@ the story missed its date once, and STATUS.md will then cheerfully report it as
 on-track. This is the same discipline the framework already applies to sprints —
 record the slip, correct forward, never rewrite the past to look clean.
 
+## Story sizing
+
+For 1 assignee / 1-week sprint, ~10-15 pt capacity baseline. Tune per-team
+when actuals stabilize.
+
+| Pts | Effort | Scope signal |
+|---|---|---|
+| 1 | ~½ day | Single doc, 1 stakeholder, no external dep |
+| 2 | 1 day | Single template/file, internal review only |
+| 3 | 2 days | Multi-doc bundle OR 1 internal integration |
+| 5 | 3-4 days | Production deliverable (HTML / video / email seq) OR 1 external system integration |
+| 8 | 1 week | Multi-system integration OR multi-asset sales kit OR content batch ≥3 items |
+| 13 | Multi-week | Cross-product, legal/compliance loop, unknown scope — **split if possible** |
+
+**Splitting rule** — if a story estimates > 8pt, split it. A 13pt single
+story is a planning anti-pattern: it blocks a whole sprint, hides milestone
+risk, and cannot be paused/handed-off mid-flight. Reference split pattern from
+koni-growth (CONTEXT D15): the original "Ship payment + recurring billing"
+(13pt) was split into US-1.1 "payment one-shot" (8pt) + US-1.6 "recurring +
+dunning state machine" (5pt), sequenced — first story unblocks revenue, second
+unblocks lifecycle automation.
+
+**External-dependency rule** — if a story waits on a third-party system,
+partner, or legal review, populate the `external_deps:` frontmatter field
+(see [story template](references/templates/story.md) §1.frontmatter). These
+stories are the most commonly undersized because dev-time excludes calendar
+wait time. Example values: `[payment_gateway, resend_api, legal_review,
+sales_navigator_license, partner_signature]`.
+
+**Done-story recalibration rule** — sprint assignment of a done-story is
+locked history (do not move done stories across sprints), but **points may be
+recalibrated** to reflect actual effort after the fact. This is the only way
+to build a real velocity baseline; leaving inflated-optimistic estimates in
+place mis-calibrates every future story. Recalibration must be paired with a
+CONTEXT.md decision entry naming the affected stories and reasoning.
+
 ## Scripts reference
 
-The `@koniverse/koni-docs` CLI provides all automation. Install once per project:
+All automation is the `@koniverse/koni-docs` CLI (`npm install --save-dev @koniverse/koni-docs`).
+The **authoritative subcommand inventory, flags, and commit loops live in
+[`cli.md`](cli.md)** — this file does not keep a second copy, because the copy
+that used to live here had already drifted out of date (it was missing `preview`
+and `validate`).
+
+The two you run around every story status change:
 
 ```bash
-npm install --save-dev @koniverse/koni-docs
+npx koni-docs sync --docs-path docs/     # propagate status: story → epic → PRD → sprint
+npx koni-docs status --docs-path docs/   # regenerate STATUS.md + the Deadlines board (RULE-5)
 ```
 
-| Command | What it does | When to run |
-|---|---|---|
-| `npx koni-docs status --docs-path docs/` | Regenerate `STATUS.md` from all story frontmatter, including the `## ⏰ Deadlines` section (`--due-soon-days <n>`, default 3) | Before every commit that changes story status |
-| `npx koni-docs sync --docs-path docs/` | Propagate story status upward — updates EPIC table, PRD `Functional Requirements` row, and sprint scope | After story status changes |
-| `npx koni-docs inject-tasks --docs-path docs/ --story US-X.Y` | Regenerate Tasks section from Acceptance Criteria (AC is canonical) | When AC changes |
-| `npx koni-docs backfill-fields --docs-path docs/` | Backfill `assignee`/`commit`/`sprint` on existing stories | When setting up sprint system in existing project |
-| `npx koni-docs backfill-commits --docs-path docs/` | **Repair only** — replaces `pending` SHAs in a CHANGELOG that already shipped broken. RULE-2 forbids writing `pending` in the first place. | Fixing a corpus that already has them |
-
-All subcommands accept `--dry-run` for safe preview mode.
-
-**Always run `npx koni-docs status` before committing any story status change.**
-STATUS.md is auto-generated — never hand-edit it (RULE-5).
+All subcommands accept `--dry-run`. **Always run `npx koni-docs status` before
+committing any story status change** — STATUS.md is auto-generated and must never
+be hand-edited (RULE-5).
 
 ## 5-layer consistency check (before merging)
 
@@ -144,21 +180,9 @@ Inconsistency between any two layers = documentation debt. Fix in same commit as
 
 ## Pre-commit checklist
 
-Run through every item before committing:
-
-```
-[ ] VERSION bumped per semver rule
-[ ] CHANGELOG.md has a new entry in the SAME commit (RULE-1). A recorded SHA must be real and reachable — backfill it in a follow-up commit, never via `--amend` (RULE-2)
-[ ] PRD.md story status updated if scope changed
-[ ] CONTEXT.md has new entry if a decision was made
-[ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
-[ ] LESSONS.md has new entry if a trap or pattern was discovered
-[ ] Story file: status → done, version_shipped set, Tasks all [x]
-[ ] No story is overdue-and-silent — either close it, or move `due` WITH a CONTEXT.md entry
-[ ] npx koni-docs sync --docs-path docs/  (propagates AC to EPIC + PRD)
-[ ] npx koni-docs status --docs-path docs/  (regenerates STATUS.md — RULE-5)
-[ ] CLAUDE.md Active Context block updated (T1-T7 as applicable)
-```
+**Single source: [SKILL.md §3c](../SKILL.md).** A second copy used to live here and
+had already drifted from it (different CHANGELOG wording, missing the BRIEF.md
+item) — exactly the failure a duplicated checklist is guaranteed to produce.
 
 ## Test artifacts
 
@@ -197,7 +221,7 @@ The Stories-in-scope / Goals / Quick-reference triad up front lets a tester unde
 
 **Templates**: [`test-cases.md`](templates/test-cases.md) · [`test-report.md`](templates/test-report.md) (two sub-templates: per-execution + per-release).
 
-**Folder READMEs**: [`docs/tests/test-cases/README.md`](../../../docs/tests/test-cases/README.md) · [`docs/tests/test-reports/README.md`](../../../docs/tests/test-reports/README.md).
+**Folder layout**: the `docs/tests/` taxonomy (test-cases + test-reports) is owned by **koni-qc** — see its `references/test-organization.md`. koni-docs owns the templates that fill those folders, not the folders' shape.
 
 **Phase 1 is manual-only.** A sync script (`agile-sync-tests.mjs`), a RULE (epic must have test-cases before close), and a Playwright → markdown converter for CI are planned for phase 2 once the manual pattern stabilizes.
 

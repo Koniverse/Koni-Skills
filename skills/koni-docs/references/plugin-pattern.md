@@ -1,5 +1,8 @@
 # Plugin-skill pattern
 
+
+**Contents**: [What a plugin skill is](#what-a-plugin-skill-is) · [Where it lives](#where-it-lives) · [Discovery](#discovery) · [Composition contract](#composition-contract) · [Authoring a new plugin](#authoring-a-new-plugin) · [Reference](#reference)
+
 How a technology-specific skill extends koni-docs without forking or
 restating its rules. Read this before authoring a `koni-<tech>` plugin, and
 when a project declares `koni-docs-plugins:` and you need to know what that

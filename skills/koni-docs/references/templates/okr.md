@@ -16,7 +16,7 @@
 > gymnastics.
 
 
-**Contents**: [1. File-naming rule](#1-file-naming-rule) · [2. YAML schema (per quarter file)](#2-yaml-schema-per-quarter-file) · [3. KR formula rules](#3-kr-formula-rules) · [4. Weekly notes](#4-weekly-notes) · [5. Permissions (`okr_owners` table)](#5-permissions-okrowners-table) · [6. Filled example — `docs/okr/2026-Q2.md`](#6-filled-example--docsokr2026-q2md) · [Weekly notes](#weekly-notes) · [7. Cross-references](#7-cross-references)
+**Contents**: [1. File-naming rule](#1-file-naming-rule) · [2. YAML schema (per quarter file)](#2-yaml-schema-per-quarter-file) · [3. KR formula rules](#3-kr-formula-rules) · [4. Weekly notes](#4-weekly-notes) · [5. Permissions (`okr_owners` table)](#5-permissions-okr_owners-table) · [6. Filled example — `docs/okr/2026-Q2.md`](#6-filled-example--docsokr2026-q2md) · [Weekly notes](#weekly-notes) · [7. Cross-references](#7-cross-references)
 
 ---
 

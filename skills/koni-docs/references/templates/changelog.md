@@ -7,9 +7,12 @@
 > close a story.
 >
 > **One rule above all others**: every code-shipping commit bumps `VERSION`
-> AND adds a new entry to CHANGELOG.md IN THE SAME COMMIT (RULE-1). The
-> commit hash goes into the entry at pre-commit time — `pending` is never
-> acceptable (RULE-2).
+> AND adds a new entry to CHANGELOG.md IN THE SAME COMMIT (RULE-1).
+>
+> **Do not put a commit SHA in the entry.** A commit cannot contain its own SHA,
+> and `--amend`-ing one in orphans it (RULE-2, LESSONS §17). The version anchor
+> `## [X.Y.Z]` plus the git tag is already a durable join key — `git log --grep`
+> finds the commit without a self-reference. `pending` is never acceptable.
 
 ---
 
@@ -35,7 +38,7 @@
 ### Security
 - <CVE or hardening detail>
 
-**Commit**: <7-char or full SHA>
+
 ```
 
 ---
@@ -43,8 +46,11 @@
 ## 2. Rules
 
 - Only include sections that have content. Omit empty sections.
-- `**Commit**: pending` is NEVER acceptable (RULE-2). Use the full landing
-  SHA, set at pre-commit.
+- **No `**Commit**:` line.** A commit cannot contain its own SHA; `--amend`-ing
+  one in rewrites the commit and orphans the SHA you just wrote (RULE-2,
+  LESSONS §17). The `## [X.Y.Z]` anchor + the git tag already join the entry to
+  its commit. `pending` is never acceptable either. If a SHA must be recorded
+  somewhere (e.g. a story's `commit:` field), backfill it in a follow-up commit.
 - Entries in reverse-chronological order — newest at top.
 - Never reorder or edit past entries.
 - Version tag appears twice: `[X.Y.Z]` in header AND `— vX.Y.Z` inline —
@@ -86,6 +92,8 @@ organize projects into custom pods for better workspace navigation.
 ### Fixed
 - Project list not updating after workspace switch (missing `revalidatePath` in
   workspace change handler)
-
-**Commit**: a1b2c3d
 ```
+
+> No `**Commit**:` line — deliberately. The entry ships *in* the commit it
+> describes, so it cannot name it; `git log --grep '0.3.0'` and the `v0.3.0` tag
+> are the join keys. RULE-2.

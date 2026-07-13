@@ -14,7 +14,7 @@
 [Skill ↔ CLI](#9-skill--cli-relationship)
 
 
-This skill ships with a companion CLI binary published as `@koniverse/koni-docs` (**v0.9.0**). It provides 7 subcommands for the doc-maintenance work the skill prescribes, plus a reusable typed lib.
+This skill ships with a companion CLI binary published as `@koniverse/koni-docs`. It provides 7 subcommands for the doc-maintenance work the skill prescribes, plus a reusable typed lib.
 
 > **Source of truth**: `packages/koni-docs/package.json` in the Koni-Skills repo. When it and npm diverge, the repo is the canonical pre-release and npm is the canonical published version. Don't hardcode a version anywhere else — run `npx koni-docs --version` to see what you actually have.
 
@@ -60,13 +60,13 @@ Should report the version you just installed. If `--version` shows an older numb
 
 | Subcommand | Since | Purpose | Example |
 |---|---|---|---|
-| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Since v0.9.0 also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
+| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
 | `sync` | v0.4 | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD section lookup uses label (`## Functional Requirements`) with legacy `## 8.` fallback (v0.7.2) | `koni-docs sync --story US-X.Y` |
 | `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
 | `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
 | `backfill-commits` | v0.4 | **Repair only** — replaces `pending` SHAs in a CHANGELOG that already shipped broken. It is *not* a licensed step of the normal flow: RULE-2 forbids writing `pending` in the first place. | `koni-docs backfill-commits` |
 | `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
-| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Since v0.9.0 also checks `due` dates: a value that is not a real date is an **error**; a story merely past its date is a **warning** that does *not* change the exit code — deadlines inform, they never block a commit. Exits non-zero on any error. | `koni-docs validate --json` |
+| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Also checks `due` dates. **Error** (exit non-zero): a value that is not a real date. **Warnings** (exit code untouched — deadlines inform, they never block a commit): a story past its `due`, and a `due` that merely restates its sprint's end date (the drift that turns the Deadlines board into a second copy of the sprint table). Exits non-zero on any error. | `koni-docs validate --json` |
 
 ## 5. Real-world usage — the four common loops
 
@@ -96,7 +96,7 @@ git add docs/ && git commit -m "docs: backfill US-X.Y commit SHA ($SHA)"
 **(C) Doc audit on a new repo or after a long pause**:
 
 ```bash
-koni-docs validate --include-warnings --json | jq        # find broken refs
+koni-docs validate --json | jq                            # find broken refs
 koni-docs backfill-fields --dry-run                       # see what's missing
 koni-docs backfill-fields                                 # fill defaults
 koni-docs status                                          # regen kanban
@@ -129,7 +129,7 @@ koni-docs preview docs --watch     # opens http://localhost:4321/
 
 ## 7. Library API for programmatic use
 
-Other Koniverse products can import the typed lib without the CLI. v0.9.0 surface:
+Other Koniverse products can import the typed lib without the CLI. Current surface:
 
 ```ts
 // Corpus + I/O
@@ -156,10 +156,11 @@ import {
   validateFrRefs,      // ← prd_ref reachability into PRD Functional Requirements (v0.7.0)
 } from '@koniverse/koni-docs/lib';
 
-// Deadlines (v0.9.0) — see sprint-system.md §Deadlines vs sprint cadence
+// Deadlines — see sprint-system.md §Deadlines vs sprint cadence
 import {
   getDeadlines,        // stories with a `due`, classified overdue / due-soon / on-track
-  findMalformedDue,    // `due` values that are not a real date
+  findMalformedDue,    // `due` values that are not a real date        → validate ERROR
+  findRedundantDue,    // `due` that merely restates its sprint's end  → validate WARNING
   normalizeDue,        // raw frontmatter value → YYYY-MM-DD | null
   isValidIsoDate,
 } from '@koniverse/koni-docs/lib';

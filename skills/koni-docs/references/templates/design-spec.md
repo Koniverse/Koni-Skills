@@ -84,7 +84,7 @@ reused, cite the source path so reviewers can verify the variant.>
 
 ## Context
 
-The agile-MD convention (`Docs/sprints/` markdown parsed into Stories +
+The agile-MD convention (`docs/sprints/` markdown parsed into Stories +
 Epics + Sprints) already works for the Koni dev team. Hypothesis: any pod
 team that follows the same convention should get the same agile UI
 inside Koni without building a separate DB-backed tracker. V1 reads each

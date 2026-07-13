@@ -74,7 +74,7 @@
   ```
   Every line must print `ok`. An `UNREACHABLE` line is the `--amend` trap above.
 
-**See**: `templates.md` §CHANGELOG entry, [LESSONS §17](../../docs/LESSONS.md)
+**See**: `templates.md` §CHANGELOG entry, [LESSONS §17](../../../docs/LESSONS.md)
 
 ---
 
@@ -129,15 +129,15 @@ NEW_ENV_VAR=<example_value_or_instructions>
 
 **What**: A story's `id:` in frontmatter must exactly match:
 1. The filename prefix (e.g., `US-3.7` in `US-3.7-pod-project-management.md`)
-2. The PRD §7 entry identifier
+2. The PRD `Epics & User Stories` entry identifier
 
 One canonical ID per story across all documentation layers.
 
 **Why**: Prevents ID drift between the story file, the sprint board, and the PRD. Mismatched IDs break the 5-layer consistency system.
 
 **How to comply**:
-1. Before creating a story, check PRD §7 to confirm the ID
-2. If the story doesn't exist in PRD §7, add it first
+1. Before creating a story, check the PRD `Epics & User Stories` table to confirm the ID
+2. If the story doesn't exist in PRD `Epics & User Stories`, add it first
 3. Use the exact same ID in filename, frontmatter `id:`, and PRD reference
 
 **Grep check**: `grep -rn "US-X.Y" docs/sprints/stories/ docs/PRD.md` — all references to a story ID must be consistent.
@@ -184,6 +184,23 @@ One canonical ID per story across all documentation layers.
 **See**: `sprint-system.md` §Story status flow
 
 ---
+
+### Vietnamese counterpart convention (`*.vi.md`)
+
+Some Koniverse projects (e.g. senti_quant) ship Vietnamese translations
+of canonical docs as `*.vi.md` siblings — e.g. `docs/PRD.vi.md` next to
+`docs/PRD.md`. **English is canonical** (per RULE-13): all sync scripts,
+grep checks, and verification commands operate on `*.md` (no `.vi`
+infix). The `.vi.md` files are:
+
+- **Optional** — projects opt in per their team's language preference.
+- **Never authoritative** — if `*.md` and `*.vi.md` disagree, `*.md` wins.
+- **Skipped by sync scripts** — `npx koni-docs status` /
+  `npx koni-docs sync` filter to `.md`-only files that DON'T match
+  `*.vi.md`. Frontmatter parsing, AC counting, status propagation: all
+  English-only.
+- **Per-story discretion** — translate the stories that need broad
+  cross-team review; leave engineering-detail stories English-only.
 
 ### RULE-13: English-only for all deliverables
 
@@ -249,7 +266,7 @@ The `v` prefix IS still used for narrative / convention surfaces:
 - Active Context summary lines (`Last Version: v0.7.0`)
 - Body prose in stories / decisions / lessons (`shipped in v0.7.0`)
 
-**Why**: Tooling that joins on version strings — `agile-sync-up.mjs` Stories-table writer, CHANGELOG-anchor lookup, semver `compare()`, sort order — needs a single canonical key. Mixing `v0.7.0` and `0.7.0` in structured fields silently breaks equality comparisons and produces double-`v` corruption like `vv0.7.0` in synced output (the script prepends `v` to the bare convention). Real-world trap: caught during Koni-Skills v0.2.0 dogfood when US-1.1's `version_shipped: v0.1.0` produced `vv0.1.0` in EPIC-1 Stories table ([LESSONS §4](LESSONS.md)). Same split that git itself uses: tag `v0.7.0`, but `package.json` `"version": "0.7.0"`.
+**Why**: Tooling that joins on version strings — `agile-sync-up.mjs` Stories-table writer, CHANGELOG-anchor lookup, semver `compare()`, sort order — needs a single canonical key. Mixing `v0.7.0` and `0.7.0` in structured fields silently breaks equality comparisons and produces double-`v` corruption like `vv0.7.0` in synced output (the script prepends `v` to the bare convention). Real-world trap: caught during Koni-Skills v0.2.0 dogfood when US-1.1's `version_shipped: v0.1.0` produced `vv0.1.0` in EPIC-1 Stories table ([LESSONS §4](../../../docs/LESSONS.md)). Same split that git itself uses: tag `v0.7.0`, but `package.json` `"version": "0.7.0"`.
 
 **How to comply**:
 1. **In story frontmatter**: `version_shipped: 0.7.0` — no `v`.
@@ -262,7 +279,7 @@ The `v` prefix IS still used for narrative / convention surfaces:
 - VERSION file: `head -1 VERSION | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'` → must match (no `v`).
 - CHANGELOG anchors: `grep -E '^## \[v' docs/CHANGELOG.md` → must return zero lines.
 
-**See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §template skeleton, [LESSONS §4](../../docs/LESSONS.md).
+**See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §template skeleton, [LESSONS §4](../../../docs/LESSONS.md).
 
 ---
 

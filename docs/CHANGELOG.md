@@ -16,6 +16,68 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.41.0] — 2026-07-13 — koni-docs: round 2 of skill-grading — the skill told agents to break its own BLOCKER rule — v0.41.0
+
+Re-grade after v0.40.0: **72.5/100** (D1 24 · D2 25 · D3 5 · D4 18.5) — still short
+of the ≥95 bar, and D3 went *down*, because a round-1 *minor* turned out to be
+Critical on verification. Exactly what LESSONS §8 predicts: each fix surfaces the
+next finding. Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **CRITICAL — the skill instructed agents to violate RULE-15, citing RULE-15 as
+  the justification.** RULE-15 (BLOCKER) says `assignee:` is the GitHub **login**
+  and explicitly forbids git `user.name`. Three places prescribed
+  `git log -1 --format=%an <sha>` — which *is* `user.name`. The rule's own
+  rationale names the failure (`user.name = AnhMTV`, login = `saltict`), so the
+  recipe produced the documented bug. It survived because on the author's machine
+  all three values coincide. Now resolves the commit author to a login via
+  `gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login`.
+- **The RULE-2 rewrite had landed in two files and nowhere else.** The changelog
+  template, SKILL.md's rule summary / pre-commit checklist / banner, and the story
+  template's §12 all still taught the impossible "fill the SHA at pre-commit"
+  flow — and the changelog template is the one an agent reaches *without* loading
+  rules.md. Propagated everywhere; no self-referential `**Commit**:` line survives
+  anywhere in the skill.
+- **Repaired the `--amend` scar RULE-2 was rewritten to prevent.** US-4.29 carried
+  `commit: e37c590` — not a valid git object. Real SHA: `a1ffc77`. Found by
+  RULE-2's own reachability grep; the whole 44-SHA corpus now passes it.
+- **A real person's name, email, and machine path shipped inside the skill**
+  (`templates/integration.md`'s filled example). Replaced with placeholders.
+- `--include-warnings` was declared on `validate` and **never read** — a flag the
+  docs taught in the audit loop, which did nothing. Removed.
+- `findRedundantDue` shipped in v0.40.0 and was documented nowhere: the lib export
+  was absent from cli.md's import block and `validate`'s new warning class was
+  unexplained. An agent would see a warning the docs never mention. Documented in
+  cli.md, sprint-system.md, and frontmatter-spec.md §5.7.
+- Every hardcoded CLI version removed from the skill — including from the file
+  that says "Don't hardcode a version anywhere else." Run `npx koni-docs --version`.
+- `rules.md`'s LESSONS citations (the evidence for two BLOCKER rules) resolved to
+  `skills/docs/LESSONS.md`. Fixed. RULE-6's "PRD §7" references predate the
+  label-only heading migration (US-4.29). Fixed.
+- The orphaned JSDoc block in `lib/deadlines.ts` — the `RedundantDue` insertion had
+  split `findMalformedDue`'s doc comment from its function, so the interface
+  carried the function's docs.
+
+### Changed
+- **`description`: 1024 → 727 bytes.** The v0.40.0 rewrite had pushed it to the
+  spec's hard 1024-char cap with 4 characters of headroom — buying trigger surface
+  it mostly already had. Trimmed the ownership preamble; kept the triggers and the
+  NOT-clauses.
+- **SKILL.md: 528 → 325 lines.** Beyond v0.40.0's §7 extraction, the `.vi.md`
+  convention moved to rules.md (it is RULE-13's detail) and the story-sizing
+  doctrine — including a dated case study — moved to sprint-system.md.
+- **De-duplicated what the extraction had forked.** The pre-commit checklist and
+  the CLI subcommand table each existed in three places and had already drifted
+  apart. Each now has one home and pointers.
+- Table of contents on every reference file over 100 lines — including the three
+  largest, which v0.40.0's auto-pass had skipped. All 100+ anchors resolve under
+  GitHub's slug rules (the first generator collapsed whitespace where GitHub does
+  not — its TOCs were themselves broken).
+
+koni-docs CLI **0.10.0 → 0.11.0**.
+
+---
+
 ## [0.40.0] — 2026-07-13 — koni-docs: the skill-grading round on US-1.6 — a guardrail that waved its own anti-pattern through — v0.40.0
 
 The koni-harness Review stage grades a skill deliverable with koni-qc's

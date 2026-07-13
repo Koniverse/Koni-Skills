@@ -14,6 +14,9 @@
 > scenarios that guard cross-story invariants, smoke checks per release,
 > and the execution log that tells reviewers when each scenario last passed.
 
+
+**Contents**: [1. What this file owns vs. what it does not](#1-what-this-file-owns-vs-what-it-does-not) · [2. Section index — what's required vs optional](#2-section-index--whats-required-vs-optional) · [3. Full template skeleton](#3-full-template-skeleton) · [Overview](#overview) · [Quick reference — test scenarios summary](#quick-reference--test-scenarios-summary) · [Test scenarios](#test-scenarios) · [Coverage matrix](#coverage-matrix) · [Open / deferred scenarios](#open--deferred-scenarios) · [4. Per-section guidance](#4-per-section-guidance) · [5. Conventions](#5-conventions) · [6. Filled mini-example (condensed)](#6-filled-mini-example-condensed) · [Overview](#overview-1) · [Quick reference — test scenarios summary](#quick-reference--test-scenarios-summary-1) · [Test scenarios](#test-scenarios-1) · [Coverage matrix](#coverage-matrix-1) · [Open / deferred scenarios](#open--deferred-scenarios-1) · [7. Cross-references](#7-cross-references)
+
 ---
 
 ## 1. What this file owns vs. what it does not

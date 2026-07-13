@@ -6,6 +6,9 @@
 >
 > **Date**: 2026-05-07
 
+
+**Contents**: [1. BMad Pipeline → Koni-Docs Mapping](#1-bmad-pipeline--koni-docs-mapping) · [2. BMad Template Structure (Extracted from Raw Sample)](#2-bmad-template-structure-extracted-from-raw-sample) · [3. Key Differences: BMad vs Current Koni-Docs Templates](#3-key-differences-bmad-vs-current-koni-docs-templates) · [4. Template Update Recommendations](#4-template-update-recommendations) · [§7. Epics & Stories Index](#7-epics--stories-index) · [FR Coverage](#fr-coverage) · [Architecture decisions](#architecture-decisions) · [5. BMad Naming Convention → Koni-Docs Mapping](#5-bmad-naming-convention--koni-docs-mapping) · [6. Complete BMad → Koni-Docs Workflow](#6-complete-bmad--koni-docs-workflow) · [7. NOTES](#7-notes)
+
 ---
 
 ## 1. BMad Pipeline → Koni-Docs Mapping
@@ -263,4 +266,4 @@ BMad sprint-status.yaml              → koni-docs auto-generate     → docs/sp
 - BMad's `planning_artifacts` path = `_bmad-output/planning-artifacts/`
 - BMad's `implementation_artifacts` path = `_bmad-output/implementation-artifacts/`
 - Koni-docs canonical path = `docs/`
-- The `references/migration-from-bmad.md` file already covers the migration procedure — this analysis provides the **template-level structural mapping** to complement that file.
+- The this file (`bmad-template-analysis.md`) file already covers the migration procedure — this analysis provides the **template-level structural mapping** to complement that file.

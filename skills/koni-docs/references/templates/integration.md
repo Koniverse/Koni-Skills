@@ -335,12 +335,12 @@ Same triggers for both patterns. Only the *file* the agent writes to differs.
 
 ## Local developer
 
-- **GitHub login**: saltict
-- **Git name**: AnhMTV
-- **Git email**: maithachvietanh@gmail.com
-- **Workspace**: /Volumes/MacData/Workspace/AI/Koni-Skills
+- **GitHub login**: <your-github-login>        # `gh api user --jq .login` (RULE-15)
+- **Git name**: <your git user.name>           # may differ from the login — that's the point of RULE-15
+- **Git email**: <your git user.email>
+- **Workspace**: <absolute path to your checkout>
 - **Current branch**: feat/us-2-2-wire-integration
-- **Last updated**: 2026-05-27
+- **Last updated**: <YYYY-MM-DD>
 
 ## Project sprint context <!-- koni-docs:auto-update -->
 

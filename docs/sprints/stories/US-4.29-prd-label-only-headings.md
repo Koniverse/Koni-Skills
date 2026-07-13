@@ -8,7 +8,7 @@ points: 3
 sprint: sprint-2026-W22
 version_shipped: "0.7.2"
 assignee: saltict
-commit: e37c590
+commit: a1ffc77
 created: 2026-05-28
 updated: 2026-05-28
 ---

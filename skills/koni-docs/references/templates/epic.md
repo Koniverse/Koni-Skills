@@ -12,6 +12,9 @@
 > that no single story can own alone. Stories *reuse* what the epic publishes;
 > they never rebuild it.
 
+
+**Contents**: [1. Section index — what's required vs optional](#1-section-index--whats-required-vs-optional) · [2. Full template skeleton](#2-full-template-skeleton) · [Goal](#goal) · [Overview](#overview) · [FR Coverage](#fr-coverage) · [AD Coverage](#ad-coverage) · [Stories](#stories) · [Object map & user-story interactions](#object-map--user-story-interactions) · [Detailed object specifications](#detailed-object-specifications) · [Cross-cutting invariants](#cross-cutting-invariants) · [RBAC additions](#rbac-additions) · [Cross-story testing requirements](#cross-story-testing-requirements) · [Performance budgets & invariants](#performance-budgets--invariants) · [Acceptance criteria (propagated from stories)](#acceptance-criteria-propagated-from-stories) · [3. Per-section guidance](#3-per-section-guidance) · [4. Filled mini-example (condensed)](#4-filled-mini-example-condensed) · [Goal](#goal-1) · [Overview](#overview-1) · [FR Coverage](#fr-coverage-1) · [Stories](#stories-1) · [Cross-cutting invariants](#cross-cutting-invariants-1) · [Performance budgets & invariants](#performance-budgets--invariants-1) · [Acceptance criteria (propagated from stories)](#acceptance-criteria-propagated-from-stories-1)
+
 ---
 
 ## 1. Section index — what's required vs optional

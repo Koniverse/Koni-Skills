@@ -276,6 +276,10 @@ This is not a parser failure; it's a *signal* failure. `due` earns its place by
 being rare. Fill it on every story and the Deadlines section becomes a second
 copy of the sprint board, which is exactly the thing nobody reads.
 
+`koni-docs validate` **warns** on this (it does not block — there are odd cases
+where a real external deadline genuinely lands on the sprint's last day). The
+warning exists so the drift is visible before it becomes the norm.
+
 ---
 
 ## 6. Migration playbook (for a project carrying broken data)
@@ -315,7 +319,7 @@ copy of the sprint board, which is exactly the thing nobody reads.
 ## 7. Parser behaviour (current koni-docs script)
 
 For implementers / debuggers — exactly what `koni-docs sync` and
-`validateFrRefs` do today (as of `koni-docs@0.9.0`):
+`validateFrRefs` do today:
 
 - **Reading**: `frontmatter.prd_ref` is read as either a string or an
   array. String form is split on `,` and each fragment is trimmed.
