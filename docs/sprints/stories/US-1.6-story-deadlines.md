@@ -12,7 +12,7 @@ prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
 assignee: jindo9986
-commit: pending
+commit: 1511dd9
 created: 2026-07-13
 updated: 2026-07-13
 external_deps:
@@ -162,7 +162,7 @@ Design spec:
 ### Fixed
 - `sprintSchema` rejected every real sprint file. YAML parses an unquoted `start: 2026-06-29` into a JS `Date`, which the `^\d{4}-\d{2}-\d{2}$` string regex could never match. Both forms are now accepted.
 
-**Commit**: pending — backfilled in the follow-up commit
+**Commit**: 1511dd9
 
 ## Implementation notes
 
