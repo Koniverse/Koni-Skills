@@ -24,6 +24,9 @@
 > rewrite a recorded run — add a new dated folder for a re-run. The reason a test
 > failed and was then re-run is itself a signal worth preserving.
 
+
+**Contents**: [1. Two sub-templates in this file](#1-two-sub-templates-in-this-file) · [2. Sub-template A — Per-execution detail](#2-sub-template-a--per-execution-detail) · [Summary](#summary) · [Scope](#scope) · [Results per test-case](#results-per-test-case) · [Failures (detail)](#failures-detail) · [Follow-up](#follow-up) · [3. Sub-template B — Per-release master](#3-sub-template-b--per-release-master) · [Release scope](#release-scope) · [Test coverage](#test-coverage) · [Run history (links to per-execution detail)](#run-history-links-to-per-execution-detail) · [Outstanding risks](#outstanding-risks) · [Ship decision](#ship-decision) · [4. Conventions shared across both sub-templates](#4-conventions-shared-across-both-sub-templates) · [5. Filled mini-example — Per-execution](#5-filled-mini-example--per-execution) · [Summary](#summary) · [Scope](#scope) · [Results per test-case](#results-per-test-case) · [Follow-up](#follow-up) · [6. Filled mini-example — Per-release](#6-filled-mini-example--per-release) · [Release scope](#release-scope) · [Test coverage](#test-coverage) · [Run history](#run-history) · [Outstanding risks](#outstanding-risks) · [Ship decision](#ship-decision) · [7. Cross-references](#7-cross-references)
+
 ---
 
 ## 1. Two sub-templates in this file

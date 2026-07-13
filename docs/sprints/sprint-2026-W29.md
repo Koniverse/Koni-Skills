@@ -12,7 +12,7 @@ goal: >-
 
 | US     | Title                                              | Epic   | Pri | Points | Status | Ship    | Story file                                                     |
 | ------ | -------------------------------------------------- | ------ | --- | ------ | ------ | ------- | -------------------------------------------------------------- |
-| US-1.6 | Story deadlines — a `due` date beside the cadence  | EPIC-1 | P1  | 3      | ✅ done | v0.39.0 | [stories/US-1.6-story-deadlines.md](stories/US-1.6-story-deadlines.md) |
+| US-1.6 | Story deadlines — a `due` date beside the cadence  | EPIC-1 | P1  | 3      | ✅ done | v0.39.0 + v0.40.0 | [stories/US-1.6-story-deadlines.md](stories/US-1.6-story-deadlines.md) |
 
 **Total**: 1 story / 3 pts / 1 contributor.
 

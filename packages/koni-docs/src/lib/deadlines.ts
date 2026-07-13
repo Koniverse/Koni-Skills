@@ -22,6 +22,9 @@ const CLOSED_STATUSES = new Set(['done', 'deprecated']);
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+/** A full ISO-8601 timestamp — what a YAML round-trip turns a bare date into. */
+const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T[\d:.]+(?:Z|[+-]\d{2}:?\d{2})?$/;
+
 const MS_PER_DAY = 86_400_000;
 
 export type DeadlineState = 'overdue' | 'due-soon' | 'on-track';
@@ -71,9 +74,14 @@ export function normalizeDue(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
   if (trimmed.length === 0) return null;
-  // Tolerate a full ISO timestamp that was round-tripped back into a string.
-  const datePart = trimmed.slice(0, 10);
-  return ISO_DATE.test(datePart) ? datePart : null;
+  // Exactly two string shapes are a date: the bare day, and a full ISO timestamp
+  // that a tool round-tripped back into a string. Anchor both — an earlier
+  // version took `slice(0, 10)` and tested that, which also swallowed the prose
+  // in `2026-07-20 (pending customer confirmation)` and reported it as a clean
+  // deadline. A tolerance that silently accepts the anti-pattern the docs
+  // promise to reject is worse than no tolerance.
+  if (ISO_DATE.test(trimmed)) return trimmed;
+  return ISO_TIMESTAMP.test(trimmed) ? trimmed.slice(0, 10) : null;
 }
 
 /**
@@ -174,6 +182,47 @@ export function getDeadlines(corpus: Corpus, today: Date, dueSoonDays: number): 
  * 2026-03-03, so the original typo is destroyed a layer below us. Only the
  * quoted form (`due: "2026-02-31"`) survives as a string and gets caught here.
  */
+export interface RedundantDue {
+  id: string;
+  source: string;
+  /** The `due` value, which equals the end of the sprint the story is committed to. */
+  due: string;
+  sprint: string;
+}
+
+/**
+ * Stories whose `due` merely restates the end of their own sprint.
+ *
+ * Not a parse failure — a *signal* failure, and the one that kills the feature if
+ * it spreads. `sprint:` already says "must land this sprint"; repeating that date
+ * in `due` adds no information and drags the story into the Deadlines board. Do
+ * it on every story and the board becomes a second copy of the sprint table,
+ * which is exactly the thing nobody reads.
+ *
+ * Warned, never blocked: it is a judgment call, and there are odd cases (a story
+ * whose external deadline genuinely lands on the sprint's last day). The point is
+ * to make the drift visible before it becomes the norm.
+ */
+export function findRedundantDue(corpus: Corpus): RedundantDue[] {
+  const sprintEnds = new Map<string, string>();
+  for (const sprint of corpus.sprints) {
+    const id = fieldString(sprint, 'id');
+    const end = normalizeDue(sprint.frontmatter.end);
+    if (id && end) sprintEnds.set(id, end);
+  }
+
+  const out: RedundantDue[] = [];
+  for (const story of getStories(corpus)) {
+    const sprint = fieldString(story, 'sprint');
+    const due = normalizeDue(story.frontmatter.due);
+    if (!sprint || due === null) continue;
+    if (sprintEnds.get(sprint) === due) {
+      out.push({ id: fieldString(story, 'id'), source: story.path, due, sprint });
+    }
+  }
+  return out;
+}
+
 export function findMalformedDue(corpus: Corpus): MalformedDue[] {
   const out: MalformedDue[] = [];
   for (const story of getStories(corpus)) {

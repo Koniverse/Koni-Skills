@@ -12,6 +12,9 @@
 > CONTEXT.md (with rationale); ARCHITECTURE.md gets the AD-N summary row
 > + the architectural state-of-the-world they describe.
 
+
+**Contents**: [1. Template skeleton](#1-template-skeleton) · [System overview](#system-overview) · [Tech stack](#tech-stack) · [Component architecture](#component-architecture) · [Data architecture](#data-architecture) · [API architecture](#api-architecture) · [Security architecture](#security-architecture) · [Deployment architecture](#deployment-architecture) · [Integration architecture](#integration-architecture) · [Architecture decisions](#architecture-decisions) · [Open architecture questions](#open-architecture-questions) · [2. Updating ARCHITECTURE.md](#2-updating-architecturemd) · [3. Filled example (condensed)](#3-filled-example-condensed) · [System overview](#system-overview) · [Tech stack](#tech-stack) · [Architecture decisions](#architecture-decisions)
+
 ---
 
 ## 1. Template skeleton

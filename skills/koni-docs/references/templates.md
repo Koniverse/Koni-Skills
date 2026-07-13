@@ -5,6 +5,9 @@
 > each, and where the canonical content lives. Load only the template
 > file the user's request needs.
 
+
+**Contents**: the thin index of every koni-docs template (what it is, when to use it, where the canonical file lives), followed by the [quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet) for Story / Epic / Sprint / Test-cases.
+
 ---
 
 ## Template files
@@ -85,14 +88,24 @@ status: backlog            # backlog | ready | in-progress | review | done | blo
 priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13
 sprint:                    # sprint-YYYY-WNN once committed
-version_shipped:           # set when status → done
-prd_ref: FR-N              # PRD §8 FR ID(s) and/or AD-N IDs
-assignee:                  # GitHub login (optional)
-commit:                    # full SHA of landing commit (never "pending")
+due:                       # OPTIONAL — a deadline imposed from OUTSIDE the sprint cadence (contract / demo / audit), bare YYYY-MM-DD. Leave EMPTY when "this sprint" is the only requirement: sprint.end is NEVER inherited. Explain the date in the body's `## Deadline`, never here.
+version_shipped:           # bare semver, set when status → done (RULE-16 — never `v`-prefixed)
+prd_ref: [FR-N]            # FR / NFR only — bare IDs, list form (RULE-17)
+arch_ref: [AD-N]           # AD only — omit if none. AD-N must NEVER go in prd_ref.
+depends_on: [US-X.Y]       # US only — omit if none
+assignee:                  # GitHub login (RULE-15) — mandatory when shipping
+commit:                    # SHA of the landing commit. A commit cannot contain its own SHA — backfill it in a follow-up commit (RULE-2). Never "pending" at rest.
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+external_deps:             # OPTIONAL — planning-only today; no tooling reads it yet
 ---
 ```
+
+> **The ID-typed fields are the trap.** `prd_ref` / `arch_ref` / `depends_on`
+> hold **bare canonical IDs and nothing else** — no parentheticals, no ranges
+> (`FR-28 .. FR-45`), no slash-joins, no cross-namespace mixing. Every qualifier
+> you are tempted to add belongs in the body. RULE-17; full contract + the
+> anti-pattern catalog in [`frontmatter-spec.md`](frontmatter-spec.md).
 
 ### Epic (`docs/sprints/epics/EPIC-N.md`)
 
@@ -101,7 +114,8 @@ updated: YYYY-MM-DD
 id: EPIC-X
 title: "<Epic title>"
 status: backlog            # backlog | in-progress | done
-prd_ref: FR-X.1 .. FR-X.N  # also list AD-N IDs if architecture-heavy
+prd_ref: [FR-1, FR-2]      # FR / NFR only — enumerate every ID; ranges (`FR-1 .. FR-9`) are INVALID (RULE-17)
+arch_ref: [AD-N]           # AD only — omit if none
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---

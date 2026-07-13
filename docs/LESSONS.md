@@ -538,3 +538,46 @@ has found no problems.
 over), no amount of downstream rigor recovers it. Say so in the docs and pin the
 behaviour with a test that asserts the rollover, rather than shipping a validator
 that quietly promises a guarantee it cannot keep.
+
+---
+
+## 17. A commit cannot contain its own SHA — `--amend` is not the fix, it's the bug
+
+**What happened**: RULE-2 (BLOCKER) says a CHANGELOG/story SHA must be real, never
+`pending` — and then prescribed: *"commit everything → note the SHA from
+`git log -1` → `git commit --amend` to fill it in."* Following that recipe this
+session produced a story whose `commit:` field pointed at `10df1467`, a commit
+that **no longer existed on any branch**. Of course it didn't: `--amend` rewrites
+the commit, which mints a *new* SHA. The value written was the pre-amend SHA,
+orphaned the instant it was written. Nothing failed loudly. `git log 10df1467`
+still resolved it (via reflog), so the number looked fine — it just wasn't in the
+history anymore. Meanwhile SKILL.md §7.5 taught the *opposite* flow (`commit
+--m "..."  # CHANGELOG SHA still "pending"` → `backfill-commits`), which the same
+rule calls a BLOCKER. Three sources, three incompatible stories, and the one the
+rule endorsed was the only one that was mathematically impossible.
+
+**The lesson**: **self-reference is a fixed-point problem, and `--amend` doesn't
+solve it — it moves it.** Any content that names the commit containing it has
+exactly two honest shapes: *don't record it* (a version anchor plus a git tag is
+already a durable join key — this repo's CHANGELOG has quietly done this since
+v0.37.0), or *record it in a follow-up commit* (ship, read `git rev-parse HEAD`,
+write, commit again). A third "shape" — amend the SHA in — is a loop that never
+converges, and it fails silently, which is why it survived in a BLOCKER rule for
+months.
+
+**The deeper lesson**: this was found by *executing the rule*, not by reading it.
+The prose was fluent and confident, and three separate documents agreed it was
+authoritative. A procedure is only verified when someone runs it and checks the
+artifact it produced — "the doc says do X" is not evidence that X terminates.
+
+**Grep check**: every recorded SHA must be reachable from HEAD, not merely
+resolvable:
+
+```bash
+grep -hoE '^commit: [0-9a-f]{7,40}' docs/sprints/stories/*.md | awk '{print $2}' \
+  | xargs -I{} sh -c 'git merge-base --is-ancestor {} HEAD 2>/dev/null \
+      && echo "{}: ok" || echo "{}: UNREACHABLE"'
+```
+
+`git log <sha>` succeeding proves nothing — reflog resolves orphans. Ancestry is
+the check that catches this.

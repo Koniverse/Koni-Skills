@@ -11,6 +11,9 @@
 > committed stories at a glance and captures the goal + retrospective. If
 > you find yourself copy-pasting AC into the sprint file, stop.
 
+
+**Contents**: [1. Template skeleton](#1-template-skeleton) · [Sprint scope](#sprint-scope) · [Sprint goal recap](#sprint-goal-recap) · [Phased plan](#phased-plan) · [Why <US-X.Y> in W<N> *(optional)*](#why-us-xy-in-wn-optional) · [Parked / deferred from W<N-1> *(optional, recommended when carry-over > 20%)*](#parked--deferred-from-wn-1-optional-recommended-when-carry-over--20) · [Closed mid-sprint W<N> *(optional, filled as stories land)*](#closed-mid-sprint-wn-optional-filled-as-stories-land) · [Risks & dependencies *(optional, recommended for sprints with cross-team blockers)*](#risks--dependencies-optional-recommended-for-sprints-with-cross-team-blockers) · [Per-Epic Retrospective](#per-epic-retrospective) · [Retrospective](#retrospective) · [Carry-overs to W<N+1> *(optional, filled at sprint close)*](#carry-overs-to-wn1-optional-filled-at-sprint-close) · [Cross-references](#cross-references) · [2. Sprint lifecycle](#2-sprint-lifecycle) · [3. Filled example (condensed)](#3-filled-example-condensed) · [Sprint scope](#sprint-scope) · [Sprint goal recap](#sprint-goal-recap) · [Phased plan](#phased-plan) · [Retrospective](#retrospective) · [Cross-references](#cross-references)
+
 ---
 
 ## 1. Template skeleton

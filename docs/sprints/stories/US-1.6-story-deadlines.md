@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: 0.39.0
+version_shipped: "0.39.0 + 0.40.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -185,6 +185,41 @@ Design spec:
 - `sprintSchema` rejected every real sprint file. YAML parses an unquoted `start: 2026-06-29` into a JS `Date`, which the `^\d{4}-\d{2}-\d{2}$` string regex could never match. Both forms are now accepted.
 
 **Commit**: 1511dd9
+
+## Round 2 — skill-grading (2026-07-13, v0.40.0)
+
+The koni-harness Review stage grades a *skill* deliverable with koni-qc's
+four-dimension rubric, one independent agent per dimension, pass bar **≥95/100**.
+Round 1 of this story shipped without it. Running it scored **72/100**:
+
+| Dimension | Score /25 | Verdict |
+|---|---|---|
+| D1 Triggering (blind router, 18 queries) | 22 | The `due` capability had **zero router surface** — the description never said "deadline" or "due". Precision 9/9, recall 8/9; the one miss was the natural phrasing of the deadline intent, which routed to koni-harness. |
+| D2 Rule-robustness (pressure scenarios) | 25 | All 7 hard rules held, including the 3 new `due` rules. But it surfaced a contradiction: SKILL.md §7.5 taught the `pending` SHA that RULE-2 calls a BLOCKER. |
+| D3 Content (author-blind) | 8 | **FAIL** — 5 Important findings, including a real code bug (below). |
+| D4 Best-practices (×2, averaged) | 17.5 | SKILL.md 528 lines over the 500 bar; no TOCs; the cheatsheet taught banned syntax. |
+
+**The finding that justifies the whole exercise**: `normalizeDue` accepted
+`due: 2026-07-20 (pending customer confirmation)` — the *literal value*
+`frontmatter-spec.md` §5.6 promises `validate` rejects — and rendered it in
+STATUS.md as a clean deadline. The `slice(0, 10)` tolerance I added for
+round-tripped ISO timestamps swallowed the prose. I wrote the doc, wrote the
+guardrail, and wrote a test suite that never crossed the two. An author-blind
+reviewer ran the CLI against the doc's own examples and found it in one pass.
+
+Round-2 changes: the `normalizeDue` fix + regression test; RULE-2 rewritten (its
+`--amend` recipe was mathematically impossible — LESSONS §17); the frontmatter
+cheatsheet regenerated (it taught RULE-17 anti-patterns and never got `due`);
+SKILL.md §7 extracted to `references/cli.md` (528 → 365 lines); the description
+given deadline triggers + near-miss carve-outs; `validate` given a
+`due == sprint.end` warning so the no-inheritance rule has a machine backstop;
+`external_deps` demoted to planning-only (it never populated the STATUS flag it
+claimed); TOCs on 13 reference files; `Docs/` → `docs/` in rules.md, whose grep
+checks had been silently returning empty on a case-sensitive filesystem.
+
+Per LESSONS §13, this round **extends this story** rather than opening US-1.7 —
+one story = one deliverable, and the deliverable is not done until it passes the
+bar.
 
 ## Implementation notes
 

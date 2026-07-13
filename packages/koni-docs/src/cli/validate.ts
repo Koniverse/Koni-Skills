@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import { loadCorpus, validateRefs, validateFrRefs, findMalformedDue, getDeadlines } from '../lib/index.ts';
+import { loadCorpus, validateRefs, validateFrRefs, findMalformedDue, findRedundantDue, getDeadlines } from '../lib/index.ts';
 import { getGlobalOpts } from './global-opts.ts';
 
 interface ValidateFlags {
@@ -28,6 +28,9 @@ export function registerValidate(program: Command): void {
       // but it must NOT fail the build: deadlines inform, they do not block.
       const overdue = getDeadlines(corpus, new Date(), DUE_SOON_DAYS)
         .filter(d => d.state === 'overdue');
+      // A `due` that just restates the sprint end is the drift that turns the
+      // Deadlines board into a second copy of the sprint table. Warn, don't block.
+      const dueRedundant = findRedundantDue(corpus);
 
       const errorCount = refErrors.length + frMissing.length + dueMalformed.length;
 
@@ -38,11 +41,13 @@ export function registerValidate(program: Command): void {
           frMissing,
           dueMalformed,
           overdue,
+          dueRedundant,
           summary: {
             ref: refErrors.length,
             fr: frMissing.length,
             dueMalformed: dueMalformed.length,
             overdue: overdue.length,
+            dueRedundant: dueRedundant.length,
           },
         }, null, 2));
       } else {
@@ -78,6 +83,13 @@ export function registerValidate(program: Command): void {
           console.log(`  ⚠ ${overdue.length} overdue story(ies) — warning only, does not fail validate:`);
           for (const d of overdue) {
             console.log(`    - ${d.id}: due ${d.due} (${Math.abs(d.daysRemaining)} day(s) ago, status ${d.status})`);
+          }
+        }
+        if (dueRedundant.length > 0) {
+          console.log('');
+          console.log(`  ⚠ ${dueRedundant.length} story(ies) whose due just restates the sprint end — warning only:`);
+          for (const d of dueRedundant) {
+            console.log(`    - ${d.id}: due ${d.due} == end of ${d.sprint}. "This sprint" is already said by \`sprint:\` — leave due empty.`);
           }
         }
       }

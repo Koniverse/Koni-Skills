@@ -3,6 +3,9 @@
 > These 12 rules apply to ALL Koniverse projects regardless of technology stack.
 > Technology-specific rules live in plugin skills (koni-docs-supabase, koni-docs-nextjs, etc.)
 
+
+**Contents**: the 12 enforced rules, grouped Pre-Commit · During-Work · Post-Generation. Each rule states What / Why / How to comply / a grep check. BLOCKERs: RULE-1, RULE-2, RULE-5, RULE-6, RULE-7, RULE-11, RULE-15, RULE-16, RULE-17.
+
 ## Rule Groups
 
 | Group | When enforced |
@@ -19,7 +22,7 @@
 
 **Severity**: BLOCKER — violations block merge
 
-**What**: Every code-shipping commit must update both the `VERSION` file AND `Docs/CHANGELOG.md` in the SAME commit. Never defer documentation to a follow-up commit.
+**What**: Every code-shipping commit must update both the `VERSION` file AND `docs/CHANGELOG.md` in the SAME commit. Never defer documentation to a follow-up commit.
 
 **Why**: Keeps version tracking and changelog atomically linked to the code change. A follow-up commit can be missed; a `git bisect` won't find the changelog entry.
 
@@ -45,20 +48,33 @@
 
 **Severity**: BLOCKER
 
-**What**: Every CHANGELOG entry must end with `**Commit**: <7-char SHA>`. The SHA must be real — `pending` is NEVER acceptable.
+**What**: A recorded SHA must be a **real, reachable** SHA. `pending` is NEVER acceptable, and neither is a SHA that no longer exists.
 
-**Why**: Allows `git log --grep` to find which commit shipped which version. A placeholder SHA breaks bisectability and erodes trust.
+**Why**: The SHA is what lets `git log --grep` / `git show` answer "which commit shipped this version". A placeholder breaks bisectability; a *stale* SHA is worse, because it looks correct and resolves to nothing.
 
-**How to comply**:
-1. Write the CHANGELOG entry with all content
-2. Commit everything
-3. Note the 7-char SHA from `git log -1 --format=%h`
-4. `git commit --amend` to fill in the SHA
-5. Push
+**The chicken-and-egg — read this before you reach for `--amend`**: a commit cannot contain its own SHA. An earlier version of this rule prescribed *"commit → read `git log -1 --format=%h` → `git commit --amend` to fill it in"*. **That procedure cannot work**: `--amend` rewrites the commit, producing a *new* SHA, so the SHA you just wrote is instantly orphaned — it resolves only via reflog and is unreachable from any branch. Verified the hard way (LESSONS §17).
 
-**Grep check**: `grep -n "Commit.*pending" Docs/CHANGELOG.md` — must return empty.
+**How to comply** — pick one, never `--amend`:
 
-**See**: `templates.md` §CHANGELOG entry
+1. **Omit the SHA from the CHANGELOG entry** *(preferred, and what this repo does since v0.37.0)*. The version anchor (`## [0.39.0]`) plus the git tag is already a durable join key — `git log --grep '0.39.0'` finds the commit without a self-reference. No `**Commit**:` line at all.
+2. **Two-commit backfill**, when a SHA really must be recorded (e.g. a story's `commit:` frontmatter). Ship the artifact, then fill the SHA in a *follow-up* commit:
+   ```bash
+   git commit -m "feat: ..."                     # the release commit
+   SHA=$(git rev-parse --short HEAD)             # now it exists and is reachable
+   # write $SHA into the story's `commit:` field
+   git commit -m "docs: backfill US-X.Y commit SHA ($SHA)"
+   ```
+
+**Grep checks**:
+- No placeholders: `grep -n "Commit.*pending" docs/CHANGELOG.md docs/sprints/stories/*.md` — must return empty *after* the backfill commit.
+- Every recorded SHA is reachable:
+  ```bash
+  grep -hoE '^commit: [0-9a-f]{7,40}' docs/sprints/stories/*.md | awk '{print $2}' \
+    | xargs -I{} sh -c 'git merge-base --is-ancestor {} HEAD 2>/dev/null && echo "{}: ok" || echo "{}: UNREACHABLE"'
+  ```
+  Every line must print `ok`. An `UNREACHABLE` line is the `--amend` trap above.
+
+**See**: `templates.md` §CHANGELOG entry, [LESSONS §17](../../docs/LESSONS.md)
 
 ---
 
@@ -66,12 +82,12 @@
 
 **Severity**: BLOCKER
 
-**What**: Adding a new environment variable requires updating ALL three files in the same commit: `Docs/SETUP.md` + `DEPLOY.md` + `.env.example`.
+**What**: Adding a new environment variable requires updating ALL three files in the same commit: `docs/SETUP.md` + `DEPLOY.md` + `.env.example`.
 
 **Why**: A missing env var in SETUP.md blocks new developers. Missing in DEPLOY.md causes production outages. Missing in .env.example makes it undiscoverable.
 
 **How to comply** — all three in same commit:
-1. `Docs/SETUP.md` — add to the `.env.local` example block + one-line description
+1. `docs/SETUP.md` — add to the `.env.local` example block + one-line description
 2. `DEPLOY.md` — add to the production env vars table
 3. `.env.example` — add the key with placeholder value
 
@@ -124,7 +140,7 @@ One canonical ID per story across all documentation layers.
 2. If the story doesn't exist in PRD §7, add it first
 3. Use the exact same ID in filename, frontmatter `id:`, and PRD reference
 
-**Grep check**: `grep -rn "US-X.Y" Docs/sprints/stories/ Docs/PRD.md` — all references to a story ID must be consistent.
+**Grep check**: `grep -rn "US-X.Y" docs/sprints/stories/ docs/PRD.md` — all references to a story ID must be consistent.
 
 **See**: `templates.md` §Story file, `sprint-system.md` §Naming conventions
 
@@ -288,11 +304,11 @@ The canonical YAML form is a **list of strings**: `prd_ref: [FR-04, FR-10]`. The
 
 **Severity**: BLOCKER
 
-**What**: `Docs/sprints/STATUS.md` is auto-generated by `npm run agile:status`. Never hand-edit it.
+**What**: `docs/sprints/STATUS.md` is auto-generated by `npx koni-docs status`. Never hand-edit it.
 
 **Why**: Hand-edits to STATUS.md will be overwritten by the next script run. The file is a derived artifact from story frontmatter — the source of truth is the story files.
 
-**How to comply**: Always run `npm run agile:status` before committing any story status change. If STATUS.md looks wrong, fix the story frontmatter, not STATUS.md.
+**How to comply**: Always run `npx koni-docs status` before committing any story status change. If STATUS.md looks wrong, fix the story frontmatter, not STATUS.md.
 
 **Grep check**: N/A — this is a process rule. The script regeneration is the enforcement mechanism.
 

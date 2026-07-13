@@ -13,6 +13,9 @@
 > ID-typed fields break those cross-references silently — the script either
 > looks up a non-existent row, or fans out a sentence into garbage tokens.
 
+
+**Contents**: [Iron Law](#1-iron-law) · [The four canonical ID spaces](#2-the-four-canonical-id-spaces) · [Per-document contract](#3-per-document-frontmatter-contract) · [YAML form](#4-yaml-form--list-vs-csv-string) · [Anti-patterns](#5-anti-patterns-real-examples--the-fix) · [Migration playbook](#6-migration-playbook-for-a-project-carrying-broken-data) · [Parser behaviour](#7-parser-behaviour-current-koni-docs-script) · [Quick decision tree](#8-quick-decision-tree)
+
 ---
 
 ## 1. Iron Law
@@ -93,16 +96,16 @@ Implementation notes.
 | `priority` | enum | recommended | `P0 \| P1 \| P2 \| P3` | |
 | `points` | scalar | recommended | `1 \| 2 \| 3 \| 5 \| 8 \| 13 \| ''` (Fibonacci) | `''` = unsized. |
 | `sprint` | scalar string | conditional | `^sprint-\d{4}-W\d{2}$` or `''` | Set when committed to a sprint. |
-| `due` | scalar string | optional | `^\d{4}-\d{2}-\d{2}$` or `''` | Hard deadline imposed from **outside** the sprint cadence. Empty = no deadline of its own; there is **no** fallback to `sprint.end`. Set it only when the date does not coincide with the sprint rhythm — see [`sprint-system.md` §Deadlines vs sprint cadence](sprint-system.md#deadlines-vs-sprint-cadence). |
+| `due` | scalar string **or** YAML date | optional | `^\d{4}-\d{2}-\d{2}$`, `''`, or the `Date` an unquoted YAML date parses into (§1.1) | Hard deadline imposed from **outside** the sprint cadence. Empty = no deadline of its own; there is **no** fallback to `sprint.end`. Set it only when the date does not coincide with the sprint rhythm — see [`sprint-system.md` §Deadlines vs sprint cadence](sprint-system.md#deadlines-vs-sprint-cadence). |
 | `version_shipped` | scalar string | conditional | `^\d+\.\d+\.\d+$` (bare semver, no `v`) | MANDATORY when `status: done` (RULE-16). |
 | `prd_ref` | **list of strings** | optional | every entry MUST match `^FR-\d+$` or `^NFR-\d+$` | FR rows synced by `koni-docs sync`. **Do not put AD-N here** — use `arch_ref`. |
 | `arch_ref` | **list of strings** | optional | every entry MUST match `^AD-\d+$` | Architecture Decisions this story materializes. |
 | `depends_on` | **list of strings** | optional | every entry MUST match `^US-\d+\.\d+$` | Stories whose artifacts this story consumes. |
 | `assignee` | scalar string | **YES** when shipping | GitHub login (`saltict`), not display name | RULE-15. |
-| `commit` | scalar string | **YES** when shipping | git SHA (7-char or full); CSV of SHAs for multi-commit stories | Never `pending` (RULE-2). |
+| `commit` | scalar string | **YES** when shipping | git SHA (7-char or full), reachable from HEAD; CSV of SHAs for multi-commit stories | Never `pending` at rest, and never `--amend`-ed in — a commit cannot contain its own SHA. Backfill in a follow-up commit (RULE-2). |
 | `created` | scalar string | recommended | `^\d{4}-\d{2}-\d{2}$` | |
 | `updated` | scalar string | recommended | `^\d{4}-\d{2}-\d{2}$` | |
-| `external_deps` | list of slugs | optional | `^[a-z0-9_-]+$` per entry | Third-party / legal-review waits — populates STATUS risk flag. |
+| `external_deps` | list of slugs | optional | `^[a-z0-9_-]+$` per entry | Third-party / legal-review waits. **Planning-only — no tooling reads it yet** (like `arch_ref` / `depends_on`, see §7). It informs sprint sizing; it does not populate any STATUS flag today. |
 
 ### 3.2 Epic (`docs/sprints/epics/EPIC-N.md`)
 
@@ -252,7 +255,7 @@ The qualifier moves into the body:
 ```markdown
 ## Deadline
 
-**2026-07-20** — the day before the ACME quarterly review (contract §7.2).
+**2026-07-20** — the day before the ACME quarterly review (MSA §7.2).
 Date confirmed by their PM on 2026-07-08. Slipping it means the review runs on
 last quarter's numbers, so this cannot absorb a carry-over.
 ```
@@ -312,7 +315,7 @@ copy of the sprint board, which is exactly the thing nobody reads.
 ## 7. Parser behaviour (current koni-docs script)
 
 For implementers / debuggers — exactly what `koni-docs sync` and
-`validateFrRefs` do today (as of `koni-docs@0.7.3`):
+`validateFrRefs` do today (as of `koni-docs@0.9.0`):
 
 - **Reading**: `frontmatter.prd_ref` is read as either a string or an
   array. String form is split on `,` and each fragment is trimmed.

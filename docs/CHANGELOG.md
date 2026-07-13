@@ -16,6 +16,76 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.40.0] — 2026-07-13 — koni-docs: the skill-grading round on US-1.6 — a guardrail that waved its own anti-pattern through — v0.40.0
+
+The koni-harness Review stage grades a skill deliverable with koni-qc's
+four-dimension rubric (bar ≥95). Running it on `koni-docs` scored **72/100**
+(D1 22 · D2 25 · D3 8 · D4 17.5) and produced findings the author could not have
+found by re-reading their own work. This entry is that round. Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md) — a round extends the anchor
+story, it does not become a new one (LESSONS §13).
+
+### Fixed
+- **`normalizeDue` silently accepted a date with prose stapled to it.**
+  `due: 2026-07-20 (pending customer confirmation)` — the *exact* value
+  `frontmatter-spec.md` §5.6 promises `validate` will reject — was normalized to
+  `2026-07-20` and rendered in STATUS.md as a clean deadline. Cause: the
+  `slice(0, 10)` tolerance added for round-tripped ISO timestamps swallowed any
+  trailing text. Both accepted shapes are now anchored (bare day, or a full ISO
+  timestamp), with a regression test. A guardrail that waves the documented
+  anti-pattern through is worse than none — the reader stops looking.
+- **RULE-2 prescribed a procedure that cannot work.** "Commit → read the SHA →
+  `git commit --amend` to fill it in" is a fixed-point that never converges:
+  amending mints a *new* SHA, orphaning the one just written. It had been a
+  BLOCKER rule for months and had produced at least one story pointing at a
+  commit reachable from nothing. Rewritten to the two honest shapes (omit the
+  SHA, or backfill it in a follow-up commit). See [LESSONS §17](LESSONS.md).
+- **`references/templates.md`'s frontmatter cheatsheet taught the anti-patterns
+  RULE-17 forbids** — `prd_ref: FR-N # …and/or AD-N IDs` and the banned range
+  syntax `FR-X.1 .. FR-X.N` — and never received `due` at all. It is billed as
+  the shortcut for agents who skip the full template, so it was the copy most
+  likely to be obeyed. Regenerated from `frontmatter-spec.md` §3.1.
+- `SKILL.md` §7 claimed the CLI was "current: v0.7.0" while the same section
+  documented v0.9.0 behaviour, told readers to install a `.tgz` filename that
+  never existed, and hardcoded one developer's absolute path
+  (`/Volumes/MacData/…`). The library-API listing omitted every deadline export.
+- `external_deps` was documented as populating a "STATUS risk flag" the CLI has
+  never read. Marked planning-only, the honest framing already used for
+  `arch_ref` / `depends_on`.
+- The worked example in `templates/story.md` broke three of the skill's own rules
+  (empty `assignee` on a `done` story — RULE-15; `commit: a1b2c3d4e5f6...` — an
+  ellipsis, not a SHA; `AD-06` cited to PRD.md when the skill's own namespace
+  table puts AD-N in ARCHITECTURE.md).
+- `references/rules.md` addressed `Docs/` (capital D) throughout — every grep
+  check in it silently returned empty on a case-sensitive filesystem, which is
+  indistinguishable from passing.
+- Dead route: `SKILL.md` §6 sent agents to `references/migration-from-bmad.md`,
+  which does not exist.
+
+### Added
+- **`validate` warns when a `due` merely restates its sprint's end date.** The
+  "no inheritance from `sprint.end`" rule was prose-only, with no machine
+  backstop, so a bulk `due = sprint.end` edit — the exact failure that turns the
+  Deadlines board into a second copy of the sprint table — passed every gate.
+  Warned, never blocked: it is a judgment call. `findRedundantDue` is exported
+  from the lib.
+- Table of contents on 13 reference files over 100 lines.
+
+### Changed
+- `SKILL.md` **528 → 365 lines** (back under the 500-line bar). §7's CLI
+  reference — install modes, flags, the commit loops, the typed lib API,
+  troubleshooting — moved to `references/cli.md` and is now loaded on demand
+  rather than on every activation. SKILL.md keeps a seven-line subcommand table.
+- The skill `description` never mentioned deadlines, so the entire shipped `due`
+  surface had zero router visibility: "we have a contractual date we can't miss —
+  where do I put it so it warns us?" routed to koni-harness. Added deadline
+  triggers plus explicit near-miss carve-outs (not koni-qc / koni-harness /
+  koni-setup).
+
+koni-docs CLI **0.9.0 → 0.10.0**.
+
+---
+
 ## [0.39.0] — 2026-07-13 — koni-docs: story deadlines — a `due` date beside the sprint cadence — v0.39.0
 
 Ships **FR-38** ([US-1.6](sprints/stories/US-1.6-story-deadlines.md), [CONTEXT D37](CONTEXT.md)).

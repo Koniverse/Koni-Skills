@@ -1,13 +1,20 @@
 ---
 name: koni-docs
 description: >
-  Manages all documentation artifacts in the koni-docs framework: SETUP,
-  PRD, ARCHITECTURE, LESSONS, CHANGELOG, CONTEXT, DESIGN, and Sprints (epics /
-  stories / sprint files / STATUS). Use when the user asks to update docs,
-  create a story, record a decision, log a lesson, write a changelog entry,
-  document system architecture, run the pre-commit doc checklist, or when any
-  planning tool (BMad, GStack, Superpowers) produces artifacts that need
-  standardization into the docs/ structure.
+  Manages the koni-docs documentation artifacts — SETUP, PRD, ARCHITECTURE,
+  LESSONS, CHANGELOG, CONTEXT, DESIGN, and Sprints (epics / stories / sprint
+  files / STATUS). Use when the user asks to update docs, create or split a
+  story, record a decision, write the LESSONS entry for a trap, write a
+  changelog entry, document system architecture, or run the pre-commit doc
+  checklist. Also use for a story's **deadline** — setting or moving its `due`
+  date, "when is this due", "what's overdue or due soon", the STATUS Deadlines
+  board — and for opening/closing a sprint, regenerating STATUS.md / the
+  kanban, or running the koni-docs CLI (sync / status / validate / story
+  frontmatter fields). Also use when any planning tool (BMad, GStack,
+  Superpowers) produces artifacts that need standardization into docs/. NOT for
+  test docs, test plans, or QC coverage (koni-qc); NOT for commit gates, the
+  agentic loop, or the lesson-capture gate that forces the read/write
+  (koni-harness); NOT for repo bootstrap or scaffolding (koni-setup).
 ---
 # koni-docs — Documentation Management
 
@@ -351,8 +358,8 @@ Load these on demand based on user intent:
 | `references/templates/test-cases.md`  | Creating / updating per-epic test scenarios (`docs/tests/test-cases/EPIC-N.md`) | 10-section skeleton — Scope / Stories in scope (emoji status) / Goals / Env / Cadence / Quick reference summary / Detail (Gherkin) / Coverage matrix (with "AC description" column) / Open. Per-section guidance + filled EPIC-02 mini-example |
 | `references/templates/test-report.md` | Recording a test run or release-level report (`docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` + `releases/vX.Y.Z.md`; path owned by koni-qc test-organization) | Two sub-templates: A) per-execution detail (one file per run, append-only) — B) per-release master (aggregate linked from CHANGELOG). Result symbols, append-only discipline, cross-link contract |
 | `references/sprint-system.md`         | User asks about sprints, agile workflow, scripts, 5-layer consistency, or test artifacts | Naming conventions, scripts, consistency check, setup guide, **§Test artifacts** (10-section test-cases structure + reports lifecycle) |
-| `references/migration-from-bmad.md`   | User asks to migrate from BMad to koni-docs                              | Architecture comparison, artifact mapping, step-by-step procedure |
-| `references/bmad-template-analysis.md` | User asks about BMad template standards, or mapping BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
+| `references/bmad-template-analysis.md` | User asks to migrate from BMad, asks about BMad template standards, or maps BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
+| `references/cli.md`                   | Installing / upgrading / invoking the `koni-docs` CLI; looking up a subcommand, a global flag, or the typed lib API | Install + update modes, global flags, the 7-subcommand inventory, the four commit loops, intent → subcommand map, library API, troubleshooting |
 
 **Plugin skills**: If the project's CLAUDE.md declares `koni-docs-plugins`, load those skills for technology-specific rules that extend the core rule set.
 See [`references/plugin-pattern.md`](references/plugin-pattern.md) for the pattern (location / discovery / composition / authoring); `koni-nextjs` is the worked example.
@@ -361,168 +368,21 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for the patte
 
 ## 7. CLI tool — `@koniverse/koni-docs`
 
-This skill ships with a companion CLI binary published as `@koniverse/koni-docs` (current: **v0.7.0**). Provides 7 subcommands for the doc-maintenance work this skill prescribes, plus a reusable lib for programmatic use.
+Every `koni-docs <cmd>` this skill tells you to run comes from the companion CLI
+(**v0.9.0**), installed per repo as a devDep (`npx koni-docs …`) or globally.
+The seven subcommands, in one line each:
 
-> **Source of truth**: VERSION in this repo (`/Volumes/MacData/Workspace/AI/Koni-Skills/VERSION`) matches the latest npm version. When numbers diverge, the repo is the canonical pre-release; npm is the canonical published version.
-
-### 7.1 Install
-
-Pick the mode that fits the consumer repo:
-
-| Mode | Command | When to use |
-|---|---|---|
-| **devDep (recommended)** | `npm install --save-dev @koniverse/koni-docs` | Most consumer repos. Pinned in `package.json`, reproducible CI. Invoke via `npx koni-docs <cmd>`. |
-| **Global** | `npm install -g @koniverse/koni-docs` | Cross-project use, one-off audits, ad-hoc preview. Invoke via `koni-docs <cmd>` (no `npx`). |
-| **Local-tarball (pre-publish)** | From this repo: `cd packages/koni-docs && npm run build && npm pack` then `npm install -g ./koniverse-koni-docs-0.7.0.tgz` | Testing an unpublished version end-to-end, dogfooding a release candidate. Matches the v0.6.x / v0.7.0 ship workflow. |
-| **`npm link` (active development)** | From this repo: `cd packages/koni-docs && npm run build && npm link` | Iterating on the CLI itself with a global `koni-docs` bin that always tracks `dist/`. Re-run `npm run build` after each source edit. |
-
-> If a project's CLAUDE.md / AGENTS.md says the CLI is installed in a specific way (e.g. devDep with `npm run agile:status` aliases), match that — don't switch modes silently.
-
-### 7.2 Update
-
-| Install mode | Update command |
+| Subcommand | Does |
 |---|---|
-| devDep | `npm install --save-dev @koniverse/koni-docs@latest` (or pin a specific version) |
-| Global | `npm install -g @koniverse/koni-docs@latest` |
-| Local-tarball | Re-pack from this repo and re-install: `npm uninstall -g @koniverse/koni-docs && npm install -g ./koniverse-koni-docs-<v>.tgz` |
-| npm link | `git pull && npm run build` from `packages/koni-docs/` — the linked bin picks up the new `dist/`. |
+| `status` | Regenerate `STATUS.md` — the kanban **and** the `## ⏰ Deadlines` board (RULE-5) |
+| `sync` | Propagate a story's status up through Epic / PRD / Sprint |
+| `validate` | ID-graph + FR-ref integrity, and `due`-date checking. Exits non-zero on error |
+| `inject-tasks` | Rebuild a story's `## Tasks` from its Acceptance criteria |
+| `backfill-fields` | Add missing standard frontmatter keys to story files |
+| `backfill-commits` | **Repair only** — a CHANGELOG that already shipped with `pending` SHAs |
+| `preview` | Astro SSR docs viewer (`--watch` for live-reload) |
 
-After upgrading, verify:
-
-```bash
-koni-docs --version        # global mode
-npx koni-docs --version    # devDep mode
-```
-
-Should report the version you just installed. If `--version` shows an older number, the install didn't take — re-run install and re-check.
-
-### 7.3 Global flags (every subcommand accepts these)
-
-- `--docs-path <path>` — override the default `docs/` root (useful for monorepos)
-- `--dry-run` — preview changes without writing files
-- `--json` — machine-readable output (pipe to `jq`)
-- `--verbose` — extra logging
-
-### 7.4 Subcommand inventory
-
-| Subcommand | Since | Purpose | Example |
-|---|---|---|---|
-| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Since v0.9.0 also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
-| `sync` | v0.4 | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD section lookup uses label (`## Functional Requirements`) with legacy `## 8.` fallback (v0.7.2) | `koni-docs sync --story US-X.Y` |
-| `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
-| `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
-| `backfill-commits` | v0.4 | Replace `pending` commit SHAs in CHANGELOG with real SHAs from `git log` | `koni-docs backfill-commits` |
-| `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
-| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Since v0.9.0 also checks `due` dates: a value that is not a real date is an **error**; a story merely past its date is a **warning** that does *not* change the exit code — deadlines inform, they never block a commit. Exits non-zero on any error. | `koni-docs validate --json` |
-
-### 7.5 Real-world usage — the four common loops
-
-**(A) After editing a story file** (start, close, change AC):
-
-```bash
-koni-docs sync --story US-X.Y    # propagate status across 5 doc layers
-koni-docs status                  # regen STATUS.md (RULE-5)
-```
-
-**(B) Pre-commit checklist** (full §3c sweep):
-
-```bash
-koni-docs inject-tasks --story US-X.Y   # only if AC changed
-koni-docs sync --story US-X.Y
-koni-docs status
-koni-docs validate                       # fails CI on broken refs
-git add docs/ && git commit -m "..."     # CHANGELOG SHA still "pending"
-koni-docs backfill-commits               # backfill SHA → write change
-git add docs/CHANGELOG.md && git commit -m "docs: backfill ..."
-```
-
-**(C) Doc audit on a new repo or after a long pause**:
-
-```bash
-koni-docs validate --include-warnings --json | jq        # find broken refs
-koni-docs backfill-fields --dry-run                       # see what's missing
-koni-docs backfill-fields                                 # fill defaults
-koni-docs status                                          # regen kanban
-```
-
-**(D) Browse the docs visually** (dashboard + per-doc + project tracker + live-reload):
-
-```bash
-koni-docs preview docs --watch     # opens http://localhost:4321/
-# /              dashboard (KPIs + epic grid)
-# /docs/<slug>   any markdown doc rendered with shiki + mermaid
-# /project       full story tracker (filter/group; needs v0.7.0+)
-```
-
-`--watch` watches `docs/**/*.md` (chokidar) and pushes SSE events to the browser; edit a story file and the open tab reloads automatically.
-
-### 7.6 When to use which subcommand (mapping from user intent)
-
-| User says... | Run |
-|---|---|
-| "regenerate STATUS" / "refresh kanban" | `koni-docs status` |
-| "sync US-X.Y" / "propagate story X status" | `koni-docs sync --story US-X.Y` |
-| "rebuild tasks for US-X.Y" | `koni-docs inject-tasks --story US-X.Y` |
-| "story X is missing fields" / "fix story frontmatter" | `koni-docs backfill-fields` (add `--dry-run` first to preview) |
-| "fill in commit SHAs" / "backfill changelog" | `koni-docs backfill-commits` |
-| "show me the docs in a browser" / "open docs viewer" | `koni-docs preview docs --watch` |
-| "check docs integrity" / "find broken refs" / "ID graph audit" | `koni-docs validate` |
-| "run doc checklist before commit" | full loop (B) above |
-| "audit this new repo's docs" | full loop (C) above |
-
-### 7.7 Library API for programmatic use
-
-Other Koniverse products can import the typed lib without the CLI. v0.7.0 surface:
-
-```ts
-// Corpus + I/O
-import {
-  loadCorpus, readDoc, writeDoc, parseDoc, serializeDoc, updateFrontmatter,
-  getStories, getEpics, getSprints, getActiveSprint, resolveById,
-} from '@koniverse/koni-docs/lib';
-
-// Markdown primitives
-import {
-  findSection, findSectionStartingWith,    // ← prefix matcher (v0.7.0)
-  replaceSection, appendToSection, removeSection,
-  findTable, parseTable, findRow, updateCell, appendRow, removeRow,
-  parseCheckboxes, setCheckboxState, appendCheckbox, replaceCheckboxes,
-} from '@koniverse/koni-docs/lib';
-
-// Schemas
-import { Schemas } from '@koniverse/koni-docs/lib';
-// → Schemas.storySchema, Schemas.epicSchema, Schemas.sprintSchema, Schemas.changelogEntrySchema
-
-// Validators
-import {
-  validateRefs,        // L3 ID graph (story→epic, story→sprint, story→PRD Epics & User Stories)
-  validateFrRefs,      // ← prd_ref reachability into PRD Functional Requirements (v0.7.0)
-} from '@koniverse/koni-docs/lib';
-
-// Changelog + git
-import {
-  parseChangelog, findEntryByVersion, formatVersionHeader, updateCommitSha,
-  isGitRepo, findCommitForVersion, findCommitByTag, listVersionBumps,
-} from '@koniverse/koni-docs/lib';
-```
-
-Subpath exports: `@koniverse/koni-docs/lib`, `@koniverse/koni-docs/lib/markdown`, `@koniverse/koni-docs/lib/schemas`.
-
-The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unified` / `remark-parse` / `remark-stringify` / `remark-gfm` (markdown AST) + `zod` (schemas). **Mutation contract**: every export is pure — functions starting with `update*` return a new value, never mutate inputs. Sole exception: `parseTable(...).node` returns a reference to the underlying mdast Table node (intentional, documented at call site).
-
-### 7.8 Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `koni-docs --version` reports an older number than `package.json` | Build/install drift after editing source | `cd packages/koni-docs && npm run build && npm pack && npm install -g ./koniverse-koni-docs-<v>.tgz` |
-| `sync` warns `PRD Functional Requirements FR <id>: section "## Functional Requirements" not found` | PRD has no `## Functional Requirements` heading and no legacy `## 8.` heading either | Rename the H2 to `## Functional Requirements` (canonical label form). Legacy numbered headings (`## 8. Functional Requirements`, with or without `(FR)` suffix) are still matched by the v0.7.2 fallback, but new PRDs should use the label form |
-| `validate` exits non-zero with `(not_found)` warnings | Story references a sprint / epic file that doesn't exist | Either create the missing file or fix the story's `sprint:` / `epic:` frontmatter |
-| `preview` shows 500 SyntaxError on `/` | Stale `dist/` shipped with v0.6.0 shebang leak | Upgrade to v0.6.1+ — `npm install -g @koniverse/koni-docs@latest` |
-| `preview --watch` browser doesn't auto-reload | Browser cached page from before `--watch` was passed | Open DevTools, disable cache, reload once; afterwards SSE works |
-| `writeDoc` adds/removes quotes in git diff | gray-matter normalization (fixed in v0.7.0 — preserves the original quote style per key) | Upgrade to v0.7.0+ |
-
-### 7.9 Skill ↔ CLI relationship
-
-This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, this §7 inventory is the authoritative reference — `references/sprint-system.md` mirrors only the agile-related subset (`status`, `sync`, `inject-tasks`, `backfill-fields`, `backfill-commits`).
-
-Skill files at `skills/koni-docs/` in this repo are the canonical source. Consumer projects link to this skill (preferred: symlink each agent's `.<agent>/skills/koni-docs/` → `../../skills/koni-docs`); the `skills-lock.json` `sourceType: "github"` mechanism is for projects that can't or won't host the file locally.
+**Everything else — install modes, upgrade, global flags, the exact commit
+loops, the typed lib API, troubleshooting — lives in
+[`references/cli.md`](references/cli.md).** Load it when you need to run, install,
+or import the CLI; you do not need it to decide *what* to document.

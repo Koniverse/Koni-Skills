@@ -66,6 +66,20 @@ test('normalizeDue: absent, empty, and prose values yield no deadline', () => {
   assert.equal(normalizeDue(42), null);
 });
 
+test('normalizeDue: a date with prose stapled to it is NOT a date', () => {
+  // REG — the first cut of normalizeDue tested `trimmed.slice(0, 10)`, so the
+  // exact anti-pattern the docs promise validate will reject
+  // (`due: 2026-07-20 (pending customer confirmation)`) was silently accepted
+  // and rendered in STATUS.md as a clean deadline. A guardrail that waves the
+  // documented anti-pattern through is worse than none: the reader stops looking.
+  assert.equal(normalizeDue('2026-07-20 (pending customer confirmation)'), null);
+  assert.equal(normalizeDue('2026-07-20 — before the audit'), null);
+  assert.equal(normalizeDue('2026-07-20 or thereabouts'), null);
+  // The ISO-timestamp tolerance that motivated the slice must still work.
+  assert.equal(normalizeDue('2026-07-20T00:00:00.000Z'), '2026-07-20');
+  assert.equal(normalizeDue('2026-07-20T09:30:00+07:00'), '2026-07-20');
+});
+
 test('isValidIsoDate: a date that matches the shape but does not exist is not a date', () => {
   assert.equal(isValidIsoDate('2026-07-20'), true);
   assert.equal(isValidIsoDate('2026-02-31'), false);

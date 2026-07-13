@@ -12,6 +12,9 @@
 > THREE files in the same commit. Skipping one of them causes silent
 > deploy failures and onboarding friction. Use the checklist in §3.
 
+
+**Contents**: [1. SETUP.md env block format](#1-setupmd-env-block-format) · [2. .env.example format](#2-envexample-format) · [3. Env var update checklist (RULE-11)](#3-env-var-update-checklist-rule-11) · [4. Filled example — SETUP.md env block](#4-filled-example--setupmd-env-block) · [5. Filled example — .env.example](#5-filled-example--envexample) · [6. DEPLOY.md production env vars table](#6-deploymd-production-env-vars-table)
+
 ---
 
 ## 1. SETUP.md env block format

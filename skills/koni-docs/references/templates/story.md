@@ -58,10 +58,10 @@ prd_ref: [FR-N]            # PRD Functional Requirements this story materializes
 arch_ref: [AD-N]           # OPTIONAL — ARCHITECTURE.md Architecture Decisions this story materializes (list of AD-N). Omit if none.
 depends_on: [US-X.Y]       # OPTIONAL — other stories whose artifacts this story consumes (list of US-X.Y). Omit if none. Cross-story narrative belongs in §7.
 assignee:                  # MANDATORY (RULE-15): commit AUTHOR — `git log -1 --format=%an <sha>`, NOT the session user (`gh api user`)
-commit:                    # full SHA of landing commit (set at pre-commit). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
+commit:                    # SHA of the landing commit. A commit cannot contain its own SHA — do NOT `--amend` it in (that rewrites the commit and orphans the SHA). Backfill it in a follow-up commit (RULE-2). Multi-commit story: comma-separated SHAs, e.g. `47b4383, a76477c, 9a701de`
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-external_deps:             # optional list of third-party systems / partners / legal reviews this story waits on. Example: [payment_gateway, resend_api, legal_review, sales_navigator_license]. Populate when story waits on calendar-time outside dev control — these stories are the most commonly undersized (SKILL.md §3a-bis).
+external_deps:             # OPTIONAL — third-party systems / partners / legal reviews this story waits on, e.g. [payment_gateway, resend_api, legal_review]. Planning-only: no tooling reads it yet. Populate when calendar-time outside dev control is on the critical path — these stories are the most commonly undersized (SKILL.md §3a-bis).
 ---
 
 ## Story refresh — YYYY-MM-DD *(optional, recurring)*
@@ -88,7 +88,7 @@ Maps to the BMad "So that..." clause — articulate the value, not the
 mechanism. For platform / infrastructure stories, name the downstream
 stories that get to *stop worrying about* what this delivers.>
 
-## Deadline
+## Deadline *(§2b — only when `due` is set)*
 
 <ONLY when `due` is set in frontmatter. Omit the whole section otherwise.
 
@@ -108,8 +108,8 @@ by their PM on 2026-07-08.
 If this slips, the review runs on last quarter's numbers, so the story cannot
 absorb a sprint carry-over.
 
-**Moved 2026-07-15 → 2026-07-20** on 2026-07-08 — ACME pushed the review by a
-week ([CONTEXT D34](../../CONTEXT.md)).
+**Moved 2026-07-15 → 2026-07-20** on 2026-07-08 — ACME pushed the review out by
+five days ([CONTEXT D34](../../CONTEXT.md)).
 
 ## Background
 
@@ -336,8 +336,12 @@ per file explaining what changed and why — not just what was added.>
   date erases the fact that the story missed it once. `koni-docs status` shows
   overdue / due-soon / on-track in STATUS.md; `koni-docs validate` errors on a
   non-date and warns (without blocking) on an overdue story.
-- `commit`: stays empty until the landing commit exists. Filled at
-  pre-commit time (RULE-2). Never `pending`.
+- `commit`: stays empty until the landing commit exists — which means it cannot
+  be filled *in* that commit (a commit cannot contain its own SHA). Do **not**
+  reach for `git commit --amend`: amending rewrites the commit and produces a new
+  SHA, orphaning the one you just wrote. Ship the story, then backfill the SHA in
+  a follow-up `docs: backfill …` commit (RULE-2, LESSONS §17). Never `pending` at
+  rest.
 - `assignee`: the person who **authored the work**, not whoever is writing
   the doc. For a **retroactive / codebase-discovered** story, derive it from
   the git author of the story's `commit` SHA — run
@@ -478,8 +482,8 @@ sprint: sprint-2026-W19
 version_shipped: 0.3.1
 prd_ref: [FR-93, FR-94]
 arch_ref: [AD-06]
-assignee: 
-commit: a1b2c3d4e5f6...
+assignee: saltict
+commit: a1b2c3d
 created: 2026-05-09
 updated: 2026-05-09
 ---
@@ -574,7 +578,7 @@ without the larger abstraction.
 ### Deprecated
 - `AUDIT_APPEND_QUEUE`, `SAFE_DEPLOY_QUEUE`, ... consts — JSDoc-marked `@deprecated`, point at `QUEUE_NAMES.X`.
 
-**Commit**: a1b2c3d4e5f6...
+**Commit**: a1b2c3d
 
 ## Implementation notes
 
@@ -595,7 +599,7 @@ gaps were low-severity. Implementation took ~150 LoC across 5 new files +
 
 ## Cross-references
 
-- [PRD AD-06](../../PRD.md)
+- [ARCHITECTURE AD-06](../../ARCHITECTURE.md#architecture-decisions)
 - [Epic EPIC-1](../epics/EPIC-1.md)
 - [CHANGELOG v0.3.1](../../CHANGELOG.md)
 ```
