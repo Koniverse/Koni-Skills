@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -255,6 +255,32 @@ SKILL.md 528 → 325 lines; the checklist and subcommand table de-duplicated aft
 the extraction forked them; TOCs on every 100+-line reference — the first
 generator's own TOCs were broken, because it collapsed whitespace where GitHub
 does not.
+
+## Round 4 — skill-grading re-grade (2026-07-13, v0.42.0)
+
+**80.25/100** (D1 **25/25** · D2 **25/25** · D3 11/25 · D4 19.25/25). D1 and D2 are
+done: the blind router got 18/18 (precision and recall both 1.00), and all nine
+hard rules held under adversarial pressure — including the three `due` rules and
+the rewritten RULE-2, which one pressured agent called "the one I would have
+reached for on autopilot."
+
+The round's own finding is the one worth keeping. I fixed the missing TOCs, wrote
+an audit to confirm the anchors resolved, and the audit printed **0 broken**. It
+was wrong: both the generator and the audit scraped `## ` lines from *inside*
+```markdown fences — template skeletons, which GitHub emits no anchor for. **150
+anchors were dead**, certified green by a checker that shared its bug with the
+thing it was checking. The same generator also wrote a TOC into SKILL.md's YAML
+frontmatter and **destroyed the description** — the skill would no longer have
+triggered for anything. Neither defect appeared in my output; an author-blind
+grader found both. LESSONS §19.
+
+Three of D3's four Importants were one defect: content moved, pointers not swept
+(RULE-2's body rewritten but not its heading; the Scripts table deleted but not
+its routers; `--include-warnings` removed from the CLI but still called by
+koni-setup). So this round ships `scripts/check-references.py` — every link,
+anchor, and `§Section` pointer must resolve. It is green on koni-docs,
+koni-harness, koni-setup, and koni-nextjs; koni-qc has 4 dangling references,
+reported rather than silently fixed.
 
 ## Implementation notes
 

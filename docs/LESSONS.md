@@ -627,3 +627,69 @@ what keeps it true.
 ```bash
 rg -n 'pre-commit time|--amend.*SHA|format=%an' skills/ docs/   # must be empty
 ```
+
+---
+
+## 19. I validated with the same wrong function that generated — and nearly shipped a skill with no description
+
+**What happened**: a grader flagged that the reference files needed tables of
+contents. I wrote a generator, ran it across 21 files, then wrote an *audit* to
+confirm the anchors resolved. The audit printed **`broken anchors: 0`**, and I
+reported the fix as done.
+
+It was wrong three times over.
+
+1. **Generator and audit shared the same blind spot.** Both scraped `## ` lines
+   with a plain regex — including the `## ` lines *inside* ` ```markdown ` fences,
+   which are template skeletons, not headings. GitHub emits no anchor for fenced
+   text. **150 anchors were dead**, and my audit confidently certified them
+   because it computed "valid" targets with the same broken function that had
+   produced the links. A validator that shares its bug with the thing it
+   validates always passes.
+2. **The slug algorithm was wrong in a way that looked right.** GitHub strips
+   punctuation and then hyphenates *each remaining space*; I collapsed runs of
+   whitespace. So `usage — the loops` is `usage--the-loops` on GitHub and
+   `usage-the-loops` in my output. Every em-dash heading silently missed.
+3. **The generator inserted a TOC into SKILL.md's YAML frontmatter.** Its
+   "insert after the title" logic assumed the file opened with an H1; SKILL.md
+   opens with `---`. The result was a `**Contents**:` line sitting between `---`
+   and `name:`, which **destroyed the frontmatter** — the skill lost its
+   `description` entirely, meaning it would no longer trigger for anything. The
+   tell was not in my audit output. It was in the harness's own skill list, where
+   the description had silently degraded to the H1 heading.
+
+**The lesson**: **a check written by the same mind, in the same sitting, with the
+same mental model as the thing it checks, is not an independent check.** It
+reproduces the misconception faithfully in both directions and returns green. To
+actually verify a generated artifact, the check must come from *outside* that
+model: run the real renderer, diff against the real consumer, or — cheapest and
+most reliable here — have someone (or something) else look. Every one of these
+three defects was caught by an author-blind grader, not by me, and I had already
+declared the work done.
+
+The recursive sting: this is LESSONS §16's exact shape ("a validator that has
+silently matched nothing for months looks identical to one that has found no
+problems") — a lesson **I wrote earlier the same day**, and then walked straight
+back into. Knowing the failure mode is not the same as being immune to it. The
+only durable defence is structural: an independent reviewer, or a check you did
+not author.
+
+**Grep check** — headings inside fences are not headings:
+
+```bash
+python3 - <<'PY'
+import re, glob
+strip = lambda s: re.sub(r'^(```|````).*?^\1', '', s, flags=re.S|re.M)
+slug  = lambda h: re.sub(r'[^\w\s-]', '', re.sub(r'`','',h).lower()).strip().replace(' ', '-')
+for p in glob.glob('skills/**/*.md', recursive=True):
+    raw = open(p).read()
+    heads = [l.lstrip('#').strip() for l in strip(raw).split('\n') if re.match(r'^#{2,4} ', l)]
+    seen, valid = {}, set()
+    for h in heads:
+        a = slug(h); n = seen.get(a, 0); seen[a] = n + 1
+        valid.add(a if not n else f'{a}-{n}')
+    for m in re.finditer(r'\]\(#([^)]+)\)', raw):
+        if m.group(1) not in valid and raw[:m.start()].count('```') % 2 == 0:
+            print('DEAD', p, m.group(1))
+PY
+```

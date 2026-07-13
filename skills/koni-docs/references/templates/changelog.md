@@ -1,6 +1,6 @@
 # CHANGELOG Entry — Template
 
-> **File location**: `docs/CHANGELOG.md` (or `Docs/CHANGELOG.md` — match
+> **File location**: `docs/CHANGELOG.md` (or `docs/CHANGELOG.md` — match
 > the project's existing casing).
 >
 > **Use when**: User asks to write a changelog entry, ship a version, or
@@ -95,5 +95,5 @@ organize projects into custom pods for better workspace navigation.
 ```
 
 > No `**Commit**:` line — deliberately. The entry ships *in* the commit it
-> describes, so it cannot name it; `git log --grep '0.3.0'` and the `v0.3.0` tag
+> describes, so it cannot name it; `git log --grep '0.63.4'` and the `v0.63.4` tag
 > are the join keys. RULE-2.

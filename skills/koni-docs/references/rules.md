@@ -1,10 +1,10 @@
 # Core Rules — Detailed Reference
 
 > These 12 rules apply to ALL Koniverse projects regardless of technology stack.
-> Technology-specific rules live in plugin skills (koni-docs-supabase, koni-docs-nextjs, etc.)
+> Technology-specific rules live in plugin skills (koni-nextjs (and future plugin skills), etc.)
 
 
-**Contents**: the 12 enforced rules, grouped Pre-Commit · During-Work · Post-Generation. Each rule states What / Why / How to comply / a grep check. BLOCKERs: RULE-1, RULE-2, RULE-5, RULE-6, RULE-7, RULE-11, RULE-15, RULE-16, RULE-17.
+**Contents**: [Rule Groups](#rule-groups) · [Pre-commit Rules](#pre-commit-rules) · [During-Work Rules](#during-work-rules) · [Post-Generation Rules](#post-generation-rules)
 
 ## Rule Groups
 
@@ -40,11 +40,11 @@
 
 **Grep check**: `git diff --cached --name-only | grep -E "VERSION|CHANGELOG" | wc -l` — must be 2 when code files are staged.
 
-**See**: `templates.md` §CHANGELOG entry, §CHANGELOG safe insertion
+**See**: [`templates/changelog.md`](templates/changelog.md), §CHANGELOG safe insertion
 
 ---
 
-### RULE-2: Commit hash in CHANGELOG mandatory
+### RULE-2: A recorded SHA is real and reachable — never `pending`, never `--amend`-ed in
 
 **Severity**: BLOCKER
 
@@ -74,7 +74,7 @@
   ```
   Every line must print `ok`. An `UNREACHABLE` line is the `--amend` trap above.
 
-**See**: `templates.md` §CHANGELOG entry, [LESSONS §17](../../../docs/LESSONS.md)
+**See**: [`templates/changelog.md`](templates/changelog.md), [LESSONS §17](../../../docs/LESSONS.md)
 
 ---
 
@@ -105,7 +105,7 @@ NEW_ENV_VAR=<placeholder_or_description>
 NEW_ENV_VAR=<example_value_or_instructions>
 ```
 
-**See**: `templates.md` §SETUP.md + DEPLOY.md + .env.example
+**See**: [`templates/setup.md`](templates/setup.md)
 
 ---
 
@@ -142,7 +142,7 @@ One canonical ID per story across all documentation layers.
 
 **Grep check**: `grep -rn "US-X.Y" docs/sprints/stories/ docs/PRD.md` — all references to a story ID must be consistent.
 
-**See**: `templates.md` §Story file, `sprint-system.md` §Naming conventions
+**See**: [`templates/story.md`](templates/story.md), `sprint-system.md` §Naming conventions
 
 ---
 
@@ -167,7 +167,7 @@ One canonical ID per story across all documentation layers.
 | Leave rationale blank | Always include "because Y" |
 | One huge entry for 10 decisions | One entry per decision |
 
-**See**: `templates.md` §CONTEXT.md, §CONTEXT revision entry
+**See**: [`templates/context.md`](templates/context.md)
 
 ---
 
@@ -246,7 +246,7 @@ infix). The `.vi.md` files are:
   ```
   Every line should print `ok`.
 
-**See**: `templates/story.md` §1 Frontmatter, `templates/sprint.md` §Sprint scope table, `templates/integration.md` §2 (`.active-context.md` Local developer block).
+**See**: `templates/story.md` §1 Frontmatter, `templates/sprint.md` §1 (the Sprint scope table lives in the skeleton), `templates/integration.md` §2 (`.active-context.md` Local developer block).
 
 ---
 
@@ -266,7 +266,7 @@ The `v` prefix IS still used for narrative / convention surfaces:
 - Active Context summary lines (`Last Version: v0.7.0`)
 - Body prose in stories / decisions / lessons (`shipped in v0.7.0`)
 
-**Why**: Tooling that joins on version strings — `agile-sync-up.mjs` Stories-table writer, CHANGELOG-anchor lookup, semver `compare()`, sort order — needs a single canonical key. Mixing `v0.7.0` and `0.7.0` in structured fields silently breaks equality comparisons and produces double-`v` corruption like `vv0.7.0` in synced output (the script prepends `v` to the bare convention). Real-world trap: caught during Koni-Skills v0.2.0 dogfood when US-1.1's `version_shipped: v0.1.0` produced `vv0.1.0` in EPIC-1 Stories table ([LESSONS §4](../../../docs/LESSONS.md)). Same split that git itself uses: tag `v0.7.0`, but `package.json` `"version": "0.7.0"`.
+**Why**: Tooling that joins on version strings — `koni-docs sync` Stories-table writer, CHANGELOG-anchor lookup, semver `compare()`, sort order — needs a single canonical key. Mixing `v0.7.0` and `0.7.0` in structured fields silently breaks equality comparisons and produces double-`v` corruption like `vv0.7.0` in synced output (the script prepends `v` to the bare convention). Real-world trap: caught during Koni-Skills v0.2.0 dogfood when US-1.1's `version_shipped: v0.1.0` produced `vv0.1.0` in EPIC-1 Stories table ([LESSONS §4](../../../docs/LESSONS.md)). Same split that git itself uses: tag `v0.7.0`, but `package.json` `"version": "0.7.0"`.
 
 **How to comply**:
 1. **In story frontmatter**: `version_shipped: 0.7.0` — no `v`.
@@ -279,7 +279,7 @@ The `v` prefix IS still used for narrative / convention surfaces:
 - VERSION file: `head -1 VERSION | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'` → must match (no `v`).
 - CHANGELOG anchors: `grep -E '^## \[v' docs/CHANGELOG.md` → must return zero lines.
 
-**See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §template skeleton, [LESSONS §4](../../../docs/LESSONS.md).
+**See**: `templates/story.md` §1 Frontmatter, `templates/changelog.md` §1 (template skeleton), [LESSONS §4](../../../docs/LESSONS.md).
 
 ---
 
@@ -329,4 +329,4 @@ The canonical YAML form is a **list of strings**: `prd_ref: [FR-04, FR-10]`. The
 
 **Grep check**: N/A — this is a process rule. The script regeneration is the enforcement mechanism.
 
-**See**: `sprint-system.md` §Scripts reference
+**See**: [`cli.md`](cli.md) §4 (subcommand inventory)

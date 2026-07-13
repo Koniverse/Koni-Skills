@@ -1,7 +1,7 @@
 # Sprint System — Conventions & Workflow
 
 
-**Contents**: [Naming conventions](#naming-conventions-canonical--single-source-of-truth-for-sprint-artifact-ids) · [Story status flow](#story-status-flow) · [Deadlines vs sprint cadence](#deadlines-vs-sprint-cadence) · [Scripts reference](#scripts-reference) · [5-layer consistency check](#5-layer-consistency-check-before-merging) · [Pre-commit checklist](#pre-commit-checklist) · [Test artifacts](#test-artifacts) · [Setup in a new project](#how-to-set-up-in-a-new-project)
+**Contents**: [Naming conventions (canonical — single source of truth for sprint artifact IDs)](#naming-conventions-canonical--single-source-of-truth-for-sprint-artifact-ids) · [Story status flow](#story-status-flow) · [Deadlines vs sprint cadence](#deadlines-vs-sprint-cadence) · [Story sizing](#story-sizing) · [Scripts reference](#scripts-reference) · [5-layer consistency check (before merging)](#5-layer-consistency-check-before-merging) · [Pre-commit checklist](#pre-commit-checklist) · [Test artifacts](#test-artifacts) · [How to set up in a new project](#how-to-set-up-in-a-new-project)
 
 ## Naming conventions (canonical — single source of truth for sprint artifact IDs)
 
@@ -133,7 +133,7 @@ unblocks lifecycle automation.
 
 **External-dependency rule** — if a story waits on a third-party system,
 partner, or legal review, populate the `external_deps:` frontmatter field
-(see [story template](references/templates/story.md) §1.frontmatter). These
+(see [story template](templates/story.md) §1.frontmatter). These
 stories are the most commonly undersized because dev-time excludes calendar
 wait time. Example values: `[payment_gateway, resend_api, legal_review,
 sales_navigator_license, partner_signature]`.
@@ -228,8 +228,8 @@ The Stories-in-scope / Goals / Quick-reference triad up front lets a tester unde
 ## How to set up in a new project
 
 1. Create the `docs/` directory structure per the orientation in SKILL.md §0
-2. Add the CLAUDE.md integration block (see `templates.md` §CLAUDE.md)
-3. Add the AGENTS.md reference block (see `templates.md` §AGENTS.md)
+2. Add the CLAUDE.md integration block (see [`templates/integration.md`](templates/integration.md))
+3. Add the AGENTS.md reference block (see [`templates/integration.md`](templates/integration.md) §3)
 4. Create initial `VERSION` file (e.g., `0.1.0`)
 5. Create initial `CHANGELOG.md` with `[Unreleased]` section
 6. If using sprints, create `docs/sprints/` with `stories/`, `epics/`, `archive/` subdirectories

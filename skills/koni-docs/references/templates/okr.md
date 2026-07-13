@@ -16,7 +16,7 @@
 > gymnastics.
 
 
-**Contents**: [1. File-naming rule](#1-file-naming-rule) · [2. YAML schema (per quarter file)](#2-yaml-schema-per-quarter-file) · [3. KR formula rules](#3-kr-formula-rules) · [4. Weekly notes](#4-weekly-notes) · [5. Permissions (`okr_owners` table)](#5-permissions-okr_owners-table) · [6. Filled example — `docs/okr/2026-Q2.md`](#6-filled-example--docsokr2026-q2md) · [Weekly notes](#weekly-notes) · [7. Cross-references](#7-cross-references)
+**Contents**: [1. File-naming rule](#1-file-naming-rule) · [2. YAML schema (per quarter file)](#2-yaml-schema-per-quarter-file) · [3. KR formula rules](#3-kr-formula-rules) · [4. Weekly notes](#4-weekly-notes) · [5. Permissions (`okr_owners` table)](#5-permissions-okr_owners-table) · [6. Filled example — `docs/okr/2026-Q2.md`](#6-filled-example--docsokr2026-q2md) · [7. Cross-references](#7-cross-references)
 
 ---
 
@@ -134,7 +134,7 @@ team_sales_a:
 ## Weekly notes
 
 ### 2026-W18 / salesperson_1
-_Posted 2026-05-04T10:30:00Z by Hieu Dao (00000000-0000-0000-0000-000000000001)_
+_Posted <YYYY-MM-DD> by <owner> (<uuid>)_
 
 Closed Acme ($85k) on Friday; two stalled deals re-engaged after the
 pricing-page refresh shipped Wed. Next week: push Beta Corp through

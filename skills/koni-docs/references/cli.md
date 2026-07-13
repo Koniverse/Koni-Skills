@@ -4,7 +4,9 @@
 > subcommand or a global flag; wiring the doc loops into a commit; importing the
 > typed lib. SKILL.md §7 points here — this file is the authoritative inventory.
 
-**Contents**: [Install](#1-install) · [Update](#2-update) ·
+
+**Contents**: [1. Install](#1-install) · [2. Update](#2-update) · [3. Global flags (every subcommand accepts these)](#3-global-flags-every-subcommand-accepts-these) · [4. Subcommand inventory](#4-subcommand-inventory) · [5. Real-world usage — the four common loops](#5-real-world-usage--the-four-common-loops) · [6. When to use which subcommand (mapping from user intent)](#6-when-to-use-which-subcommand-mapping-from-user-intent) · [7. Library API for programmatic use](#7-library-api-for-programmatic-use) · [8. Troubleshooting](#8-troubleshooting) · [9. Skill ↔ CLI relationship](#9-skill--cli-relationship)
+
 [Global flags](#3-global-flags-every-subcommand-accepts-these) ·
 [Subcommand inventory](#4-subcommand-inventory) ·
 [The four common loops](#5-real-world-usage--the-four-common-loops) ·
@@ -189,6 +191,6 @@ The lib has zero CLI dependencies. Composes `gray-matter` (frontmatter) + `unifi
 
 ## 9. Skill ↔ CLI relationship
 
-This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, this §7 inventory is the authoritative reference — `references/sprint-system.md` mirrors only the agile-related subset (`status`, `sync`, `inject-tasks`, `backfill-fields`, `backfill-commits`).
+This skill (the `SKILL.md` you are reading) and the `koni-docs` CLI evolve together. **When the SKILL.md says "run X"**, X is one of the subcommands above. **When the CLI gains a new subcommand**, §4 above is the authoritative inventory. No other file keeps a second copy — `sprint-system.md` used to mirror the agile subset and had already drifted out of date, so it now points here instead.
 
 Skill files at `skills/koni-docs/` in this repo are the canonical source. Consumer projects link to this skill (preferred: symlink each agent's `.<agent>/skills/koni-docs/` → `../../skills/koni-docs`); the `skills-lock.json` `sourceType: "github"` mechanism is for projects that can't or won't host the file locally.

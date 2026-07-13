@@ -6,7 +6,7 @@
 > file the user's request needs.
 
 
-**Contents**: the thin index of every koni-docs template (what it is, when to use it, where the canonical file lives), followed by the [quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet) for Story / Epic / Sprint / Test-cases.
+**Contents**: [Template files](#template-files) · [Conventions every template follows](#conventions-every-template-follows) · [Activation table (mirrors SKILL.md §5)](#activation-table-mirrors-skillmd-5) · [Quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet)
 
 ---
 
@@ -18,7 +18,7 @@
 | **CONTEXT.md — Decision Log** | [templates/context.md](templates/context.md) | Recording a product/architecture decision or revision (append-only, RULE-7) |
 | **LESSONS.md — Lessons Learned** | [templates/lessons.md](templates/lessons.md) | Codifying a recurring trap, library quirk, or pattern that would save someone 30 minutes |
 | **BRIEF.md — Product Brief** | [templates/brief.md](templates/brief.md) | Creating/updating the executive brief (precedes PRD §1) |
-| **PRD — Product Requirements Document** | [templates/prd.md](templates/prd.md) | Creating/updating PRD §1–§11; FR table rows; PRD §11 epic/story index |
+| **PRD — Product Requirements Document** | [templates/prd.md](templates/prd.md) | Creating/updating the full PRD section set; FR table rows; the PRD `Epics & User Stories` index |
 | **ARCHITECTURE.md — System Architecture** | [templates/architecture.md](templates/architecture.md) | Documenting tech stack, components, data flow, AD-N summary table |
 | **DESIGN Spec for a Story** | [templates/design-spec.md](templates/design-spec.md) | A story has visual/interaction complexity warranting a dedicated spec |
 | **Epic File — Full Template** | [templates/epic.md](templates/epic.md) | Creating/updating an epic (BMad-grade: Mermaid maps, invariants, budgets) |

@@ -102,7 +102,7 @@ grep -q "Koni-Docs Integration" CLAUDE.md 2>/dev/null && echo "✅ integration b
 - **✅ present** → leave it. Do not "improve" working files during onboarding.
 - **Doc-content backfill** (missing story frontmatter, pending CHANGELOG SHAs,
   broken ID refs) → not this skill's job. Run koni-docs' own audit loop:
-  `koni-docs validate --include-warnings`, `koni-docs backfill-fields`,
+  `koni-docs validate`, `koni-docs backfill-fields`,
   `koni-docs status`.
 
 ## Output: the diff summary

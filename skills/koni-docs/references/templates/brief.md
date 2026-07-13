@@ -11,7 +11,7 @@
 > derives from this file.
 
 
-**Contents**: [1. Template skeleton](#1-template-skeleton) · [Executive Summary](#executive-summary) · [The Problem](#the-problem) · [The Solution](#the-solution) · [What Makes This Different](#what-makes-this-different) · [Who This Serves](#who-this-serves) · [Success Criteria](#success-criteria) · [Scope](#scope) · [Vision](#vision) · [2. Updating BRIEF.md](#2-updating-briefmd) · [3. Filled example (condensed)](#3-filled-example-condensed) · [Executive Summary](#executive-summary) · [The Problem](#the-problem) · [The Solution](#the-solution) · [What Makes This Different](#what-makes-this-different) · [Who This Serves](#who-this-serves) · [Success Criteria](#success-criteria) · [Scope](#scope) · [Vision](#vision)
+**Contents**: [1. Template skeleton](#1-template-skeleton) · [2. Updating BRIEF.md](#2-updating-briefmd) · [3. Filled example (condensed)](#3-filled-example-condensed)
 
 ---
 

@@ -13,7 +13,7 @@
 > + the architectural state-of-the-world they describe.
 
 
-**Contents**: [1. Template skeleton](#1-template-skeleton) · [System overview](#system-overview) · [Tech stack](#tech-stack) · [Component architecture](#component-architecture) · [Data architecture](#data-architecture) · [API architecture](#api-architecture) · [Security architecture](#security-architecture) · [Deployment architecture](#deployment-architecture) · [Integration architecture](#integration-architecture) · [Architecture decisions](#architecture-decisions) · [Open architecture questions](#open-architecture-questions) · [2. Updating ARCHITECTURE.md](#2-updating-architecturemd) · [3. Filled example (condensed)](#3-filled-example-condensed) · [System overview](#system-overview) · [Tech stack](#tech-stack) · [Architecture decisions](#architecture-decisions)
+**Contents**: [1. Template skeleton](#1-template-skeleton) · [2. Updating ARCHITECTURE.md](#2-updating-architecturemd) · [3. Filled example (condensed)](#3-filled-example-condensed)
 
 ---
 
@@ -202,7 +202,7 @@ Link new architecture decisions from CONTEXT.md here as they are recorded.
 # ARCHITECTURE — Koni-ERP-02
 
 > Last updated: 2026-05-07 (v0.76.0)
-> Maintainer: founder / @jindo9986
+> Maintainer: <team or @github-login>
 
 ## System overview
 

@@ -11,7 +11,7 @@
 > X over Y" — silently editing history breaks that contract.
 
 
-**Contents**: [1. Phase header](#1-phase-header) · [Phase N — <Phase name> (YYYY-MM-DD, shipped vX.Y.Z)](#phase-n--phase-name-yyyy-mm-dd-shipped-vxyz) · [2. Decision entry template (D`<N>`)](#2-decision-entry-template-dn) · [3. Revision entry template (revision of D`<M>`)](#3-revision-entry-template-revision-of-dm) · [4. Anti-patterns (RULE-7)](#4-anti-patterns-rule-7) · [5. Filled example](#5-filled-example) · [Phase 0 — Brainstorm & PRD (2026-04-29 morning)](#phase-0--brainstorm--prd-2026-04-29-morning)
+**Contents**: [1. Phase header](#1-phase-header) · [2. Decision entry template (D`<N>`)](#2-decision-entry-template-dn) · [3. Revision entry template (revision of D`<M>`)](#3-revision-entry-template-revision-of-dm) · [4. Anti-patterns (RULE-7)](#4-anti-patterns-rule-7) · [5. Filled example](#5-filled-example)
 
 ---
 

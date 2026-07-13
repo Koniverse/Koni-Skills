@@ -16,6 +16,58 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.42.0] — 2026-07-13 — koni-docs: round 3 of skill-grading — I validated with the same wrong function that generated — v0.42.0
+
+Re-grade after v0.41.0: **80.25/100** (D1 **25** · D2 **25** · D3 11 · D4 19.25).
+D1 and D2 are now perfect — the blind router routed 18/18, and all 9 hard rules
+held under adversarial pressure, including the three `due` rules and the rewritten
+RULE-2. D3 and D4 still block the ≥95 bar. Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The TOCs shipped in v0.41.0 had ~150 dead anchors, and my own audit certified
+  them green.** The generator scraped `## ` lines from *inside* ` ```markdown `
+  fences — template skeletons, which emit no anchor on GitHub — and the audit
+  computed "valid" targets with the same broken function. A checker that shares
+  its bug with the thing it checks always passes. It also used the wrong slug
+  algorithm (GitHub hyphenates *each* space; I collapsed runs, so every em-dash
+  heading silently missed). Regenerated fence-aware: **0 dead anchors**.
+- **The same generator wrote a TOC into SKILL.md's YAML frontmatter**, between
+  `---` and `name:` — destroying it. The skill lost its `description` entirely,
+  which means it would no longer have triggered for anything. See
+  [LESSONS §19](LESSONS.md).
+- **`agile-sync-up.mjs` — a script that does not exist anywhere in the repo — was
+  named as the enforcement mechanism in five places**, including as the *why* of
+  BLOCKER RULE-16. All replaced with `koni-docs sync`.
+- **RULE-2's body was rewritten; its heading was not.** It still read "Commit hash
+  in CHANGELOG mandatory" above a body whose preferred path is *no `**Commit**:`
+  line at all* — the first thing an agent grepping `RULE-2` reads. LESSONS §18,
+  committed one round earlier, names exactly this failure.
+- **Deleting the duplicated Scripts table left every pointer into it dangling.**
+  SKILL.md's activation table — the primary routing surface — still sent
+  "regenerate status", "inject tasks", and "backfill changelog SHAs" to a section
+  this project had just gutted.
+- **Cross-skill breakage:** removing the dead `--include-warnings` flag from the
+  CLI broke `koni-setup`, which still instructed agents to run it. Fixed there.
+- Residual PII (`@jindo9986`, a real name in an OKR example) in template worked
+  examples; `Docs/` casing; a `See references/...` link that resolved to
+  `references/references/...`; the changelog example's version disagreeing with
+  its own annotation.
+
+### Added
+- **`scripts/check-references.py`** — asserts every `](link.md)`, `](#anchor)`, and
+  `` `file.md` §Section `` in a skill resolves to something that exists. It knows
+  that headings inside fences are not headings, that GitHub does not collapse
+  whitespace when slugging, and that placeholder paths (`US-X.Y-<slug>.md`) belong
+  to the *generated* document. This is the mechanical check that would have caught
+  15 of this round's findings, and it is the reason the class should not recur.
+  Currently green on koni-docs, koni-harness, koni-setup, koni-nextjs; **koni-qc
+  has 4 dangling references** — pre-existing debt, reported not silently fixed.
+
+koni-docs CLI **0.11.0 → 0.11.1**.
+
+---
+
 ## [0.41.0] — 2026-07-13 — koni-docs: round 2 of skill-grading — the skill told agents to break its own BLOCKER rule — v0.41.0
 
 Re-grade after v0.40.0: **72.5/100** (D1 24 · D2 25 · D3 5 · D4 18.5) — still short

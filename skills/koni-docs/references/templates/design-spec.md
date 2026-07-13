@@ -13,7 +13,7 @@
 > applied — and document any deviation with rationale.
 
 
-**Contents**: [1. Template skeleton](#1-template-skeleton) · [Context](#context) · [Screens / states](#screens--states) · [Layout decisions](#layout-decisions) · [Component inventory](#component-inventory) · [Open questions](#open-questions) · [2. Filled example (condensed)](#2-filled-example-condensed) · [Context](#context) · [Screens / states](#screens--states) · [Layout decisions](#layout-decisions) · [Component inventory](#component-inventory) · [Open questions](#open-questions)
+**Contents**: [1. Template skeleton](#1-template-skeleton) · [2. Filled example (condensed)](#2-filled-example-condensed)
 
 ---
 

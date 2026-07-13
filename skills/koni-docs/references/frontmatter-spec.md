@@ -14,7 +14,7 @@
 > looks up a non-existent row, or fans out a sentence into garbage tokens.
 
 
-**Contents**: [Iron Law](#1-iron-law) · [The four canonical ID spaces](#2-the-four-canonical-id-spaces) · [Per-document contract](#3-per-document-frontmatter-contract) · [YAML form](#4-yaml-form--list-vs-csv-string) · [Anti-patterns](#5-anti-patterns-real-examples--the-fix) · [Migration playbook](#6-migration-playbook-for-a-project-carrying-broken-data) · [Parser behaviour](#7-parser-behaviour-current-koni-docs-script) · [Quick decision tree](#8-quick-decision-tree)
+**Contents**: [1. Iron Law](#1-iron-law) · [2. The four canonical ID spaces](#2-the-four-canonical-id-spaces) · [3. Per-document frontmatter contract](#3-per-document-frontmatter-contract) · [4. YAML form — list vs CSV string](#4-yaml-form--list-vs-csv-string) · [5. Anti-patterns (real examples + the fix)](#5-anti-patterns-real-examples--the-fix) · [6. Migration playbook (for a project carrying broken data)](#6-migration-playbook-for-a-project-carrying-broken-data) · [7. Parser behaviour (current koni-docs script)](#7-parser-behaviour-current-koni-docs-script) · [8. Quick decision tree](#8-quick-decision-tree)
 
 ---
 

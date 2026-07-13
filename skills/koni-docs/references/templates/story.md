@@ -13,7 +13,7 @@
 > (those belong to ARCHITECTURE.md + CONTEXT.md).
 
 
-**Contents**: [1. Section index — what's required vs optional](#1-section-index--whats-required-vs-optional) · [2. Full template skeleton](#2-full-template-skeleton) · [Story refresh — YYYY-MM-DD *(optional, recurring)*](#story-refresh--yyyy-mm-dd-optional-recurring) · [Goal](#goal) · [Deadline *(§2b — only when `due` is set)*](#deadline-2b--only-when-due-is-set) · [Background](#background) · [Acceptance criteria](#acceptance-criteria) · [Tasks](#tasks) · [Dev notes](#dev-notes) · [Verification commands](#verification-commands) · [Changelog entry](#changelog-entry) · [Implementation notes](#implementation-notes) · [Files modified](#files-modified) · [Cross-references](#cross-references) · [3. Per-section guidance](#3-per-section-guidance) · [4. Filled mini-example (condensed)](#4-filled-mini-example-condensed) · [Goal](#goal-1) · [Background](#background-1) · [Acceptance criteria](#acceptance-criteria-1) · [Tasks](#tasks-1) · [Dev notes](#dev-notes-1) · [Verification commands](#verification-commands-1) · [Changelog entry](#changelog-entry-1) · [Implementation notes](#implementation-notes-1) · [Files modified](#files-modified-1) · [Cross-references](#cross-references-1)
+**Contents**: [1. Section index — what's required vs optional](#1-section-index--whats-required-vs-optional) · [2. Full template skeleton](#2-full-template-skeleton) · [3. Per-section guidance](#3-per-section-guidance) · [4. Filled mini-example (condensed)](#4-filled-mini-example-condensed)
 
 ---
 
@@ -57,7 +57,7 @@ points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md 
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
 due:                       # OPTIONAL — hard deadline from OUTSIDE the sprint cadence (contract / demo / audit date), bare YYYY-MM-DD. Leave EMPTY when "this sprint" is the only requirement — sprint.end is NOT inherited. Explain the date in §Deadline, never in this value.
 version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
-prd_ref: [FR-N]            # PRD Functional Requirements this story materializes — list of bare IDs only (RULE-17). FR-N / NFR-N here; AD-N goes in arch_ref. See references/frontmatter-spec.md.
+prd_ref: [FR-N]            # PRD Functional Requirements this story materializes — list of bare IDs only (RULE-17). FR-N / NFR-N here; AD-N goes in arch_ref. See [`frontmatter-spec.md`](../frontmatter-spec.md).
 arch_ref: [AD-N]           # OPTIONAL — ARCHITECTURE.md Architecture Decisions this story materializes (list of AD-N). Omit if none.
 depends_on: [US-X.Y]       # OPTIONAL — other stories whose artifacts this story consumes (list of US-X.Y). Omit if none. Cross-story narrative belongs in §7.
 assignee:                  # MANDATORY (RULE-15): the commit author's GitHub LOGIN — `gh api repos/{owner}/{repo}/commits/<sha> --jq .author.login`. NOT `git log --format=%an` (that is git user.name, which RULE-15 forbids) and NOT the session user.
@@ -301,7 +301,7 @@ per file explaining what changed and why — not just what was added.>
 - `id` MUST match the filename prefix: `US-1.16-...md` → `id: US-1.16`.
   RULE-6 enforces this.
 - `epic` MUST match an existing `EPIC-N.md` and the story MUST be listed
-  in that epic's Stories table. `agile-sync-up.mjs` validates this.
+  in that epic's Stories table. `koni-docs sync` validates this.
 - `status` lifecycle: `backlog → ready → in-progress → review → done`.
   `blocked` is a sub-state of `in-progress` (document the reason in
   Implementation notes). `deprecated` is a terminal state for stories
