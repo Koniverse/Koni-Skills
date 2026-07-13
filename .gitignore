@@ -10,3 +10,7 @@ examples/
 
 # EnterWorktree-managed isolated workspaces. Local-only; do not commit.
 .claude/worktrees/
+# >>> koni-harness >>>
+.koni-harness/loop-state
+.koni-harness/worktrees/
+# <<< koni-harness <<<

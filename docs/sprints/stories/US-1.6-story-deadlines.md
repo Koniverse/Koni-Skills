@@ -54,6 +54,28 @@ about slipping is a gate that teaches people to delete the date.
 Design spec:
 [2026-07-13-koni-docs-story-deadlines-design.md](../../superpowers/specs/2026-07-13-koni-docs-story-deadlines-design.md).
 
+**Lessons applied**: read at Frame from [LESSONS.md](../../LESSONS.md) —
+
+- **§12 — the doc layer is only trustworthy if every field is true at write time.**
+  The decisive constraint on this design. It is why `due` has no fallback to
+  `sprint.end` (an inherited deadline is a field that is *not* true — nobody
+  promised that date to anyone) and why moving a `due` requires a CONTEXT entry
+  rather than a silent edit that would let STATUS.md report a slipped story as
+  on-track.
+- **§13 + §7 — one story = one deliverable; a story is not a release.** The work
+  spans the CLI *and* the skill docs, and the temptation was to split it into
+  "add the field" + "wire the tooling". A field nobody surfaces is a dead field,
+  so schema + status + validate + docs ship as one story.
+- **§10 — a machine-parsed contract written in prose breeds silent data loss.**
+  `due` is parsed by code, so the contract is frozen as an exact regex
+  (`^\d{4}-\d{2}-\d{2}$`) with the accepted-forms behaviour pinned by tests,
+  not described in prose. This lesson is also what made me test the *real* YAML
+  loader with the exact syntax an author types — which is how the rollover bug
+  and the broken `sprintSchema` surfaced at all (now §16).
+- **§4 — `version_shipped` is bare semver.** Followed: `0.39.0`, no `v`.
+- **§14 / §15 — read the contract at entry, cite it, let review confirm.** This
+  block is that citation.
+
 ## Acceptance criteria
 
 - [x] **AC-1** — **Given** a story with `due: 2026-07-20`, **When**
