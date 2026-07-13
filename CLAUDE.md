@@ -13,7 +13,7 @@ This file holds only the Claude-Code activation surface for the
 koni-docs:
   plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W27     # active 2026-06-29 → 2026-07-05 (the QC-intelligence drive: koni-qc US-5.1→US-5.10 v0.16.0→v0.34.0 + US-3.8 harness parallelism + US-6.1 agent monitoring; ships FR-26→FR-37. W26 closed 06-28 at 3 stories/24 pts — see CONTEXT D32)
+  active_sprint: sprint-2026-W29     # active 2026-07-13 → 2026-07-19 (story deadlines: US-1.6 ships FR-38 at v0.39.0 — a `due` date distinct from the sprint cadence, sparse by design and non-blocking; see CONTEXT D37. W28 not opened: nothing shipped that week. W27 closed 07-05 at 12 stories/42 pts)
   version_file: VERSION              # path to semver file
 
 > **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.

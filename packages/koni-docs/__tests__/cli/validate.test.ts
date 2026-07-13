@@ -44,5 +44,51 @@ test('validate: --json emits structured output', () => {
   assert.equal(r.status, 0);
   const parsed = JSON.parse(r.stdout);
   assert.equal(parsed.ok, true);
-  assert.deepEqual(parsed.summary, { ref: 0, fr: 0 });
+  assert.deepEqual(parsed.summary, { ref: 0, fr: 0, dueMalformed: 0, overdue: 0 });
+});
+
+/** A story in EPIC-1 whose only interesting property is its `due` value. */
+function writeStoryWithDue(docs: string, id: string, dueYaml: string, status = 'in-progress'): void {
+  writeFileSync(join(docs, 'sprints', 'stories', `${id}-dated.md`), `---
+id: ${id}
+title: "Dated"
+epic: EPIC-1
+status: ${status}
+priority: P1
+points: 1
+due: ${dueYaml}
+---
+
+## Goal
+
+Dated story.
+`);
+}
+
+test('validate: a due date that is not a date is an error', () => {
+  const docs = freshDocs();
+  writeStoryWithDue(docs, 'US-1.3', '"end of July"');
+  const r = runCli(['validate', '--docs-path', docs]);
+  assert.equal(r.status, 1, `stdout: ${r.stdout}`);
+  assert.match(r.stdout, /malformed due date/);
+  assert.match(r.stdout, /US-1\.3/);
+});
+
+test('validate: an overdue story warns but does NOT fail the run', () => {
+  const docs = freshDocs();
+  writeStoryWithDue(docs, 'US-1.3', '2020-01-01');
+  const r = runCli(['validate', '--docs-path', docs]);
+  // The whole point of the chosen enforcement level: deadlines inform, they do
+  // not block. A missed date must never wedge someone's commit.
+  assert.equal(r.status, 0, `stdout: ${r.stdout}`);
+  assert.match(r.stdout, /overdue story/);
+  assert.match(r.stdout, /US-1\.3/);
+});
+
+test('validate: a shipped story past its due date is not overdue', () => {
+  const docs = freshDocs();
+  writeStoryWithDue(docs, 'US-1.3', '2020-01-01', 'done');
+  const r = runCli(['validate', '--docs-path', docs, '--json']);
+  assert.equal(r.status, 0);
+  assert.equal(JSON.parse(r.stdout).summary.overdue, 0);
 });

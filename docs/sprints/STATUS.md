@@ -1,8 +1,12 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-06-30 10:13:25 UTC
-> Total stories: 50
+> Last generated: 2026-07-13 08:40:31 UTC
+> Total stories: 57
+
+## ⏰ Deadlines (0)
+
+_No stories carry an explicit deadline._
 
 ## 📋 Backlog (0)
 
@@ -20,22 +24,24 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (50)
+## ✅ Done (57)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
 | US-1.1 | Koni-docs skill — initial release (v0.1.0) | EPIC-1 | P0 | 13 | sprint-2026-W19 | saltict |
-| US-1.2 | Add file-extracted active-context pattern to koni-docs | EPIC-1 | P0 | 3 | sprint-2026-W21 | saltict |
-| US-1.3 | Add RULE-15: assignee = GitHub login (never git user.name) | EPIC-1 | P0 | 2 | sprint-2026-W21 | saltict |
-| US-1.4 | Document AGENTS-canonical / CLAUDE-pointer convention in skill | EPIC-1 | P1 | 1 | sprint-2026-W21 | saltict |
+| US-1.2 | Add file-extracted active-context pattern to koni-docs | EPIC-1 | P0 | 3 | sprint-2026-W22 | saltict |
+| US-1.3 | Add RULE-15: assignee = GitHub login (never git user.name) | EPIC-1 | P0 | 2 | sprint-2026-W22 | saltict |
+| US-1.4 | Document AGENTS-canonical / CLAUDE-pointer convention in skill | EPIC-1 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-1.5 | Real-world template + script audit (Koni-Finance-Final + senti_quant) | EPIC-1 | P0 | 8 | sprint-2026-W22 | saltict |
-| US-2.1 | Bootstrap docs/ scaffolding on Koni-Skills | EPIC-2 | P0 | 5 | sprint-2026-W21 | saltict |
-| US-2.2 | Wire koni-docs integration into CLAUDE.md + AGENTS.md (Pattern B) | EPIC-2 | P0 | 3 | sprint-2026-W21 | saltict |
-| US-2.3 | Seed VERSION + CHANGELOG.md from git history | EPIC-2 | P1 | 2 | sprint-2026-W21 | saltict |
-| US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W21 | saltict |
+| US-1.6 | Story deadlines — a `due` date beside the sprint cadence | EPIC-1 | P1 | 3 | sprint-2026-W29 | jindo9986 |
+| US-2.1 | Bootstrap docs/ scaffolding on Koni-Skills | EPIC-2 | P0 | 5 | sprint-2026-W22 | saltict |
+| US-2.2 | Wire koni-docs integration into CLAUDE.md + AGENTS.md (Pattern B) | EPIC-2 | P0 | 3 | sprint-2026-W22 | saltict |
+| US-2.3 | Seed VERSION + CHANGELOG.md from git history | EPIC-2 | P1 | 2 | sprint-2026-W22 | saltict |
+| US-2.4 | Apply AGENTS-canonical / CLAUDE-pointer convention to Koni-Skills | EPIC-2 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-3.1 | Define plugin-skill pattern + ship koni-nextjs reference | EPIC-3 | P1 | 3 | sprint-2026-W26 | jindo9986 |
 | US-3.2 | koni-setup — Koniverse project bootstrapper & onboarder skill (first non-docs skill) | EPIC-3 | P1 | 5 | sprint-2026-W26 | jindo9986 |
 | US-3.3 | koni-harness — portable agentic-loop harness (gate + loop-runner + context-loader + sprint-sequencer + session-adapters) | EPIC-3 | P1 | 16 | sprint-2026-W26 | jindo9986 |
+| US-3.8 | koni-harness parallel orchestration — multi-agent sprint swarm + within-story fan-out | EPIC-3 | P1 | 3 | sprint-2026-W27 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -71,9 +77,14 @@ _No stories_
 | US-4.34 | Viewer `/project` Warning view — required-field validator (replace filter-only impl) | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
 | US-4.35 | Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim | EPIC-4 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-4.36 | Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort | EPIC-4 | P1 | 2 | sprint-2026-W22 | saltict |
-| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill | EPIC-5 | P1 | 5 | sprint-2026-W26 | jindo9986 |
-| US-5.2 | skill-grading — QC for skill artifacts, wired into the harness build/verify loop | EPIC-5 | P1 | 3 | sprint-2026-W26 | jindo9986 |
-| US-5.3 | test-organization — standard docs/tests taxonomy + scaffolding, synthesized from Senti-Quant | EPIC-5 | P1 | 3 | sprint-2026-W26 | jindo9986 |
+| US-5.1 | koni-qc — QC methodology & coverage-intelligence skill | EPIC-5 | P1 | 5 | sprint-2026-W27 | jindo9986 |
+| US-5.2 | skill-grading — QC for skill artifacts, wired into the harness build/verify loop | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
+| US-5.3 | test-organization — standard docs/tests taxonomy + scaffolding; round 2: standardize + enforce across the catalog (absorbs US-5.6) | EPIC-5 | P1 | 6 | sprint-2026-W27 | jindo9986 |
+| US-5.4 | unit-coverage — per-function unit-test process + Self-verify gate, below the AC↔TC matrix | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
+| US-5.5 | test-automation — the spec→test→run→report→sync→CI loop that makes koni-qc self-running | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
+| US-5.7 | whole-project QC — QA-tracking epic + Definition-of-Done + depth bar (from the ERP-02 learning note) | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
+| US-5.8 | koni-qc field absorption — exemplar bar, ERP 100%-drive hardening, field reorg + regression-learning loop (3 rounds; absorbs US-5.9 + US-5.10) | EPIC-5 | P1 | 11 | sprint-2026-W27 | jindo9986 |
+| US-6.1 | koni-agent-monitoring — content-free Claude Code usage reporter (client for ERP Agent Ops) | EPIC-6 | P1 | 5 | sprint-2026-W27 | jindo9986 |
 
 ## 🚫 Blocked (0)
 
@@ -91,8 +102,10 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 50
+- ✅ **Done**: 57
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
 ✓ WIP: 0/3 stories in-progress.
+
+✓ No overdue stories.

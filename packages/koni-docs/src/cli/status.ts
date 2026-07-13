@@ -1,9 +1,16 @@
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import type { Command } from 'commander';
-import { loadCorpus, getStories } from '../lib/index.ts';
-import type { MatterEntry } from '../lib/index.ts';
+import { loadCorpus, getStories, getDeadlines } from '../lib/index.ts';
+import type { Corpus, Deadline, DeadlineState, MatterEntry } from '../lib/index.ts';
 import { getGlobalOpts } from './global-opts.ts';
+
+/** A deadline within this many days of today counts as due-soon. */
+const DEFAULT_DUE_SOON_DAYS = 3;
+
+const DEADLINE_EMOJI: Record<DeadlineState, string> = {
+  overdue: '🔴', 'due-soon': '🟠', 'on-track': '🟢',
+};
 
 const STATUS_ORDER = ['backlog', 'ready', 'in-progress', 'review', 'done', 'blocked', 'deprecated'] as const;
 const STATUS_EMOJI: Record<string, string> = {
@@ -26,7 +33,48 @@ function semverIdCompare(a: string, b: string): number {
   return aMin - bMin;
 }
 
-function renderKanban(stories: MatterEntry[]): string {
+/**
+ * The `## ⏰ Deadlines` block. Rendered above the kanban columns: a story that
+ * owes someone a date is the first thing worth seeing.
+ *
+ * Only stories carrying an explicit `due` appear. Sprint end dates are NOT
+ * inherited — see lib/deadlines.ts for why the noise would defeat the point.
+ */
+function renderDeadlines(deadlines: Deadline[]): string[] {
+  const lines: string[] = [];
+  lines.push('');
+  lines.push(`## ⏰ Deadlines (${deadlines.length})`);
+  lines.push('');
+
+  if (deadlines.length === 0) {
+    lines.push('_No stories carry an explicit deadline._');
+    return lines;
+  }
+
+  lines.push('| ID | Title | Due | Days | State | Assignee |');
+  lines.push('|---|---|---|---|---|---|');
+  for (const d of deadlines) {
+    const title = d.title.replace(/\|/g, '\\|');
+    // Signed, always — "+2" and "-3" read as a direction, "2" reads as a count.
+    const days = d.daysRemaining >= 0 ? `+${d.daysRemaining}` : String(d.daysRemaining);
+    lines.push(
+      `| ${d.id || '—'} | ${title || '—'} | ${d.due} | ${days} | ${DEADLINE_EMOJI[d.state]} ${d.state} | ${d.assignee || '—'} |`,
+    );
+  }
+  return lines;
+}
+
+function renderDeadlineSummary(deadlines: Deadline[], dueSoonDays: number): string {
+  const overdue = deadlines.filter(d => d.state === 'overdue').length;
+  const dueSoon = deadlines.filter(d => d.state === 'due-soon').length;
+  if (overdue === 0 && dueSoon === 0) return '✓ No overdue stories.';
+  const parts: string[] = [];
+  if (overdue > 0) parts.push(`${overdue} overdue`);
+  if (dueSoon > 0) parts.push(`${dueSoon} due within ${dueSoonDays} day${dueSoonDays === 1 ? '' : 's'}`);
+  return `⚠️  **Deadlines**: ${parts.join(' · ')}.`;
+}
+
+function renderKanban(stories: MatterEntry[], deadlines: Deadline[], dueSoonDays: number): string {
   const grouped: Record<string, MatterEntry[]> = {};
   for (const s of STATUS_ORDER) grouped[s] = [];
   for (const story of stories) {
@@ -50,6 +98,8 @@ function renderKanban(stories: MatterEntry[]): string {
   lines.push('> **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).');
   lines.push(`> Last generated: ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC`);
   lines.push(`> Total stories: ${stories.length}`);
+
+  lines.push(...renderDeadlines(deadlines));
 
   for (const status of STATUS_ORDER) {
     const bucket = grouped[status]!;
@@ -82,27 +132,60 @@ function renderKanban(stories: MatterEntry[]): string {
   const wip = grouped['in-progress']!.length;
   lines.push('');
   lines.push(wip > 3 ? `⚠️  **WIP limit exceeded**: ${wip} stories in-progress (limit: 3).` : `✓ WIP: ${wip}/3 stories in-progress.`);
+  lines.push('');
+  lines.push(renderDeadlineSummary(deadlines, dueSoonDays));
   return lines.join('\n') + '\n';
+}
+
+interface StatusFlags {
+  dueSoonDays: string;
+}
+
+/** Rejects `--due-soon-days garbage` / `-1` loudly instead of silently meaning 0. */
+function parseDueSoonDays(raw: string): number {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 0) {
+    console.error(`✗ --due-soon-days must be a non-negative integer (got "${raw}")`);
+    process.exit(2);
+  }
+  return n;
+}
+
+export function renderStatus(corpus: Corpus, today: Date, dueSoonDays: number): string {
+  const stories = getStories(corpus);
+  const deadlines = getDeadlines(corpus, today, dueSoonDays);
+  return renderKanban(stories, deadlines, dueSoonDays);
 }
 
 export function registerStatus(program: Command): void {
   program
     .command('status')
     .description('Regenerate sprints/STATUS.md from story frontmatter')
-    .action(function (this: Command) {
+    .option(
+      '--due-soon-days <n>',
+      'a story due within this many days is flagged due-soon',
+      String(DEFAULT_DUE_SOON_DAYS),
+    )
+    .action(function (this: Command, cmdOpts: StatusFlags) {
       const opts = getGlobalOpts(this);
+      const dueSoonDays = parseDueSoonDays(cmdOpts.dueSoonDays);
       const corpus = loadCorpus(opts.docsPath);
       const stories = getStories(corpus);
-      const out = renderKanban(stories);
+      const deadlines = getDeadlines(corpus, new Date(), dueSoonDays);
+      const overdue = deadlines.filter(d => d.state === 'overdue').length;
+      const out = renderKanban(stories, deadlines, dueSoonDays);
       const outPath = join(opts.docsPath, 'sprints', 'STATUS.md');
       if (opts.dryRun) {
-        if (opts.json) console.log(JSON.stringify({ ok: true, dryRun: true, storyCount: stories.length }));
+        if (opts.json) console.log(JSON.stringify({ ok: true, dryRun: true, storyCount: stories.length, deadlineCount: deadlines.length, overdue }));
         else console.log(`(dry run) would write ${outPath} (${stories.length} stories)`);
         return;
       }
       if (!existsSync(dirname(outPath))) mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, out, 'utf-8');
-      if (opts.json) console.log(JSON.stringify({ ok: true, path: outPath, storyCount: stories.length }));
-      else console.log(`✓ wrote ${outPath} (${stories.length} stories)`);
+      if (opts.json) console.log(JSON.stringify({ ok: true, path: outPath, storyCount: stories.length, deadlineCount: deadlines.length, overdue }));
+      else {
+        console.log(`✓ wrote ${outPath} (${stories.length} stories)`);
+        if (overdue > 0) console.log(`⚠️  ${overdue} story(ies) overdue — see the Deadlines section.`);
+      }
     });
 }

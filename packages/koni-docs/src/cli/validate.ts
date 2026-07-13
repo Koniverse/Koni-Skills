@@ -1,11 +1,14 @@
 import type { Command } from 'commander';
-import { loadCorpus, validateRefs, validateFrRefs } from '../lib/index.ts';
+import { loadCorpus, validateRefs, validateFrRefs, findMalformedDue, getDeadlines } from '../lib/index.ts';
 import { getGlobalOpts } from './global-opts.ts';
 
 interface ValidateFlags {
   json: boolean;
   includeWarnings: boolean;
 }
+
+/** Mirrors `status --due-soon-days`; only used to label warnings here. */
+const DUE_SOON_DAYS = 3;
 
 export function registerValidate(program: Command): void {
   program
@@ -19,22 +22,33 @@ export function registerValidate(program: Command): void {
       const refErrors = validateRefs(corpus);
       const frMissing = validateFrRefs(corpus);
 
-      const errorCount = refErrors.length + frMissing.length;
+      // A `due` that is not a real date is a schema violation — an error.
+      const dueMalformed = findMalformedDue(corpus);
+      // A story that is merely past its date is news, not a defect. It prints,
+      // but it must NOT fail the build: deadlines inform, they do not block.
+      const overdue = getDeadlines(corpus, new Date(), DUE_SOON_DAYS)
+        .filter(d => d.state === 'overdue');
+
+      const errorCount = refErrors.length + frMissing.length + dueMalformed.length;
 
       if (cmdOpts.json || opts.json) {
         console.log(JSON.stringify({
           ok: errorCount === 0,
           refErrors,
           frMissing,
+          dueMalformed,
+          overdue,
           summary: {
             ref: refErrors.length,
             fr: frMissing.length,
+            dueMalformed: dueMalformed.length,
+            overdue: overdue.length,
           },
         }, null, 2));
       } else {
         console.log(`koni-docs validate — ${opts.docsPath}`);
         console.log('');
-        if (refErrors.length === 0 && frMissing.length === 0) {
+        if (errorCount === 0) {
           console.log('  ✓ all references resolve');
         } else {
           if (refErrors.length > 0) {
@@ -48,6 +62,22 @@ export function registerValidate(program: Command): void {
             for (const m of frMissing) {
               console.log(`    - ${m.id} (${m.source}): missing ${m.missingFr.join(', ')} in PRD Functional Requirements`);
             }
+          }
+          if (dueMalformed.length > 0) {
+            console.log(`  ✗ ${dueMalformed.length} malformed due date(s):`);
+            for (const d of dueMalformed) {
+              const why = d.reason === 'impossible_date'
+                ? 'no such calendar date'
+                : 'not a YYYY-MM-DD date — prose belongs in the body';
+              console.log(`    - ${d.id} (${d.source}): due="${d.due}" (${why})`);
+            }
+          }
+        }
+        if (overdue.length > 0) {
+          console.log('');
+          console.log(`  ⚠ ${overdue.length} overdue story(ies) — warning only, does not fail validate:`);
+          for (const d of overdue) {
+            console.log(`    - ${d.id}: due ${d.due} (${Math.abs(d.daysRemaining)} day(s) ago, status ${d.status})`);
           }
         }
       }

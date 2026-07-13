@@ -503,3 +503,38 @@ discover**. Enumerate decisions the contract governs (the component × state mat
 Corollary for the write side: a doc is finished when the next reader can act
 without opening the diff — docs written "to pass" are D32's class with a green
 checkmark (the doc-completeness bar, D36).
+
+---
+
+## 16. YAML eats a bad date before your validator ever sees it — and the same rule was silently rejecting every real file
+
+**What happened**: while adding the `due` field (US-1.6), two things surfaced from
+one root cause. First, a test asserting that `due: 2026-02-31` is rejected as an
+impossible date *failed*: js-yaml parses an unquoted date as a timestamp and
+**silently rolls it over** to `2026-03-03`. The typo is destroyed a layer beneath
+the tooling — no downstream validator can ever catch it, because by the time
+koni-docs reads the frontmatter the original text is gone. Only the quoted form
+(`due: "2026-02-31"`) survives as a string.
+
+Second, and worse: the same coercion means an unquoted `start: 2026-06-29` arrives
+as a JS `Date`, not a string — so `sprintSchema`'s `^\d{4}-\d{2}-\d{2}$` **string**
+regex had been rejecting **every sprint file in the repo**. The schema had been
+wrong for months and nobody noticed, because nothing failed loudly: the validator
+simply never matched, and the corpus round-tripped `2026-06-29` into
+`2026-06-29T00:00:00.000Z` in the files themselves — the evidence was sitting in
+git, visible, unread.
+
+**The lesson**: a schema does not validate the file, it validates **whatever the
+parser handed you** — and a parser is free to coerce, roll over, and reinvent your
+value before you get it. Two habits follow. (1) When adding a typed field, write a
+test that round-trips through the *real* loader with the *exact* syntax an author
+will type — not a hand-built object. The unit test that constructs
+`{due: '2026-02-31'}` passes and proves nothing. (2) When a schema rule never
+fires, that is not evidence it is satisfied; it is evidence worth checking. A
+validator that has silently matched nothing for months looks identical to one that
+has found no problems.
+
+**Corollary**: when the parser can destroy information (an impossible date rolled
+over), no amount of downstream rigor recovers it. Say so in the docs and pin the
+behaviour with a test that asserts the rollover, rather than shipping a validator
+that quietly promises a guarantee it cannot keep.

@@ -12,7 +12,7 @@
  * common "update one cell" path). See packages/koni-docs/src/lib/markdown/tables.ts.
  */
 
-export const KONI_DOCS_LIB_VERSION = '0.8.1';
+export const KONI_DOCS_LIB_VERSION = '0.9.0';
 
 // Core types
 export type { Doc, MatterEntry, Corpus } from './types.ts';
@@ -61,6 +61,12 @@ export * as Schemas from './schemas/index.ts';
 // Refs
 export { validateRefs, validateFrRefs, listChildrenOf, listReferrersTo } from './refs.ts';
 export type { RefKind, RefValidationResult, FrRefMissing } from './refs.ts';
+
+// Deadlines
+export {
+  getDeadlines, findMalformedDue, normalizeDue, isValidIsoDate,
+} from './deadlines.ts';
+export type { Deadline, DeadlineState, MalformedDue } from './deadlines.ts';
 
 // Changelog
 export {

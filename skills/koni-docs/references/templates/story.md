@@ -24,6 +24,7 @@ tell *story size* from which sections are filled in.
 | --- | ------------------------------------ | -------------- | ------------------ | ---------------- |
 | 1   | Frontmatter                          | required       | required           | required         |
 | 2   | Goal                                 | required       | required           | required         |
+| 2b  | Deadline                             | required *iff* `due` is set | required *iff* `due` is set | required *iff* `due` is set |
 | 3   | Background                           | optional       | required           | required         |
 | 4   | Acceptance criteria                  | required       | required           | required         |
 | 5   | Tasks                                | required       | required           | required         |
@@ -51,6 +52,7 @@ status: backlog            # backlog | ready | in-progress | review | done | blo
 priority: P1               # P0 | P1 | P2 | P3
 points: 5                  # Fibonacci: 1 / 2 / 3 / 5 / 8 / 13 — see SKILL.md §3a-bis for scale + consult /sales-engineer or /marketing-ops on non-eng work
 sprint:                    # nullable while backlog; set to sprint-YYYY-WNN when committed
+due:                       # OPTIONAL — hard deadline from OUTSIDE the sprint cadence (contract / demo / audit date), bare YYYY-MM-DD. Leave EMPTY when "this sprint" is the only requirement — sprint.end is NOT inherited. Explain the date in §Deadline, never in this value.
 version_shipped:           # MANDATORY (RULE-16) when status → done; bare semver e.g. `0.3.1`, NEVER `v0.3.1`
 prd_ref: [FR-N]            # PRD Functional Requirements this story materializes — list of bare IDs only (RULE-17). FR-N / NFR-N here; AD-N goes in arch_ref. See references/frontmatter-spec.md.
 arch_ref: [AD-N]           # OPTIONAL — ARCHITECTURE.md Architecture Decisions this story materializes (list of AD-N). Omit if none.
@@ -85,6 +87,29 @@ the following decisions were locked into this story:
 Maps to the BMad "So that..." clause — articulate the value, not the
 mechanism. For platform / infrastructure stories, name the downstream
 stories that get to *stop worrying about* what this delivers.>
+
+## Deadline
+
+<ONLY when `due` is set in frontmatter. Omit the whole section otherwise.
+
+The frontmatter holds the bare date; this section holds everything a human
+needs to weigh it. Three things, in this order:
+
+1. **Who imposed the date** — the customer, the contract clause, the regulator,
+   the conference. A date nobody outside the team asked for is not a `due`.
+2. **What breaks if it slips** — the concrete consequence. "We'd look bad" is
+   not a consequence; "the quarterly review runs on stale numbers" is.
+3. **Every move of the date**, appended, never overwritten — old → new → why,
+   with the CONTEXT decision that authorized it.>
+
+**2026-07-20** — the day before the ACME quarterly review (MSA §7.2). Confirmed
+by their PM on 2026-07-08.
+
+If this slips, the review runs on last quarter's numbers, so the story cannot
+absorb a sprint carry-over.
+
+**Moved 2026-07-15 → 2026-07-20** on 2026-07-08 — ACME pushed the review by a
+week ([CONTEXT D34](../../CONTEXT.md)).
 
 ## Background
 
@@ -299,6 +324,18 @@ per file explaining what changed and why — not just what was added.>
   constraints), NEVER in frontmatter. See RULE-17 and
   [`frontmatter-spec.md`](../frontmatter-spec.md) for the full
   contract and migration playbook.
+- `due` *(optional)*: a hard deadline imposed from **outside** the sprint
+  cadence — a contract date, a customer demo, an audit window. A sprint is a
+  *rhythm*; `due` is a *commitment*. **Leave it empty when "this sprint" is the
+  only requirement** — `sprint:` already says that, and `sprint.end` is
+  deliberately NOT inherited. A `due` on every story turns the Deadlines
+  section into a second copy of the sprint board that nobody reads; the field
+  earns its power by being rare. The value is a bare `YYYY-MM-DD` and nothing
+  else — the reason for the date goes in §2b Deadline. Moving an existing `due`
+  requires a CONTEXT.md entry (old → new → why), because silently editing the
+  date erases the fact that the story missed it once. `koni-docs status` shows
+  overdue / due-soon / on-track in STATUS.md; `koni-docs validate` errors on a
+  non-date and warns (without blocking) on an overdue story.
 - `commit`: stays empty until the landing commit exists. Filled at
   pre-commit time (RULE-2). Never `pending`.
 - `assignee`: the person who **authored the work**, not whoever is writing

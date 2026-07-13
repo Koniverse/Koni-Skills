@@ -16,6 +16,56 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.39.0] — 2026-07-13 — koni-docs: story deadlines — a `due` date beside the sprint cadence — v0.39.0
+
+Ships **FR-38** ([US-1.6](sprints/stories/US-1.6-story-deadlines.md), [CONTEXT D37](CONTEXT.md)).
+koni-docs CLI **0.8.1 → 0.9.0**.
+
+A sprint is a *cadence* — it repeats, and `sprint.end` is where the week stops,
+not a promise made to anyone. A deadline is a *commitment* — a date imposed from
+outside that rhythm. koni-docs could express the first and never the second, so
+work carrying a contract date, a customer demo, or an audit window was invisible
+to every tool in the framework.
+
+### Added
+- **`due`** — optional story frontmatter field, a bare `YYYY-MM-DD` deadline
+  imposed from outside the sprint cadence. **No inheritance**: a story without
+  `due` has no deadline, and `sprint.end` is never a fallback. An implicit
+  deadline on every story would bury the two that carry a real one — the field
+  earns its power by being rare.
+- **`koni-docs status`**: a `## ⏰ Deadlines` section above the kanban columns
+  (🔴 overdue / 🟠 due-soon / 🟢 on-track, most overdue first), a deadline line in
+  the Summary, and `--due-soon-days <n>` (default 3). Quiet, not absent, when
+  nothing is dated. Derived state is recomputed every run — never stored, so it
+  cannot go stale.
+- **`koni-docs validate`**: `due` checking with two severities. A value that is
+  not a real date is an **error** (exit 1). A story merely past its date is a
+  **warning** that leaves the exit code alone — deadlines inform, they never
+  block a commit. A gate that punishes recording a slip teaches people to delete
+  the date.
+- `lib/deadlines.ts` — `getDeadlines`, `findMalformedDue`, `normalizeDue`,
+  `isValidIsoDate`, exported from `@koniverse/koni-docs/lib`.
+- Skill docs: frontmatter-spec §1.1 (the Iron Law extended from ID-typed to
+  date-typed fields) + §3.1 `due` row + §5.6/§5.7 anti-patterns; story template
+  §2b Deadline; sprint-system §Deadlines vs sprint cadence, including the rule
+  that **moving a `due` requires a CONTEXT entry** (old → new → why).
+
+### Fixed
+- `sprintSchema` had been rejecting **every real sprint file**. YAML parses an
+  unquoted `start: 2026-06-29` into a JS `Date`, which a `^\d{4}-\d{2}-\d{2}$`
+  *string* regex can never match — so the rule had silently matched nothing for
+  months. Both forms are now accepted. Same root cause as the `due` work; see
+  [LESSONS §16](LESSONS.md).
+
+### Known limits
+- An **unquoted** impossible date (`due: 2026-02-31`) is silently rolled over by
+  YAML to `2026-03-03` before koni-docs sees it; the typo cannot be recovered
+  downstream. Only the quoted form is caught. Documented and pinned by a test.
+- Deferred: `due_type` (hard/soft), `due_source`, epic/sprint-level deadlines,
+  and viewer rendering — one field until one field proves insufficient.
+
+---
+
 ## [0.38.0] — 2026-07-04 — design-first UI + the doc-completeness bar (refines FR-21 + FR-26) — v0.38.0
 
 Two user directives: (1) always learn from the project's own documents — LESSONS

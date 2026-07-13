@@ -1648,3 +1648,51 @@ the loop eats its own output).
 **Date**: 2026-07-04
 **Version**: 0.38.0
 **Reference**: [agentic-loop-standard.md](../skills/koni-harness/references/agentic-loop-standard.md) (design-first + doc-completeness callouts), [gate-catalog.md](../skills/koni-harness/references/gate-catalog.md) (§design-first), [design-first.sh](../skills/koni-harness/scripts/checks/design-first.sh), [whole-project-qc.md](../skills/koni-qc/references/whole-project-qc.md) §6, LESSONS §15, CHANGELOG [0.38.0].
+
+---
+
+### D37. A sprint is a cadence, a deadline is a commitment — `due` is sparse by design and never blocks a commit
+
+**Context**: user directive (2026-07-13) — sprints are weekly, but some tasks
+carry an externally-imposed date (contract, customer demo, audit window) and
+koni-docs had nowhere to record it. Time existed only as a *rhythm*
+(`sprint.start` / `sprint.end`) and as *bookkeeping* (`created` / `updated`).
+Neither expresses a promise made to someone.
+
+**Decision** (v0.39.0, US-1.6, ships FR-38):
+
+1. **Two kinds of time, kept apart.** A **sprint is a cadence** — it repeats, and
+   `sprint.end` is merely where the week stops; it is not a promise. A **`due` is
+   a commitment** — a date imposed from *outside* that rhythm. One optional story
+   field, a bare `YYYY-MM-DD`; the reason for the date lives in a `## Deadline`
+   body section, never in the frontmatter value.
+
+2. **No inheritance — an empty `due` means no deadline.** `sprint.end` is
+   explicitly *not* a fallback. The rejected alternative (every story inherits an
+   implicit deadline) would drag all twenty rows of a sprint into the Deadlines
+   view and bury the two dates that are real. The field earns its power by being
+   rare: a `due` on every story is a second copy of the sprint board, which is
+   the thing nobody reads.
+
+3. **Deadlines inform; they never block.** `koni-docs validate` **errors** on a
+   `due` that is not a real date (a schema violation, same class as a malformed
+   `prd_ref`) but only **warns** — exit code untouched — on a story merely past
+   its date. Rationale: a gate that punishes *recording* a slip teaches people to
+   delete the date instead of moving it. The gate would buy compliance and cost
+   the truth.
+
+4. **Moving a `due` requires a CONTEXT entry** (old → new → why). Silently
+   editing the date erases the fact that the story missed it once, and STATUS.md
+   would then report it as on-track. Same discipline as D32 for sprints: record
+   the slip, correct forward, never rewrite the past to look tidy.
+
+**Consequence**: `koni-docs status` renders `## ⏰ Deadlines` above the kanban
+(overdue / due-soon / on-track; `--due-soon-days`, default 3). Derived state is
+computed on every run from `due` + `status` + today, never stored, so it cannot
+go stale. Deferred deliberately: `due_type` (hard/soft), `due_source`,
+epic/sprint-level deadlines, and viewer rendering — one field until one field
+proves insufficient.
+
+**Date**: 2026-07-13
+**Version**: 0.39.0
+**Reference**: [US-1.6](sprints/stories/US-1.6-story-deadlines.md), [design spec](superpowers/specs/2026-07-13-koni-docs-story-deadlines-design.md), [sprint-system.md](../skills/koni-docs/references/sprint-system.md) §Deadlines vs sprint cadence, [frontmatter-spec.md](../skills/koni-docs/references/frontmatter-spec.md) §1.1, LESSONS §16, CHANGELOG [0.39.0].

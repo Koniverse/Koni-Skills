@@ -26,6 +26,29 @@ match the canonical regex for that thing. Period. The "I'll add a small
 clarifying note next to the ID" instinct is the bug — every such note
 becomes a parser failure the moment the field gets split.
 
+### 1.1 The same law for date-typed fields
+
+> **A date-typed field contains ONLY a bare `YYYY-MM-DD` date. Why the date
+> exists, who imposed it, and what happens if it slips belong in the document
+> body — never in the frontmatter value.**
+
+`created`, `updated`, and `due` are dates the tooling *computes with* — it
+subtracts them, sorts by them, and classifies against today. `due: end of July`
+and `due: 2026-07-20 (pending customer confirmation)` are exactly the same class
+of bug as `prd_ref: FR-94 (shared with EPIC-5)`: the value stops being a date
+the moment a human appends a thought to it.
+
+Two traps specific to dates:
+
+- **YAML rolls impossible dates over silently.** `due: 2026-02-31` is parsed as
+  a timestamp and becomes `2026-03-03` before koni-docs ever sees it — the typo
+  is destroyed a layer below the tooling, so no validator can catch it. Read the
+  date back after you write it.
+- **Bare dates round-trip into timestamps.** `2026-07-20` becomes
+  `2026-07-20T00:00:00.000Z` once a tool rewrites the file (this is why every
+  `sprint.start` in a live repo looks like that). Harmless — the CLI normalizes
+  both forms — but don't be surprised by the diff.
+
 ---
 
 ## 2. The four canonical ID spaces
@@ -70,6 +93,7 @@ Implementation notes.
 | `priority` | enum | recommended | `P0 \| P1 \| P2 \| P3` | |
 | `points` | scalar | recommended | `1 \| 2 \| 3 \| 5 \| 8 \| 13 \| ''` (Fibonacci) | `''` = unsized. |
 | `sprint` | scalar string | conditional | `^sprint-\d{4}-W\d{2}$` or `''` | Set when committed to a sprint. |
+| `due` | scalar string | optional | `^\d{4}-\d{2}-\d{2}$` or `''` | Hard deadline imposed from **outside** the sprint cadence. Empty = no deadline of its own; there is **no** fallback to `sprint.end`. Set it only when the date does not coincide with the sprint rhythm — see [`sprint-system.md` §Deadlines vs sprint cadence](sprint-system.md#deadlines-vs-sprint-cadence). |
 | `version_shipped` | scalar string | conditional | `^\d+\.\d+\.\d+$` (bare semver, no `v`) | MANDATORY when `status: done` (RULE-16). |
 | `prd_ref` | **list of strings** | optional | every entry MUST match `^FR-\d+$` or `^NFR-\d+$` | FR rows synced by `koni-docs sync`. **Do not put AD-N here** — use `arch_ref`. |
 | `arch_ref` | **list of strings** | optional | every entry MUST match `^AD-\d+$` | Architecture Decisions this story materializes. |
@@ -210,6 +234,44 @@ prd_ref:
 Yes, that's verbose. It's also accurate, greppable, and the only form the
 script can validate. If the epic owns 30+ FRs and the list is unwieldy,
 that's a signal the epic itself is too broad — split it.
+
+### 5.6 Prose-in-`due`
+
+```yaml
+# ❌ BROKEN — none of these are a date. `koni-docs validate` errors on all three.
+due: end of July
+due: 2026-07-20 (pending customer confirmation)
+due: before the Q3 audit
+
+# ✅ FIXED
+due: 2026-07-20
+```
+
+The qualifier moves into the body:
+
+```markdown
+## Deadline
+
+**2026-07-20** — the day before the ACME quarterly review (contract §7.2).
+Date confirmed by their PM on 2026-07-08. Slipping it means the review runs on
+last quarter's numbers, so this cannot absorb a carry-over.
+```
+
+### 5.7 A `due` that just restates the sprint end
+
+```yaml
+# ❌ NOISE — the story is already committed to a sprint that ends 2026-07-19.
+sprint: sprint-2026-W29
+due: 2026-07-19
+
+# ✅ FIXED — say it once.
+sprint: sprint-2026-W29
+due:
+```
+
+This is not a parser failure; it's a *signal* failure. `due` earns its place by
+being rare. Fill it on every story and the Deadlines section becomes a second
+copy of the sprint board, which is exactly the thing nobody reads.
 
 ---
 

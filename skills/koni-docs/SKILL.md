@@ -128,6 +128,12 @@ See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugi
 3. **Find or create the story** in `docs/sprints/stories/`:
    - Flip `status:` → `in-progress`
    - Set `sprint:` to the active sprint id
+   - Set `due:` **only** if the work owes someone a date from *outside* the
+     sprint rhythm (contract, customer demo, audit, filing). "Must land this
+     sprint" is not a `due` — `sprint:` already says that, and `sprint.end` is
+     never inherited. When you do set it, write the date in frontmatter and the
+     *reason* in the story's `## Deadline` section. See
+     [`sprint-system.md` §Deadlines vs sprint cadence](references/sprint-system.md).
    - If no story exists, create a stub using the full story template (`references/templates/story.md`) before starting.
    - **Domain-skill consultation for sizing** (mandatory for non-engineering
      projects — growth / marketing / sales-ops / content workspaces): before
@@ -206,6 +212,7 @@ Run through every item before committing:
 [ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
 [ ] Story file: status → done, version_shipped set, Tasks all [x]
+[ ] No story overdue-and-silent — close it, or move `due` WITH a CONTEXT.md entry (old → new → why)
 [ ] npx koni-docs sync --docs-path docs/  (5-layer sync)
 [ ] npx koni-docs status --docs-path docs/  (STATUS.md — RULE-5)
 [ ] CLAUDE.md Active Context block updated (see §4)
@@ -400,13 +407,13 @@ Should report the version you just installed. If `--version` shows an older numb
 
 | Subcommand | Since | Purpose | Example |
 |---|---|---|---|
-| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5) | `koni-docs status` |
+| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Since v0.9.0 also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
 | `sync` | v0.4 | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD section lookup uses label (`## Functional Requirements`) with legacy `## 8.` fallback (v0.7.2) | `koni-docs sync --story US-X.Y` |
 | `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
 | `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
 | `backfill-commits` | v0.4 | Replace `pending` commit SHAs in CHANGELOG with real SHAs from `git log` | `koni-docs backfill-commits` |
 | `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
-| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Exits non-zero on any error. | `koni-docs validate --json` |
+| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Since v0.9.0 also checks `due` dates: a value that is not a real date is an **error**; a story merely past its date is a **warning** that does *not* change the exit code — deadlines inform, they never block a commit. Exits non-zero on any error. | `koni-docs validate --json` |
 
 ### 7.5 Real-world usage — the four common loops
 

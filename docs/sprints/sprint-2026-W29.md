@@ -1,0 +1,34 @@
+---
+id: sprint-2026-W29
+status: in-progress
+start: 2026-07-13
+end: 2026-07-19
+goal: >-
+  Teach koni-docs to hold a calendar commitment: ship story deadlines (US-1.6,
+  FR-38, v0.39.0) — a `due` field distinct from the sprint cadence, surfaced in
+  STATUS.md and warned about (never blocked) by validate.
+---
+## Sprint scope
+
+| US     | Title                                              | Epic   | Pri | Points | Status | Ship    | Story file                                                     |
+| ------ | -------------------------------------------------- | ------ | --- | ------ | ------ | ------- | -------------------------------------------------------------- |
+| US-1.6 | Story deadlines — a `due` date beside the cadence  | EPIC-1 | P1  | 3      | ✅ done | v0.39.0 | [stories/US-1.6-story-deadlines.md](stories/US-1.6-story-deadlines.md) |
+
+**Total**: 1 story / 3 pts / 1 contributor.
+
+## Goal detail
+
+koni-docs could express a *rhythm* (`sprint.start` / `sprint.end`) and
+*bookkeeping* (`created` / `updated`), but never a *commitment*. Work carrying a
+contract date, a customer demo, or an audit window had nowhere to record it, so
+no tool could surface it before it was missed.
+
+US-1.6 adds `due` — deliberately sparse (no inheritance from `sprint.end`) and
+deliberately non-blocking (a missed date warns, it never fails a commit).
+
+## Notes
+
+Sprint W28 (2026-07-06 → 07-12) was not opened: no work shipped in that week.
+Recording the gap rather than back-dating W29's work into it — see
+[CONTEXT D32](../CONTEXT.md) and [LESSONS §12](../LESSONS.md) for why sprints are
+anchored to real ship dates and corrected forward, never rewritten to look tidy.

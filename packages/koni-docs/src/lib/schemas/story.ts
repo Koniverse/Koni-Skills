@@ -11,6 +11,11 @@ export const storySchema = z.object({
     z.literal(5), z.literal(8), z.literal(13),
   ]).optional(),
   sprint: z.union([z.string().regex(/^sprint-\d{4}-W\d{2}$/), z.literal('')]).optional(),
+  // Hard deadline imposed from outside the sprint cadence. Empty = no deadline
+  // of its own; there is no fallback to sprint.end (see lib/deadlines.ts).
+  // `z.date()` is not sloppiness: js-yaml parses an unquoted `2026-07-20` into a
+  // JS Date, so both forms reach the schema from real corpora.
+  due: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.literal(''), z.date()]).optional(),
   version_shipped: z.union([z.string().regex(/^v?\d+\.\d+\.\d+$/), z.literal('')]).optional(),
   prd_ref: z.union([z.string(), z.array(z.string())]).optional(),
   arch_ref: z.union([z.string(), z.array(z.string())]).optional(),
@@ -28,6 +33,7 @@ export const STORY_DEFAULTS: Record<string, unknown> = {
   priority: 'P2',
   points: '',
   sprint: '',
+  due: '',
   version_shipped: '',
   prd_ref: [],
   arch_ref: [],

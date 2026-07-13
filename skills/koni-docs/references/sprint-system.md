@@ -56,6 +56,54 @@ To minimize confusion:
   Filed as followup for a future story (auto-detect pad-style from
   existing epic files).
 
+## Deadlines vs sprint cadence
+
+A sprint and a deadline are different kinds of time, and keeping them apart is
+the whole of this section.
+
+- **Sprint = cadence.** It repeats. `sprint.end` is where the week stops. It is
+  not a promise made to anyone outside the team.
+- **`due` = commitment.** A specific date imposed from *outside* the rhythm: a
+  contract date, a customer demo, an audit window, a legal filing.
+
+**Set `due` only when the date does not coincide with the sprint rhythm.** A
+story that merely has to land "this sprint" already says so through `sprint:`.
+Leave `due` empty. There is deliberately **no** inheritance from `sprint.end` —
+if every story carried an implicit deadline, the two that carry a real one would
+be buried under twenty rows of noise. Deadlines stay rare so the warning keeps
+its weight.
+
+The *reason* for the date goes in a `## Deadline` section in the story body:
+who imposed it, what breaks if it slips. The frontmatter holds the bare date and
+nothing else (see [`frontmatter-spec.md` §1.1](frontmatter-spec.md)).
+
+### Derived state — never stored
+
+Only `due` is authored. `koni-docs status` classifies it fresh on every run
+against `status` and today, so it cannot go stale:
+
+| State | Condition |
+|---|---|
+| 🔴 `overdue` | `due` is in the past and the story is still open |
+| 🟠 `due-soon` | `due` falls within the next N days (N = 3 by default; `--due-soon-days`) |
+| 🟢 `on-track` | `due` is further out than N days |
+| — | story is `done` or `deprecated` — a shipped story cannot be late |
+
+`STATUS.md` grows a `## ⏰ Deadlines` section above the kanban columns.
+`koni-docs validate` **errors** on a `due` that is not a real date (a schema
+violation) and **warns**, without failing, on a story that is merely past its
+date. Deadlines inform; they never block a commit.
+
+### Moving a deadline leaves a trace
+
+> **Every change to an existing `due` requires a CONTEXT.md entry**: old date →
+> new date → why.
+
+Editing `due` from `2026-07-10` to `2026-07-24` in silence erases the fact that
+the story missed its date once, and STATUS.md will then cheerfully report it as
+on-track. This is the same discipline the framework already applies to sprints —
+record the slip, correct forward, never rewrite the past to look clean.
+
 ## Scripts reference
 
 The `@koniverse/koni-docs` CLI provides all automation. Install once per project:
@@ -66,7 +114,7 @@ npm install --save-dev @koniverse/koni-docs
 
 | Command | What it does | When to run |
 |---|---|---|
-| `npx koni-docs status --docs-path docs/` | Regenerate `STATUS.md` from all story frontmatter | Before every commit that changes story status |
+| `npx koni-docs status --docs-path docs/` | Regenerate `STATUS.md` from all story frontmatter, including the `## ⏰ Deadlines` section (`--due-soon-days <n>`, default 3) | Before every commit that changes story status |
 | `npx koni-docs sync --docs-path docs/` | Propagate story status upward — updates EPIC table, PRD `Functional Requirements` row, and sprint scope | After story status changes |
 | `npx koni-docs inject-tasks --docs-path docs/ --story US-X.Y` | Regenerate Tasks section from Acceptance Criteria (AC is canonical) | When AC changes |
 | `npx koni-docs backfill-fields --docs-path docs/` | Backfill `assignee`/`commit`/`sprint` on existing stories | When setting up sprint system in existing project |
@@ -103,6 +151,7 @@ Run through every item before committing:
 [ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
 [ ] Story file: status → done, version_shipped set, Tasks all [x]
+[ ] No story is overdue-and-silent — either close it, or move `due` WITH a CONTEXT.md entry
 [ ] npx koni-docs sync --docs-path docs/  (propagates AC to EPIC + PRD)
 [ ] npx koni-docs status --docs-path docs/  (regenerates STATUS.md — RULE-5)
 [ ] CLAUDE.md Active Context block updated (T1-T7 as applicable)
