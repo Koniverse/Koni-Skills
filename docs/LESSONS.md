@@ -693,3 +693,44 @@ for p in glob.glob('skills/**/*.md', recursive=True):
             print('DEAD', p, m.group(1))
 PY
 ```
+
+---
+
+## 20. A guard you wrote yourself is a hypothesis until you try to break it — and a rule with no number cannot be grepped
+
+**What happened**: after LESSONS §19 (a validator that shared its author's blind
+spot certified 150 dead anchors as green), I shipped a real checker. An
+author-blind reviewer then found it **still reported a false green**: it could see
+`` `file.md` §Section `` but not the *linked* form `` [`file.md`](file.md) §Section ``
+— which the skill used **nine times**, one of them genuinely dead, on the See line
+of a BLOCKER rule. Same defect class, one layer up. A second reviewer found the
+verdict changed depending on which directory I invoked it from.
+
+Meanwhile, three rules I had written about the `due` field — *set it only for an
+external commitment; keep the value a bare date; never move it silently* — held
+GREEN under adversarial pressure, and a grader still marked one RED. Why: they
+were **not numbered rules**. They lived in prose in a reference file. `grep RULE-`
+found nothing. And the only surface an agent reads at commit time phrased the
+obligation as *"no story overdue-and-silent"* — conditioned on the story being
+**already late**, so an agent proactively pushing a date read straight past it.
+
+**Two lessons, and they are the same lesson.**
+
+1. **A guard is a hypothesis until you try to break it.** Running your checker on
+   a clean corpus and getting `0` proves nothing — a checker that always prints 0
+   also prints 0. Before trusting it, *plant the defects it claims to catch* and
+   confirm each one fails: a dead link, a dead anchor, a dead section pointer, a
+   named script that does not exist. Then plant a legitimate case and confirm it
+   passes. Silence is only evidence once you have proven the thing can speak.
+2. **An obligation that is not addressable is not enforceable.** A rule must have
+   a number (so `grep RULE-` finds it), live where the rule is *read* (§18), state
+   its trigger unconditionally (not "when it has already gone wrong"), and — where
+   possible — carry a machine check. The three `due` obligations became RULE-18 for
+   exactly this reason: they were correct, well-argued, and unfindable.
+
+**Grep check** — a rule that cannot be found cannot be followed:
+
+```bash
+# Every obligation stated as a MUST/NEVER in a skill should map to a numbered rule.
+rg -n 'MUST|NEVER|always requires' skills/*/references/*.md | rg -v 'RULE-\d+'
+```

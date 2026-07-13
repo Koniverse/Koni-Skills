@@ -16,6 +16,65 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.43.0] — 2026-07-13 — koni-docs: round 4 of skill-grading — a guard you wrote yourself is a hypothesis — v0.43.0
+
+Re-grade after v0.42.0: **79/100** (D1 22 · D2 23 · D3 14 · D4 20). D1 and D2 both
+*fell* from 25 — which is the whole reason the rubric forbids inferring "still ≥95"
+from a review of the fix alone. Extends
+[US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The checker I shipped last round reported a false green.** It could see
+  `` `file.md` §Section `` but not the *linked* form
+  `` [`file.md`](file.md) §Section `` — which this skill uses **nine times**, one of
+  them genuinely dead, on the See line of a BLOCKER rule. It also only matched
+  `.md` targets (so a dead `](scripts/ghost.py)` passed), ignored H1 headings, and
+  changed its verdict depending on the directory it was invoked from. Same defect
+  class as LESSONS §19, one layer up. Now hardened and — the part that matters —
+  **proven against planted defects** rather than trusted because it printed 0.
+- **The three `due` obligations were correct, well-argued, and ungreppable.** They
+  lived as prose in a reference file, so `grep RULE-` found nothing, and the only
+  surface an agent reads at commit time phrased the CONTEXT-entry obligation as
+  *"no story overdue-and-silent"* — conditioned on the story being **already
+  late**, so a proactive date push read straight past it. They are now **RULE-18**,
+  numbered, unconditional, with grep checks and a machine backstop.
+- `agile-sync-tests.mjs` — a second ghost script, same family as the one purged
+  last round.
+- **RULE-2 had no way out for someone who had already amended.** The grep says
+  `UNREACHABLE` and stopped there. It now says what to do next (find the real
+  commit, re-record it in a follow-up — and do *not* amend again).
+- Templates emitted dead links into every document generated from them:
+  `epic.md` used the legacy numbered PRD anchor that this skill's own label-only
+  convention forbids; `test-report.md`'s release skeleton was missing the
+  `sprints/` hop, so every generated release report linked to
+  `docs/tests/stories/…`, which never exists.
+- Five dead §-pointers the strengthened checker surfaced, including RULE-1's
+  (`§CHANGELOG safe insertion` — the real heading transposes the words).
+
+### Added
+- **`skill-references` gate check** (`work-commit` + `release-commit`, blocking).
+  The checker is no longer something a reader has to know about: it runs on every
+  commit that touches a skill. It also now appears in SKILL.md §3c and §6 — last
+  round it was shipped but mentioned in no markdown file at all, so a Claude
+  loading the skill would never have run it.
+
+### Changed
+- **SKILL.md: 325 → 268 lines.** §4 inlined the whole of `integration.md` (both
+  CLAUDE.md blocks, the Pattern A/B table, the T1-T7 triggers) and §6 re-routed the
+  same 15 templates §5 already routes. Both are pointers now.
+- Deleted the last two self-declared mirrors: `templates.md`'s "Activation table
+  (mirrors SKILL.md §5)" (a 16-row copy of a 29-row table — it had already
+  drifted) and `cli.md` §6's third intent→command map.
+- `cli.md`'s subcommand inventory no longer carries a `Since` column or inline
+  version history — it is a live reference, not a changelog.
+- `description`: added "release notes" and "ADR" (both common phrasings with no
+  trigger vocabulary), and sharpened the koni-setup boundary — it claimed `SETUP`
+  as an artifact while disclaiming "repo bootstrap" in the same breath.
+
+koni-docs CLI **0.11.1 → 0.11.2**.
+
+---
+
 ## [0.42.0] — 2026-07-13 — koni-docs: round 3 of skill-grading — I validated with the same wrong function that generated — v0.42.0
 
 Re-grade after v0.41.0: **80.25/100** (D1 **25** · D2 **25** · D3 11 · D4 19.25).

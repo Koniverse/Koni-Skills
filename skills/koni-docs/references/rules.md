@@ -40,7 +40,7 @@
 
 **Grep check**: `git diff --cached --name-only | grep -E "VERSION|CHANGELOG" | wc -l` — must be 2 when code files are staged.
 
-**See**: [`templates/changelog.md`](templates/changelog.md), §CHANGELOG safe insertion
+**See**: [`templates/changelog.md`](templates/changelog.md), §3 (safe CHANGELOG insertion)
 
 ---
 
@@ -73,6 +73,18 @@
     | xargs -I{} sh -c 'git merge-base --is-ancestor {} HEAD 2>/dev/null && echo "{}: ok" || echo "{}: UNREACHABLE"'
   ```
   Every line must print `ok`. An `UNREACHABLE` line is the `--amend` trap above.
+
+**Already amended? Here is the way out.** The orphaned SHA is not recoverable and
+does not need to be — the *work* is in history under a new SHA. Find it and
+re-record it, in a follow-up commit:
+
+```bash
+git log --oneline --grep '<the version or story id>'   # locate the real commit
+sed -i '' 's/^commit: <orphan>/commit: <real>/' docs/sprints/stories/US-X.Y-*.md
+git commit -am "docs: repair US-X.Y commit SHA (<orphan> was orphaned by an amend)"
+```
+
+Do not amend again to "fix" it — that mints a third SHA and orphans the second.
 
 **See**: [`templates/changelog.md`](templates/changelog.md), [LESSONS §17](../../../docs/LESSONS.md)
 
@@ -312,6 +324,54 @@ The canonical YAML form is a **list of strings**: `prd_ref: [FR-04, FR-10]`. The
 - `koni-docs validate` → exits 0.
 
 **See**: [`frontmatter-spec.md`](frontmatter-spec.md) (the authoritative spec — per-field contract, anti-pattern catalog, migration playbook), `templates/story.md` §1 Frontmatter, `templates/epic.md` §1 Frontmatter.
+
+---
+
+### RULE-18: `due` is a commitment from outside the sprint cadence — sparse, bare, and never moved silently
+
+**Severity**: BLOCKER (format) · WARNING (usage)
+
+**What**: three obligations on a story's `due` field.
+
+1. **Set it only for a date imposed from OUTSIDE the sprint rhythm** — a contract,
+   a customer demo, an audit window, a legal filing. "Must land this sprint" is
+   *not* a `due`: `sprint:` already says that, and `sprint.end` is **never**
+   inherited. A story with no `due` has no deadline.
+2. **The value is a bare `YYYY-MM-DD` and nothing else.** No parentheticals, no
+   "tentative", no prose. Why the date exists and what breaks if it slips go in
+   the story's `## Deadline` section.
+3. **Moving an existing `due` requires a CONTEXT.md entry** — old date → new date
+   → why. This applies **whenever the date changes**, not only once the story is
+   already late. A proactive push is exactly the case that needs the record.
+
+**Why**: (1) is a *signal* rule — a `due` on every story turns the Deadlines board
+into a second copy of the sprint table, which is the thing nobody reads; the field
+earns its power by being rare. (2) is a *parser* rule — `koni-docs validate`
+errors on a non-date, and a caveated value silently drops the story off the board
+entirely (the caveat causes the outcome the author feared). (3) is an *honesty*
+rule: editing `2026-07-10` → `2026-07-24` in silence erases the fact that the
+story missed its date once, and STATUS.md will then cheerfully report it as
+on-track. Record the slip; correct forward; never rewrite the past to look clean.
+
+**How to comply**:
+1. Before setting `due`, ask: *who outside this team is owed this date?* No answer
+   → leave it empty.
+2. Write the bare date. Put the reason, the imposing party, and the consequence in
+   `## Deadline` (see the `## Deadline` section in [`templates/story.md`](templates/story.md)).
+3. Changing the date? Append the CONTEXT entry **in the same commit**, and append
+   the move to `## Deadline` (old → new → why → the `D<N>` that authorized it).
+
+**Grep checks**:
+- No prose in the field: `grep -hE '^due: .+' docs/sprints/stories/*.md | grep -vE '^due: [0-9]{4}-[0-9]{2}-[0-9]{2}$'` → must be empty.
+- `koni-docs validate` → errors on a non-date; **warns** when a `due` merely restates its sprint's end (the machine backstop for obligation 1).
+- A `due` changed with no CONTEXT entry in the same commit:
+  ```bash
+  git diff --cached -U0 -- docs/sprints/stories | grep -q '^+due:' && \
+    git diff --cached --name-only | grep -q 'docs/CONTEXT.md' || \
+    echo "due changed without a CONTEXT entry — RULE-18.3"
+  ```
+
+**See**: [`sprint-system.md`](sprint-system.md) §Deadlines vs sprint cadence, [`frontmatter-spec.md`](frontmatter-spec.md) §1.1, the `## Deadline` section of [`templates/story.md`](templates/story.md), [CONTEXT D37](../../../docs/CONTEXT.md).
 
 ---
 

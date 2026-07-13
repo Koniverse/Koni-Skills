@@ -6,7 +6,7 @@
 > file the user's request needs.
 
 
-**Contents**: [Template files](#template-files) · [Conventions every template follows](#conventions-every-template-follows) · [Activation table (mirrors SKILL.md §5)](#activation-table-mirrors-skillmd-5) · [Quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet)
+**Contents**: [Template files](#template-files) · [Conventions every template follows](#conventions-every-template-follows) · [Activation](#activation) · [Quick frontmatter cheatsheet](#quick-frontmatter-cheatsheet)
 
 ---
 
@@ -49,28 +49,11 @@
 
 ---
 
-## Activation table (mirrors SKILL.md §5)
+## Activation
 
-| User request                                    | Template file                          |
-| ----------------------------------------------- | -------------------------------------- |
-| "write changelog for vX.Y.Z"                    | [templates/changelog.md](templates/changelog.md) |
-| "log a decision" / "record architecture choice" | [templates/context.md](templates/context.md)     |
-| "add a lesson" / "log a lesson"                 | [templates/lessons.md](templates/lessons.md)     |
-| "create brief" / "product brief"                | [templates/brief.md](templates/brief.md)         |
-| "update PRD" / "PRD for <feature>"              | [templates/prd.md](templates/prd.md)             |
-| "create / update architecture"                  | [templates/architecture.md](templates/architecture.md) |
-| "create design spec for US-X.Y"                 | [templates/design-spec.md](templates/design-spec.md) |
-| "create an epic"                                | [templates/epic.md](templates/epic.md)           |
-| "create a story for US-X.Y"                     | [templates/story.md](templates/story.md)         |
-| "create sprint file"                            | [templates/sprint.md](templates/sprint.md)       |
-| "update setup for new env var"                  | [templates/setup.md](templates/setup.md)         |
-| "create OKR ledger" / "quarterly OKRs"          | [templates/okr.md](templates/okr.md)             |
-| "wire koni-docs into project" / "refresh Active Context" | [templates/integration.md](templates/integration.md) |
-| "create test-cases for EPIC-N"                  | [templates/test-cases.md](templates/test-cases.md) |
-| "record test run for EPIC-N"                    | [templates/test-report.md](templates/test-report.md) (per-execution sub-template) |
-| "create release test report"                    | [templates/test-report.md](templates/test-report.md) (per-release sub-template) |
-
----
+**Single source: [SKILL.md §5](../SKILL.md).** A 16-row copy of that 29-row table
+used to live here and had already drifted out of date. A mirror that must be kept
+in sync is a mirror that will not be.
 
 ## Quick frontmatter cheatsheet
 

@@ -1,16 +1,16 @@
 ---
 name: koni-docs
 description: >
-  Use when working on any koni-docs artifact — PRD, ARCHITECTURE, CHANGELOG,
-  CONTEXT, LESSONS, SETUP, DESIGN, or Sprints (epics / stories / STATUS): update
-  docs, create or split a story, record a decision, write a LESSONS entry, write
-  a changelog entry, run the pre-commit doc checklist, open or close a sprint,
-  regenerate STATUS.md / the kanban, or run the koni-docs CLI (sync / status /
-  validate). Also for a story's deadline — setting or moving its `due` date,
-  "when is this due", "what's overdue or due soon". Also when BMad / GStack /
-  Superpowers output needs standardizing into docs/. NOT test docs or QC
-  (koni-qc); NOT commit gates or the agentic loop (koni-harness); NOT repo
-  bootstrap (koni-setup).
+  Use when working on any koni-docs artifact — PRD, ARCHITECTURE (ADRs / decision
+  records), CHANGELOG (release notes), CONTEXT, LESSONS, SETUP, DESIGN, or Sprints
+  (epics / stories / STATUS): update docs, create or split a story, record a
+  decision, write a LESSONS entry, write release notes, run the pre-commit doc
+  checklist, open or close a sprint, regenerate STATUS.md / the kanban, or run the
+  koni-docs CLI (sync / status / validate). Also for a story's deadline — setting
+  or moving its `due` date, "when is this due", "what's overdue or due soon". Also
+  when BMad / GStack / Superpowers output needs standardizing into docs/. This
+  skill WRITES the doc content; it does not set repos up (koni-setup), author test
+  docs or QC (koni-qc), or run commit gates and the agentic loop (koni-harness).
 ---
 # koni-docs — Documentation Management
 
@@ -87,7 +87,7 @@ BRAINSTORM → BRIEF → PRD → ARCH → EPIC/US → DESIGN → REVIEW → QA �
 
 ## 2. Core rules (summary)
 
-These 12 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
+These 13 rules apply to ALL Koniverse projects. Full enforcement details in `references/rules.md`.
 
 | Rule    | Summary                                                       | Group      |
 | ------- | ------------------------------------------------------------- | ---------- |
@@ -103,6 +103,7 @@ These 12 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-15 | `assignee:` is the GitHub login — never git user.name         | During     |
 | RULE-16 | `version_shipped:` is bare semver — never `v`-prefixed        | During     |
 | RULE-17 | Frontmatter ID fields = bare canonical IDs only, never prose  | During     |
+| RULE-18 | `due` = a commitment from outside the sprint cadence — sparse, bare date, never moved silently | During |
 
 **Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project declares `koni-docs-plugins: [supabase, nextjs]` in its CLAUDE.md, load those plugin skills for the additional rules.
 See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugin skills are structured, discovered (`koni-docs-plugins:`), and composed; `koni-nextjs` is the reference.
@@ -154,77 +155,30 @@ Run through every item before committing:
 [ ] SETUP.md + DEPLOY.md + .env.example updated if new env var (RULE-11)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
 [ ] Story file: status → done, version_shipped set, Tasks all [x]
-[ ] No story overdue-and-silent — close it, or move `due` WITH a CONTEXT.md entry (old → new → why)
+[ ] Any `due` CHANGED this commit? → CONTEXT.md entry in the SAME commit (old → new → why). Applies to a proactive push, not just an overdue story (RULE-18)
+[ ] `version_shipped` is BARE semver, `assignee` is a GitHub login, ID fields are bare IDs (RULE-16, RULE-15, RULE-17)
 [ ] npx koni-docs sync --docs-path docs/  (5-layer sync)
 [ ] npx koni-docs status --docs-path docs/  (STATUS.md — RULE-5)
+[ ] Touched a skill or its references? → python3 skills/koni-docs/scripts/check-references.py <skill-dir>  (every link, anchor, §-pointer, and named script must resolve)
 [ ] CLAUDE.md Active Context block updated (see §4)
 ```
 
 ---
 
-## 4. CLAUDE.md/AGENTS.md auto-update
+## 4. CLAUDE.md / AGENTS.md auto-update
 
-Every Koniverse project must have an active context block. Agent updates that block at specific trigger points (T1–T7 below).
+Every project wires koni-docs into its agent files and keeps a live sprint snapshot
+there. Two shapes: **Pattern A** (Active Context inline in CLAUDE.md — simplest,
+fine solo) and **Pattern B** (extracted to a gitignored `.active-context.md` —
+recommended for teams; it stops merge churn on a file everyone edits).
 
-There are **two valid patterns** for where the Active Context block lives. Pick one per project; do not mix. Full template + rationale lives in [`references/templates/integration.md`](references/templates/integration.md) §0.
+Seven trigger points (T1-T7) keep the snapshot true: story start / close, sprint
+open / close, a CONTEXT decision, a LESSONS entry, a version bump.
 
-| Pattern | When to use | Active Context lives in |
-|---|---|---|
-| **A — Inline** | Solo developer, one active branch, low merge volume | `CLAUDE.md` between `koni-docs:auto-update` markers |
-| **B — File-extracted (recommended for teams)** | 2+ developers, parallel branches, frequent sprint churn | `.active-context.md` (gitignored) — `CLAUDE.md` keeps a pointer; `.active-context.example.md` committed as template |
-
-**Why a separate file for teams**: the Active Context block changes on every story start, close, sprint roll, decision, and lesson — many times per week. Two devs editing it on parallel branches always merges as a conflict. Pattern B moves the volatile content into a gitignored snapshot; the durable record stays in `docs/sprints/`, `CHANGELOG.md`, `CONTEXT.md`, `LESSONS.md`. Conflicts go to zero.
-
-### CLAUDE.md integration block (config — common to both patterns)
-
-```markdown
-## Koni-Docs Integration
-
-koni-docs:
-  plugins: []                        # e.g. [supabase, nextjs]
-  docs_path: docs/
-  active_sprint: sprint-YYYY-WNN
-  version_file: VERSION
-```
-
-### Active Context — Pattern A (inline in CLAUDE.md)
-
-```markdown
-## Active Context <!-- koni-docs:auto-update -->
-- Sprint: sprint-YYYY-WNN
-- Active Stories: 🟡 US-X.Y <title>
-- Last Version: vX.Y.Z
-- Recent Decisions: D<N>
-- Recent Lessons: §N
-<!-- /koni-docs:auto-update -->
-```
-
-### Active Context — Pattern B (file-extracted, recommended for teams)
-
-`CLAUDE.md` keeps only a pointer:
-
-```markdown
-## Active Context
-
-> **Moved to `.active-context.md`** — see [`.active-context.example.md`](./.active-context.example.md)
-> for the template and the gitignored-on-purpose rationale.
-```
-
-`.active-context.md` (gitignored) holds the live snapshot — both a `Local developer` block (GitHub login, git name/email, workspace, current branch) and the auto-update `Project sprint context` block. `.active-context.example.md` is committed as the team template; contributors copy it on first checkout. Full template in [`references/templates/integration.md`](references/templates/integration.md) §2.
-
-### Trigger points (same for both patterns)
-
-| #  | Trigger                | Action                                               |
-| -- | ---------------------- | ---------------------------------------------------- |
-| T1 | Start a story          | Add `🟡 US-X.Y <title>` to Active Stories          |
-| T2 | Close a story          | Change `🟡 → ✅`, update Last Version             |
-| T3 | Start a sprint         | Update Sprint ID                                     |
-| T4 | Add a LESSONS entry    | Append LESSONS.md + add §N to Recent Lessons        |
-| T5 | Log a CONTEXT decision | Append CONTEXT.md + add D`<N>` to Recent Decisions |
-| T6 | Add an env var         | Update SETUP + DEPLOY + .env.example (RULE-11)       |
-| T7 | Pre-commit             | Run full checklist, verify all doc layers consistent |
-
-**How to update**: Use the `Edit` tool targeting the block between `<!-- koni-docs:auto-update -->` and `<!-- /koni-docs:auto-update -->` markers. For Pattern A the markers live in `CLAUDE.md`; for Pattern B they live in `.active-context.md`. Either way, only the marker block changes — surrounding content stays untouched.
+**The block formats, both patterns end-to-end, and the T1-T7 table:
+[`templates/integration.md`](references/templates/integration.md).** Load it when
+wiring a new project or when a trigger fires; you do not need it to decide what to
+document.
 
 ---
 
@@ -250,8 +204,8 @@ file matching the user's request.
 | "create an epic"                                | Use full epic template                                                                    | `templates/epic.md`                        |
 | "create sprint file"                            | Use sprint template                                                                       | `templates/sprint.md`                      |
 | "create / update test-cases for EPIC-N"         | Use test-cases template (10-section layout: Scope / Stories in scope / Goals / Env / Cadence / Quick reference / Detail / Coverage matrix / Open) | `templates/test-cases.md`                  |
-| "record a test run for EPIC-N"                  | Use per-execution sub-template — write to `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) / `report-manual.md` (path owned by koni-qc test-organization) | `templates/test-report.md` §A              |
-| "create release test report for vX.Y.Z"         | Use per-release sub-template — write to `releases/vX.Y.Z.md`, link from CHANGELOG          | `templates/test-report.md` §B              |
+| "record a test run for EPIC-N"                  | Use per-execution sub-template — write to `test-reports/EPIC-NN/<MMDDYYYY>/report.md` (auto) / `report-manual.md` (path owned by koni-qc test-organization) | `templates/test-report.md` §2 (sub-template A)              |
+| "create release test report for vX.Y.Z"         | Use per-release sub-template — write to `releases/vX.Y.Z.md`, link from CHANGELOG          | `templates/test-report.md` §3 (sub-template B)              |
 | "update setup for new env var"                  | RULE-11: update SETUP + DEPLOY + .env.example in same commit                              | `templates/setup.md`                       |
 | "create OKR ledger" / "set up quarterly OKRs"   | Use OKR template (file-native quarterly Markdown ledger)                                  | `templates/okr.md`                         |
 | "wire koni-docs into project" / "refresh Active Context" | Update CLAUDE.md + AGENTS.md (+ `.active-context.md` for Pattern B) integration blocks | `templates/integration.md`        |
@@ -270,34 +224,25 @@ file matching the user's request.
 
 ## 6. Reference files
 
-Load these on demand based on user intent:
+Everything below is **loaded on demand** — §5 above names which one a given intent
+needs. Each file opens with its own `**Contents**` line, so you can see its scope
+before reading it.
 
-| File                                  | When to load                                                             | Contents                                                          |
-| ------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| `references/rules.md`                 | User asks about rules, pre-commit check, or rule violation surfaces      | 12 core rules with severity, compliance steps, grep checks        |
-| `references/frontmatter-spec.md`      | Authoring / migrating story / epic / sprint frontmatter; debugging `sync` row-not-found warnings | Authoritative per-field contract for `prd_ref` / `arch_ref` / `depends_on` / etc. Per-namespace regex, anti-pattern catalog with real broken values, migration playbook for projects carrying prose-stuffed ref fields. Pair with RULE-17. |
-| `references/templates.md`             | User asks "what templates exist?" or needs to navigate templates         | Thin index — names each template, when to use it, links to the canonical file. Also has quick frontmatter cheatsheet for Story/Epic/Sprint. |
-| `references/templates/changelog.md`   | Writing changelog entry / shipping a version                             | CHANGELOG entry template, rules (RULE-1/RULE-2), safe-insertion pattern (anchor on `[Unreleased]`), filled example |
-| `references/templates/context.md`     | Recording a decision or revision (append-only, RULE-7)                   | Phase header + decision entry + revision entry templates, anti-patterns table, filled example (D3 TAM pivot) |
-| `references/templates/lessons.md`     | Codifying a recurring trap / pattern                                     | Entry template, maintenance rules, filled example (`next build` vs `tsc`) |
-| `references/templates/brief.md`       | Creating/updating product brief (precedes PRD Executive Summary)         | 8-section template (Exec / Problem / Solution / Differentiator / Persona / Success / Scope / Vision), filled example (Koni ERP brief) |
-| `references/templates/prd.md`         | Creating/updating PRD (label-only H2 sections, FR row, story entry, Epics & User Stories index) | Heading convention + full template skeleton, update procedure, FR row format, story-in-PRD entry, condensed filled snippet, legacy-numbered-PRD migration steps |
-| `references/templates/architecture.md` | Documenting tech stack / components / data / AD-N summary table         | Full ARCHITECTURE template (overview / stack / components / data / API / security / deploy / integrations / ADs), filled example |
-| `references/templates/design-spec.md` | A story has visual or interaction complexity warranting a dedicated spec | Header refs + screens/states + layout decisions + component inventory + open questions, filled example (US-3.7 pod project) |
-| `references/templates/epic.md`        | Creating/updating an epic                                                | Full BMad-grade Epic template — per-section guidance, required-vs-optional matrix by epic size, Mermaid patterns for entity maps + happy-path sequence diagrams, filled mini-example |
-| `references/templates/story.md`       | Creating/stubbing/updating a story                                       | Full BMad-grade Story template — per-section guidance, required-vs-optional matrix by story size (1-13 pts), AC numbering rules, verification-command table pattern, filled mini-example |
-| `references/templates/sprint.md`      | Opening or closing a sprint                                              | Frontmatter + Sprint scope table + goal recap + phased plan + retrospective + cross-references, filled example (sprint-2026-W19) |
-| `references/templates/setup.md`       | Adding an env var (RULE-11 — all three files in same commit)             | SETUP block format + .env.example format + DEPLOY env table + RULE-11 checklist, filled examples for all three |
-| `references/templates/okr.md`         | Project adopts file-native OKRs in `docs/okr/YYYY-QN.md`                 | File-naming rule, YAML schema, KR formula rules (SELECT-only, end-exclusive boundaries), weekly notes, permissions, filled example (2026-Q2.md) |
-| `references/templates/integration.md` | Wiring koni-docs into a new project, refreshing Active Context           | CLAUDE.md `Koni-Docs Integration` block + AGENTS.md reference block + 7 trigger points for Active Context updates, filled example |
-| `references/templates/test-cases.md`  | Creating / updating per-epic test scenarios (`docs/tests/test-cases/EPIC-N.md`) | 10-section skeleton — Scope / Stories in scope (emoji status) / Goals / Env / Cadence / Quick reference summary / Detail (Gherkin) / Coverage matrix (with "AC description" column) / Open. Per-section guidance + filled EPIC-02 mini-example |
-| `references/templates/test-report.md` | Recording a test run or release-level report (`docs/tests/test-reports/EPIC-NN/<MMDDYYYY>/report.md` + `releases/vX.Y.Z.md`; path owned by koni-qc test-organization) | Two sub-templates: A) per-execution detail (one file per run, append-only) — B) per-release master (aggregate linked from CHANGELOG). Result symbols, append-only discipline, cross-link contract |
-| `references/sprint-system.md`         | User asks about sprints, agile workflow, scripts, 5-layer consistency, or test artifacts | Naming conventions, story sizing, deadlines vs cadence, consistency check, setup guide, **§Test artifacts** (10-section test-cases structure + reports lifecycle) |
-| `references/bmad-template-analysis.md` | User asks to migrate from BMad, asks about BMad template standards, or maps BMad artifacts to koni-docs | Full BMad pipeline → koni-docs mapping, template differences, update recommendations |
-| `references/cli.md`                   | Installing / upgrading / invoking the `koni-docs` CLI; looking up a subcommand, a global flag, or the typed lib API | Install + update modes, global flags, the 7-subcommand inventory, the four commit loops, intent → subcommand map, library API, troubleshooting |
+| File | Load when |
+|---|---|
+| [`references/rules.md`](references/rules.md) | You need the enforcement detail of a rule — what / why / how to comply / the grep check |
+| [`references/frontmatter-spec.md`](references/frontmatter-spec.md) | Writing or fixing any frontmatter field (the Iron Law, the ID + date contracts, the anti-pattern catalog) |
+| [`references/sprint-system.md`](references/sprint-system.md) | Sprints, story sizing, deadlines vs cadence, the 5-layer consistency check, test artifacts |
+| [`references/cli.md`](references/cli.md) | Installing, upgrading, or running the CLI; a subcommand, a flag, the commit loops, the typed lib |
+| [`references/templates.md`](references/templates.md) | You want the index of every template, or just the frontmatter shape |
+| [`references/templates/*.md`](references/templates/) | Writing the artifact itself — one file per doc type, each with a section index and one filled example |
+| [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project declares `koni-docs-plugins:` and you need how plugin skills compose |
+| [`references/bmad-template-analysis.md`](references/bmad-template-analysis.md) | Migrating from BMad, or mapping BMad artifacts into koni-docs |
+| [`scripts/check-references.py`](scripts/check-references.py) | **Run it after editing any skill doc.** It asserts that every markdown link, every in-page anchor, every section pointer, and every script the docs name by filename actually resolves. It knows headings inside code fences are not headings, and that GitHub hyphenates each space rather than collapsing runs — the two mistakes that once certified 150 dead anchors as green (LESSONS §19) |
 
-**Plugin skills**: If the project's CLAUDE.md declares `koni-docs-plugins`, load those skills for technology-specific rules that extend the core rule set.
-See [`references/plugin-pattern.md`](references/plugin-pattern.md) for the pattern (location / discovery / composition / authoring); `koni-nextjs` is the worked example.
+**Plugin skills**: if the project's CLAUDE.md declares `koni-docs-plugins`, load those
+skills for technology-specific rules that extend this rule set. `koni-nextjs` is the
+worked example.
 
 ---
 

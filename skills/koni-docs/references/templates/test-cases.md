@@ -207,7 +207,7 @@ spot AC gaps. The Story column inlines the short name from §Stories in
 scope (gives a tester scanning a single row enough context to know what
 the AC is about). AC description is a ≤80-char distillation of the
 story's AC text — never copy paste the full AC. Generate by hand at first;
-later phases may auto-fill via `agile-sync-tests.mjs`.>
+later phases may auto-fill via a test-sync script (not yet built).>
 
 | Story | AC | AC description | Covered by | Type |
 |---|---|---|---|---|

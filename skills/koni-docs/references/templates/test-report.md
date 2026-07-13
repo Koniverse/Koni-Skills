@@ -206,14 +206,14 @@ they belong to. Link to CHANGELOG.md vX.Y.Z section for the canonical
 list. Do not duplicate the changelog body here.>
 
 - See [CHANGELOG.md vX.Y.Z](../../../CHANGELOG.md#vxyz)
-- Stories shipped: [US-X.Y](../../stories/US-X.Y-<slug>.md), [US-X.Z](../../stories/US-X.Z-<slug>.md)
+- Stories shipped: [US-X.Y](../../../sprints/stories/US-X.Y-<slug>.md), [US-X.Z](../../../sprints/stories/US-X.Z-<slug>.md)
 
 ## Test coverage
 
 | Epic | Total TC | Pass | Fail | Skip | Coverage % | Notes |
 |---|---|---|---|---|---|---|
-| [EPIC-N](../../epics/EPIC-N.md) | N | N | 0 | N | M% | <one-line caveat> |
-| [EPIC-M](../../epics/EPIC-M.md) | N | N | 0 | N | M% | — |
+| [EPIC-N](../../../sprints/epics/EPIC-N.md) | N | N | 0 | N | M% | <one-line caveat> |
+| [EPIC-M](../../../sprints/epics/EPIC-M.md) | N | N | 0 | N | M% | — |
 
 > **Coverage % formula:** `pass / (total − skip)` rounded to integer.
 > Skipped TCs are not counted as failures, but the Notes column must
@@ -234,7 +234,7 @@ recent first.>
 item names an owner + a target sprint or release to resolve.>
 
 - **TC-N.E2E-2 flaked once on Safari** — owner `@qa-lead`. Target: next sprint. See LESSONS §N.
-- **TC-N.PRF-1 not run** — owner `@infra-lead`. Target: v0.X+1 once perf budget defined in [EPIC-N §14](../../epics/EPIC-N.md#performance-budgets--invariants).
+- **TC-N.PRF-1 not run** — owner `@infra-lead`. Target: v0.X+1 once perf budget defined in [EPIC-N §14](../../../sprints/epics/EPIC-N.md#performance-budgets--invariants).
 
 ## Ship decision
 
@@ -391,13 +391,13 @@ slice: link with AES-256 vault, credential verification, terminal
 provisioning, health badge, unlink + decommission.
 
 - See [CHANGELOG.md v0.2.0](../../../CHANGELOG.md#v020)
-- Stories shipped: [US-2.6](../../stories/US-2.6-mt5-credential-verification.md), [US-2.7](../../stories/US-2.7-terminal-provisioning.md), [US-2.8](../../stories/US-2.8-mt5-account-health-status.md), [US-2.9](../../stories/US-2.9-unlink-mt5-account.md)
+- Stories shipped: [US-2.6](../../../sprints/stories/US-2.6-mt5-credential-verification.md), [US-2.7](../../../sprints/stories/US-2.7-terminal-provisioning.md), [US-2.8](../../../sprints/stories/US-2.8-mt5-account-health-status.md), [US-2.9](../../../sprints/stories/US-2.9-unlink-mt5-account.md)
 
 ## Test coverage
 
 | Epic | Total TC | Pass | Fail | Skip | Coverage % | Notes |
 |---|---|---|---|---|---|---|
-| [EPIC-02](../../epics/EPIC-02.md) | 3 | 2 | 0 | 1 | 100% | Smoke skipped (PR-only); 2 gaps tracked in test-cases §7 |
+| [EPIC-02](../../../sprints/epics/EPIC-02.md) | 3 | 2 | 0 | 1 | 100% | Smoke skipped (PR-only); 2 gaps tracked in test-cases §7 |
 
 ## Run history
 

@@ -5,12 +5,12 @@
 > typed lib. SKILL.md §7 points here — this file is the authoritative inventory.
 
 
-**Contents**: [1. Install](#1-install) · [2. Update](#2-update) · [3. Global flags (every subcommand accepts these)](#3-global-flags-every-subcommand-accepts-these) · [4. Subcommand inventory](#4-subcommand-inventory) · [5. Real-world usage — the four common loops](#5-real-world-usage--the-four-common-loops) · [6. When to use which subcommand (mapping from user intent)](#6-when-to-use-which-subcommand-mapping-from-user-intent) · [7. Library API for programmatic use](#7-library-api-for-programmatic-use) · [8. Troubleshooting](#8-troubleshooting) · [9. Skill ↔ CLI relationship](#9-skill--cli-relationship)
+**Contents**: [1. Install](#1-install) · [2. Update](#2-update) · [3. Global flags (every subcommand accepts these)](#3-global-flags-every-subcommand-accepts-these) · [4. Subcommand inventory](#4-subcommand-inventory) · [5. Real-world usage — the four common loops](#5-real-world-usage--the-four-common-loops) · [6. When to use which subcommand](#6-when-to-use-which-subcommand) · [7. Library API for programmatic use](#7-library-api-for-programmatic-use) · [8. Troubleshooting](#8-troubleshooting) · [9. Skill ↔ CLI relationship](#9-skill--cli-relationship)
 
 [Global flags](#3-global-flags-every-subcommand-accepts-these) ·
 [Subcommand inventory](#4-subcommand-inventory) ·
 [The four common loops](#5-real-world-usage--the-four-common-loops) ·
-[Intent → subcommand](#6-when-to-use-which-subcommand-mapping-from-user-intent) ·
+[Intent → subcommand](#6-when-to-use-which-subcommand) ·
 [Library API](#7-library-api-for-programmatic-use) ·
 [Troubleshooting](#8-troubleshooting) ·
 [Skill ↔ CLI](#9-skill--cli-relationship)
@@ -60,15 +60,15 @@ Should report the version you just installed. If `--version` shows an older numb
 
 ## 4. Subcommand inventory
 
-| Subcommand | Since | Purpose | Example |
-|---|---|---|---|
-| `status` | v0.4 | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
-| `sync` | v0.4 | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); column-by-NAME addressing (W23 BLOCKER fix); PRD section lookup uses label (`## Functional Requirements`) with legacy `## 8.` fallback (v0.7.2) | `koni-docs sync --story US-X.Y` |
-| `inject-tasks` | v0.4 | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
-| `backfill-fields` | v0.4 | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
-| `backfill-commits` | v0.4 | **Repair only** — replaces `pending` SHAs in a CHANGELOG that already shipped broken. It is *not* a licensed step of the normal flow: RULE-2 forbids writing `pending` in the first place. | `koni-docs backfill-commits` |
-| `preview` | v0.6.0 | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables chokidar + SSE live-reload (v0.7.0). | `koni-docs preview docs --port 4321 --watch` |
-| `validate` | v0.7.0 | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Also checks `due` dates. **Error** (exit non-zero): a value that is not a real date. **Warnings** (exit code untouched — deadlines inform, they never block a commit): a story past its `due`, and a `due` that merely restates its sprint's end date (the drift that turns the Deadlines board into a second copy of the sprint table). Exits non-zero on any error. | `koni-docs validate --json` |
+| Subcommand | Purpose | Example |
+|---|---|---|
+| `status` | Regenerate `STATUS.md` kanban from story frontmatter (RULE-5). Also renders the `## ⏰ Deadlines` section (overdue / due-soon / on-track) from each story's `due` field, above the kanban columns. `--due-soon-days <n>` (default 3) sets the due-soon window. | `koni-docs status --due-soon-days 7` |
+| `sync` | Propagate story status through doc layers (Epic / PRD `Functional Requirements` / Sprint / STATUS); PRD section lookup uses the label form (`## Functional Requirements`), with a legacy `## 8.` fallback | `koni-docs sync --story US-X.Y` |
+| `inject-tasks` | Regenerate `## Tasks` checklist from `## Acceptance criteria` items in a story | `koni-docs inject-tasks --story US-X.Y` |
+| `backfill-fields` | Add missing standard frontmatter keys to story files via `STORY_DEFAULTS` | `koni-docs backfill-fields` |
+| `backfill-commits` | **Repair only** — replaces `pending` SHAs in a CHANGELOG that already shipped broken. It is *not* a licensed step of the normal flow: RULE-2 forbids writing `pending` in the first place. | `koni-docs backfill-commits` |
+| `preview` | Launch the Astro SSR docs viewer (dashboard / per-doc / `/project` tracker). `--watch` enables live-reload. | `koni-docs preview docs --port 4321 --watch` |
+| `validate` | L3 ID-graph integrity check + FR-ref reachability (each story's `prd_ref` resolves to a real FR row in PRD `Functional Requirements`). Also checks `due` dates. **Error** (exit non-zero): a value that is not a real date. **Warnings** (exit code untouched — deadlines inform, they never block a commit): a story past its `due`, and a `due` that merely restates its sprint's end date (the drift that turns the Deadlines board into a second copy of the sprint table). Exits non-zero on any error. | `koni-docs validate --json` |
 
 ## 5. Real-world usage — the four common loops
 
@@ -110,24 +110,16 @@ koni-docs status                                          # regen kanban
 koni-docs preview docs --watch     # opens http://localhost:4321/
 # /              dashboard (KPIs + epic grid)
 # /docs/<slug>   any markdown doc rendered with shiki + mermaid
-# /project       full story tracker (filter/group; needs v0.7.0+)
+# /project       full story tracker (filter/group)
 ```
 
 `--watch` watches `docs/**/*.md` (chokidar) and pushes SSE events to the browser; edit a story file and the open tab reloads automatically.
 
-## 6. When to use which subcommand (mapping from user intent)
+## 6. When to use which subcommand
 
-| User says... | Run |
-|---|---|
-| "regenerate STATUS" / "refresh kanban" | `koni-docs status` |
-| "sync US-X.Y" / "propagate story X status" | `koni-docs sync --story US-X.Y` |
-| "rebuild tasks for US-X.Y" | `koni-docs inject-tasks --story US-X.Y` |
-| "story X is missing fields" / "fix story frontmatter" | `koni-docs backfill-fields` (add `--dry-run` first to preview) |
-| "fill in commit SHAs" / "backfill changelog" | `koni-docs backfill-commits` |
-| "show me the docs in a browser" / "open docs viewer" | `koni-docs preview docs --watch` |
-| "check docs integrity" / "find broken refs" / "ID graph audit" | `koni-docs validate` |
-| "run doc checklist before commit" | full loop (B) above |
-| "audit this new repo's docs" | full loop (C) above |
+**Single source: [SKILL.md §5](../SKILL.md)** — the intent → action table there
+already maps every user phrasing to the command. §4 above is the inventory; §5 is
+the router. Keeping a third map here would be the mirror that drifts.
 
 ## 7. Library API for programmatic use
 

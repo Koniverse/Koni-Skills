@@ -238,7 +238,7 @@ move funds").
 protect. Each invariant cites the FR / AD it operationalizes and the story
 that primarily enforces it.>
 
-- **<Invariant 1> ([FR-N](../../PRD.md#4-functional-requirements)):** <statement of the rule.> Enforced by [US-X.Y](../stories/US-X.Y-<slug>.md).
+- **<Invariant 1> ([FR-N](../../PRD.md#functional-requirements)):** <statement of the rule.> Enforced by [US-X.Y](../stories/US-X.Y-<slug>.md).
 - **<Invariant 2>:** <statement>. <How violations are caught (lint / test / runtime).>
 
 ## RBAC additions

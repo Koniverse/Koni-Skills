@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -281,6 +281,27 @@ koni-setup). So this round ships `scripts/check-references.py` — every link,
 anchor, and `§Section` pointer must resolve. It is green on koni-docs,
 koni-harness, koni-setup, and koni-nextjs; koni-qc has 4 dangling references,
 reported rather than silently fixed.
+
+## Round 5 — skill-grading re-grade (2026-07-13, v0.43.0)
+
+**79/100** (D1 22 · D2 23 · D3 14 · D4 20). D1 and D2 both **fell** from 25 — the
+clearest possible demonstration of why the rubric forbids inferring "still ≥95"
+from a review of the fix alone.
+
+The checker I shipped as *the* durable fix for dangling references **reported a
+false green**. It saw `` `file.md` §Section `` but not `` [`file.md`](file.md) §Section ``
+— nine uses, one genuinely dead, on a BLOCKER rule's See line. It also only matched
+`.md` targets, ignored H1, and changed its verdict with the working directory. I had
+verified it the same way I verified everything else that failed this week: by
+running it on a clean corpus and reading `0`. A checker that always prints 0 also
+prints 0. It is now proven against **planted** defects (LESSONS §20).
+
+The other lesson is about my own rules. The three `due` obligations held GREEN under
+every pressure scenario, and a grader still marked one RED — because they were not
+*numbered* rules. They lived in prose; `grep RULE-` found nothing; and the commit-time
+surface phrased the CONTEXT-entry obligation as "no story overdue-and-silent",
+conditioned on the story being **already late** — so an agent proactively pushing a
+date read past it. Correct, well-argued, and unfindable. They are now RULE-18.
 
 ## Implementation notes
 
