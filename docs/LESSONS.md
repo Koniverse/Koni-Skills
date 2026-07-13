@@ -911,3 +911,40 @@ a lock, and that it cannot be emptied, and that it cannot corrupt what it checks
 There is no final turtle. There is only a discipline: at every layer, ask *"what would
 I see if this were broken?"* — and if the honest answer is *"exactly what I see now"*,
 you have built a more elaborate way to print zero.
+
+---
+
+## 25. A closed to-do list is not a reference — it is a fossil that instructs
+
+**What happened**: `bmad-template-analysis.md` carried an 85-line section titled
+"Template Update Recommendations" — add a `§7` index to the PRD, add Given/When/Then to
+the story template, add an FR Coverage table to the epic. **Every one of them had
+shipped.** Months ago. The section had never been rewritten because nothing in the system
+noticed: it read like a reference, it sat in the reference directory, and it was routed
+to from SKILL.md.
+
+So an agent loading it to learn "how does BMad map to koni-docs" was told to add things
+that were already there — in section numbers (`PRD §7`) that a later migration had
+retired. It also cited an `examples/bmad-raw-sample/` directory that does not exist. A
+work artifact, frozen at the moment its work was authorized, wearing the costume of
+documentation.
+
+**The lesson**: **a document that recommends is dated the moment the recommendation is
+taken.** Reference material describes *what is*; a plan describes *what should be*. When a
+plan lands in the reference directory, it does not become a reference — it becomes a
+fossil that gives instructions. The fix is not to update it; it is to **convert it into
+its outcome**: "here is what we adopted from BMad, here is what we kept, and here is the
+one thing we deliberately do differently." That text is true today and stays true.
+
+**The tell, and it is grep-able**: reference files should not contain the words
+*recommend*, *should add*, *TODO*, *proposed*, or *phase 2*. If they do, they are either a
+plan that escaped, or a promise nobody is tracking.
+
+```bash
+rg -ni 'recommend|should add|proposed|phase 2|planned for' skills/*/references/
+```
+
+Same class as LESSONS §21 (the cheatsheet that restates a contract) and §18 (a rule lands
+where you look, not where the fact lives): **the artifact that nobody re-reads is the
+artifact that lies**, and it lies most convincingly to whoever trusted the directory it
+was filed in.

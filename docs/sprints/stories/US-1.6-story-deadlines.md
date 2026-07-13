@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0 + 0.46.0 + 0.47.0 + 0.48.0 + 0.49.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -405,6 +405,22 @@ the test data, and my green was memory dressed as coverage.
 
 Now: 27 defect classes, 11 mutants, floors on both so an emptied suite cannot read as a
 passing one, and a sandbox so the guard can never corrupt what it guards. LESSONS §24.
+
+## Round 11 — closing the D3/D4 gap (2026-07-13, v0.49.0)
+
+Targeted at the two things still costing points, neither of which is the skill's content.
+
+**D4 — bloat.** `bmad-template-analysis.md` carried 85 lines of *recommendations* whose
+work had all shipped months earlier, in section numbers a later migration retired, citing
+a directory that does not exist. A plan filed in the reference directory does not become
+a reference; it becomes a fossil that gives instructions (LESSONS §25). Converted to its
+outcome. RULE-18's rationale, restated in full in two files, now lives once in `rules.md`.
+
+**D3 — the last checker holes.** Explicit HTML anchors (`<a name>`, `id=`) emit real
+anchors and were not collected, so a live link read as dead. The repo root was found by
+counting directory levels rather than locating `.git`.
+
+27 defect classes, 12 mutants, all killed; six skills clean.
 
 ## Implementation notes
 

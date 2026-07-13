@@ -92,22 +92,15 @@ against `status` and today, so it cannot go stale:
 | 🟢 `on-track` | `due` is further out than N days |
 | — | story is `done` or `deprecated` — a shipped story cannot be late |
 
-`STATUS.md` grows a `## ⏰ Deadlines` section above the kanban columns.
-`koni-docs validate` **errors** on a `due` that is not a real date (a schema
-violation) and **warns**, without failing the run, on two things: a story that is
-merely past its date, and a `due` that just restates its sprint's end date — the
-machine backstop for the no-inheritance rule above. Deadlines inform; they never
-block a commit.
+`STATUS.md` grows a `## ⏰ Deadlines` section above the kanban columns. What `validate`
+errors on and what it merely warns about is specified once, in
+**[RULE-18](rules.md)** — deadlines inform; they never block a commit.
 
 ### Moving a deadline leaves a trace
 
-> **Every change to an existing `due` requires a CONTEXT.md entry**: old date →
-> new date → why.
-
-Editing `due` from `2026-07-10` to `2026-07-24` in silence erases the fact that
-the story missed its date once, and STATUS.md will then cheerfully report it as
-on-track. This is the same discipline the framework already applies to sprints —
-record the slip, correct forward, never rewrite the past to look clean.
+**[RULE-18.3](rules.md)** — every change to an existing `due` requires a CONTEXT.md entry
+(old → new → why), including a proactive push before the story is late. The rule states
+the obligation and its rationale; this file states only the model it rests on.
 
 ## Story sizing
 

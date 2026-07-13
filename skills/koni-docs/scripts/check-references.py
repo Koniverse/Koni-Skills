@@ -40,6 +40,10 @@ FILE_LINK = re.compile(
 REF_DEF = re.compile(r'^\[[^\]]+\]:\s*<?([^\s>]+)>?', re.M)
 # A skill's markdown renders as HTML, so <a href> and <img src> are links too.
 HTML_SRC = re.compile(r'<(?:a|img|source)\b[^>]*?\b(?:href|src)\s*=\s*"([^"]+)"', re.I)
+# ...and <a name="x"> / <h2 id="x"> emit REAL anchors. Not collecting them made the
+# checker report a live link as dead — a false positive, which trains people to ignore
+# the gate, which ends exactly where silence ends.
+HTML_ANCHOR = re.compile(r'<[a-z][a-z0-9]*\b[^>]*?\b(?:name|id)\s*=\s*"([^"]+)"', re.I)
 # `file.md` §Section, the linked form [`file.md`](path) §Section, and the bare form
 # SKILL.md §3a-bis — all three have shipped dead in this repo.
 SECTION_POINTER = re.compile(
@@ -129,6 +133,7 @@ def anchors_of(text: str) -> set[str]:
         n = seen.get(slug, 0)
         seen[slug] = n + 1
         out.add(slug if n == 0 else f'{slug}-{n}')
+    out.update(HTML_ANCHOR.findall(body))
     return out
 
 
@@ -190,7 +195,22 @@ def in_fence(text: str, index: int) -> bool:
 
 def check(root: Path) -> list[str]:
     problems: list[str] = []
-    repo = root.parent.parent  # repo root — a cited script may live in packages/ or scripts/
+    # Find the repo root by locating `.git`, not by counting directory levels — the old
+    # `root.parent.parent` silently changed the script-search root when the checker was
+    # invoked on a path of a different shape. Bounded: outside a repo (a sandbox copy,
+    # a tarball) fall back to the scan root rather than walking up to `/` and rglob-ing
+    # the whole filesystem.
+    repo = root
+    for _ in range(6):
+        if (repo / '.git').exists():
+            break
+        if repo == repo.parent:
+            break
+        repo = repo.parent
+    else:
+        repo = root
+    if not (repo / '.git').exists():
+        repo = root
     cache: dict[Path, str] = {}
 
     def read(p: Path) -> str:

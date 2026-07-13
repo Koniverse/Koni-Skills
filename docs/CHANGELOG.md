@@ -16,6 +16,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.49.0] — 2026-07-13 — koni-docs: a closed to-do list is not a reference — v0.49.0
+
+Continuing to the ≥95 bar. Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **`bmad-template-analysis.md` shipped an 85-line to-do list of work that was already
+  done.** "Add a `§7` index to the PRD", "add Given/When/Then to the story template",
+  "add FR Coverage to the epic" — all of it landed months ago, in section numbers a later
+  migration retired, citing an `examples/` directory that does not exist. A work artifact
+  frozen at the moment its work was authorized, wearing the costume of documentation.
+  Replaced by its outcome: what koni-docs adopted, what it kept, and the one thing it
+  deliberately does differently. 268 → 218 lines. See [LESSONS §25](LESSONS.md).
+- **Explicit HTML anchors** (`<a name="x">`, `id="x"`) emit real GitHub anchors and the
+  checker collected none — so a live link read as dead. A false positive trains people to
+  ignore the gate, which ends exactly where silence ends.
+- **The repo root was found by counting directory levels** (`root.parent.parent`), which
+  silently moved the script-search root when the checker was invoked on a path of a
+  different shape. It now locates `.git` — bounded, so a sandbox copy falls back to the
+  scan root instead of walking to `/` and rglob-ing the filesystem.
+- RULE-18's obligations and rationale were restated in full in `sprint-system.md`.
+  `rules.md` is the rule's home; sprint-system keeps only the model it rests on
+  (cadence vs commitment) and the derived-state table it uniquely owns.
+
+**27 planted defect classes, all caught. 12 mutant checkers, all killed.** Six skills, 0
+dangling references.
+
+koni-docs CLI **0.11.6 → 0.11.7**.
+
+---
+
 ## [0.48.0] — 2026-07-13 — koni-docs: a mutation suite is a lock, not a net — v0.48.0
 
 Round 8: **D1 25/25 · D2 25/25 · D3 18/25 · D4 20.5/25.** D1 and D2 are maxed and stable.

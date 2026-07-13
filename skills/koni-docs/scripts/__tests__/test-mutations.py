@@ -90,6 +90,11 @@ MUTATIONS: list[tuple[str, str, str]] = [
         "        out.add(slug if n == 0 else f'{slug}-{n}')",
         "        out.add(slug)",
     ),
+    (
+        'explicit HTML anchors stop being collected — live <a name>/id= links read as dead',
+        '    out.update(HTML_ANCHOR.findall(body))',
+        '    pass',
+    ),
 ]
 
 
@@ -113,7 +118,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 11
+MIN_MUTANTS = 12
 
 
 def main() -> int:

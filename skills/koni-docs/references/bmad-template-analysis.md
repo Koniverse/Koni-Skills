@@ -6,7 +6,7 @@
 >
 
 
-**Contents**: [1. BMad Pipeline → Koni-Docs Mapping](#1-bmad-pipeline--koni-docs-mapping) · [2. BMad Template Structure (Extracted from Raw Sample)](#2-bmad-template-structure-extracted-from-raw-sample) · [3. Key Differences: BMad vs Current Koni-Docs Templates](#3-key-differences-bmad-vs-current-koni-docs-templates) · [4. Template Update Recommendations](#4-template-update-recommendations) · [5. BMad Naming Convention → Koni-Docs Mapping](#5-bmad-naming-convention--koni-docs-mapping) · [6. Complete BMad → Koni-Docs Workflow](#6-complete-bmad--koni-docs-workflow) · [7. NOTES](#7-notes)
+**Contents**: [1. BMad Pipeline → Koni-Docs Mapping](#1-bmad-pipeline--koni-docs-mapping) · [2. BMad Template Structure (Extracted from Raw Sample)](#2-bmad-template-structure-extracted-from-raw-sample) · [3. Key Differences: BMad vs Current Koni-Docs Templates](#3-key-differences-bmad-vs-current-koni-docs-templates) · [4. What koni-docs adopted from BMad — and what it kept](#4-what-koni-docs-adopted-from-bmad--and-what-it-kept)
 
 ---
 
@@ -187,82 +187,32 @@ SPRINT-STATUS.YAML
 | Retrospective | Per-epic retrospective flag | In sprint file on close | **Adopt BMad retro pattern** — per-epic retro optional flag |
 | Sprint goal | Not in YAML | In sprint MD frontmatter + recap | **Keep koni-docs** |
 
-## 4. Template Update Recommendations
+## 4. What koni-docs adopted from BMad — and what it kept
 
-### 4a. PRD Template — Add §7 Epics & Stories Index
+This section used to be a list of *recommendations*. Every one of them shipped, so the
+list was a closed to-do masquerading as a reference — it told readers to add things that
+had been there for months, in section numbers (`PRD §7`) that the label-only heading
+migration retired. What remains is the outcome.
 
-Current koni-docs PRD template has §4 (FR table with EPIC-N column) but lacks a §7 index. Add:
+**Adopted from BMad** (visible in the templates today):
 
-```markdown
-## §7. Epics & Stories Index
+- **Given/When/Then acceptance criteria**, alongside the declarative form for schema and
+  constraint ACs — [`templates/story.md`](templates/story.md) §4.
+- **`TASK-X.Y.N` task IDs** with subtask indentation and explicit `(AC: n, m)`
+  cross-references — the reason a reviewer can tell which AC a task serves.
+- **Structured Dev Notes** — Architecture constraints / Cross-story dependencies /
+  References as named sub-sections rather than free prose.
+- **The epic's FR Coverage table** and the PRD's `Epics & User Stories` index.
 
-### EPIC-1 — {Epic Title}
-| Story | Title | Status | Version |
-|-------|-------|--------|---------|
-| US-1.1 | {title} | {status} | — |
-```
+**Kept from koni-docs** (BMad has no equivalent):
 
-### 4b. Story Template — Enhancements
+- The richer story frontmatter — `version_shipped`, `commit`, `assignee`, `due`,
+  `prd_ref` / `arch_ref` / `depends_on` as typed ID lists.
+- The **Changelog entry** section inside the story — the mechanism that makes RULE-1
+  (docs ship in the same commit) practical rather than aspirational.
+- The explicit sprint scope table, and the 12 enforced rules with their grep checks.
 
-1. **Add BMad-style AC format option**: Support Given/When/Then alongside declarative ACs
-2. **Add Tasks grouping**: Allow `TASK-X.Y.Z` with subtask indentation and AC cross-reference
-3. **Add structured Dev Notes**: Include `Project Structure Notes` and `References` sub-sections
-4. **Keep koni-docs frontmatter**: The koni-docs frontmatter is richer — keep all fields
-5. **Keep koni-docs Changelog entry section**: This is critical for RULE-1 (same-commit docs)
-
-### 4c. Epic Template — Add FR Coverage
-
-Add to current koni-docs epic template:
-
-```markdown
-## FR Coverage
-| FR | Story | Status |
-|----|-------|--------|
-| FR-N | US-X.Y | {status} |
-```
-
-### 4d. Architecture Template — Add Architecture Decisions Table
-
-Current koni-docs ARCHITECTURE template links to CONTEXT.md for decisions. Add a summary table:
-
-```markdown
-## Architecture decisions
-| Decision | Topic | Date | Version | CONTEXT Ref |
-|----------|-------|------|---------|-------------|
-| AD-1 | {topic} | YYYY-MM-DD | vX.Y.Z | D{N} |
-```
-
-## 5. BMad Naming Convention → Koni-Docs Mapping
-
-| BMad Convention | Koni-Docs Convention | Mapping Rule |
-|----------------|---------------------|--------------|
-| `Epic N` | `EPIC-N` | Same numbering, UPPERCASE in koni-docs |
-| `Story N.M` | `US-X.Y` | N.M → X.Y (same numbering; X=epic, Y=story) |
-| `{N}-{M}-{slug}` | `US-{X}.{Y}-{slug}` | Prefix with `US-` |
-| `epic-N: {status}` | `EPIC-N.md` frontmatter `status:` | YAML → Markdown frontmatter |
-| `development_status:` | `STATUS.md` (auto-generated) | YAML → kanban table |
-| `sprint-status.yaml` | `sprint-YYYY-WNN.md` + `STATUS.md` | Complementary: YAML machine, MD human |
-
-## 6. Complete BMad → Koni-Docs Workflow
-
-```
-INPUT                                PROCESS                      OUTPUT
-───────────────────────────────────────────────────────────────────────────────
-BMad brainstorm session              → koni-docs extract          → (discard or archive)
-BMad brief.md                        → koni-docs extract §1,§2   → docs/PRD.md §1
-BMad prd.md                          → koni-docs standardize      → docs/PRD.md (full)
-BMad architecture.md                 → koni-docs standardize      → docs/ARCHITECTURE.md
-BMad epics.md (all epics+stories)    → koni-docs split+standardize → docs/sprints/epics/EPIC-N.md
-                                                                  → docs/PRD.md §7 index
-                                                                  → docs/sprints/stories/US-X.Y-slug.md
-BMad story files (per-story)         → koni-docs add frontmatter  → docs/sprints/stories/US-X.Y-slug.md
-BMad sprint-status.yaml              → koni-docs auto-generate     → docs/sprints/STATUS.md
-                                     → koni-docs manual            → docs/sprints/sprint-YYYY-WNN.md
-```
-
-## 7. NOTES
-
-- BMad's `planning_artifacts` path = `_bmad-output/planning-artifacts/`
-- BMad's `implementation_artifacts` path = `_bmad-output/implementation-artifacts/`
-- Koni-docs canonical path = `docs/`
-- This file provides the **template-level structural mapping** between the two pipelines; the step-by-step migration procedure is the koni-docs SKILL.md workflow itself (§3).
+**The one thing BMad does that koni-docs deliberately does not**: BMad numbers its PRD
+sections. koni-docs addresses them by **label** (`## Functional Requirements`), because a
+numbered heading breaks every cross-reference the moment a section is inserted — see
+[`templates/prd.md`](templates/prd.md) §1.

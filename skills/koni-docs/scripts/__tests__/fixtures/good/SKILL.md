@@ -24,6 +24,9 @@ The `real-tool.py` script does the thing.
 [live emoji anchor](#-deploy-it)
 [live duplicate-heading anchor](#real-section-1)
 [live fragment in an href](references/ok.md#alive)
+[live explicit HTML anchor](#custom-anchor)
+
+<a name="custom-anchor"></a>
 
 A setext heading
 ================
