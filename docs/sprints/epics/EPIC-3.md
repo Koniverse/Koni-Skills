@@ -18,7 +18,7 @@ proves itself as a multi-skill home rather than a single-skill repo.
 ### Business context
 
 The PRD and ARCHITECTURE both reserve a plugin slot
-(`koni-docs-plugins: [supabase, nextjs]`) but no plugin skill has been
+(`plugins: [supabase, nextjs]` (under the `koni-docs:` block)) but no plugin skill has been
 written yet, and no skill exists in this repo other than `koni-docs`.
 EPIC-3 is the bridge from "we shipped one skill" to "we run a catalog."
 

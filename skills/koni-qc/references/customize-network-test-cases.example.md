@@ -168,7 +168,7 @@ every release.
 
 - App-kill mid-Save durability (process crash between detect and persist) —
   deferred to a dedicated resilience pass (related to NEG-5).
-- i18n: RTL rendering of the network name — deferred (tracked in `nfr.md` §i18n).
+- i18n: RTL rendering of the network name — deferred (tracked in `nfr.md` (the i18n section)).
 
 ## Self-grade vs `quality-bar.md`
 

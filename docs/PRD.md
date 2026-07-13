@@ -275,7 +275,7 @@ every Koniverse agent-supported workflow.
    experimental\_install on a fresh clone, agent-agnostic activation.
    No manual `git submodule`, no copy-paste decay.
 3. **Plugin-ready** — `koni-docs` declares a plugin slot
-   (`koni-docs-plugins: [supabase, nextjs]`) so technology-specific
+   (`plugins: [supabase, nextjs]` (under the `koni-docs:` block)) so technology-specific
    rules ship as their own skills and extend the core rule set
    without forking it.
 

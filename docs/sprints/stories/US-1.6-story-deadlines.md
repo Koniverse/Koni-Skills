@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0"
+version_shipped: "0.39.0 + 0.40.0 + 0.41.0 + 0.42.0 + 0.43.0 + 0.44.0 + 0.45.0"
 prd_ref: [FR-38]
 arch_ref: []
 depends_on: []
@@ -318,6 +318,32 @@ things RULE-17 forbids** — the copy billed as the shortcut for agents in a hur
 the copy nobody audited. Both are LESSONS §21: duplication does not fail by going
 missing, it fails by going subtly wrong in the copy people actually reach for; and a
 name repeated confidently in prose is not a verified name.
+
+## Round 7 — skill-grading re-grade (2026-07-13, v0.45.0)
+
+**D1 25/25 · D2 25/25.** The blind router routed 18/18 (precision and recall both 1.00),
+and every rule family held under multi-pressure adversarial scenarios — including all
+three RULE-18 obligations, which had been the RED two rounds earlier.
+
+D3 15/25, and both its Criticals were the same thing: **the checker's fourth consecutive
+false green.** Four rounds running, I widened it, ran it on a clean corpus, read `0`, and
+reported it fixed — and four rounds running, an author-blind reviewer planted a syntax I
+had not imagined. It also carried a silent trapdoor: an indented closing fence disabled
+every check for the rest of the file, with no warning.
+
+The reviewer named the pattern rather than the bug: *"the guard is validated only against
+defects its author imagined."* So the guard now ships its own planted-defect suite — 15
+classes, one fixture each, plus a clean control. I wrote the tests first; they failed 10
+of 15 against the then-current checker. The gate now runs that suite **before** trusting
+the checker's verdict: sabotage the checker and the gate refuses its green (verified by
+sabotaging it). LESSONS §22.
+
+Also closed: koni-qc had been red for four rounds because the gate swept only *touched*
+skills; RULE-16 was a BLOCKER with no blocker (`v0.7.0` would have shipped); and EPIC-3 —
+the unbuilt plugin epic, which will be implemented from its own text — still taught the
+`koni-docs-plugins` key that does not exist.
+
+All six skills in the repo now report 0 dangling references.
 
 ## Implementation notes
 

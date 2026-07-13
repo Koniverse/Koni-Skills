@@ -16,6 +16,57 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.45.0] — 2026-07-13 — koni-docs: round 6 — D1 and D2 hit 25/25; the guard finally ships its own tests — v0.45.0
+
+Re-grade after v0.44.0: **D1 25/25** (blind router 18/18 — precision and recall both
+1.00) and **D2 25/25** (all six rule families held under multi-pressure scenarios,
+including all three RULE-18 obligations). D3 15/25 with two Criticals, both about the
+guard. Extends [US-1.6](sprints/stories/US-1.6-story-deadlines.md).
+
+### Fixed
+- **The checker's FOURTH consecutive false green.** Each round I widened it, ran it on
+  a clean corpus, read `0`, and called it fixed; each round an author-blind reviewer
+  planted a syntax I had not imagined. It could not see: reference-style definitions
+  (`[x]: gone.md`), title-attribute links (`](x.md "T")`), angle-bracket destinations,
+  HTML `<a href>` / `<img src>`, `~~~` fences (whose `##` lines became **phantom
+  anchors**), bare script names, or a §-pointer whose path was fiction (it "rescued"
+  wrong paths by basename).
+- **A silent trapdoor**: a fence closed by an *indented* marker never closed, so
+  everything to EOF counted as fenced — **every check for the rest of that file was
+  skipped, with no warning.** Latent, file-scoped, triggered by ordinary markdown, and
+  the single most likely source of the next false green.
+- **koni-qc had been red for four rounds and nobody was told**, because the gate swept
+  only the skills a commit *touched*. All 10 of its dangling references are now fixed,
+  and the gate sweeps **every** skill whenever any skill is touched.
+- **RULE-16 was a BLOCKER with no blocker.** `story-lint` asserted `version_shipped` was
+  *present*, never that it was bare — so `v0.7.0` would have shipped and surfaced as
+  `vv0.7.0` in the synced Stories table. That is LESSONS §4, in the repo that wrote it.
+- **The specs that would have regenerated the `koni-docs-plugins` bug.** EPIC-3 is the
+  *unbuilt* plugin epic; it will be implemented from that text. PRD, EPIC-1, EPIC-3
+  de-ghosted. (CONTEXT / CHANGELOG / LESSONS are append-only history — correctly left.)
+
+### Added
+- **`scripts/__tests__/` — the guard's own planted-defect suite.** One defect per class
+  it claims to catch (15 of them), plus a clean control that must stay quiet. The tests
+  were written **first** and failed 10 of 15 against the then-current checker, naming
+  the same misses the reviewer found by hand.
+- **The gate runs the self-test before trusting the checker.** Sabotage the checker and
+  the gate refuses its green rather than believing it — verified by actually
+  sabotaging it. A validator's silence is evidence only once you have proven it can
+  speak (LESSONS §22).
+
+### Changed
+- The script check's scope is now **stated**: it covers runnable tooling a skill tells
+  you to execute (`.sh` / `.py` / `.mjs`), not every source file a doc may cite. `.ts` /
+  `.js` were briefly in scope and produced false positives on legitimate cross-repo
+  references. A guard that cries wolf gets ignored — which ends where silence ends.
+
+**All six skills in the repo: 0 dangling references.**
+
+koni-docs CLI **0.11.3 → 0.11.4**.
+
+---
+
 ## [0.44.0] — 2026-07-13 — koni-docs: round 5 of skill-grading — the skill taught a config key that does not exist — v0.44.0
 
 Re-grade after v0.43.0: D4 rose to **21.25** (20.5 + 22, the highest yet; one grader

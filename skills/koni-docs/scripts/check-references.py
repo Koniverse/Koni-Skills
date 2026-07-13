@@ -25,27 +25,32 @@ import re
 import sys
 from pathlib import Path
 
-FENCE = re.compile(r'^(```|````).*?^\1', re.S | re.M)
 HEADING = re.compile(r'^#{1,6} (.+)$', re.M)   # H1 too — `](#title)` is a legal link
-ANCHOR_LINK = re.compile(r'\]\(#([^)]+)\)')
-# Any relative target, not just .md — a dead `](scripts/ghost.py)` must fail too.
-FILE_LINK = re.compile(r'\]\(([^)#\s]+)(?:#([^)]+))?\)')
-# `file.md` §Section — and the LINKED form [`file.md`](path) §Section, which an
-# earlier version of this script could not see at all. It certified 9 such pointers
-# green, one of which was dead, on a BLOCKER rule's See line. The bug this script
-# exists to catch, in the script itself.
-# Three forms, all of which have shipped dead in this repo:
-#   `file.md` §Section          — the bare-backtick form
-#   [`file.md`](path) §Section  — the linked form (a false green certified 9 of these)
-#   SKILL.md §3a-bis            — no backticks at all, and it lived INSIDE a template
-#                                 skeleton, so it was copied into every generated story
+ANCHOR_LINK = re.compile(r'\]\(\s*#([^)\s"]+)(?:\s+"[^"]*")?\s*\)')
+# Every destination form CommonMark allows, because each has hidden a dead link here:
+#   ](path)   ](path#anchor)   ](path "Title")   ](<path>)   ](<path> "Title")
+FILE_LINK = re.compile(
+    r'\]\(\s*<?([^)>#\s"]+)>?(?:#([^)\s">]+))?(?:\s+"[^"]*")?\s*\)'
+)
+# Reference-style definitions: [label]: path/to/file.md
+REF_DEF = re.compile(r'^\[[^\]]+\]:\s*<?([^\s>]+)>?', re.M)
+# A skill's markdown renders as HTML, so <a href> and <img src> are links too.
+HTML_SRC = re.compile(r'<(?:a|img|source)\b[^>]*?\b(?:href|src)\s*=\s*"([^"]+)"', re.I)
+# `file.md` §Section, the linked form [`file.md`](path) §Section, and the bare form
+# SKILL.md §3a-bis — all three have shipped dead in this repo.
 SECTION_POINTER = re.compile(
     r'\[?`?([A-Za-z][\w./-]*\.md)`?(?:\]\([^)]*\))?,?\s*§([^\n,.;()\[\]|`+]+)'
 )
 
-# A script the skill names as tooling must exist. `agile-sync-up.mjs` was cited as
-# the enforcement mechanism of a BLOCKER rule for months; it never existed.
-SCRIPT_NAME = re.compile(r'`([\w./-]+\.(?:mjs|py|sh))`')
+# Backticked OR bare. The first version required backticks — so `agile-sync-up.mjs`,
+# the very ghost this check was written for, would still have slipped through unquoted.
+#
+# Scope, stated honestly: this covers the **runnable tooling a skill tells you to
+# execute** (.sh / .py / .mjs), not every source file a doc may cite. `.ts` / `.js`
+# were in scope briefly and produced false positives on legitimate cross-repo
+# references (koni-agent-monitoring cites Koni-ERP-02's `ingest-schema.ts`) — a check
+# that cries wolf gets ignored, which ends in the same place as silence.
+SCRIPT_NAME = re.compile(r'(?<![\w/.\-…*])([\w-]+(?:\.[\w-]+)*\.(?:mjs|py|sh))(?![\w-])')
 
 
 def is_external(target: str) -> bool:
@@ -64,10 +69,21 @@ CONSUMER_DOCS = {
 def is_placeholder(target: str) -> bool:
     """`US-X.Y-<slug>.md` is a shape, not a path — it resolves in the generated
     document, not in the template that describes it. `checks/foo.sh` is an
-    illustration of a file the reader would author, not a claim that it exists."""
+    illustration of a file the reader would author, not a claim that it exists.
+    And `Next.js` is a product name, not a script: filenames in these repos are
+    lowercase, so a capitalized stem is prose."""
     if '<' in target or 'X.Y' in target or 'X.Z' in target or 'EPIC-N' in target:
         return True
-    stem = Path(target).stem.lower()
+    raw_stem = Path(target).stem
+    if raw_stem[:1].isupper():
+        return True
+    # `crypto.test.ts` / `subscription.integration.spec.ts` are naming *conventions*
+    # illustrated in prose, not tools the docs claim to ship.
+    if re.search(r'\.(test|spec|integration|e2e|unit)$', raw_stem):
+        return True
+    if target.startswith(('*', '<')) or '*' in target:
+        return True          # `*.spec.ts` is a glob — a shape, not a file
+    stem = raw_stem.lower()
     return (stem in {'foo', 'bar', 'baz', 'example'}
             or stem.startswith(('your-', 'my-', 'example-', 'foo')))
 
@@ -113,21 +129,29 @@ def fence_spans(text: str) -> list[tuple[int, int]]:
     spans: list[tuple[int, int]] = []
     open_at: int | None = None
     open_len = 0
-    for m in re.finditer(r'^(`{3,})', text, re.M):
-        marker = len(m.group(1))
+    open_char = ''
+    for m in re.finditer(r'^[ \t]{0,3}(`{3,}|~{3,})', text, re.M):
+        marker = m.group(1)
+        char, length = marker[0], len(marker)
         if open_at is None:
-            open_at, open_len = m.start(), marker
-        elif marker >= open_len:
+            open_at, open_len, open_char = m.start(), length, char
+        elif char == open_char and length >= open_len:
             spans.append((open_at, m.end()))
-            open_at, open_len = None, 0
+            open_at, open_len, open_char = None, 0, ''
     if open_at is not None:
         spans.append((open_at, len(text)))
     return spans
 
 
+def comment_spans(text: str) -> list[tuple[int, int]]:
+    """HTML comments. A link inside one is not a link."""
+    return [(m.start(), m.end()) for m in re.finditer(r'<!--.*?-->', text, re.S)]
+
+
 def in_fence(text: str, index: int) -> bool:
-    """A link inside a fence belongs to the *generated* document, not this one."""
-    return any(start <= index < end for start, end in fence_spans(text))
+    """A link inside a fence belongs to the *generated* document, not this one.
+    A link inside an HTML comment belongs to nobody."""
+    return any(start <= index < end for start, end in fence_spans(text) + comment_spans(text))
 
 
 def check(root: Path) -> list[str]:
@@ -141,6 +165,11 @@ def check(root: Path) -> list[str]:
         return cache[p]
 
     for md in sorted(root.rglob('*.md')):
+        # The self-test's fixtures are deliberately broken — that is their job. Skip
+        # them when sweeping a skill, but NOT when they are themselves the target
+        # (relative_to(root)), or the self-test would silently pass on garbage.
+        if '__tests__' in md.relative_to(root).parts:
+            continue
         text = read(md)
         own_anchors = anchors_of(text)
 
@@ -159,6 +188,8 @@ def check(root: Path) -> list[str]:
                 continue
             if in_fence(text, m.start()) or is_external(target_raw) or is_placeholder(target_raw):
                 continue
+            if Path(target_raw).name in CONSUMER_DOCS:
+                continue          # lives in the consumer's docs/, not in the skill
             target = (md.parent / m.group(1)).resolve()
             if not target.exists():
                 problems.append(f'{md}: dead link -> {m.group(1)}')
@@ -167,18 +198,31 @@ def check(root: Path) -> list[str]:
                 if m.group(2) not in anchors_of(read(target)):
                     problems.append(f'{md}: dead anchor {m.group(1)}#{m.group(2)}')
 
+        for pattern in (REF_DEF, HTML_SRC):
+            for m in pattern.finditer(text):
+                t = m.group(1)
+                if in_fence(text, m.start()) or is_external(t) or is_placeholder(t):
+                    continue
+                if '/' not in t and '.' not in t:
+                    continue
+                if Path(t).name in CONSUMER_DOCS:
+                    continue
+                if not (md.parent / t.split('#')[0]).exists():
+                    problems.append(f'{md}: dead link -> {t}')
+
         siblings = root.parent  # sibling skills — cross-skill pointers are legitimate
         for m in SECTION_POINTER.finditer(text):
             if is_placeholder(m.group(1)) or Path(m.group(1)).name in CONSUMER_DOCS:
                 continue
-            target = md.parent / m.group(1)
+            cited = m.group(1)
+            target = md.parent / cited
             if not target.exists():
-                # The file may live elsewhere in this skill, or in a sibling skill
-                # (koni-qc owns the test-doc references koni-docs points at).
-                matches = list(root.rglob(Path(m.group(1)).name)) or \
-                          list(siblings.rglob(Path(m.group(1)).name))
+                if '/' in cited:
+                    problems.append(f'{md}: §-pointer path does not resolve -> {cited}')
+                    continue
+                matches = list(root.rglob(cited)) or list(siblings.rglob(cited))
                 if not matches:
-                    problems.append(f'{md}: §-pointer to a file that does not exist -> {m.group(1)}')
+                    problems.append(f'{md}: §-pointer to a file that does not exist -> {cited}')
                     continue
                 target = matches[0]
             named = m.group(2).strip()
@@ -211,7 +255,11 @@ def check(root: Path) -> list[str]:
             if in_fence(text, m.start()) or is_placeholder(m.group(1)):
                 continue
             name = Path(m.group(1)).name
-            if not (list(root.rglob(name)) or list(repo.rglob(name))):
+            found = list(root.rglob(name)) or [
+                q for q in repo.rglob(name)
+                if 'node_modules' not in q.parts and '.git' not in q.parts
+            ]
+            if not found:
                 problems.append(f'{md}: names a script that does not exist -> {m.group(1)}')
 
     return problems

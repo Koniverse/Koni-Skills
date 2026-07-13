@@ -10,7 +10,7 @@
 **Contents**: [The automation spine](#the-automation-spine) ·
 [1. Generate](#1-generate-spec--runnable-test) · [2. Report](#2-the-reporter-contract) ·
 [3. Sync](#3-story-write-back-code--story) · [4. CI gate](#4-ci-gate--runner-bootstrap) ·
-[Ownership](#ownership--why-a-contract-not-a-vendored-tool)
+[Ownership](#1-generate-spec--runnable-test)
 
 ## The automation spine
 
@@ -97,7 +97,7 @@ Turns a run into `report.md` — deterministic, no hand-editing.
   live env — in a lane that lacks it (the unit/Docker gate, a DB-less local run) a
   missing such test folds to **⏳ `env-pending`** (its own bucket; still *covered*),
   **never broken** — it is verified in its own CI lane
-  ([`live-harness.md`](live-harness.md), §4 item 4). In the **full lane** (CI job with
+  ([`live-harness.md`](live-harness.md) (Boot resilience) item 4). In the **full lane** (CI job with
   services / a local live-stack run) the same handle IS enforced: missing or failing
   ⇒ broken. This is what lets a repo flip `— (manual)` rows to live handles without
   false-reding the unit gate (the ERP drive ran 244 env-pending handles this way).

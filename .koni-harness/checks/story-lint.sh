@@ -67,6 +67,11 @@ for f in "$dir"/US-*.md; do
   if [ -n "$created" ] && [ ! "$created" \< "2026-07-04" ]; then
     grep -Eq '^[[:space:]>*-]*\**Lessons applied\**:' "$f" ||
       fail "$f: created $created but no 'Lessons applied:' line — cite the LESSONS.md sections read at Frame (or 'none — <why>'); D35"
+
+    # RULE-16 is a BLOCKER that had no blocker: `version_shipped: v0.7.0` passed, then
+    # surfaced as `vv0.7.0` in the synced Stories table (LESSONS §4).
+    grep -Eq '^version_shipped:[[:space:]]*"?v' "$f" &&
+      fail "$f: version_shipped is v-prefixed — RULE-16 requires bare semver (the sync prepends the v, producing vv0.7.0)"
   fi
 
   if [ "$status" = done ]; then

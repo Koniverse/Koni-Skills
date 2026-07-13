@@ -85,7 +85,7 @@ standard. Every functional/edge case is one row. The columns are fixed:
 
 > These two rows use placeholder IDs (`TC-XX.*`) so they don't collide with a real
 > suite's IDs. The **`Covered-by`** handle has **five** fixed forms:
-> 1. `<path>.spec.ts::<name>` — **covered** (the automated test exists and ran). The
+> 1. `<path>.spec.ts::<name>` (a naming shape, not a real file) — **covered** (the automated test exists and ran). The
 >    path is relative to the test root (`epic/EPIC-NN/…` is fine; the `<app>/tests/`
 >    prefix may be omitted), and `<name>` may be abbreviated to the test's leading
 >    TC-ID token (`…spec.ts::TC-01.WS-5`) since that token is the reporter's parse key;

@@ -218,7 +218,7 @@ half of the reliability axis in [`nfr.md`](nfr.md).)
   `env-pending` is a **derived, lane-aware status**, not a Covered-by form: an
   automated-form handle whose file cadence is `*.integration/*.e2e/*.smoke` counts
   env-pending in a lane without that env (unit/Docker gate) — it is **verified in its
-  own CI lane** ([`test-automation.md`](test-automation.md) §2/§4) and never counted
+  own CI lane** ([`test-automation.md`](test-automation.md) §2 and §4) and never counted
   broken locally. `design` comes from the fifth Covered-by form
   ([`traceability.md`](traceability.md)). `manual` and `PROPOSED:` are the two
   buckets that count as **uncovered** — driving them to zero is the 100% target.

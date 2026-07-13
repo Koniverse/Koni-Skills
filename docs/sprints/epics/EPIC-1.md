@@ -39,7 +39,7 @@ hosted skill marketplace — that is permanently out of scope.
 
 ### Out of scope
 
-- **Plugin skills (Supabase, Next.js)** — owned by [EPIC-3](EPIC-3.md). The integration block reserves the `koni-docs-plugins:` slot in v0.1.0.
+- **Plugin skills (Supabase, Next.js)** — owned by [EPIC-3](EPIC-3.md). The integration block reserves the `plugins:` (under `koni-docs:`) slot in v0.1.0.
 - **Dogfood on this repo itself** — owned by [EPIC-2](EPIC-2.md). EPIC-1 ships the skill; EPIC-2 proves it on its own home.
 - **CI gate / GitHub Action** — deferred. The regression test runs locally for now.
 

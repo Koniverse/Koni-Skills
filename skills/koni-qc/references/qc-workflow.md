@@ -60,7 +60,7 @@ Decide *what* is under test and *when* it is done.
 - **Run the change sweep (MANDATORY on any repo with a prior QC round)** — read the
   CHANGELOG **and** `git log` since the last round, verify every feat has covering
   TCs and every fix has a `REG` TC, and update the change-coverage ledger —
-  [`regression-learning.md`](regression-learning.md) §change-sweep. A fix with no
+  [`regression-learning.md`](regression-learning.md) (The change sweep). A fix with no
   REG TC is a confirmed miss and enters the miss post-mortem before new authoring
   starts (the miss tells you where the derivation is blind).
 - **Define scope** — in / out of scope; which surfaces; regression blast radius.

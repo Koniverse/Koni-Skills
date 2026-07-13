@@ -776,3 +776,43 @@ the doc is fiction that reads like fact.
 # Every config key a doc claims should appear in a real config or schema.
 rg -o '`[a-z][a-z0-9_-]*:`' skills/*/SKILL.md | sort -u   # then verify each one exists
 ```
+
+---
+
+## 22. Trust the guard's silence only after you have made it speak — ship the planted defects with it
+
+**What happened**: `check-references.py` produced **four consecutive false greens**,
+one per grading round. Each time I widened it, "verified" it by running it on a clean
+corpus, read `0`, and reported it fixed. Each time an author-blind reviewer planted a
+syntax I had not imagined — a linked `§`-pointer, a bare one, a `~~~` fence, a
+title-attribute link, an HTML `href`, a reference-style definition — and the guard
+waved it through while printing the same confident `0`.
+
+Round four, the reviewer named the pattern instead of the bug: *"the guard is validated
+only against defects its author imagined. Until it ships with a corpus of planted
+defects that CI asserts it catches, the next widening will simply relocate the blind
+spot."* That is exactly what had happened, four times.
+
+So the guard now ships with **its own test suite**: a `bad/` fixture carrying one
+planted defect per class it claims to catch, a `good/` control that must stay clean,
+and a runner asserting every single one is caught. I wrote the tests **first**; they
+failed **10 of 15** against the then-current checker, naming the same misses the
+reviewer found by hand. Only then did I widen it. And the gate now runs the self-test
+*before* trusting the checker's verdict — sabotage the checker and the gate refuses its
+green rather than believing it.
+
+**The lesson**: **a validator's silence is evidence only if you have proven it can
+speak.** "It printed zero" and "it is broken" are the same observation. The proof is
+not a clean run — a clean run is what a dead checker gives you. The proof is a corpus
+of known-bad inputs it is asserted to reject, versioned alongside it, run by CI. Any
+check without that is a hypothesis wearing a uniform.
+
+Two corollaries, both learned the same day:
+
+- **False positives are the same failure as false greens.** The checker briefly flagged
+  `Next.js` as a missing script and `crypto.test.ts` as a missing file. A guard that
+  cries wolf gets ignored, and ignored is where silent guards also end up. Precision is
+  not politeness; it is what keeps the guard alive.
+- **A guard that only inspects what changed hides standing rot.** The gate originally
+  swept only the skills a commit touched, so a sibling sat red for four rounds while
+  the skill advertised the guard as covering everything. Touch one, sweep all.
