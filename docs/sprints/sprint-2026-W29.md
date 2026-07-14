@@ -16,6 +16,14 @@ goal: >-
 
 **Total**: 1 story / 3 pts / 1 contributor.
 
+## Carried out of this sprint
+
+[US-1.7](stories/US-1.7-skill-grading-open-findings.md) (backlog, 5 pts) — the open
+skill-grading findings. US-1.6's deliverable shipped; what did not converge is the
+verification apparatus the grading rounds built around it, plus four unrun evals. Filed as
+its own story rather than extending US-1.6 further: the checker is now shared infrastructure
+used by all six skills, not this feature's tooling (LESSONS §13).
+
 ## Goal detail
 
 koni-docs could express a *rhythm* (`sprint.start` / `sprint.end`) and
