@@ -1,5 +1,5 @@
 ---
-name: koni-ea
+name: koni-ea-dev
 description: >
   Use when programming or reviewing an MQL5 Expert Advisor or custom indicator for
   MetaTrader 5 and it must be correct to the MQL5 standard — the EA lifecycle and
@@ -11,17 +11,17 @@ description: >
   the pending-fill margin pre-check), the MQL5 pitfalls that only bite in production
   (repaint, backtest mode, filling mode, handle leak, ArraySetAsSeries, self-recovery
   after restart), compiling clean, and the reusable Koni .mqh library conventions —
-  even without naming koni-ea.
+  even without naming koni-ea-dev.
 ---
-# koni-ea — programming a correct MQL5 Expert Advisor
+# koni-ea-dev — programming a correct MQL5 Expert Advisor
 
-> koni-ea is the **standard for programming a Koniverse MQL5 Expert Advisor
+> koni-ea-dev is the **standard for programming a Koniverse MQL5 Expert Advisor
 > correctly**: the lifecycle and event model, the trading and risk mechanics, the
 > MQL5 traps that only bite in production, and how to compile clean and test
 > honestly. It is to MQL5 EAs what koni-qc is to test docs — a methodology for
 > writing correct code, not a code generator. It is deliberately scoped to the
 > *programming*; the operational lifecycle around a released EA (versioning,
-> registry, deployment, per-version docs) is a trading-ops SOP, not this skill.
+> registry, deployment, per-version docs) is its sibling skill **koni-ea-ops**.
 
 The standard is **synthesized from two production corpora** and resolves the places
 where they disagree (each reference names the divergence and the chosen canonical

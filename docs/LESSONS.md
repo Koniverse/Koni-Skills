@@ -1194,3 +1194,32 @@ does not serve it — however related — belongs in a different skill or is som
 own. "Adjacent and useful" is the exact shape of scope creep, because it always looks like
 added value until a user has to read past it. The tell you crossed the line: the skill's own
 `description` needs "and" to list two distinct jobs.
+
+## 33. Renaming or splitting a shipped skill — correct forward, and cross-reference siblings by name
+
+**What happened**: acting on §32, koni-ea was split into `koni-ea-dev` (programming) and a
+new `koni-ea-ops` (operations), which meant **renaming a skill that had already shipped**
+twice (v0.57.0, v0.58.0) with its old name recorded in the CHANGELOG, two stories, and two
+lessons. The temptation was to sweep every mention to the new name. That would have rewritten
+history: the v0.57.0 entry is a true statement that `koni-ea` shipped *then* — editing it to
+say `koni-ea-dev` makes the record lie about what happened.
+
+Two rules kept the rename honest and the tooling quiet:
+- **Correct forward, not backward (§12).** Historical records — past CHANGELOG entries,
+  shipped stories, prior lessons — keep the name the skill had when they were written. Only
+  *living* docs (the PRD's functional requirements, the AGENTS.md catalog, the current
+  story, the new CHANGELOG entry) get the new name. The new version's entry *records* the
+  rename; the old entries are left as evidence of what was true.
+- **Cross-reference sibling skills by name, not by path.** koni-ea-dev and koni-ea-ops point
+  at each other as "**koni-ea-ops**" / "**koni-ea-dev**" in prose, never as
+  `../koni-ea-ops/SKILL.md`. The per-skill reference checker scans one skill directory; a
+  relative link that escapes it either dangles or forces the checker to reach across skills.
+  A name is stable across directory moves and needs no checker. (This is also how koni-nextjs
+  references koni-docs.)
+
+**The lesson**: **a rename is a forward event, not a retroactive one.** The identifier
+changed at a point in time; records from before that point correctly use the old name, and
+the change is documented at the version where it happened — the same discipline as a moved
+sprint or a corrected decision. And when skills refer to each other, a **name is a more
+durable link than a path** — it survives the exact reorganisation (rename, split, move) that
+paths do not.

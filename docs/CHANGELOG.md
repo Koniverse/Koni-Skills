@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.59.0] — 2026-07-15 — split koni-ea into koni-ea-dev + koni-ea-ops — v0.59.0
+
+Split the single koni-ea skill into two named skills so the coding standard and the ops
+runbook are separate — the clean execution of the v0.58.0 scope narrowing
+([US-3.13](sprints/stories/US-3.13-koni-ea-split-dev-ops.md), FR-41 + FR-42, LESSONS §32).
+
+### Changed
+- **Renamed `koni-ea` → `koni-ea-dev`** (the MQL5 **programming** methodology; content
+  unchanged, `name:` + self-references updated). Past CHANGELOG entries and stories keep the
+  `koni-ea` name they shipped under — the rename is recorded forward (LESSONS §12/§33).
+- **PRD FR-41** renamed to koni-ea-dev; **AGENTS.md** catalog updated to list both skills.
+
+### Added
+- **`koni-ea-ops`** — the EA **operational-lifecycle** skill: `SKILL.md` + five references —
+  `versioning.md` (the `v<X.YY>` scheme, minor-vs-major, folder layout, commit=release),
+  `registry-and-magic.md` (the `registry.yaml` shape, MagicNumber as Notion source-of-truth,
+  instance bindings, the collision audit), `deployment.md` (deploy to a terminal + production
+  `.ex5` via the compile service), `backtest-and-release.md` (release backtest mode, metrics,
+  the archive, the deprecated release SOP), and `documentation.md` (the per-version doc
+  template). Cross-references koni-ea-dev by name, not path.
+- **PRD FR-42** (koni-ea-ops) and **LESSONS §33** (renaming a shipped skill: correct forward;
+  cross-reference siblings by name, not path).
+
+---
+
 ## [0.58.0] — 2026-07-15 — koni-ea refocus: scope to the MQL5 programming methodology — v0.58.0
 
 Narrowed koni-ea (shipped v0.57.0) to focus purely on **programming a correct MQL5 EA**,

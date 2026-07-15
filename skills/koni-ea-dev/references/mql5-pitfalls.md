@@ -102,9 +102,6 @@ in-memory state** while positions stay open. The EA must rebuild:
 MT5 does **not** enforce magic uniqueness. Two instances sharing a magic merge in
 every position/deal query — every `PositionGetInteger(POSITION_MAGIC)` filter
 matches both, so one EA manages the other's positions. Silent and corrupting. Give
-each running instance its own magic, `> 0`, and never reuse one. Audit a tree of
-EAs for duplicate defaults:
-
-```bash
-grep -rh "MagicNumber=" algorithms/mql5/ | sort | uniq -c | sort -rn
-```
+each running instance its own magic, `> 0`, and never reuse one. (Assigning magics
+and auditing a tree of EAs for duplicates is an operational task — see the
+**koni-ea-ops** skill.)

@@ -18,8 +18,9 @@ goal: >-
 | US-3.10 | koni-setup docs sync — security-review capability + gate | EPIC-3 | P2  | 1      | ✅ done | v0.56.0           | [stories/US-3.10-koni-setup-security-review-sync.md](stories/US-3.10-koni-setup-security-review-sync.md) |
 | US-3.11 | koni-ea — MQL5 Expert Advisor authoring standard skill | EPIC-3 | P2  | 5      | ✅ done | v0.57.0           | [stories/US-3.11-koni-ea-mql5-standard.md](stories/US-3.11-koni-ea-mql5-standard.md) |
 | US-3.12 | koni-ea refocus — scope to the MQL5 programming methodology | EPIC-3 | P2  | 2      | ✅ done | v0.58.0           | [stories/US-3.12-koni-ea-programming-focus.md](stories/US-3.12-koni-ea-programming-focus.md) |
+| US-3.13 | Split koni-ea → koni-ea-dev + koni-ea-ops | EPIC-3 | P2  | 3      | ✅ done | v0.59.0           | [stories/US-3.13-koni-ea-split-dev-ops.md](stories/US-3.13-koni-ea-split-dev-ops.md) |
 
-**Total**: 5 stories / 14 pts / 1 contributor.
+**Total**: 6 stories / 17 pts / 1 contributor.
 
 ## Carried out of this sprint
 
