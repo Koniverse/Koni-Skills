@@ -12,7 +12,7 @@ prd_ref: [FR-40]
 arch_ref: []
 depends_on: [US-5.11]
 assignee: jindo9986
-commit:
+commit: e4ce4ca
 created: 2026-07-13
 updated: 2026-07-13
 external_deps:
