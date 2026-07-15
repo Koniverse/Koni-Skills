@@ -18,8 +18,13 @@
 
 ## Security
 
-The lead. Codifies the Koni-Finance dedicated security suite. Every case here is
-a `TC-<EPIC>.SEC-<n>` row in the canonical table ([`traceability.md`](traceability.md)).
+The lead, and the **shortlist + trigger** only. The threat model, the per-category
+case-derivation taxonomy, the adversarial identify→refute→confidence-filter review, the
+finding schema, and the release sign-off live in **[`security-review.md`](security-review.md)**
+— load it whenever the checklist below is not enough (auth, money/asset movement,
+multi-tenant data, untrusted input, secrets/crypto, file upload, deserialization, a new
+outbound call). Every case here is a `TC-<EPIC>.SEC-<n>` row in the canonical table
+([`traceability.md`](traceability.md)).
 
 - [ ] **Authn** — valid/invalid/expired credentials; session fixation; logout invalidates.
 - [ ] **Authz** — every protected path tested as owner / other-user / anonymous; no horizontal or vertical privilege escalation.

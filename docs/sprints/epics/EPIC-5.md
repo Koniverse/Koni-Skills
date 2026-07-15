@@ -1,7 +1,7 @@
 ---
 id: EPIC-5
 title: "Koniverse QC tooling"
-status: done
+status: in-progress
 prd_ref: 'FR-26'
 created: 2026-06-28T00:00:00.000Z
 updated: 2026-06-28T00:00:00.000Z
@@ -62,6 +62,7 @@ a11y/i18n, and perf SLAs. EPIC-5 closes that gap with a methodology skill that i
 | FR-35 | [US-5.8](../stories/US-5.8-layered-suites-report-quality.md)           | ✅ shipped (v0.31.0) |
 | FR-36 | [US-5.8](../stories/US-5.8-layered-suites-report-quality.md) (round 2) | ✅ shipped (v0.33.0) |
 | FR-37 | [US-5.8](../stories/US-5.8-layered-suites-report-quality.md) (round 3) | ✅ shipped (v0.34.0) |
+| FR-39 | [US-5.11](../stories/US-5.11-security-review-capability.md)              | ✅ shipped (v0.53.0) |
 
 ## Stories
 
@@ -74,6 +75,7 @@ a11y/i18n, and perf SLAs. EPIC-5 closes that gap with a methodology skill that i
 | [US-5.5](../stories/US-5.5-test-automation.md)               | test-automation                     | Automation spine: spec→runnable test + reporter contract (run→report) + story write-back + CI-gate/runner bootstrap; from the koni-erp-02 deployment gaps                                 | ✅ done | v0.24.0                   |
 | [US-5.7](../stories/US-5.7-whole-project-qc.md)              | whole-project QC                    | The layer above the per-epic lifecycle: QA-tracking epic + strategy + artifact-location MUSTs + execution + Definition-of-Done + depth bar (from the ERP-02 learning note)                | ✅ done | v0.26.0                   |
 | [US-5.8](../stories/US-5.8-layered-suites-report-quality.md) | koni-qc field absorption (3 rounds) | Exemplar-bar authoring/reports; round 2 (v0.33.0, was US-5.9): frozen contract + enforcer + Band D + live-harness; round 3 (v0.34.0, was US-5.10): field reorg + regression-learning loop | ✅ done | v0.31.0 + 0.33.0 + 0.34.0 |
+| [US-5.11](../stories/US-5.11-security-review-capability.md)  | security-review capability          | Detailed adversarial security-testing method — threat model → per-category derivation → identify/refute/confidence-filter → decision-grade report + REG test; adapts /security-review. `nfr.md` §Security becomes the trigger, pointing to it                                            | ✅ done | v0.53.0                   |
 
 > **Retired story IDs** (consolidation, [CONTEXT D33](../../CONTEXT.md)): `US-5.6`
 > → US-5.3 round 2 · `US-5.9` → US-5.8 round 2 · `US-5.10` → US-5.8 round 3.

@@ -1696,3 +1696,51 @@ proves insufficient.
 **Date**: 2026-07-13
 **Version**: 0.39.0
 **Reference**: [US-1.6](sprints/stories/US-1.6-story-deadlines.md), [design spec](superpowers/specs/2026-07-13-koni-docs-story-deadlines-design.md), [sprint-system.md](../skills/koni-docs/references/sprint-system.md) §Deadlines vs sprint cadence, [frontmatter-spec.md](../skills/koni-docs/references/frontmatter-spec.md) §1.1, LESSONS §16, CHANGELOG [0.39.0].
+
+---
+
+### D38. koni-qc's security testing gets a method, not just a checklist — adversarial, with false-positive discipline as a first-class rule
+
+**Context**: a directive (2026-07-13) — make koni-qc's security testing detailed and
+strong, modelled on Anthropic's `/security-review`. koni-qc could name the security
+categories to cover (`nfr.md` §Security, 8 items) but not derive the cases, run a rigorous
+review, or write a finding a ship decision could rest on. A checklist is not a method.
+
+**Decision** (v0.53.0, US-5.11, ships FR-39):
+
+1. **A dedicated method reference** — `references/security-review.md`. It is
+   threat-model-first (enumerate the trust boundaries an attacker can reach; every case
+   and finding names the boundary it crosses), carries a per-category derivation taxonomy
+   (authn, authz/IDOR, RLS, injection, XSS, deserialization/RCE, SSRF, secrets/crypto,
+   session/CSRF, data-exposure), and runs an **adversarial identify → refute →
+   confidence-filter** loop: independent agents must *disprove* a candidate finding's
+   exploitability before it is reported.
+
+2. **False-positive discipline is first-class, not a footnote.** Security is the one place
+   in QC where a false positive costs as much as a false negative — a suite that cries
+   wolf gets muted, and a muted suite misses the real one (the LESSONS §22/§26 shape). So
+   the method ships the hard exclusions, the precedents, and the signal-quality bar from
+   `/security-review` as load-bearing content, and a finding without a concrete exploit
+   path is defined as noise, not a finding.
+
+3. **Single-source.** `nfr.md` §Security is reduced to the shortlist + trigger and
+   *points* to the method — it does not restate it (LESSONS §21: a cheatsheet that
+   restates a contract is a second contract that drifts).
+
+4. **Composes, never reproduces.** The method owns the coverage intelligence and the
+   finding rubric; it delegates every engine — the running exploit to gstack, the live
+   2-credential RLS harness to `live-harness.md`, the blocking gate to koni-harness, the
+   report body to koni-docs, the escaped-vuln → REG test to `regression-learning.md`.
+   This is the same boundary koni-qc keeps everywhere (D-series on koni-qc; US-5.1). No
+   scanner, no SAST tool, no new gate in this story.
+
+**Consequence**: koni-qc now has a **Security-review** mode alongside author / execute /
+release / skill-grade / whole-project. The adversarial loop is deliberately the same shape
+as koni-qc's own `skill-grading.md` and `/security-review`'s three-step fan-out — the
+skill already knew how to run independent adversarial agents; this points that engine at
+security. Deferred: a koni-harness "security-review-required on high-risk change" gate is
+named as the harness's to own, wired in a later story.
+
+**Date**: 2026-07-13
+**Version**: 0.53.0
+**Reference**: [US-5.11](sprints/stories/US-5.11-security-review-capability.md), [security-review.md](../skills/koni-qc/references/security-review.md), Anthropic `/security-review`, CHANGELOG [0.53.0].

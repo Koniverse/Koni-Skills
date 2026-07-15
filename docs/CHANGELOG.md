@@ -16,6 +16,57 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.53.0] — 2026-07-13 — koni-qc: a detailed, adversarial security-review capability — v0.53.0
+
+Ships **FR-39** ([US-5.11](sprints/stories/US-5.11-security-review-capability.md),
+[CONTEXT D38](CONTEXT.md)). Brings the rigor of Anthropic's `/security-review` into
+koni-qc's coverage-intelligence idiom.
+
+koni-qc could name the security categories a suite should cover — an 8-item checklist —
+but not derive the cases, run a rigorous review, or write a finding a ship decision could
+rest on. A checklist is not a method.
+
+### Added
+- **`skills/koni-qc/references/security-review.md`** — the security method:
+  - **Threat-model-first**: enumerate the trust boundaries an attacker can reach; every
+    test case and finding names the boundary it crosses.
+  - **A per-category derivation taxonomy** — authn, authz/IDOR, RLS/tenant-isolation,
+    injection (SQL/NoSQL/command/path/template/XXE), XSS (stored/reflected/DOM),
+    deserialization/RCE, SSRF, secrets/crypto, session/CSRF, data-exposure/PII — each with
+    the boundary it lives on, the concrete attacker inputs, the required-when trigger, and
+    the highest-signal check.
+  - **The adversarial review** — identify → **refute** (independent agents must disprove
+    exploitability before a finding is reported) → confidence-filter (drop < 8/10). The
+    same shape as koni-qc's `skill-grading.md` and `/security-review`'s three-step fan-out.
+  - **A decision-grade finding schema** — file:line, severity, confidence, category, and a
+    concrete **exploit scenario** ("a finding without an exploit path is noise").
+  - **A false-positive discipline as a first-class rule** — the hard exclusions, the
+    precedents, and the signal-quality bar, because a security suite that cries wolf gets
+    muted, and a muted suite misses the real one.
+  - Escaped-vuln → red-first REG test + class-generalization sweep; the release security
+    sign-off.
+- koni-qc SKILL.md: a **Security-review** mode, an ownership row, activation + reference
+  rows, and security triggers in the `description` (threat model, injection, IDOR, SSRF,
+  XSS, auth bypass, RLS, "is this safe to ship").
+
+### Changed
+- `nfr.md` §Security is now the **shortlist + trigger**, pointing to `security-review.md`
+  for the method — single-source, no duplicated depth (LESSONS §21).
+
+### Composition
+- The method owns the coverage intelligence and the finding rubric; it **delegates every
+  engine** — the running exploit to gstack, the live 2-credential RLS harness to
+  `live-harness.md`, the blocking gate to koni-harness, the report body to koni-docs. No
+  scanner, no SAST tool, no new gate in this story.
+
+All six skills: **0 dangling references** (the shared `check-references.py` gate caught a
+dead §-pointer in the first draft; fixed).
+
+**Commit**: pending
+
+
+---
+
 ## [0.52.0] — 2026-07-13 — koni-docs: a machine enumerates the claim surface — v0.52.0
 
 Round 10: **D4 23/25** (22.5 + 23.5 — a new high). **D3 5/25** — a collapse, and correct.

@@ -3,8 +3,10 @@ name: koni-qc
 description: >
   Use when building test docs or running quality control — writing test cases, a
   test plan, a coverage matrix, traceability; edge cases, every AC needing
-  positive/negative/boundary tests; security / performance /
-  accessibility (NFR) testing; QA-ing a release, "is testing thorough / the suite
+  positive/negative/boundary tests; performance / accessibility (NFR) testing;
+  a **security review** — threat-modelling a surface, deriving security test cases,
+  or hunting injection / IDOR / SSRF / XSS / auth-bypass / RLS-isolation vulns with
+  an exploit-path-and-confidence finding report; QA-ing a release, "is testing thorough / the suite
   too thin?"; where test files/reports go (docs/tests layout, per-US); the unit-test/coverage bar (a test misclassified, env-pending, or broken
   in the unit gate); automating
   the test loop (generate tests from specs, run → report → sync, CI gate, broken
@@ -30,6 +32,7 @@ description: >
 | Concern | Owner |
 |---|---|
 | Test-design techniques, edge taxonomy, AC↔TC matrix, NFR/security, risk priority, the quality rubric | **koni-qc** (this) |
+| **Security coverage intelligence** — threat model, per-category case derivation, the finding + confidence rubric, false-positive discipline, the adversarial identify→refute→filter method | **koni-qc** [`security-review.md`](references/security-review.md) — delegates *running* the exploit to gstack and the *gate* to koni-harness |
 | Test-doc templates / structure / `docs/tests/` layout | **koni-docs** — `references/templates/test-cases.md`, `test-report.md` (invoke; fill, don't redefine) |
 | Execution (browser / systematic QA, bug reports) | **gstack** — `qa` / `qa-only` / `investigate` / `browse` (invoke) |
 | UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` **and the shadcn standard** (both mandatory; criteria in `references/nfr.md` §UI) (invoke) |
@@ -55,6 +58,7 @@ never re-implements the right-column owners.
 | **Author test-cases for EPIC-N** | Read the epic's koni-docs inputs (PRD/stories/AC/ARCH) → produce a complete `docs/tests/test-cases/EPIC-N/` (index.md frame + per-US row files) with the canonical rich-TC table + the AC↔TC coverage matrix + edge + NFR/security cases, risk-ordered; a mixed API+UI surface splits into **layered suites** (API by-endpoint + functional) with the orthogonal coverage matrices | `test-design.md` · `edge-coverage.md` · `nfr.md` · `traceability.md` · `layered-suites.md` + koni-docs template |
 | **Run QC execution for EPIC-N** | Drive gstack per test case (for UI cases, run `/design-review` against the repo's `DESIGN.md` **+ the shadcn standard** — both mandatory); record results into koni-docs `test-report.md` run files with execution instrumentation (coverage % by AC/type, pass/fail, perf vs SLA) | `qc-workflow.md` §4 (Execute) + `report-quality.md` (the report content bar) + gstack (`qa`/`/design-review`) + koni-docs |
 | **Release gate for vX.Y.Z** | Check entry/exit criteria; produce the koni-docs release report + ship decision; run the koni-harness gate | `qc-workflow.md` §5 (Release gate) + `quality-bar.md` + koni-harness |
+| **Security-review a surface / release** | Threat-model the boundaries an attacker can reach → derive the SEC cases each demands → review adversarially (identify → refute → confidence-filter) so a plausible-but-wrong finding cannot survive → produce a decision-grade findings report + release sign-off, and pin every confirmed vuln with a red-first REG test. Runs the exploit via gstack, holds the gate via koni-harness | `security-review.md` + `nfr.md` §Security + `live-harness.md` (2-cred RLS) + `regression-learning.md` + gstack |
 | **Grade a skill (skill-QC)** | QC a *skill artifact* (not a product feature): score it /100 across 4 independent dimensions — triggering, rule-robustness, content, best-practices — to the **≥95 catalog standard** (re-grade the whole skill after any change, not just the diff) | `skill-grading.md` + skill-creator · writing-skills · `superpowers:code-reviewer` |
 | **Set up / standardize test docs** | Apply the standard `docs/tests/` taxonomy + by-epic test-code layout + the 3-place sync rule; if the repo wasn't bootstrapped by koni-setup, self-scaffold the missing tree | `test-organization.md` (+ koni-setup scaffolds at setup; koni-docs owns the templates) |
 | **Set the unit-coverage standard** | Own the per-function unit-test rule + coverage bar (the layer *below* the AC↔TC matrix); Dev authors the tests, koni-harness Self-verify enforces the bar | `unit-coverage.md` (+ koni-harness Execute/Self-verify; the repo's runner executes) |
@@ -75,7 +79,8 @@ never re-implements the right-column owners.
 | "a bug escaped / got hotfixed — now what?" / "turn this bug into tests" / "bug bash → tests" / "make the suite learn" / "what shipped since the last QC round?" / "sweep the changelog for missed cases" | `references/regression-learning.md` |
 | "am I missing edge cases?" / "make coverage thorough" | `references/edge-coverage.md` |
 | "trace AC to tests" / "TC IDs" / "coverage matrix" / "mark a TC deploy-only / ops-deploy" / "mark a TC verified-by-design-review / record the verification method" | `references/traceability.md` |
-| "security / performance / accessibility / i18n testing" | `references/nfr.md` |
+| "performance / accessibility / i18n testing" / the security shortlist | `references/nfr.md` |
+| "security review" / "threat model this" / "find security vulns / injection / IDOR / SSRF / XSS / RLS bypass" / "is this safe to ship" / "audit auth" / "penetration-test the API" / derive security test cases / a security finding report or release sign-off | `references/security-review.md` |
 | "unit tests" / "test each function" / "unit coverage" / "TDD per function" / "why is my integration test failing/broken in the unit gate?" (lane scoping: `test-automation.md` §2) | `references/unit-coverage.md` |
 | "automate the tests" / "generate tests from the spec" / "run + report + sync coverage" / "self-updating / CI-gated suite" / "set up CI for tests" / "test-reports empty, nothing runs" / "the reporter is dropping cases" / "broken Covered-by handles / coverage honesty" (pipeline/handle integrity) | `references/test-automation.md` |
 | "set up QC for this project" / "audit our test coverage" / "stand up QA tracking" / "QA epic" / "is our testing done?" / "specs written but is QC complete?" / "QC the whole repo" (**across the whole repo, not one epic** — a single epic/release is the qc-workflow row above) | `references/whole-project-qc.md` |
@@ -115,7 +120,8 @@ before review; do not restate the bands here.
 | [`references/test-automation.md`](references/test-automation.md) | Load the moment specs are authored but `test-reports/` is empty — the generate → report → sync → CI spine (frozen parse contract + the **broken-handle enforcer** + the runner/CI bootstrap; reference reporter shipped at [`scripts/qc-report.mjs`](scripts/qc-report.mjs) with its contract self-test) |
 | [`references/regression-learning.md`](references/regression-learning.md) | The **QC harness loop** — every escaped bug becomes a REG test + a class finding + a generalization sweep; the mandatory CHANGELOG/git-log change sweep + change-coverage ledger; the miss post-mortem. Load on any real bug, hotfix, bug-bash, or round start |
 | [`references/whole-project-qc.md`](references/whole-project-qc.md) | Load when **standing up or auditing QC for a whole repo** (not one epic) — the layer above `qc-workflow.md`; the Modes row lists what it does |
-| [`references/nfr.md`](references/nfr.md) | Non-functional coverage — security (lead), performance/SLA, accessibility, i18n, reliability, compatibility, observability |
+| [`references/nfr.md`](references/nfr.md) | Non-functional coverage — the security shortlist + trigger, performance/SLA, accessibility, i18n, reliability, compatibility, observability |
+| [`references/security-review.md`](references/security-review.md) | The **security method** behind nfr.md's shortlist — threat model, the per-category case-derivation taxonomy (authn/authz/IDOR, injection, XSS, RCE, SSRF, secrets/crypto, RLS, data exposure), the adversarial identify→refute→confidence-filter review, the finding schema + severity/confidence + false-positive discipline, escaped-vuln→REG-test, and the release security sign-off |
 | [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
 | [`references/skill-grading.md`](references/skill-grading.md) | Grading a **skill artifact** /100 across 4 dimensions (triggering · rule-robustness · content · best-practices); the harness Review stage uses it when building a skill |
 | [`references/test-organization.md`](references/test-organization.md) | The standard `docs/tests/` taxonomy + by-epic/suffix test-code layout + the 3-place sync rule + status legend + scaffolding (koni-setup at setup, koni-qc self-scaffold fallback) |

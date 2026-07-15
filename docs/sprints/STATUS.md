@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-14 02:31:47 UTC
-> Total stories: 58
+> Last generated: 2026-07-15 02:59:59 UTC
+> Total stories: 59
 
 ## ⏰ Deadlines (0)
 
@@ -26,7 +26,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (57)
+## ✅ Done (58)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -86,6 +86,7 @@ _No stories_
 | US-5.5 | test-automation — the spec→test→run→report→sync→CI loop that makes koni-qc self-running | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
 | US-5.7 | whole-project QC — QA-tracking epic + Definition-of-Done + depth bar (from the ERP-02 learning note) | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
 | US-5.8 | koni-qc field absorption — exemplar bar, ERP 100%-drive hardening, field reorg + regression-learning loop (3 rounds; absorbs US-5.9 + US-5.10) | EPIC-5 | P1 | 11 | sprint-2026-W27 | jindo9986 |
+| US-5.11 | koni-qc security-review — a detailed, adversarial security-testing capability | EPIC-5 | P1 | 3 | sprint-2026-W29 | jindo9986 |
 | US-6.1 | koni-agent-monitoring — content-free Claude Code usage reporter (client for ERP Agent Ops) | EPIC-6 | P1 | 5 | sprint-2026-W27 | jindo9986 |
 
 ## 🚫 Blocked (0)
@@ -104,7 +105,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 57
+- ✅ **Done**: 58
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
