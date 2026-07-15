@@ -73,6 +73,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) | koni-ea — MQL5 EA standard | Ship koni-ea: the MQL5 Expert Advisor authoring standard (SKILL.md + 7 references) — lifecycle, trading & risk mechanics, MQL5 pitfalls, versioning/registry, per-version doc template, shared `.mqh` conventions. Synthesized from Trading-Resources + Senti-Quant, hardened by author-blind review | ✅ done | v0.57.0 |
 | [US-3.12](../stories/US-3.12-koni-ea-programming-focus.md) | koni-ea refocus | Narrow koni-ea to the MQL5 **programming** methodology per user feedback: remove the ops reference (versioning/registry/deploy/doc SOP), add a focused `compilation-and-testing.md`, rename+trim the inputs reference, reframe SKILL.md. Ops lifecycle is trading-ops, out of scope | ✅ done | v0.58.0 |
 | [US-3.13](../stories/US-3.13-koni-ea-split-dev-ops.md) | koni-ea split → dev + ops | Rename koni-ea → **koni-ea-dev** and ship a new **koni-ea-ops** skill (SKILL + 5 references: versioning, registry & MagicNumber, deployment, backtest & release, per-version docs) for the EA operational lifecycle. Two clean skills instead of one mixed one (executes LESSONS §32) | ✅ done | v0.59.0 |
+| [US-3.14](../stories/US-3.14-koni-ea-skill-grading.md) | koni-ea skill-grading pass | Grade koni-ea-dev + koni-ea-ops against koni-qc's 4-dimension skill-grading rubric and fix every finding to clear the ≥95 catalog bar (dev ~97, ops 96.4). 3 rounds; author-blind graders per dimension | ✅ done | v0.60.0 |
 
 ## Cross-cutting invariants
 

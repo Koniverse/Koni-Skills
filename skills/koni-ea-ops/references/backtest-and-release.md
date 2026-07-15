@@ -46,4 +46,10 @@ banner says do not follow it.** The current model is simpler and is the one this
 skill teaches: **commit is the release** (see
 [`versioning.md`](versioning.md#commit--release)), the registry is maintained in
 Notion and mirrored to `registry.yaml`, and there is no separate publish pipeline.
-Do not resurrect the deprecated checklist because it is still physically present.
+Do not resurrect the deprecated checklist because it looks more thorough or is still
+physically present. Following it actively breaks the current model two ways: its
+`registry`-sync step treats `registry.yaml` as an **authoritative write target** —
+reviving the yaml-as-source-of-truth behaviour D9 retired and Rule 2 forbids
+([`registry-and-magic.md`](registry-and-magic.md#magicnumber-rules)) — and its
+Grafana / `sync_registry` / ClickHouse infrastructure is **gone**, so those steps
+silently no-op against tooling that no longer exists.

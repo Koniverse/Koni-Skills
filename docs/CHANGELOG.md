@@ -16,6 +16,33 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.60.0] — 2026-07-15 — koni-ea-dev + koni-ea-ops skill-grading pass (clear the ≥95 bar) — v0.60.0
+
+Graded both EA skills against koni-qc's four-dimension skill-grading rubric and hardened them
+to clear the ≥95/100 catalog bar — koni-ea-dev **~97**, koni-ea-ops **96.4**
+([US-3.14](sprints/stories/US-3.14-koni-ea-skill-grading.md), FR-41 + FR-42). Three grading
+rounds; every author-blind Critical/Important resolved.
+
+### Changed
+- **`skills/koni-ea-ops/`** — reframed `registry.yaml` as **Notion's git-tracked mirror**
+  (Notion is the source of truth post-CONTEXT D9; the old "registry is source of truth" claim
+  was backwards); reordered the release lifecycle so **Commit precedes Deploy** (no live run
+  on an uncommitted version); cited the *live* LESSONS §4 for the `.set`-is-a-minor-bump rule;
+  gave all eight non-negotiables an explicit named failure mode; rewrote the description into a
+  `Triggers:` form.
+- **`skills/koni-ea-dev/`** — `CalcLotSize` now **skips below `VOLUME_MIN`** instead of
+  silently forcing min-lot (was breaking the risk contract); added `NormLotNoMax` for the DCA
+  path and a worked new-bar example that commits only after `CopyBuffer` succeeds; `EMAValue`
+  returns bool+out-param; corrected a false "VOLUME_MAX clamped at the order call" claim (an
+  over-max lot is *rejected*); hardened the CTrade and `ResultRetcode` non-negotiables.
+
+### Added
+- **LESSONS §34** — on a uniform-criterion grading axis, harden *every* item to the criterion,
+  not the one a grader happened to name (a flat score with a rotating nominated defect is
+  grader variance, not a real defect); distinct from the §8 fix-cascade.
+
+---
+
 ## [0.59.0] — 2026-07-15 — split koni-ea into koni-ea-dev + koni-ea-ops — v0.59.0
 
 Split the single koni-ea skill into two named skills so the coding standard and the ops

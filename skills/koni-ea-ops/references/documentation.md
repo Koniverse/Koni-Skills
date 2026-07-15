@@ -3,7 +3,7 @@
 Every released version ships a `<ALGO>_v<X.YY>.md` beside its source (see
 [`versioning.md`](versioning.md#folder--file-layout)). It is the human record of
 what the version does, what its inputs mean, and how it was tested. Vietnamese is
-accepted for this document (it is operational, not code).
+preferred for this document (the SOP prioritizes it; it is operational, not code).
 
 **Contents**: [Required sections](#required-sections) · [Style](#style)
 

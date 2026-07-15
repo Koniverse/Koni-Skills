@@ -19,8 +19,9 @@ goal: >-
 | US-3.11 | koni-ea — MQL5 Expert Advisor authoring standard skill | EPIC-3 | P2  | 5      | ✅ done | v0.57.0           | [stories/US-3.11-koni-ea-mql5-standard.md](stories/US-3.11-koni-ea-mql5-standard.md) |
 | US-3.12 | koni-ea refocus — scope to the MQL5 programming methodology | EPIC-3 | P2  | 2      | ✅ done | v0.58.0           | [stories/US-3.12-koni-ea-programming-focus.md](stories/US-3.12-koni-ea-programming-focus.md) |
 | US-3.13 | Split koni-ea → koni-ea-dev + koni-ea-ops | EPIC-3 | P2  | 3      | ✅ done | v0.59.0           | [stories/US-3.13-koni-ea-split-dev-ops.md](stories/US-3.13-koni-ea-split-dev-ops.md) |
+| US-3.14 | koni-ea-dev + koni-ea-ops skill-grading pass (≥95 bar) | EPIC-3 | P2  | 3      | ✅ done | v0.60.0           | [stories/US-3.14-koni-ea-skill-grading.md](stories/US-3.14-koni-ea-skill-grading.md) |
 
-**Total**: 6 stories / 17 pts / 1 contributor.
+**Total**: 7 stories / 20 pts / 1 contributor.
 
 ## Carried out of this sprint
 

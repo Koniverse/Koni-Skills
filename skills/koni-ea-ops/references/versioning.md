@@ -26,6 +26,14 @@ The one that is missed most often: **a `.set` tweak on a running EA is a new
 version.** The parameters are part of the released artifact; changing them without
 cutting a version means the live behaviour no longer matches any committed record.
 
+> Provenance: this `.set`-is-a-version rule is mandated by the **live**
+> `LESSONS.md §4` ("minor bump required when changing `.set` parameters only") and
+> the *deprecated* `ALGORITHM_RELEASE_SOP`; the current `ALGORITHM_DEPLOYMENT_SOP`
+> defines a minor bump as a bug fix / new backward-compatible input / perf-logging
+> and does not itself name a `.set` tweak. The rule is current team practice, not a
+> deprecated leftover — an untracked live parameter change is a real reproducibility
+> hole.
+
 ## Folder & file layout
 
 A version is a directory of sibling artifacts, all sharing the `X.YY`:
@@ -47,7 +55,10 @@ algorithms/mql5/<ALGO>/v<X>/v<X.YY>/
 
 **An EA version is released the moment its `.mq5` / `.set` / `.md` (and its
 backtest) are committed under `algorithms/mql5/<ALGO>/v<X>/v<X.YY>/`.** There is no
-separate publish step — the commit is the release event.
+separate publish step — the commit is the release event. It follows that **an
+instance must not run live before its version is committed** — a live, uncommitted
+instance is an unreleased instance in production, and nothing in the archive records
+what it is running.
 
 > Historical note: an older `ALGORITHM_RELEASE_SOP` doc describes a retired
 > GitHub-Release + registry-sync + ClickHouse pipeline. That doc's own banner says

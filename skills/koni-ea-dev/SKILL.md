@@ -2,16 +2,16 @@
 name: koni-ea-dev
 description: >
   Use when programming or reviewing an MQL5 Expert Advisor or custom indicator for
-  MetaTrader 5 and it must be correct to the MQL5 standard — the EA lifecycle and
-  event model (OnInit/OnTick/OnDeinit/OnTradeTransaction/OnTimer), input & naming
-  conventions, CTrade order placement, new-bar / closed-bar signal discipline,
-  indicator handles and CopyBuffer, position sizing, SL/TP and the broker stop
-  level, DCA/grid/breakout/trend mechanics, position-by-magic management, risk &
-  money-management coding (equity breaker, daily loss, spread/gap/session filters,
-  the pending-fill margin pre-check), the MQL5 pitfalls that only bite in production
-  (repaint, backtest mode, filling mode, handle leak, ArraySetAsSeries, self-recovery
-  after restart), compiling clean, and the reusable Koni .mqh library conventions —
-  even without naming koni-ea-dev.
+  MetaTrader 5 and the code must be correct to the MQL5 standard. Triggers:
+  structuring OnInit/OnTick/OnDeinit/OnTradeTransaction/OnTimer, placing orders with
+  CTrade, new-bar / closed-bar signal timing, indicator handles and
+  CopyBuffer/ArraySetAsSeries, position sizing and SL/TP with the broker stop level,
+  DCA/grid/breakout/trend mechanics, selecting or closing positions by magic in EA
+  code, risk & money-management coding (equity breaker, daily loss,
+  spread/gap/session filters, the pending-fill margin pre-check), the MQL5 pitfalls
+  that only bite in production (repaint, backtest mode, filling mode, handle leak,
+  self-recovery after restart), compiling clean, or writing a reusable Koni `.mqh`
+  module — even without naming koni-ea-dev.
 ---
 # koni-ea-dev — programming a correct MQL5 Expert Advisor
 
@@ -33,13 +33,6 @@ form):
 - **The Koni MQL5 library** — the `Senti-Quant` `terminal_manager` header-only
   `Include/Koni/**` modules, the reference for building **reusable `.mqh`** rather
   than a single-file strategy EA.
-
-## When this applies
-
-Programming a new EA or indicator, wiring order placement or position management,
-implementing sizing / SL-TP / a DCA basket, reviewing an EA for correctness before
-it goes live, or chasing an MQL5-specific bug — a fill that never happened, a
-repaint, a handle leak, a wrong-indexed buffer, a state loss after restart.
 
 ## The two build modes
 
@@ -95,8 +88,15 @@ These hold for **every** Koni EA; each reference expands them:
 
 - **Signals on closed bars, never the forming tick** — read bar `[1]`/`[2]`, gate
   entries behind a new-bar check. (Repaint and tick-noise both die here.)
-- **CTrade, never raw `OrderSend`.** Set `SetExpertMagicNumber` in `OnInit`; set the
-  filling mode with `SetTypeFillingBySymbol(_Symbol)`.
+- **CTrade, never raw `OrderSend`.** Hand-filling `MqlTradeRequest` and hand-decoding
+  `MqlTradeResult` is a silent-error site; CTrade centralizes it and does everything
+  `OrderSend` can (see [trading-mechanics](references/trading-mechanics.md#ctrade)).
+  Set `SetExpertMagicNumber` in `OnInit`; set the filling mode with
+  `SetTypeFillingBySymbol(_Symbol)`.
+- **Check `ResultRetcode()`, not just the boolean** — CTrade's `bool` says the request
+  was *accepted*, not *filled* (a `Buy()` can return `true` on a requote or partial);
+  set state flags only after `TRADE_RETCODE_DONE`, or you track a position the server
+  never opened.
 - **Release every indicator handle in `OnDeinit`**, guarded, reset to `INVALID_HANDLE`.
 - **`ArraySetAsSeries(buf, true)`** before every `CopyBuffer`, and check its return
   `>= count` before using the data.

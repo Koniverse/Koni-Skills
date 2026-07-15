@@ -119,8 +119,10 @@ Two sub-rules the corpus learned the hard way:
   not in MarketWatch) must not block a chain, and the broker still rejects a truly
   unaffordable fill. Never leave the `false` branch empty — that silently skips the
   gate without recording the choice.
-- Compute the lot **without** the `VOLUME_MAX` clamp so this check can see an
-  overflow (the clamp happens after, in the actual order call).
+- Compute the lot **without** the `VOLUME_MAX` clamp so this check can *see* the
+  overflow and **block** it (the `lot > VOLUME_MAX` guard above). Nothing clamps it
+  later — an over-max lot is rejected by the server (`TRADE_RETCODE_INVALID_VOLUME`),
+  not silently reduced; the block here is what stops it reaching the order call.
 
 ## Slippage & filling mode
 

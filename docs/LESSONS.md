@@ -1223,3 +1223,30 @@ the change is documented at the version where it happened — the same disciplin
 sprint or a corrected decision. And when skills refer to each other, a **name is a more
 durable link than a path** — it survives the exact reorganisation (rename, split, move) that
 paths do not.
+
+## 34. On a subjective grading axis, harden *every* item to the criterion — or graders rotate the nomination
+
+**What happened**: grading koni-ea-ops's rule-robustness dimension (D2), the score sat at
+**21.9/25 across three independent graders** — but each named a *different* single rule as
+the weak one. Round 1 flagged nothing (25). Round 2: "rule 2 lacks a named failure mode."
+I hardened rule 2. Round 3: "rule 6 lacks a named failure mode" — rule 6 having passed the
+two prior rounds. I hardened rule 6. The confirm grader: "rule 8 lacks a named failure
+mode" — rule 8 having passed all three prior rounds. The skill had eight strong rules; each
+grader applied the same criterion (imperative + reason + **named failure mode**) and simply
+nominated whichever rule's failure mode was least explicit *that pass*. Fixing the nominated
+rule didn't raise the score — it just moved the nomination.
+
+This is not the §8 fix-cascade (where a fix *breaks* another axis). It is **grader variance
+on a subjective axis**: when N items nearly meet a bar and a grader must name the weakest,
+which one it names is noise. Patching the named item is whack-a-mole — the distribution of
+"weakest" just re-centres on the next-softest.
+
+**The lesson**: **when a rubric scores items against a uniform criterion, satisfy the
+criterion for *all* items at once, not the one a grader happened to name.** I stopped
+patching individually and swept every one of the eight rules to carry an explicit, concrete
+failure mode ("silent merge in every query", "~10–15% inflated win-rate", "the wrong
+parameters run live unnoticed", "steps no-op against vanished infra"). The next grader
+returned 8/8 GREEN = 25 — because there was no longer a softest item to nominate. The tell
+you are in this trap, not a real-defect trap: the score is *flat* across rounds while the
+*named* defect keeps moving, and each "fix" is judged correct yet moves nothing. The exit is
+to raise the whole set to the bar, then re-grade once.

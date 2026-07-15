@@ -1,17 +1,14 @@
 ---
 name: koni-ea-ops
 description: >
-  Use for the operational lifecycle around a Koniverse MQL5 Expert Advisor — not
-  writing its code (that is koni-ea-dev) but organising it as a released,
-  deployed, tracked asset: the `v<X.YY>` version scheme and folder layout, when a
-  change is a minor vs major bump, the commit-is-release model, the
-  `registry.yaml` / MagicNumber source-of-truth and instance bindings, assigning
-  and auditing MagicNumbers, deploying an EA to a MetaTrader 5 terminal (attach,
-  `.set`, AutoTrading, Journal verification), producing production `.ex5` via the
-  compile service, the release backtest requirements and metrics to record, and
-  the per-version EA documentation template. Triggers: "cut a new EA version",
-  "deploy this EA", "register a MagicNumber", "the EA doc", "release checklist",
-  "which version bump", "organise the EA repo" — even without naming koni-ea-ops.
+  Use when you need to version, register, deploy, backtest-for-release, or
+  document a Koniverse MQL5 Expert Advisor — the operational lifecycle of a
+  released EA, not writing its code (that is the sibling skill koni-ea-dev).
+  Triggers: "cut a new EA version", "is this a minor or major bump?", "assign or
+  register a MagicNumber", "deploy this EA to MT5", "attach and verify the
+  Journal", "produce a production .ex5", "release backtest requirements or
+  metrics", "write the per-version EA doc", "run the release checklist", "organise
+  the EA version folders or the registry" — even without naming koni-ea-ops.
 ---
 # koni-ea-ops — the operational lifecycle of an MQL5 EA
 
@@ -39,8 +36,8 @@ is written.
 The seam: koni-ea-dev ends when the `.mq5` compiles clean and passes its
 self-verify; koni-ea-ops begins with cutting the version directory and ends with a
 deployed, documented, registered instance. The MagicNumber is the shared token —
-koni-ea-dev *uses* it (unique per instance, `> 0`); koni-ea-ops *assigns and
-tracks* it.
+koni-ea-dev *uses* it (unique per instance, `> 0`); koni-ea-ops *records and
+tracks* it (Notion assigns it).
 
 ## The release lifecycle
 
@@ -53,10 +50,11 @@ tracks* it.
    record the metrics — [`backtest-and-release.md`](references/backtest-and-release.md).
 4. **Document the version.** Write the per-version `.md` from the template —
    [`documentation.md`](references/documentation.md).
-5. **Deploy.** Attach to the terminal, load the `.set`, enable AutoTrading, verify
-   the Journal — [`deployment.md`](references/deployment.md).
-6. **Commit = release.** The version is released the moment its artifacts are
+5. **Commit = release.** The version is released the moment its artifacts are
    committed under the version directory — [`versioning.md`](references/versioning.md#commit--release).
+   **This comes before going live** — an instance must never run on an uncommitted version.
+6. **Deploy.** Only now attach to the terminal, load the `.set`, enable AutoTrading,
+   and verify the Journal — [`deployment.md`](references/deployment.md).
 
 ## Reference map
 
@@ -70,15 +68,20 @@ tracks* it.
 
 ## Non-negotiables (the short list)
 
-- **One MagicNumber per instance, assigned by the registry (Notion), never
-  hand-picked, never reused.** MT5 does not enforce uniqueness; a shared magic
-  merges two EAs in every query and in reporting.
+- **One MagicNumber per instance, assigned by Notion, never hand-picked, never
+  reused.** MT5 does not enforce uniqueness; a shared magic merges two EAs in every
+  query and in reporting.
+- **Notion is the source of truth** for MagicNumbers (and instance rows where
+  tracked); `registry.yaml` is its git-tracked mirror (its live-registry role was
+  retired at CONTEXT D9, but the magic-per-version record is still maintained — keep
+  it in sync, and never treat the yaml as authoritative).
 - **A `.set` parameter change on a live instance is a new minor version** — a
   tuning change is a new version, with its own directory and backtest.
 - **A release backtest is "Every Tick Based on Real Ticks"** on the live timeframe,
   ≥ 3 months. "Open Prices Only" never backs a release.
 - **Commit is the release** — the version ships when its `.mq5` / `.set` / `.md`
-  (and backtest) are committed under `algorithms/mql5/<ALGO>/v<X>/v<X.YY>/`.
-- **Every version carries its `.md` doc.** An undocumented version is not released.
-- **The registry is the source of truth for what is live** — a deployed instance
-  without a `registry.yaml` entry is invisible to ops.
+  (and backtest) are committed under `algorithms/mql5/<ALGO>/v<X>/v<X.YY>/`; an
+  instance must not run live before its version is committed.
+- **Every version carries its `.md` doc.** An undocumented version is not released —
+  without it an operator can't reconcile the running `.set` against what the inputs
+  mean, so the wrong parameters run live unnoticed.
