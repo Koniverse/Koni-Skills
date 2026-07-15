@@ -1112,3 +1112,28 @@ Corollary for cross-skill work: **when two skills point at each other, the seam 
 the lie hides.** Skill A says "B owns the gate"; B's docs say nothing; each looks complete
 alone. The hole is only visible when you read both against each other — which no
 per-skill checker does. Audit the seam explicitly.
+
+## 30. What a scaffolded repo inherits is defined by the *vendored* config, not the live one
+
+**What happened**: updating koni-setup's docs to describe what a freshly-scaffolded repo
+gets from the koni-harness gate, I nearly wrote that the repo inherits *both* new gates —
+`security-review` and `skill-references`. It was a plausible symmetry: both shipped this
+session, both live in the monorepo's `.koni-harness/gates.conf`. It was also wrong. A
+scaffolded repo gets exactly what `install-gate.sh` copies, and that installer copies the
+**vendored default** `skills/koni-harness/scripts/gates.conf` — which carries
+`security-review` but deliberately omits `skill-references`, because that gate audits *skill
+docs* and only exists to guard `Koni-Skills` itself. The monorepo runs a gate set that a
+consumer repo never receives.
+
+**The lesson**: **a repo that ships a tool to others runs two configurations — its own and
+the one it hands out — and they are not the same file.** When you document "what you get,"
+read the artifact the installer actually copies, never the one the source repo runs against
+itself. The live config is a superset; asserting a consumer inherits a source-only entry is
+an over-claim that every per-skill reference check passes (it resolves — §29) and that only
+reading the *vendored* file refutes.
+
+How it was caught: the author-blind reviewer (§19) was pointed at the vendored
+`gates.conf` and `install-gate.sh` specifically — "verify against the file the installer
+copies, not the repo's live gate" — and confirmed `skill-references` is absent there. The
+guard against this class is to name the vendored file as the source of truth in the review
+brief, not to trust that "the gate set" is one thing.

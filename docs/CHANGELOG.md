@@ -16,6 +16,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.56.0] — 2026-07-15 — koni-setup docs sync: surface koni-qc security-review + the vendored security-review gate — v0.56.0
+
+koni-qc gained a security-review method (US-5.11) and koni-harness's `install-gate.sh` now
+vendors a `security-review` gate (US-3.9), but koni-setup — the skill that onboards a repo to
+the standard — still described neither. A documentation sync so koni-setup's picture of the
+trio matches what the trio does ([US-3.10](sprints/stories/US-3.10-koni-setup-security-review-sync.md),
+FR-20). No scope change; no new scaffolding.
+
+### Changed
+- **`skills/koni-setup/references/skill-inventory.md`** — the koni-qc bullet now lists the
+  **security review** (threat-model a surface; derive injection / IDOR / SSRF / XSS /
+  auth-bypass / RLS test cases). The koni-harness bullet now states the vendored default
+  `gates.conf` carries an opt-in `security-review` warn check — a no-op until the repo
+  declares boundaries in `.koni-harness/security-paths` — and calls out that the
+  monorepo-only `skill-references` check is **not** vendored into a scaffolded product repo.
+- **`skills/koni-setup/references/onboarding-audit.md`** — an optional audit item points a
+  repo with trust boundaries at `.koni-harness/security-paths` to activate the gate, framed
+  as opt-in (absence is not a scaffolding gap) and never-blocking.
+
+### Added
+- **LESSONS §30** — what a scaffolded repo inherits is defined by the *vendored* config the
+  installer copies, not the source repo's live one; asserting a consumer inherits a
+  source-only gate is an over-claim a resolving reference check cannot catch (§29).
+
+---
+
 ## [0.55.0] — 2026-07-13 — koni-harness: use the new koni-qc security-review — a Review trigger + a warn gate — v0.55.0
 
 koni-qc gained a security-review method in v0.53.0–0.54.0, but the harness loop had no way

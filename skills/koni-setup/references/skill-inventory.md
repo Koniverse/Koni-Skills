@@ -40,9 +40,17 @@ belong in every repo with a docs/dev lifecycle:
 - **koni-harness** — the Koni Agentic Loop standard **+ the portable commit/release
   gate**. Wiring the skill is the symlink; its value is the vendored gate — **also
   run `sh .claude/skills/koni-harness/scripts/install-gate.sh`** so `.koni-harness/`
-  + the pre-commit/pre-push hooks guard the repo from day 0.
+  + the pre-commit/pre-push hooks guard the repo from day 0. The vendored default
+  `gates.conf` now carries an opt-in **`security-review`** warn check (release-commit):
+  it is a documented **no-op until the repo declares its trust boundaries** as globs in
+  `.koni-harness/security-paths`, then it reminds — pointing at koni-qc's
+  `security-review.md` — when a staged change touches one. (The monorepo-only
+  `skill-references` check is **not** vendored — it audits skill docs, so it ships only
+  in `Koni-Skills` itself, never into a scaffolded product repo.)
 - **koni-qc** — the QC methodology (AC↔TC matrix, edge taxonomy, NFR, the
-  test-organization standard, skill-grading). No scripts — symlink only.
+  test-organization standard, the **security review** — threat-model a surface and
+  derive injection / IDOR / SSRF / XSS / auth-bypass / RLS test cases — and
+  skill-grading). No scripts — symlink only.
 
 > Install the trio **after** the doc tree + VERSION exist (the gate's
 > `koni-docs-validate` / `changelog-anchor` / `version-phase` checks read them). A

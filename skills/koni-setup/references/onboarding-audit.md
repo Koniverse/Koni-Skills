@@ -53,6 +53,12 @@ profile; untagged rows apply to all.
 - [ ] `.claude/skills/koni-docs` resolves (not dangling)
 - [ ] `.agents/skills/koni-docs` resolves
 - [ ] `_bmad/` present, `_bmad-output/` gitignored
+- [ ] *(optional)* if the repo has security trust boundaries (auth, crypto, RLS,
+  payment, admin surfaces), consider declaring them in `.koni-harness/security-paths`
+  (one glob per line) to activate the vendored **`security-review`** warn gate — dormant
+  until declared. It reminds (never blocks) when a boundary changes, pointing at koni-qc's
+  `security-review.md`. Not a scaffolding gap when absent — a repo opts in when it has
+  boundaries worth guarding.
 
 ### Active Context
 - [ ] Pattern A: inline `<!-- koni-docs:auto-update -->` block in CLAUDE.md, **or**
