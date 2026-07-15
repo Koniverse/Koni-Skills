@@ -16,6 +16,47 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.55.0] — 2026-07-13 — koni-harness: use the new koni-qc security-review — a Review trigger + a warn gate — v0.55.0
+
+koni-qc gained a security-review method in v0.53.0–0.54.0, but the harness loop had no way
+to *use* it, and koni-qc's own composes-table named a harness gate as "proposed, not yet
+built". This closes both ([US-3.9](sprints/stories/US-3.9-harness-security-review-gate.md),
+FR-40).
+
+### Added
+- **`security-review` gate** (`release-commit`, **warn**, opt-in). A staged change matching
+  a repo-declared boundary glob (`.koni-harness/security-paths`, one per line) that ships
+  without the koni-qc security review gets a WARN pointing at
+  `skills/koni-qc/references/security-review.md`. Suppress a reviewed path via
+  `.koni-harness/security-review-ack`. With no `security-paths` file it is a documented
+  no-op — precise and opt-in, because a noisy security reminder gets muted (the exact
+  failure koni-qc's method warns against), so the boundary is *declared*, never guessed.
+  **Warn, not block**: whether a change needs a review is a judgment; a false trigger must
+  never wedge a commit.
+- **A plant→assert test** for the check (`checks/__tests__/test-security-review.sh`) — five
+  behaviours (silent no-op, warns on a declared boundary, ack-suppressed, precise on a
+  non-boundary path, `**`-glob nesting), proven to *fail* against three mutations (guard
+  removed, never-warns, wrong reference path). A guard's green means nothing until you have
+  made it both speak and fail (LESSONS §20, §24).
+- **Review-stage wiring**: the loop's Review stage (`agentic-loop-standard.md`) and the
+  SKILL.md Review/QA row now name koni-qc security-review, triggered when a change crosses a
+  security trust boundary (auth, authz/multi-tenancy, money movement, untrusted input,
+  secrets/crypto, file upload, deserialization, a new outbound call).
+
+### Fixed
+- **`gate-catalog.md` said "eight built-in checks"** — there are now ten, and two
+  (`skill-references`, `security-review`) were undocumented. De-numbered the heading so the
+  count cannot drift (LESSONS §28) and documented both.
+- **koni-qc `security-review.md` cited the harness gate as "proposed, not yet built"** — it
+  now exists (warn-level, opt-in), so the composes table reflects reality. The two skills
+  are consistent: koni-qc names the method, koni-harness holds the gate.
+
+All six skills: **0 dangling references**; the shared guard suite (37 classes · 20 mutants ·
+full branch coverage) stays green.
+
+
+---
+
 ## [0.54.0] — 2026-07-13 — koni-qc: security-review hardened after an author-blind review — v0.54.0
 
 A review-and-improve round on the v0.53.0 security capability ([US-5.11](sprints/stories/US-5.11-security-review-capability.md),

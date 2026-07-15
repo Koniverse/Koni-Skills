@@ -29,7 +29,7 @@ between its stages.
 | 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
 | 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; **LESSONS read + cited** (lessons-loop callout); for UI work **DESIGN.md read + cited before any UI code** (design-first callout) |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
-| 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
+| 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → **koni-qc security-review** *(when the change crosses a security trust boundary — auth, authz/multi-tenancy, money/asset movement, untrusted input, secrets/crypto, file upload, deserialization, a new outbound call)* → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`); every touched doc surface updated to the **doc-completeness bar** (callout below) |
 | 6 | **Commit / Release** | git + gate-runner | The gate passes |
 

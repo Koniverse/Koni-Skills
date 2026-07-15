@@ -382,7 +382,7 @@ adversarial method**. It delegates every engine, exactly as the rest of koni-qc 
 | **Running** the exploit — driving the request, fuzzing the input, the browser payload | **gstack** — `/investigate`, `/qa`, `/browse` (invoke) |
 | The **live 2-credential / RLS-as-a-real-user** harness | **koni-qc** [`live-harness.md`](live-harness.md) |
 | The **author-blind** identify/refute passes | independent sub-agents · **`superpowers:code-reviewer`** for a content pass |
-| The **blocking gate** — a `credential-scan` on staged secrets (present in `gate-catalog.md`). *(A "security-review-required on high-risk change" gate is **proposed, not yet built** — koni-harness's to own; do not cite it as existing.)* | **koni-harness** |
+| The **gate** — `credential-scan` on staged secrets, and the warn-level `security-review` gate: a change to a repo-declared security boundary (`.koni-harness/security-paths`) that ships without this review gets a WARN pointing back here | **koni-harness** (`gate-catalog.md`) |
 | The **report body** + the release sign-off doc | **koni-docs** `templates/test-report.md` |
 | Turning a confirmed vuln into a REG test + the generalization sweep | **koni-qc** [`regression-learning.md`](regression-learning.md) |
 

@@ -1,7 +1,7 @@
 # Gate catalog — the built-in checks
 
 The gate is driven by `gates.conf`, a line-oriented config read by
-`gate-runner.sh`. This file documents the eight built-in checks that ship in the
+`gate-runner.sh`. This file documents the built-in checks that ship in the
 default `gates.conf`, the config grammar, and how to add your own check.
 
 For how the runner is wired into git / Claude Code / Gemini / Codex, see
@@ -10,7 +10,7 @@ For how the runner is wired into git / Claude Code / Gemini / Codex, see
 
 **Contents**: [Phases and severities](#phases-and-severities) ·
 [Invoking the release-commit phase](#invoking-the-release-commit-phase) ·
-[The eight built-in checks](#the-eight-built-in-checks) ·
+[The built-in checks](#the-built-in-checks) ·
 [Config grammar](#config-grammar) · [Adding a custom check](#adding-a-custom-check)
 
 ---
@@ -76,7 +76,7 @@ enforce release-time checks.
 
 ---
 
-## The eight built-in checks
+## The built-in checks
 
 ### `version-phase`
 
@@ -256,6 +256,51 @@ enforce release-time checks.
 - **`gates.conf` row**:
   ```
   koni-docs-validate   | checks/koni-docs-validate.sh        | release-commit             | warn  |
+  ```
+
+### `skill-references`
+
+- **What it asserts**: every markdown cross-reference in a changed skill resolves — a
+  file link, an in-page anchor, a section pointer, a named script, and a count stated in
+  prose (a "13 rules" that has since become 14). Runs `skills/koni-docs/scripts/check-references.py`
+  over **every** skill (touch one, sweep all), and first runs that checker's own
+  self-test, mutation test, and branch-coverage gate — refusing the checker's verdict
+  if any fail, because a guard whose own tests fail proves nothing (LESSONS §19-§24, §28).
+- **Phase(s)**: `work-commit`, `release-commit`
+- **Default severity**: `block`
+- **Generalizes from**: three rounds of false greens where a dangling reference — a dead
+  §-pointer, a ghost script, a drifted count — was invisible to the author who wrote it.
+- **`gates.conf` row**:
+  ```
+  skill-references     | checks/skill-references.sh          | work-commit,release-commit | block |
+  ```
+
+### `security-review`
+
+- **What it asserts**: a release-commit does not ship a change to a **security trust
+  boundary** without the koni-qc security review
+  (`skills/koni-qc/references/security-review.md`). Precise and **opt-in**: the repo
+  declares its boundaries as shell globs in `.koni-harness/security-paths` (one per line);
+  a staged change matching any of them warns. A path is suppressed once its review is
+  recorded by listing it (or a substring) in `.koni-harness/security-review-ack`. With no
+  `security-paths` file the check is a **documented no-op** — a security reminder must be
+  precise or it gets muted, the exact failure koni-qc's own method warns against, so the
+  boundary is *declared by the repo*, never guessed by a content heuristic.
+- **Why warn, not block**: whether a change truly needs a security review is a judgment,
+  and a false trigger must never wedge a commit. It reminds; the author (or koni-qc) decides.
+- **Phase(s)**: `release-commit`
+- **Default severity**: `warn` (opt a repo up to `block` once its boundaries are declared
+  and its reviews are consistently recorded)
+- **Proven by**: `skills/koni-harness/scripts/checks/__tests__/test-security-review.sh` —
+  five plant→assert cases (silent no-op, warns on a declared boundary, suppressed by ack,
+  precise on a non-boundary path, `**`-glob nesting), and it is checked against three
+  mutations (guard removed, never-warns, wrong reference path) so a regression fails the
+  test instead of shipping.
+- **Generalizes from**: the koni-qc security-review method naming koni-harness as the owner
+  of the gate that enforces it.
+- **`gates.conf` row**:
+  ```
+  security-review     | checks/security-review.sh          | release-commit             | warn  |
   ```
 
 ### `tests` (passthrough)

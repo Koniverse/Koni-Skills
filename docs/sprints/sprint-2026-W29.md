@@ -14,7 +14,9 @@ goal: >-
 | ------ | -------------------------------------------------- | ------ | --- | ------ | ------ | ------- | -------------------------------------------------------------- |
 | US-1.6 | Story deadlines — a `due` date beside the cadence  | EPIC-1 | P1  | 3      | ✅ done | v0.39.0 + v0.40.0 | [stories/US-1.6-story-deadlines.md](stories/US-1.6-story-deadlines.md) |
 
-**Total**: 1 story / 3 pts / 1 contributor.
+| US-3.9 | koni-harness uses koni-qc security-review              | EPIC-3 | P2  | 3      | ✅ done | v0.55.0           | [stories/US-3.9-harness-security-review-gate.md](stories/US-3.9-harness-security-review-gate.md) |
+
+**Total**: 2 stories / 6 pts / 1 contributor.
 
 ## Carried out of this sprint
 

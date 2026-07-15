@@ -1077,3 +1077,38 @@ written reason — CLI argument parsing, an `OSError` on an unreadable directory
 unexplained exclusion is how a coverage gate becomes decoration. Two of mine were genuinely
 unreachable; one of those turned out to be dead code, and I deleted it rather than exempt
 it. That is the right instinct: **an exemption is a confession, not a solution.**
+
+---
+
+## 29. A pointer that resolves is not a pointer that is true — cross-reference checks verify syntax, not the claim
+
+**What happened**: koni-qc's `security-review.md` shipped a "composes, never reproduces"
+table asserting that koni-harness owns "a security-review-required gate on high-risk
+changes." The `skill-references` checker — which validates that every link, anchor, and
+`§`-pointer *resolves* — passed it green, because the sentence contained no broken
+reference. It was still false: **that gate did not exist anywhere in koni-harness.** An
+author-blind reader caught it in one pass; the machine never could.
+
+The check answers "does this pointer land on something?" The defect was "the thing it
+lands on does not do what the sentence says." Those are different questions, and only the
+first is mechanical. A skill can be fully link-clean and still describe a capability that
+was deferred, renamed, or never built — a *semantic over-claim* wearing a valid citation.
+
+**The lesson**: **a reference checker proves structure, not meaning.** It is necessary and
+it is not sufficient. Two claims a resolving pointer cannot verify:
+- *that a named capability exists and behaves as described* (the fictional gate);
+- *that a delegated engine actually owns what you delegated to it* (a "composes" table is a
+  set of promises about other files — each one is an unverified claim until something reads
+  the target and confirms).
+
+Two ways to close the gap, both used this session:
+1. **An author-blind reader** — a reviewer who did not write the sentence checks the target
+   against the claim. This is what caught the fictional gate.
+2. **Make the claim true by building the thing**, then keep it true with a test. The
+   deferred gate became real (US-3.9) with a plant→assert test, so "koni-harness holds the
+   gate" is now a fact a check can rest on, not a promise.
+
+Corollary for cross-skill work: **when two skills point at each other, the seam is where
+the lie hides.** Skill A says "B owns the gate"; B's docs say nothing; each looks complete
+alone. The hole is only visible when you read both against each other — which no
+per-skill checker does. Audit the seam explicitly.
