@@ -12,7 +12,7 @@ prd_ref: [FR-39]
 arch_ref: []
 depends_on: [US-5.1, US-5.8]
 assignee: jindo9986
-commit:
+commit: 30c62f0
 created: 2026-07-13
 updated: 2026-07-13
 external_deps:
@@ -141,7 +141,7 @@ is its own capability, not bolted onto an existing reference).
 ### Changed
 - `nfr.md` §Security is now the shortlist + trigger, pointing to `security-review.md` for the method (single-source; no duplicated depth).
 
-**Commit**: <backfilled in a follow-up commit>
+**Commit**: 30c62f0
 
 ## Implementation notes
 

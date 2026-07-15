@@ -62,8 +62,6 @@ rest on. A checklist is not a method.
 All six skills: **0 dangling references** (the shared `check-references.py` gate caught a
 dead §-pointer in the first draft; fixed).
 
-**Commit**: pending
-
 
 ---
 
