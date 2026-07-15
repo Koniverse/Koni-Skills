@@ -108,7 +108,7 @@ During active development with skill-creator, iteration results go in a sibling 
 | koni-setup | `skills/koni-setup/` | Day-0 project bootstrapper/onboarder — detect profile, scaffold, wire skills, audit an existing repo |
 | koni-nextjs | `skills/koni-nextjs/` | Plugin-skill reference — Next.js rules extending koni-docs (`plugins: [nextjs]`) |
 | koni-agent-monitoring | `skills/koni-agent-monitoring/` | Install/verify the Koni Agent Ops monitoring client (content-free usage metrics → ERP dashboard) |
-| koni-ea | `skills/koni-ea/` | MQL5 Expert Advisor authoring standard for MetaTrader 5 — lifecycle, trading & risk mechanics, MQL5 pitfalls, versioning/registry, EA docs, shared `.mqh` conventions |
+| koni-ea | `skills/koni-ea/` | Programming a correct MQL5 Expert Advisor for MetaTrader 5 — lifecycle & event model, trading & risk-coding mechanics, the MQL5 pitfalls, compile-clean & honest testing, shared `.mqh` conventions |
 
 ## Installed helper skills
 

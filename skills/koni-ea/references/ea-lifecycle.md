@@ -24,8 +24,8 @@ Before any include, at the very top of the file:
 ```
 
 Rules:
-- **`#property version` string equals the folder/file minor version** as `"X.YY"`
-  (`"1.09"`, `"3.02"`). It is the one value that must never drift from the path.
+- **`#property version` string equals the file's version** as `"X.YY"` (`"1.09"`,
+  `"3.02"`) — keep the two in sync so the source states its own version truthfully.
 - **`#property strict` is inert in MQL5** — it is an MQL4 directive; the MQL5
   compiler is always strict. Some corpus EAs carry it as a harmless carryover.
   Leaving it out is correct; adding it changes nothing. Do not rely on it for
@@ -149,9 +149,9 @@ Copy this shape into a new EA and fill the marked sections:
 #include <Trade\Trade.mqh>
 
 input group "==== General ===="
-input long   InpMagicNumber = 0;      // registry-assigned; > 0
+input long   InpMagicNumber = 0;      // unique per instance; validate > 0
 input double InpLotSize     = 0.01;   // base lot
-// …strategy inputs (see inputs-naming-structure.md)…
+// …strategy inputs (see inputs-and-naming.md)…
 
 CTrade   trade;
 datetime g_lastBarTime = 0;

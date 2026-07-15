@@ -57,7 +57,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-25 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.14.0) |
 | FR-33 | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) | ✅ shipped (v0.27.0) |
 | FR-40 | [US-3.9](../stories/US-3.9-harness-security-review-gate.md) | ✅ shipped (v0.55.0) |
-| FR-41 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) | ✅ shipped (v0.57.0) |
+| FR-41 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) (+ [US-3.12](../stories/US-3.12-koni-ea-programming-focus.md) scope refocus) | ✅ shipped (v0.57.0; refined v0.58.0) |
 
 ## Stories
 
@@ -70,6 +70,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.9](../stories/US-3.9-harness-security-review-gate.md) | koni-harness uses koni-qc security-review | Review-stage trigger + a warn-level opt-in `security-review` gate (boundary globs in `.koni-harness/security-paths`), proven by a plant→assert test; builds the gate koni-qc named as harness-owned | ✅ done | v0.55.0 |
 | [US-3.10](../stories/US-3.10-koni-setup-security-review-sync.md) | koni-setup docs sync | Surface koni-qc's security-review capability + the vendored opt-in `security-review` gate in koni-setup's inventory/audit; distinguish it from the monorepo-only `skill-references` check. Docs sync, refines FR-20, no scope change | ✅ done | v0.56.0 |
 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) | koni-ea — MQL5 EA standard | Ship koni-ea: the MQL5 Expert Advisor authoring standard (SKILL.md + 7 references) — lifecycle, trading & risk mechanics, MQL5 pitfalls, versioning/registry, per-version doc template, shared `.mqh` conventions. Synthesized from Trading-Resources + Senti-Quant, hardened by author-blind review | ✅ done | v0.57.0 |
+| [US-3.12](../stories/US-3.12-koni-ea-programming-focus.md) | koni-ea refocus | Narrow koni-ea to the MQL5 **programming** methodology per user feedback: remove the ops reference (versioning/registry/deploy/doc SOP), add a focused `compilation-and-testing.md`, rename+trim the inputs reference, reframe SKILL.md. Ops lifecycle is trading-ops, out of scope | ✅ done | v0.58.0 |
 
 ## Cross-cutting invariants
 

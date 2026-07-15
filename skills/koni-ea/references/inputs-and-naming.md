@@ -1,11 +1,10 @@
-# Inputs, naming & file structure
+# Inputs & naming
 
-The conventions that make an EA readable in the MT5 Inputs tab and consistent
-across the archive. Where the corpus diverges, the **canonical** form is stated
-and the divergence flagged so old EAs can migrate.
+The conventions that make an EA readable in the MT5 Inputs tab and consistent to
+read. Where the corpus diverges, the **canonical** form is stated and the
+divergence flagged so old EAs can migrate.
 
 **Contents**: [Inputs](#inputs) · [Enums](#enums) · [Naming](#naming) ·
-[File & folder layout](#file--folder-layout) · [Version scheme](#version-scheme) ·
 [English-code rule](#english-code-rule)
 
 ## Inputs
@@ -30,9 +29,10 @@ and the divergence flagged so old EAs can migrate.
   toggles `bool`; magic `long` (`POSITION_MAGIC` is a `long`; the corpus commonly
   uses `int`, which also works via implicit widening). Everything is `input` —
   `sinput` is not used.
-- **MagicNumber default** is the value assigned by the registry for this EA
-  (see [`versioning-release-docs.md`](versioning-release-docs.md#registry--magicnumber));
-  it also lives in the `.set` file. Never `0`, never hand-invented at write time.
+- **MagicNumber** is `> 0` and **unique per running instance** — MT5 does not
+  enforce uniqueness, and a shared magic silently merges two EAs' positions in every
+  query ([magic collision](mql5-pitfalls.md#magicnumber-collision)). Validate
+  `InpMagicNumber > 0` in `OnInit`.
 
 ## Enums
 
@@ -68,39 +68,8 @@ For **class** naming (`C`-prefix), member (`m_`) and file conventions in reusabl
 modules, see [`shared-library.md`](shared-library.md#naming). Wrap every function
 in a `//+---…---+` banner box; number the file's major sections in comments.
 
-## File & folder layout
-
-A strategy EA is a directory of sibling artifacts, all sharing the version:
-
-```
-algorithms/mql5/<ALGO>/v<X>/v<X.YY>/
-    <ALGO>_v<X.YY>.mq5     # source
-    <ALGO>_v<X.YY>.set     # default inputs incl. MagicNumber
-    <ALGO>_v<X.YY>.md      # per-version doc (see versioning-release-docs.md)
-    backtest/              # optional exported MT5 HTML reports
-```
-
-- `<ALGO>` is `UPPER_SNAKE_CASE` (`EMA_CO`, `ALPHA_TREND_DCA`).
-- Note the **double nesting**: the major dir `v<X>/` contains minor dirs
-  `v<X.YY>/`. The `.mq5`, `.set`, and `.md` basenames all repeat the full version.
-- A custom indicator follows the same scheme under `indicators/<NAME>/…` and is
-  loaded with `iCustom(_Symbol, tf, "Custom\\<Name>_vX.YY", …)`.
-
-## Version scheme
-
-`v<X.YY>` — **X** = one-digit major, **YY** = two-digit zero-padded minor:
-
-- **Minor bump (`YY`)** — backward-compatible: a bug fix, a new optional input,
-  logging/perf, or **any `.set` parameter change on a live instance**. New
-  `v<X.YY>/` dir + a fresh backtest.
-- **Major bump (`X`)** — a breaking entry/exit-logic or architecture change not
-  compatible with the old `.set`. Reset minor to `00`; full re-test.
-
-Details and the release flow: [`versioning-release-docs.md`](versioning-release-docs.md#version-scheme).
-
 ## English-code rule
 
-**English for all code, identifiers, comments, and commit messages.** Vietnamese
-is acceptable only in operational SOPs and the per-version `.md` bot docs. The
-corpus has Vietnamese input comments in places (`STP`) — tolerated legacy, not a
-model. New code is English throughout.
+**English for all code, identifiers, comments, and commit messages.** The corpus
+has Vietnamese input comments in places (`STP`) — tolerated legacy, not a model.
+New code is English throughout.

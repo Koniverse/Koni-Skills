@@ -1,8 +1,8 @@
 # MQL5 pitfalls — the production-only bug list
 
 Every item here is a bug that a **green backtest hides** and that only surfaces on
-a live account. Walk this as a self-verify checklist before compiling a release
-(step 6 of the [authoring loop](../SKILL.md)). Ordered roughly by how often it
+a live account. Walk this as a self-verify checklist before compiling
+(step 6 of the [programming loop](../SKILL.md)). Ordered roughly by how often it
 bites.
 
 **Contents**: [Repaint / bar-close](#repaint--evaluate-on-bar-close) ·
@@ -100,12 +100,11 @@ in-memory state** while positions stay open. The EA must rebuild:
 ## MagicNumber collision
 
 MT5 does **not** enforce magic uniqueness. Two instances sharing a magic merge in
-every position/deal query and in reporting — silent, corrupting. One magic per
-instance, **assigned by the registry** (Notion), never hand-picked. Audit for
-duplicates:
+every position/deal query — every `PositionGetInteger(POSITION_MAGIC)` filter
+matches both, so one EA manages the other's positions. Silent and corrupting. Give
+each running instance its own magic, `> 0`, and never reuse one. Audit a tree of
+EAs for duplicate defaults:
 
 ```bash
 grep -rh "MagicNumber=" algorithms/mql5/ | sort | uniq -c | sort -rn
 ```
-
-See [`versioning-release-docs.md`](versioning-release-docs.md#registry--magicnumber).

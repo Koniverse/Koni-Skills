@@ -47,7 +47,7 @@ comment:
 
 Name **every** limit/tunable as a `#define` constant — no magic numbers in the
 logic. This aligns with the strategy-EA naming in
-[`inputs-naming-structure.md`](inputs-naming-structure.md#naming).
+[`inputs-and-naming.md`](inputs-and-naming.md#naming).
 
 ## Init vs constructor
 

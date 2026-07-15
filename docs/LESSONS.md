@@ -1167,3 +1167,30 @@ of habit, not correctness. Three traps a synthesized standard is specially prone
 The guard: an author-blind review whose brief is "verify against the source **and** the
 language, not against the draft" — the reference checker proves the pointer resolves (§29),
 never that the convention it teaches is real.
+
+## 32. Scope a skill to one job — a coding standard and an ops runbook in one file serve neither
+
+**What happened**: koni-ea shipped as an "MQL5 EA authoring standard" that bundled the
+**programming** methodology (lifecycle, mechanics, risk coding, the MQL5 pitfalls) with the
+**operational** lifecycle around a released EA (the `v<X.YY>` version scheme, the
+registry/Notion MagicNumber flow, deployment steps, the per-version documentation SOP). It
+read as thorough. The user's correction was immediate: focus it on programming correctly —
+the ops is a trading-ops SOP, not this skill. Narrowing it removed a whole reference and
+sharpened every remaining one.
+
+Two independent reasons the bundle was wrong, and both matter:
+- **Audience split.** The reader asking "how do I write a correct EA" had to wade through
+  registry and deploy process; the reader wanting the release SOP found it half-told inside
+  a coding skill. A skill with two audiences answers neither cleanly — the description alone
+  had to list both, blurring *when to reach for it*.
+- **It was a second copy.** The ops content was `Trading-Resources`' own SOP, mirrored here.
+  A mirrored SOP is a drift source (§28): the day the real SOP changes, the skill lies. The
+  fix was not to sync them — it was to delete the copy and let the skill point at the one
+  owner.
+
+**The lesson**: **a skill is scoped by the single question it answers, not by everything
+adjacent to its topic.** When drafting one, name that question in a sentence; anything that
+does not serve it — however related — belongs in a different skill or is someone else's to
+own. "Adjacent and useful" is the exact shape of scope creep, because it always looks like
+added value until a user has to read past it. The tell you crossed the line: the skill's own
+`description` needs "and" to list two distinct jobs.

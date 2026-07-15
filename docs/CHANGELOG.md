@@ -16,6 +16,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.58.0] — 2026-07-15 — koni-ea refocus: scope to the MQL5 programming methodology — v0.58.0
+
+Narrowed koni-ea (shipped v0.57.0) to focus purely on **programming a correct MQL5 EA**,
+per user feedback — the operational lifecycle around a released EA (versioning, registry,
+deployment, per-version docs) is a trading-ops SOP, not this skill
+([US-3.12](sprints/stories/US-3.12-koni-ea-programming-focus.md), refines FR-41).
+
+### Changed
+- **`skills/koni-ea/`** — removed the ops reference `versioning-release-docs.md` (version
+  scheme, commit=release, registry/Notion MagicNumber, deploy, per-version doc template);
+  added a focused **`compilation-and-testing.md`** (compile clean + warnings-as-errors, the
+  error-106 include-path trap, honest "Every Tick Based on Real Ticks" testing); renamed
+  `inputs-naming-structure.md` → **`inputs-and-naming.md`** with the file-layout/version
+  sections removed; reframed `SKILL.md` to "programming a correct MQL5 EA" and stated the
+  ops lifecycle is out of scope. The MagicNumber-uniqueness rule is kept as a **correctness**
+  rule (MT5 enforces no uniqueness), not a registry-assignment rule.
+- **PRD FR-41** description and **AGENTS.md** catalog row updated to the programming scope.
+
+### Added
+- **LESSONS §32** — scope a skill to the single question it answers; a coding standard and
+  an ops runbook in one file serve neither (the tell: the `description` needs "and" to list
+  two jobs).
+
+---
+
 ## [0.57.0] — 2026-07-15 — koni-ea: the MQL5 Expert Advisor authoring standard skill — v0.57.0
 
 A new catalog skill, **koni-ea**, capturing how to write a Koniverse MQL5 Expert Advisor for
