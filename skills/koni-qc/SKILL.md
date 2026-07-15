@@ -1,22 +1,19 @@
 ---
 name: koni-qc
 description: >
-  Use when building test docs or running quality control — writing test cases, a
-  test plan, a coverage matrix, traceability; edge cases, every AC needing
-  positive/negative/boundary tests; performance / accessibility (NFR) testing;
-  a **security review** — threat-modelling a surface, deriving security test cases,
-  or hunting injection / IDOR / SSRF / XSS / auth-bypass / RLS-isolation vulns with
-  an exploit-path-and-confidence finding report; QA-ing a release, "is testing thorough / the suite
-  too thin?"; where test files/reports go (docs/tests layout, per-US); the unit-test/coverage bar (a test misclassified, env-pending, or broken
-  in the unit gate); automating
-  the test loop (generate tests from specs, run → report → sync, CI gate, broken
-  Covered-by handles, a reporter dropping cases); standing up the
-  integration/e2e live-stack harness (RLS as a real user, seed e2e users); QC-ing
-  a whole repo (QA epic, "is our testing done?"); making a run report
-  decision-grade ("is our 100% honest?"); a bug escaped or a
-  hotfix landed (bugs → regression tests, sweep CHANGELOG/git log for missed
-  cases); verifying UI against DESIGN.md + the
-  shadcn standard; or grading a skill ("score this SKILL.md") — even without naming koni-qc.
+  Use when building test docs or running QC — test cases, a test plan, a coverage
+  matrix, traceability; edge cases, every AC needing positive/negative/boundary
+  tests; performance / accessibility (NFR) testing; a **security review** —
+  threat-model a surface, derive security test cases, find injection / IDOR / SSRF /
+  XSS / auth-bypass / RLS-isolation risks (exploit-path finding report; koni-qc
+  derives + reviews, *running* the exploit is gstack, not remediation); QA-ing a
+  release ("is testing thorough / too thin?"); where test files/reports go; the
+  unit-test/coverage bar (a test misclassified, env-pending, or broken in the unit
+  gate); automating the loop (spec→test→run→report→sync, CI gate, broken Covered-by
+  handles); the live RLS-as-a-real-user harness; QC-ing a whole repo; a run report's
+  honesty; a bug escaped (→ regression tests, sweep CHANGELOG/git log); UI vs
+  DESIGN.md + the shadcn standard; or grading a skill ("score this SKILL.md") — even
+  without naming koni-qc.
 ---
 # koni-qc — QC methodology & coverage intelligence
 

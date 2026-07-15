@@ -16,6 +16,53 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.54.0] — 2026-07-13 — koni-qc: security-review hardened after an author-blind review — v0.54.0
+
+A review-and-improve round on the v0.53.0 security capability ([US-5.11](sprints/stories/US-5.11-security-review-capability.md),
+FR-39). An author-blind content review scored it 21/25 and a blind-router triggering
+pass 22/25; both surfaced concrete, fixable defects. Rounds extend the anchor story
+(LESSONS §13).
+
+### Fixed
+- **The confidence rule contradicted itself** — three passages disagreed on the same
+  cut (a HIGH-severity confidence-7 finding was both *dropped* and *reported*), and one
+  used a 0–1 scale while the rest used 1–10. Now a single deterministic rule on one
+  scale: **report at ≥8, raise a confidence-7 finding as an open question, drop below 7**
+  — severity never moves the cut (confidence = "is the attack real?", severity = "how
+  bad if it is", filtered independently).
+- **The "composes" table cited a koni-harness security-review gate that does not exist.**
+  `credential-scan` is real; the "security-review-required on high-risk change" gate is
+  **proposed, not yet built** — now marked as such, not asserted as present. (The same
+  gate US-5.11 explicitly deferred; the table wrongly read it as shipped.)
+- **The description read as if koni-qc *runs* the exploit** — the derive-vs-run boundary
+  lived in the body, so a blind router pulled koni-qc for "run the SQL-injection attack
+  against staging" (gstack's job). The frontmatter now states it: koni-qc derives + reviews;
+  running the exploit is gstack, remediation is not QC.
+- **A portability leak**: the RLS section cited "FR-93" — a Koni-Finance-Final requirement
+  absent from this repo's PRD and meaningless in a skill that ships elsewhere. Restated as
+  the principle (multi-tenant isolation is the highest-blast-radius defect), not an FR.
+
+### Added
+- **Two categories the taxonomy lacked, both against its own "money movement" emphasis**:
+  write-side **mass assignment / over-posting** (POST `role=admin` → privilege escalation;
+  EXPO had covered only the read direction) and **race / TOCTOU** (concurrent double-spend,
+  idempotency-key replay).
+- **JWT algorithm confusion** (`alg:none`, RS256→HS256 key confusion) under Authentication.
+- **Four boundary-triggered categories**: business-logic authz (negative quantity / price
+  tampering), CORS misconfiguration, open redirect (distinct from SSRF), inbound webhook
+  signature verification — plus an explicit **out-of-scope** note (GraphQL-specific,
+  prototype pollution, cache poisoning, dependency/CVE scanning) so a clean review never
+  *implies* coverage it did not do.
+- Tightened the React/Angular XSS carve-out — `{value}` is safe in text/attribute position
+  but **not** in `href`/`src` (`javascript:` URI) — and required the mid-tier refute to run
+  in a **fresh context** (a self-refute is the motivated-reasoning trap the phase exists to break).
+
+All six skills: **0 dangling references**; the shared guard suite (37 classes · 20 mutants
+· full branch coverage) stays green.
+
+
+---
+
 ## [0.53.0] — 2026-07-13 — koni-qc: a detailed, adversarial security-review capability — v0.53.0
 
 Ships **FR-39** ([US-5.11](sprints/stories/US-5.11-security-review-capability.md),

@@ -36,8 +36,9 @@ not "list every category and check the boxes"; it is:
 2. **Derive** concrete test cases from each boundary, not from a generic checklist.
 3. **Review adversarially** — every candidate finding must survive an independent
    attempt to *refute* its exploitability before it is reported.
-4. **Filter by confidence** — report only findings with a concrete attack path
-   (≥0.7 to raise, ≥0.8 to keep after refutation).
+4. **Filter by confidence** — on a 1–10 scale: raise a candidate at **≥7**, and
+   after refutation **report only at ≥8**. A confidence-7 finding is not dropped and
+   not reported as a vuln — it is raised to the author as an open question.
 5. **Pin** every confirmed vuln with a red-first regression test, so a fix cannot
    silently regress.
 
@@ -80,6 +81,9 @@ For each category: the **boundary** it lives on, how to **derive** the concrete 
 - **Derive**: valid / invalid / expired / malformed credential; session fixation (does
   the session id rotate on login?); logout actually invalidates server-side; password
   reset token single-use and expiring; no user-enumeration via differential responses.
+  For **JWTs specifically**: `alg:none` (unsigned token accepted?), RS256→HS256 key
+  confusion (public key used as an HMAC secret), an expired/`exp`-stripped token, and a
+  token signed by the wrong key — each must be rejected.
 - **Required when**: any login, token, or session surface.
 - **Highest signal**: does an *expired* or *revoked* token still work anywhere?
 
@@ -90,17 +94,35 @@ For each category: the **boundary** it lives on, how to **derive** the concrete 
   `/orders/{id}` for another user's) and vertical (a normal user hits an admin route).
   Test the *object*, not just the *route*: `GET /api/doc/42` and `PATCH /api/doc/42`
   may authorize differently.
-- **Required when**: any per-user or per-tenant data.
-- **Highest signal**: change one id in a request and see another tenant's row.
+- **Derive (write-side mass assignment / over-posting)**: POST/PATCH a field the caller
+  should not control — `role=admin`, `isAdmin=true`, `balance=…`, `ownerId=<someone-else>`
+  — and confirm the server *allowlists* bindable fields rather than binding the whole body
+  into the ORM. This is privilege escalation, not just data exposure.
+- **Required when**: any per-user or per-tenant data, or any endpoint that writes a model.
+- **Highest signal**: change one id in a request and see another tenant's row; or set a
+  privileged field the UI never sends and watch it stick.
 
 ### RLS / tenant isolation (`SEC-` / `RLS-`)
 - **Boundary**: tenant A → tenant B.
 - **Derive**: with **two real credentials** (see [`live-harness.md`](live-harness.md), the 2-credential recipe), tenant A attempts read *and* mutate on tenant B's rows through
   every data path — not just the API, but any RPC, background job, export, or search
   that could leak across the boundary.
-- **Required when**: multi-tenant storage. This is FR-93-class; it is not optional.
+- **Required when**: multi-tenant storage. Isolation is a hard requirement, not a
+  nice-to-have — the highest-blast-radius defect a multi-tenant app can ship.
 - **Highest signal**: a query that "filters by tenant in the app layer" but runs with a
   DB role that can see all tenants — bypass the app filter and the rows are there.
+
+### Race conditions & TOCTOU on state that must not double-spend (`SEC-` / `RACE-`)
+- **Boundary**: two concurrent requests → a check-then-act on a shared balance, quota, or
+  one-time token.
+- **Derive**: fire N concurrent requests at "redeem this voucher" / "withdraw" / "apply
+  this coupon" / "accept this invite" and confirm exactly one succeeds — no double-spend,
+  no negative balance, no coupon used twice. Replay an idempotency key and confirm the
+  second call is a no-op, not a second charge.
+- **Required when**: money/asset movement, a one-time token, a quota, or any
+  check-then-act on shared mutable state.
+- **Highest signal**: a balance read, an app-layer `if balance >= amount`, then a write —
+  with no DB-level constraint or row lock between them. Two requests both pass the check.
 
 ### Injection — SQL / NoSQL / command / path / template / XXE (`SEC-` / `INJ-`)
 - **Boundary**: untrusted string → an interpreter (SQL engine, shell, filesystem,
@@ -127,8 +149,10 @@ For each category: the **boundary** it lives on, how to **derive** the concrete 
   on every field that is later rendered; test both the *store* and the *render*; DOM XSS
   via `innerHTML`/`document.write`/`dangerouslySetInnerHTML`/`bypassSecurityTrust*`.
 - **Required when**: untrusted data rendered to any user (self or others).
-- **Note**: React/Angular auto-escape — a plain `{value}` is safe; only flag the unsafe
-  sinks named above. Do not manufacture React/Angular XSS findings.
+- **Note**: React/Angular auto-escape in **text and attribute-value** position — a plain
+  `{value}` there is safe, so do not manufacture findings for it. But they do **not**
+  neutralize a `javascript:` URI in `href={value}` / `src={value}`, nor the named sinks
+  (`dangerouslySetInnerHTML` / `bypassSecurityTrust*`) — those are live and must be flagged.
 
 ### Deserialization & code execution (`SEC-` / `RCE-`)
 - **Boundary**: untrusted bytes → a deserializer or dynamic evaluator.
@@ -170,6 +194,25 @@ For each category: the **boundary** it lives on, how to **derive** the concrete 
   a secret in an error body; an enumerable sequential id that leaks record counts.
 - **Required when**: any endpoint returning per-user data, any error path in production.
 
+### Also derive when the boundary is present
+- **Business-logic authz** (`SEC-` / `LOGIC-`): negative quantity, a tampered price or
+  discount, a step-skip in a multi-stage flow, a value the client computes that the
+  server trusts. Required when money or a stateful workflow is involved.
+- **CORS misconfiguration** (`SEC-` / `CORS-`): `Access-Control-Allow-Origin` reflecting
+  an arbitrary Origin **with** `Allow-Credentials: true`. Required on any
+  credentialed cross-origin API.
+- **Open redirect** (`SEC-` / `REDIR-`): a `?next=`/`?return=` param that redirects to an
+  attacker host (distinct from SSRF — the victim's browser is the target). Required on
+  any post-login/logout redirect or a URL-valued param echoed into `Location`.
+- **Inbound webhook signature** (`SEC-` / `HOOK-`): a webhook receiver that acts on the
+  payload without verifying the sender's signature/HMAC. Required on any inbound webhook.
+
+> **Deliberately out of scope here** (name them only if the specific surface has them):
+> GraphQL-specific issues (introspection, batching, field-level authz), prototype
+> pollution, web-cache poisoning, and dependency/CVE scanning (SCA is a separate concern,
+> not this method). Say so in the review's coverage note rather than implying they were
+> checked.
+
 > **Not every feature needs every category.** The threat model decides. A pure
 > read-only public docs page has one category (XSS on any rendered field) and none of
 > the rest; a multi-tenant money-movement API has nearly all of them.
@@ -195,8 +238,9 @@ survives only if the refuter cannot break it. This is the phase that kills
 plausible-but-wrong findings before they reach a human — the single most important step,
 because an unrefuted security report is a report nobody will trust twice.
 
-**Phase 3 — Confidence-filter.** Score each surviving finding 1–10 (below). Drop
-anything **< 8** after refutation. The output is short and every line is real.
+**Phase 3 — Confidence-filter.** Score each surviving finding 1–10 (rubric below).
+The single cut: **report at ≥8, raise a confidence-7 finding as an open question,
+drop below 7.** The output is short and every line is real.
 
 For a high-risk surface, run Phase 2 with **≥2 independent refuters per finding** and
 keep the finding only if it survives the majority — the same "diverse-lens verify"
@@ -234,13 +278,18 @@ scenario is not decision-grade:
 - **LOW** — defense-in-depth, or impact bounded to the attacker's own data.
 
 **Confidence** — how sure the attack path is real, *after* refutation:
-- **8–10** — a concrete exploit path is identified; the refuter could not break it. Report.
-- **7–8** — a suspicious pattern needing a specific condition; report only if HIGH severity.
-- **< 7** — too speculative. Do not report. Silence here is not a miss; it is the
+- **8–10** — a concrete exploit path is identified; the refuter could not break it.
+  **Report** it as a finding.
+- **exactly 7** — a plausible path with an unresolved condition. **Raise it to the
+  author as an open question**, never as a vuln — regardless of severity. This is the
+  one tier that is neither reported nor silently dropped.
+- **< 7** — too speculative. **Do not report.** Silence here is not a miss; it is the
   discipline that keeps the report trusted.
 
-A finding that is HIGH severity but confidence 5 is **not** a finding — it is a question
-for the author, raised as such, never as a vuln.
+The bands do not overlap and severity does not move the cut — an unresolved condition is
+an open question at *any* severity, so a HIGH-severity confidence-7 finding is a question,
+not a vuln. Confidence measures "is the attack real?"; severity measures "how bad if it
+is." They are filtered independently.
 
 ---
 
@@ -313,7 +362,7 @@ The **risk trigger** decides both whether to run and how hard:
 | Surface | Depth |
 |---|---|
 | Read-only, no untrusted input, no secrets | the [`nfr.md`](nfr.md) checklist; no full review |
-| Untrusted input **or** per-user data | derive the relevant categories; single-pass identify + self-refute |
+| Untrusted input **or** per-user data | derive the relevant categories; identify, then refute in a **fresh context** (a self-refute by the agent that raised the finding is the motivated-reasoning trap the refute phase exists to break — use a clean context even at this tier) |
 | Auth, money/asset movement, multi-tenant, crypto, file upload, deserialization, a new outbound call, or a past security incident in this area | the **full adversarial review** — threat model, per-category derivation, ≥2 independent refuters per finding, decision-grade report + sign-off |
 
 Run it at **Design** (derive the SEC cases into the suite), at **Execute** (drive the
@@ -333,7 +382,7 @@ adversarial method**. It delegates every engine, exactly as the rest of koni-qc 
 | **Running** the exploit — driving the request, fuzzing the input, the browser payload | **gstack** — `/investigate`, `/qa`, `/browse` (invoke) |
 | The **live 2-credential / RLS-as-a-real-user** harness | **koni-qc** [`live-harness.md`](live-harness.md) |
 | The **author-blind** identify/refute passes | independent sub-agents · **`superpowers:code-reviewer`** for a content pass |
-| The **blocking gate** — a `credential-scan` on staged secrets, a security-review requirement on high-risk changes | **koni-harness** (`gate-catalog.md`) |
+| The **blocking gate** — a `credential-scan` on staged secrets (present in `gate-catalog.md`). *(A "security-review-required on high-risk change" gate is **proposed, not yet built** — koni-harness's to own; do not cite it as existing.)* | **koni-harness** |
 | The **report body** + the release sign-off doc | **koni-docs** `templates/test-report.md` |
 | Turning a confirmed vuln into a REG test + the generalization sweep | **koni-qc** [`regression-learning.md`](regression-learning.md) |
 

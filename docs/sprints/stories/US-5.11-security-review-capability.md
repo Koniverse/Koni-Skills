@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W29
 due:
-version_shipped: 0.53.0
+version_shipped: "0.53.0 + 0.54.0"
 prd_ref: [FR-39]
 arch_ref: []
 depends_on: [US-5.1, US-5.8]
@@ -142,6 +142,38 @@ is its own capability, not bolted onto an existing reference).
 - `nfr.md` §Security is now the shortlist + trigger, pointing to `security-review.md` for the method (single-source; no duplicated depth).
 
 **Commit**: 30c62f0
+
+## Round 2 — hardened after an author-blind review (2026-07-13, v0.54.0)
+
+Ran the capability through the same adversarial review it prescribes: an author-blind
+content pass (**21/25**) and a blind-router triggering pass (**22/25**). Both found
+concrete defects, fixed here:
+
+- **The confidence rule contradicted itself** — three passages disagreed, so a
+  HIGH-severity confidence-7 finding was both dropped and reported. Now one deterministic
+  cut on a 1–10 scale: report at ≥8, raise a 7 as an open question, drop below 7; severity
+  never moves the cut. This was the most-invoked decision in the file and it was
+  non-deterministic — exactly the kind of self-contradiction that ships wrong findings.
+- **The "composes" table cited a koni-harness security-review gate that does not exist** —
+  the very gate this story *deferred*, wrongly read as present. Marked "proposed, not yet
+  built". (The check that pointers resolve does not catch a *semantic* over-claim; an
+  author-blind reader did.)
+- **The description read as if koni-qc runs the exploit** — the derive-vs-run boundary
+  lived in the body, so a blind router pulled koni-qc for "run the attack against staging"
+  (gstack's). Now stated in the frontmatter, kept under the 1024 cap.
+- **FR-93 portability leak** (self-found before the reviewers): the RLS section cited a
+  Koni-Finance-Final FR absent from this repo — same class as the cross-repo link fixed in
+  koni-docs earlier. Restated as the principle.
+- **Taxonomy gaps against the file's own money-movement emphasis**: added write-side mass
+  assignment, race/TOCTOU, JWT alg-confusion, business-logic authz, CORS, open redirect,
+  webhook signature — plus an explicit out-of-scope note so a clean review never implies
+  coverage it skipped. Tightened the React `href`/`src` carve-out and required the mid-tier
+  refute to run in a fresh context.
+
+Lessons: none new — the two headline findings are the shape of §19 (don't trust a review
+you wrote — an author-blind reader found the fictional gate and the self-contradicting
+rule) and §21 (a portability-leaking reference). The value was applying them, not learning
+them.
 
 ## Implementation notes
 
