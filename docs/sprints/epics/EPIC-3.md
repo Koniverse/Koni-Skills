@@ -2,7 +2,7 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: done
-prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-33'
+prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-33, FR-41'
 created: 2026-05-27T00:00:00.000Z
 updated: 2026-07-15T00:00:00.000Z
 ---
@@ -57,6 +57,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-25 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.14.0) |
 | FR-33 | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) | ✅ shipped (v0.27.0) |
 | FR-40 | [US-3.9](../stories/US-3.9-harness-security-review-gate.md) | ✅ shipped (v0.55.0) |
+| FR-41 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) | ✅ shipped (v0.57.0) |
 
 ## Stories
 
@@ -68,6 +69,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) | koni-harness parallel orchestration | Multi-agent execution mode: `swarm.sh` wave planner + `parallel-orchestration.md` (sprint swarm, worktree per story; within-story fan-out; gate-per-worktree + integration + human-merge). No stage/gate change | ✅ done | v0.27.0 |
 | [US-3.9](../stories/US-3.9-harness-security-review-gate.md) | koni-harness uses koni-qc security-review | Review-stage trigger + a warn-level opt-in `security-review` gate (boundary globs in `.koni-harness/security-paths`), proven by a plant→assert test; builds the gate koni-qc named as harness-owned | ✅ done | v0.55.0 |
 | [US-3.10](../stories/US-3.10-koni-setup-security-review-sync.md) | koni-setup docs sync | Surface koni-qc's security-review capability + the vendored opt-in `security-review` gate in koni-setup's inventory/audit; distinguish it from the monorepo-only `skill-references` check. Docs sync, refines FR-20, no scope change | ✅ done | v0.56.0 |
+| [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) | koni-ea — MQL5 EA standard | Ship koni-ea: the MQL5 Expert Advisor authoring standard (SKILL.md + 7 references) — lifecycle, trading & risk mechanics, MQL5 pitfalls, versioning/registry, per-version doc template, shared `.mqh` conventions. Synthesized from Trading-Resources + Senti-Quant, hardened by author-blind review | ✅ done | v0.57.0 |
 
 ## Cross-cutting invariants
 

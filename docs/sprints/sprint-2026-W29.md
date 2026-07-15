@@ -16,8 +16,9 @@ goal: >-
 
 | US-3.9 | koni-harness uses koni-qc security-review              | EPIC-3 | P2  | 3      | ✅ done | v0.55.0           | [stories/US-3.9-harness-security-review-gate.md](stories/US-3.9-harness-security-review-gate.md) |
 | US-3.10 | koni-setup docs sync — security-review capability + gate | EPIC-3 | P2  | 1      | ✅ done | v0.56.0           | [stories/US-3.10-koni-setup-security-review-sync.md](stories/US-3.10-koni-setup-security-review-sync.md) |
+| US-3.11 | koni-ea — MQL5 Expert Advisor authoring standard skill | EPIC-3 | P2  | 5      | ✅ done | v0.57.0           | [stories/US-3.11-koni-ea-mql5-standard.md](stories/US-3.11-koni-ea-mql5-standard.md) |
 
-**Total**: 3 stories / 7 pts / 1 contributor.
+**Total**: 4 stories / 12 pts / 1 contributor.
 
 ## Carried out of this sprint
 

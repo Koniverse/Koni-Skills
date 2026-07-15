@@ -16,6 +16,29 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.57.0] — 2026-07-15 — koni-ea: the MQL5 Expert Advisor authoring standard skill — v0.57.0
+
+A new catalog skill, **koni-ea**, capturing how to write a Koniverse MQL5 Expert Advisor for
+MetaTrader 5 to a standard — the methodology equivalent for EAs of what koni-qc is for test
+docs ([US-3.11](sprints/stories/US-3.11-koni-ea-mql5-standard.md), FR-41). Synthesized from
+two production corpora (the `Trading-Resources` strategy-EA archive and the `Senti-Quant`
+`terminal_manager` MQL5 library) and hardened by an author-blind technical review against
+both.
+
+### Added
+- **`skills/koni-ea/`** — `SKILL.md` + seven references:
+  - `ea-lifecycle.md` — `#property` header, OnInit/OnTick/OnDeinit/OnTradeTransaction/OnTimer, the standard order-of-operations, the canonical skeleton.
+  - `inputs-naming-structure.md` — `Inp` inputs, `input group`, enums, naming, the `v<X.YY>` file/folder layout, the English-code rule.
+  - `trading-mechanics.md` — CTrade, closed-bar signals, indicator handles + `CopyBuffer` + `ArraySetAsSeries`, fixed & risk-% sizing, SL/TP with `SYMBOL_TRADE_STOPS_LEVEL`, position-by-magic, DCA/grid/breakout patterns.
+  - `risk-management.md` — position cap, latched equity breaker, daily loss, spread/gap/session filters, cooldown, the fail-permissive **margin pre-check**, slippage & filling mode.
+  - `mql5-pitfalls.md` — the production-only traps (repaint, backtest mode, pending-fill margin, handle leak, `ArraySetAsSeries`, stop level, normalization, filling mode, self-recovery, magic collision).
+  - `versioning-release-docs.md` — the `v<X.YY>` scheme, commit = release, registry & MagicNumber (Notion source of truth), compile & Strategy-Tester, deploy, the per-version doc template.
+  - `shared-library.md` — header-only `.mqh`, `KONI_*_MQH` include guards, init-vs-constructor DI, stack-global lifetime, Logger/JSON idioms, the compile service.
+- **PRD FR-41** — ship koni-ea (EPIC-3, catalog expansion).
+- **LESSONS §31** — a standard synthesized from a corpus must verify each convention's effect, not inherit its frequency (the `#property strict` cargo-cult, a guessed registry shape, a wrong-way margin-check — all caught by author-blind review, none visible to the reference checker).
+
+---
+
 ## [0.56.0] — 2026-07-15 — koni-setup docs sync: surface koni-qc security-review + the vendored security-review gate — v0.56.0
 
 koni-qc gained a security-review method (US-5.11) and koni-harness's `install-gate.sh` now

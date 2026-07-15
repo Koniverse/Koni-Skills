@@ -1137,3 +1137,33 @@ How it was caught: the author-blind reviewer (§19) was pointed at the vendored
 copies, not the repo's live gate" — and confirmed `skill-references` is absent there. The
 guard against this class is to name the vendored file as the source of truth in the review
 brief, not to trust that "the gate set" is one thing.
+
+## 31. A standard synthesized from a corpus must verify each convention's *effect*, not inherit it
+
+**What happened**: writing koni-ea (the MQL5 EA standard) from two production corpora, I
+codified `#property strict` as a **mandatory** rule that "turns silent coercions into
+compile errors." It appears in several shipped EAs, so it read as a convention worth
+promoting. It is nothing of the sort: `#property strict` is an **MQL4** directive — inert in
+MQL5, where the compiler is always strict. The EAs that carry it copied it from an MQL4
+template; the ones that omit it are not missing anything. I had mistaken a **cargo-cult
+copy-paste for a signal**, and worse, invented a mechanism to justify it. An author-blind
+reviewer checking the claim against the language (not the corpus) caught it, alongside a
+registry example whose YAML shape I'd guessed wrong and a margin-check whose fail-*block*
+direction contradicted the corpus's own hard-won fail-*permissive* lesson.
+
+**The lesson**: **a corpus shows you what people *did*, not what *works* — a standard must
+establish the difference before it codifies anything.** Frequency in the source is evidence
+of habit, not correctness. Three traps a synthesized standard is specially prone to:
+- **Cargo-cult convention** — an inert or harmful idiom repeated often enough to look
+  canonical (the `#property strict` no-op). Verify each rule's actual effect against the
+  language/API, independent of how many files carry it.
+- **Guessed-shape artifact** — a config/example rewritten from memory of the corpus rather
+  than copied from it (the wrong `registry.yaml` shape). A copyable artifact in a standard
+  must be diffed against the real one, because readers will paste it verbatim.
+- **Resolved-the-wrong-way divergence** — when the corpus disagrees with itself, the
+  standard must pick the side the *lesson* chose, not the side that reads cleaner (the
+  fail-permissive margin check). Read the corpus's own LESSONS before declaring a canonical.
+
+The guard: an author-blind review whose brief is "verify against the source **and** the
+language, not against the draft" — the reference checker proves the pointer resolves (§29),
+never that the convention it teaches is real.

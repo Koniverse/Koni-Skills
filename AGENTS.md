@@ -103,6 +103,12 @@ During active development with skill-creator, iteration results go in a sibling 
 | Skill | Path | Purpose |
 |---|---|---|
 | koni-docs | `skills/koni-docs/` | Documentation management — SETUP, PRD, LESSONS, CHANGELOG, CONTEXT, DESIGN, Sprints |
+| koni-harness | `skills/koni-harness/` | The Koni Agentic Loop standard + the portable commit/release gate (gate-runner + checks) |
+| koni-qc | `skills/koni-qc/` | QC methodology & coverage intelligence — AC↔TC matrix, edge taxonomy, NFR, test-organization, security review, skill-grading |
+| koni-setup | `skills/koni-setup/` | Day-0 project bootstrapper/onboarder — detect profile, scaffold, wire skills, audit an existing repo |
+| koni-nextjs | `skills/koni-nextjs/` | Plugin-skill reference — Next.js rules extending koni-docs (`plugins: [nextjs]`) |
+| koni-agent-monitoring | `skills/koni-agent-monitoring/` | Install/verify the Koni Agent Ops monitoring client (content-free usage metrics → ERP dashboard) |
+| koni-ea | `skills/koni-ea/` | MQL5 Expert Advisor authoring standard for MetaTrader 5 — lifecycle, trading & risk mechanics, MQL5 pitfalls, versioning/registry, EA docs, shared `.mqh` conventions |
 
 ## Installed helper skills
 
