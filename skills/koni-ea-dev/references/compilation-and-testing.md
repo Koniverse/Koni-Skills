@@ -5,8 +5,8 @@ zero errors** (and no warnings you have not consciously accepted), and its logic
 validated in a **realistic** Strategy-Tester run — not one whose mode flatters the
 result. Both are part of programming correctly; neither is optional.
 
-**Contents**: [Compile clean](#compile-clean) · [The include-path trap](#the-include-path-trap) ·
-[Test honestly](#test-honestly)
+**Contents**: [Compile clean](#compile-clean) · [Compile in the loop (MCP)](#compile-in-the-loop-an-mql5-mcp-server) ·
+[The include-path trap](#the-include-path-trap) · [Test honestly](#test-honestly)
 
 ## Compile clean
 
@@ -22,6 +22,63 @@ result. Both are part of programming correctly; neither is optional.
     as mojibake. Diagnostics match `file(line,col) : error CODE: msg`.
   - Full contract (isolation, `#resource` deps, the GUI-session requirement):
     [`shared-library.md`](shared-library.md#compile-service).
+- **In the loop (MCP)**: when an MQL5-compile MCP server is wired, don't leave the
+  compile to a human — close the loop yourself (next section).
+
+## Compile in the loop (an MQL5 MCP server)
+
+An MQL5-compile MCP server turns "compile clean" from a prescription into a **loop
+the agent closes itself**: write the EA → compile → read the real MetaEditor
+diagnostics → fix → recompile, until **zero errors and zero warnings**. Do this
+before claiming an EA compiles — a compile you did not run is not evidence.
+
+The reference implementation is `mcp-server-mql5`
+([github.com/elliottwaves-20/mcp-server-mql5](https://github.com/elliottwaves-20/mcp-server-mql5)),
+a small **Python** server that shells out to a local `metaeditor64.exe`. Two tools:
+
+- **`compile_mql5(code, filename="ExpertAdvisor")`** — takes the EA **source as a string**, writes it
+  to a temp `.mq5`, runs MetaEditor `/compile`, and returns the log (errors +
+  warnings). Feed it the draft, read the diagnostics, fix, recompile.
+- **`search_mql5_docs(search_term)`** — searches `mql5.com/docs`. Use it to **verify
+  an unfamiliar function or constant against the real docs instead of guessing** —
+  the same anti-hallucination discipline this skill applies everywhere (a plausible
+  API is not a real one).
+
+**What it can and cannot compile.** The server writes the source to an **isolated
+temp dir** and passes **no `/include` root**, so only the editor's **stock**
+`<Trade\...>` includes resolve. That is exactly right for a **self-contained strategy
+EA** (this skill's default mode — stock includes only). It will **not** resolve a
+quoted-relative `#include "sibling.mqh"`, a `#resource`, or a Koni `<Koni/...>`
+include, so it does **not** cover [`shared-library.md`](shared-library.md) mode —
+compile those with the full `/include` contract instead.
+
+**Config — corrected.** The config circulated for this server has three errors; the
+working form:
+
+- it is a **Python** package → run it with **`uvx`**, not `npx` (there is no
+  `package.json`, so an `npx` command fails to start it);
+- the env var is **`MQL5_EDITOR_PATH`**, not `METAEDITOR_PATH`;
+- there is **no `MQL5_DIR`** — the server ignores it.
+
+Windows only (it drives `metaeditor64.exe`; use double-backslash paths):
+
+```json
+{
+  "mcpServers": {
+    "mql5-server": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/elliottwaves-20/mcp-server-mql5.git", "mcp-server-mql5"],
+      "env": {
+        "MQL5_EDITOR_PATH": "C:\\Program Files\\MetaTrader 5\\metaeditor64.exe"
+      }
+    }
+  }
+}
+```
+
+The server hands back a decoded log string — read it for `error` / `warning` lines
+and the `Result: N errors` summary; the MetaEditor foot-guns (unreliable exit code,
+UTF-16 log) are its problem, not yours.
 
 ## The include-path trap
 

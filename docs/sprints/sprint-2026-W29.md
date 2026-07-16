@@ -20,8 +20,9 @@ goal: >-
 | US-3.12 | koni-ea refocus — scope to the MQL5 programming methodology | EPIC-3 | P2  | 2      | ✅ done | v0.58.0           | [stories/US-3.12-koni-ea-programming-focus.md](stories/US-3.12-koni-ea-programming-focus.md) |
 | US-3.13 | Split koni-ea → koni-ea-dev + koni-ea-ops | EPIC-3 | P2  | 3      | ✅ done | v0.59.0           | [stories/US-3.13-koni-ea-split-dev-ops.md](stories/US-3.13-koni-ea-split-dev-ops.md) |
 | US-3.14 | koni-ea-dev + koni-ea-ops skill-grading pass (≥95 bar) | EPIC-3 | P2  | 3      | ✅ done | v0.60.0           | [stories/US-3.14-koni-ea-skill-grading.md](stories/US-3.14-koni-ea-skill-grading.md) |
+| US-3.15 | koni-ea-dev — compile-in-the-loop via an MQL5 MCP server | EPIC-3 | P2  | 2      | ✅ done | v0.61.0           | [stories/US-3.15-koni-ea-dev-mcp-compile.md](stories/US-3.15-koni-ea-dev-mcp-compile.md) |
 
-**Total**: 7 stories / 20 pts / 1 contributor.
+**Total**: 8 stories / 22 pts / 1 contributor.
 
 ## Carried out of this sprint
 

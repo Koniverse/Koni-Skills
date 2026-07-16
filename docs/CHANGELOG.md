@@ -16,6 +16,28 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.61.0] — 2026-07-15 — koni-ea-dev: compile-in-the-loop via an MQL5 MCP server — v0.61.0
+
+Taught koni-ea-dev to close the compile loop — verify an EA compiles rather than only
+prescribing it — by wiring an MQL5-compile MCP server
+([US-3.15](sprints/stories/US-3.15-koni-ea-dev-mcp-compile.md), FR-41). Re-graded: koni-ea-dev
+holds at **98.1/100**.
+
+### Added
+- **`skills/koni-ea-dev/references/compilation-and-testing.md`** — a "Compile in the loop (an
+  MQL5 MCP server)" section: `compile_mql5(code, filename)` (source string → MetaEditor
+  diagnostics) and `search_mql5_docs(search_term)`, framed as an optional accelerator that
+  turns "compile clean" into a write→compile→fix loop. Documents the **verified, corrected**
+  config — the server is a **Python** package (`uvx`, not `npx`), reads **`MQL5_EDITOR_PATH`**
+  (not `METAEDITOR_PATH`), and ignores `MQL5_DIR` — with the honest scope boundary (temp-dir /
+  no-`/include` compile resolves stock `<Trade\...>` includes only; library-mode compiles use
+  the `/include` contract).
+- **LESSONS §35** — a handed-over integration config is an unverified claim; the server's code
+  and packaging are the authority (three of the four supplied config keys were wrong, and the
+  code won over the README).
+
+---
+
 ## [0.60.0] — 2026-07-15 — koni-ea-dev + koni-ea-ops skill-grading pass (clear the ≥95 bar) — v0.60.0
 
 Graded both EA skills against koni-qc's four-dimension skill-grading rubric and hardened them

@@ -1250,3 +1250,25 @@ returned 8/8 GREEN = 25 — because there was no longer a softest item to nomina
 you are in this trap, not a real-defect trap: the score is *flat* across rounds while the
 *named* defect keeps moving, and each "fix" is judged correct yet moves nothing. The exit is
 to raise the whole set to the bar, then re-grade once.
+
+## 35. A handed-over integration config is an unverified claim — check the runtime and every key against the server's source
+
+**What happened**: asked to wire an MQL5-compile MCP server into koni-ea-dev, I was given a
+ready-made config: `command: npx`, `env: { METAEDITOR_PATH, MQL5_DIR }`. It looked
+authoritative and copy-pasteable. Before documenting it I read the server's actual repo —
+`server.py` and `pyproject.toml` — and **three of the four keys were wrong**: the repo is a
+*Python* package with no `package.json`, so `npx` can never launch it (the runner is `uvx`);
+the env var the server reads is `MQL5_EDITOR_PATH`, not `METAEDITOR_PATH`; and `MQL5_DIR` is
+referenced *nowhere* in the server. Transcribing the config as given would have shipped a
+skill whose flagship instruction silently does nothing.
+
+**The lesson**: **a config, a snippet, or an env-var list handed to you — even by the user,
+even from a project's own README — is a claim to verify, not a fact to transcribe.** The
+authorities are the server's *code and packaging*: the entry point / `[project.scripts]` says
+what launches it, `os.getenv` / the arg parser says which keys it actually reads, and the
+build files say the runtime (`pyproject.toml` → Python/`uvx`; `package.json` → Node/`npx`).
+This is the tool-integration face of §31 (verify the *effect*, not the surface) and §29 (a
+plausible config, like a resolving pointer, can still be false). The check is cheap — read
+three files — and it is the difference between an integration that runs and one that fails on
+first use, quietly. The README itself is not exempt: this repo's README even listed the env
+var one way while the code read another; the **code won**.
