@@ -1744,3 +1744,36 @@ named as the harness's to own, wired in a later story.
 **Date**: 2026-07-13
 **Version**: 0.53.0
 **Reference**: [US-5.11](sprints/stories/US-5.11-security-review-capability.md), [security-review.md](../skills/koni-qc/references/security-review.md), Anthropic `/security-review`, CHANGELOG [0.53.0].
+
+---
+
+### D39. `koni-docs status` is safe to auto-run; `koni-docs sync` (CLI 0.10.0) is **not** — it over-aggregates the FR "Ship" column
+
+**Context**: Running the standard pre-commit doc pass (`sync` then `status`) after the
+sprint-W29 koni-ea work, `koni-docs sync` (CLI 0.10.0) rewrote the PRD / EPIC "Ship"
+(version_shipped) columns by mechanically concatenating every version that touched a
+mapped story: FR-38 (which shipped v0.39.0 + v0.40.0) became a 14-version string
+`v0.39.0 + 0.40.0 + … + 0.52.0`; FR-41 lost its curated "renamed koni-ea-dev v0.59.0"
+narrative, collapsing to a single `v0.62.0`; FR-42 flipped to a wrong `v0.60.0`. It also
+escaped the leading pipes on the sprint scope rows.
+
+**Decision**: In this repo, the doc-standardization pass is **`status`-only** (regenerate
+`STATUS.md`, RULE-5) plus **hand-maintaining** the PRD / EPIC FR tables. Do **not** run
+`koni-docs sync` with CLI 0.10.0 — its version-aggregation corrupts curated Ship text.
+Revisit if a newer CLI fixes the aggregation. The `sync` "row not found" warnings for the
+W29 rows were a real defect too: the scope table had been split into a headerless fragment;
+it is now one contiguous table.
+
+**Rationale**: The FR "Ship" column is curated narrative ("shipped v0.57.0; renamed
+koni-ea-dev v0.59.0"), not a mechanical version list. A tool that flattens it to an
+aggregate destroys information and misstates when each FR actually shipped — the opposite of
+doc honesty. `status` only writes the auto-owned `STATUS.md`, so it stays safe.
+
+**Impact**: The pre-commit checklist's `sync` step is suspended for this repo at CLI 0.10.0
+(status-only). Pre-existing `prd_ref` AD-N warnings (architecture-decision IDs that belong in
+`arch_ref`, RULE-17) surfaced by `sync` are noted but out of scope here — a separate
+frontmatter-migration task.
+
+**Date**: 2026-07-16
+**Version**: 0.62.0
+**Reference**: [sprint-2026-W29](sprints/sprint-2026-W29.md), [STATUS.md](sprints/STATUS.md), koni-docs skill §3c pre-commit checklist, RULE-5.

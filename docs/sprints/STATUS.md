@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-15 03:50:32 UTC
-> Total stories: 60
+> Last generated: 2026-07-16 10:04:09 UTC
+> Total stories: 67
 
 ## ⏰ Deadlines (0)
 
@@ -26,7 +26,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (59)
+## ✅ Done (66)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -45,6 +45,13 @@ _No stories_
 | US-3.3 | koni-harness — portable agentic-loop harness (gate + loop-runner + context-loader + sprint-sequencer + session-adapters) | EPIC-3 | P1 | 16 | sprint-2026-W26 | jindo9986 |
 | US-3.8 | koni-harness parallel orchestration — multi-agent sprint swarm + within-story fan-out | EPIC-3 | P1 | 3 | sprint-2026-W27 | jindo9986 |
 | US-3.9 | koni-harness uses the new koni-qc security-review — Review-stage trigger + a warn-level gate | EPIC-3 | P2 | 3 | sprint-2026-W29 | jindo9986 |
+| US-3.10 | koni-setup docs sync — surface the koni-qc security-review capability + the vendored security-review gate | EPIC-3 | P2 | 1 | sprint-2026-W29 | jindo9986 |
+| US-3.11 | koni-ea — the MQL5 Expert Advisor authoring standard skill | EPIC-3 | P2 | 5 | sprint-2026-W29 | jindo9986 |
+| US-3.12 | koni-ea refocus — scope to the MQL5 programming methodology, drop the ops layer | EPIC-3 | P2 | 2 | sprint-2026-W29 | jindo9986 |
+| US-3.13 | Split koni-ea into koni-ea-dev (programming) + koni-ea-ops (operations) | EPIC-3 | P2 | 3 | sprint-2026-W29 | jindo9986 |
+| US-3.14 | koni-ea-dev + koni-ea-ops skill-grading pass — clear the ≥95 catalog bar | EPIC-3 | P2 | 3 | sprint-2026-W29 | jindo9986 |
+| US-3.15 | koni-ea-dev — compile-in-the-loop via an MQL5 MCP server | EPIC-3 | P2 | 2 | sprint-2026-W29 | jindo9986 |
+| US-3.16 | koni-ea-dev — refine the MCP compile section from a deeper read of the server | EPIC-3 | P3 | 1 | sprint-2026-W29 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -106,7 +113,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 59
+- ✅ **Done**: 66
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
