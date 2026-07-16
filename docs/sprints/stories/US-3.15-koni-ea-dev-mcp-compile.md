@@ -12,7 +12,7 @@ prd_ref: [FR-41]
 arch_ref: []
 depends_on: [US-3.14]
 assignee: jindo9986
-commit: pending
+commit: 767ef9c
 created: 2026-07-16
 updated: 2026-07-16
 external_deps:
