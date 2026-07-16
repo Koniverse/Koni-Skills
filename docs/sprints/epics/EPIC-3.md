@@ -75,6 +75,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.13](../stories/US-3.13-koni-ea-split-dev-ops.md) | koni-ea split → dev + ops | Rename koni-ea → **koni-ea-dev** and ship a new **koni-ea-ops** skill (SKILL + 5 references: versioning, registry & MagicNumber, deployment, backtest & release, per-version docs) for the EA operational lifecycle. Two clean skills instead of one mixed one (executes LESSONS §32) | ✅ done | v0.59.0 |
 | [US-3.14](../stories/US-3.14-koni-ea-skill-grading.md) | koni-ea skill-grading pass | Grade koni-ea-dev + koni-ea-ops against koni-qc's 4-dimension skill-grading rubric and fix every finding to clear the ≥95 catalog bar (dev ~97, ops 96.4). 3 rounds; author-blind graders per dimension | ✅ done | v0.60.0 |
 | [US-3.15](../stories/US-3.15-koni-ea-dev-mcp-compile.md) | koni-ea-dev compile-in-the-loop | Wire an MQL5-compile MCP server (`compile_mql5`/`search_mql5_docs`) into koni-ea-dev so an agent verifies an EA compiles rather than only prescribing it; ships the verified/corrected config + honest scope boundary. Re-graded 98.1/100 | ✅ done | v0.61.0 |
+| [US-3.16](../stories/US-3.16-koni-ea-dev-mcp-refine.md) | koni-ea-dev MCP section refine | Refine the MCP section from a full read of the server: division of labor (verify engine, not code generator — the skill authors), `MQL5_EDITOR_PATH` auto-detected/optional, `search_mql5_docs` returns page text. Author-blind verified vs source | ✅ done | v0.62.0 |
 
 ## Cross-cutting invariants
 

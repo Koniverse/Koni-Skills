@@ -32,6 +32,13 @@ the agent closes itself**: write the EA → compile → read the real MetaEditor
 diagnostics → fix → recompile, until **zero errors and zero warnings**. Do this
 before claiming an EA compiles — a compile you did not run is not evidence.
 
+**Division of labor.** The server does **not** write code — that is this skill's job.
+It is a *verification* engine, not a generator: **this skill authors the EA to the
+rules here; the MCP compiles it and looks up the docs.** That is exactly the server's
+headline "auto-fixing loops" — it feeds the real MetaEditor errors back so the agent
+fixes and recompiles. The better you author to the [non-negotiables](../SKILL.md) and
+[pitfalls](mql5-pitfalls.md) up front, the faster the loop converges (fewer round-trips).
+
 The reference implementation is `mcp-server-mql5`
 ([github.com/elliottwaves-20/mcp-server-mql5](https://github.com/elliottwaves-20/mcp-server-mql5)),
 a small **Python** server that shells out to a local `metaeditor64.exe`. Two tools:
@@ -39,10 +46,11 @@ a small **Python** server that shells out to a local `metaeditor64.exe`. Two too
 - **`compile_mql5(code, filename="ExpertAdvisor")`** — takes the EA **source as a string**, writes it
   to a temp `.mq5`, runs MetaEditor `/compile`, and returns the log (errors +
   warnings). Feed it the draft, read the diagnostics, fix, recompile.
-- **`search_mql5_docs(search_term)`** — searches `mql5.com/docs`. Use it to **verify
-  an unfamiliar function or constant against the real docs instead of guessing** —
-  the same anti-hallucination discipline this skill applies everywhere (a plausible
-  API is not a real one).
+- **`search_mql5_docs(search_term)`** — searches `mql5.com/docs` and returns the
+  **matched page's actual text** (source URL + content, truncated), not just a link.
+  Use it to **verify an unfamiliar function or constant against the real docs before
+  you write the call** — the same anti-hallucination discipline this skill applies
+  everywhere (a plausible API is not a real one).
 
 **What it can and cannot compile.** The server writes the source to an **isolated
 temp dir** and passes **no `/include` root**, so only the editor's **stock**
@@ -57,7 +65,9 @@ working form:
 
 - it is a **Python** package → run it with **`uvx`**, not `npx` (there is no
   `package.json`, so an `npx` command fails to start it);
-- the env var is **`MQL5_EDITOR_PATH`**, not `METAEDITOR_PATH`;
+- the env var is **`MQL5_EDITOR_PATH`**, not `METAEDITOR_PATH` — and it is
+  **optional**: the server auto-detects `metaeditor64.exe` in the common MT5 install
+  paths, so set it explicitly only if detection fails or you run several terminals;
 - there is **no `MQL5_DIR`** — the server ignores it.
 
 Windows only (it drives `metaeditor64.exe`; use double-backslash paths):

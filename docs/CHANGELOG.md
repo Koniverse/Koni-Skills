@@ -16,6 +16,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.62.0] — 2026-07-16 — koni-ea-dev: refine the MCP compile section from a deeper read — v0.62.0
+
+Sharpened koni-ea-dev's MCP compile section with facts from reading the server's whole
+source ([US-3.16](sprints/stories/US-3.16-koni-ea-dev-mcp-refine.md), FR-41).
+
+### Changed
+- **`skills/koni-ea-dev/references/compilation-and-testing.md`** — added the **division of
+  labor** (the MCP is a compile + docs *verification* engine with no code-generation tool —
+  **this skill authors the EA**, the MCP runs the "auto-fixing loops"); noted that
+  `MQL5_EDITOR_PATH` is **optional** (the server auto-detects `metaeditor64.exe`); and that
+  `search_mql5_docs` returns the matched page's **text** (truncated), not just a link. Every
+  claim author-blind-verified against the upstream `server.py`/README; koni-ea-dev holds ≥95.
+
+---
+
 ## [0.61.0] — 2026-07-15 — koni-ea-dev: compile-in-the-loop via an MQL5 MCP server — v0.61.0
 
 Taught koni-ea-dev to close the compile loop — verify an EA compiles rather than only
