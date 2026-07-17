@@ -16,6 +16,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.63.0] — 2026-07-17 — koni-harness: UI features always run the design-skill trio (desktop + mobile) — v0.63.0
+
+Made the harness loop always invoke the three popular design skills for any UI feature
+([US-3.17](sprints/stories/US-3.17-harness-design-trio.md), FR-21).
+
+### Changed
+- **`skills/koni-harness/`** — a UI feature now runs the **design-skill trio**, one per
+  stage: gstack **`/design-consultation`** at Frame/Design (establish/confirm the design
+  system) → Anthropic **`frontend-design`** at Execute (build it, **desktop AND mobile**) →
+  gstack **`/design-review`** at Review (designer's-eye QA on both breakpoints). All to
+  `DESIGN.md` **+ the repo's design LESSONS**. Formalised across `SKILL.md` (description +
+  owner table + tool-rule), `agentic-loop-standard.md` (the design-first callout + stage
+  table), `loop-runner.md`, and `example-loop.md`; the `design-first` citation now records
+  the trio. The gate stays a presence-check (unchanged); the implement-only tool invariant
+  is preserved (both gstack skills are Frame/Review, `frontend-design` is the implementer).
+
+---
+
 ## [0.62.0] — 2026-07-16 — koni-ea-dev: refine the MCP compile section from a deeper read — v0.62.0
 
 Sharpened koni-ea-dev's MCP compile section with facts from reading the server's whole

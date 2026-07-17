@@ -2,19 +2,19 @@
 name: koni-harness
 description: >
   Use when setting up or running a Koniverse repo's development loop or its
-  commit/release safety net — e.g. "set up the harness", "install the gate",
-  "wire verification gates", "pre-commit gate", "pre-push gate", "agentic
-  loop", "harness engineering", or "make the loop portable across Claude /
-  Cursor / Codex / Gemini". Also use when a change risks a bad version bump, a
-  missing changelog anchor, leaked secrets, or broken doc references; to
-  right-size process; when stories get too small/fragmented (consolidate /
-  merge stories, story sprawl); to learn from past mistakes (always read +
-  write LESSONS.md, lesson verdict); when UI keeps getting reworked after
-  review (design-first: build to DESIGN.md up front); when docs are filled
-  "just enough" (doc-completeness bar); or to pick the next dependency-ready
-  story. Also use to run work **multi-agent / in
-  parallel** — "run the sprint in parallel", "swarm the ready stories", "fan
-  out the review/tests across agents" (swarm planner + worktree-per-story).
+  commit/release safety net — "set up the harness", "install / wire the gate",
+  "pre-commit / pre-push gate", "agentic loop", or "make the loop portable across
+  Claude / Cursor / Codex / Gemini". Also when a change risks a bad version bump, a
+  missing changelog anchor, leaked secrets, or broken doc references; to right-size
+  process; when stories get too small/fragmented (story sprawl); to learn from past
+  mistakes (read +
+  write LESSONS.md, lesson verdict); when **building a UI feature** — run the
+  design-skill trio (`/design-consultation` → `frontend-design` → `/design-review`)
+  for desktop **and** mobile, to `DESIGN.md` + design lessons (design-first); when
+  docs are filled "just enough" (doc-completeness bar); or to pick the next
+  dependency-ready story. Also to run work **multi-agent / in parallel** — "run the
+  sprint in parallel / swarm the ready stories", "fan out review/tests across
+  agents" (swarm planner + worktree-per-story).
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -31,13 +31,17 @@ never reproduces:
 | Spawning the parallel agents themselves (worktree isolation) | the tool runtime (invoked — Claude Agent/Workflow; koni-harness only *plans* the wave) |
 | Doc bodies, koni-docs' rules, `validate` CLI | koni-docs (invoked) |
 | Repo scaffold, skill wiring | koni-setup (invoked) |
-| Plan / brainstorm | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**) |
-| Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI (invoked) |
-| Review / QA | gstack `/design-review` (UI vs `DESIGN.md` **+ shadcn standard**, both mandatory) + **koni-qc** (test coverage — or its **skill-grading** rubric, **≥95 to pass**, when the deliverable is a skill; or its **security-review** method when the change crosses a security trust boundary, backstopped by the warn-level `security-review` gate) + code review (invoked) |
+| Plan / brainstorm / **UI design** | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**); gstack **`/design-consultation`** to establish/confirm the design system for a UI surface (design-first) |
+| Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI, **built for desktop AND mobile** to `DESIGN.md` + design LESSONS (invoked) |
+| Review / QA | gstack `/design-review` (UI vs `DESIGN.md` **+ shadcn standard**, both mandatory; **both breakpoints**) + **koni-qc** (test coverage — or its **skill-grading** rubric, **≥95 to pass**, when the deliverable is a skill; or its **security-review** method when the change crosses a security trust boundary, backstopped by the warn-level `security-review` gate) + code review (invoked) |
 
 **Tool rule (the one non-obvious invariant):** Superpowers + gstack are for
-brainstorm/plan/review only; implementation is Anthropic Skills only. The Review
-stage adds `/design-review` (UI vs `DESIGN.md` + the shadcn standard, both mandatory) and koni-qc (the AC↔TC gate).
+brainstorm/plan/review only; implementation is Anthropic Skills only. A **UI
+feature runs the design-skill trio, one per stage**: gstack `/design-consultation`
+at Frame/Design → Anthropic `frontend-design` at Execute (desktop **and** mobile) →
+gstack `/design-review` at Review (UI vs `DESIGN.md` + the shadcn standard, both
+mandatory) — plus koni-qc (the AC↔TC gate). See the design-first callout in
+[`agentic-loop-standard.md`](references/agentic-loop-standard.md).
 
 ## The standard
 

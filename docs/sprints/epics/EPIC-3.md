@@ -50,7 +50,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)           | ✅ shipped (v0.15.0) |
 | FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | ✅ shipped (v0.9.0)  |
 | FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) (+ [US-3.10](../stories/US-3.10-koni-setup-security-review-sync.md) docs sync) | ✅ shipped (v0.9.0; refined v0.56.0) |
-| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.10.0) |
+| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) (+ [US-3.17](../stories/US-3.17-harness-design-trio.md) design-trio) | ✅ shipped (v0.10.0; refined v0.63.0) |
 | FR-22 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.11.0) |
 | FR-23 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.12.0) |
 | FR-24 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.13.0) |
@@ -76,6 +76,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.14](../stories/US-3.14-koni-ea-skill-grading.md) | koni-ea skill-grading pass | Grade koni-ea-dev + koni-ea-ops against koni-qc's 4-dimension skill-grading rubric and fix every finding to clear the ≥95 catalog bar (dev ~97, ops 96.4). 3 rounds; author-blind graders per dimension | ✅ done | v0.60.0 |
 | [US-3.15](../stories/US-3.15-koni-ea-dev-mcp-compile.md) | koni-ea-dev compile-in-the-loop | Wire an MQL5-compile MCP server (`compile_mql5`/`search_mql5_docs`) into koni-ea-dev so an agent verifies an EA compiles rather than only prescribing it; ships the verified/corrected config + honest scope boundary. Re-graded 98.1/100 | ✅ done | v0.61.0 |
 | [US-3.16](../stories/US-3.16-koni-ea-dev-mcp-refine.md) | koni-ea-dev MCP section refine | Refine the MCP section from a full read of the server: division of labor (verify engine, not code generator — the skill authors), `MQL5_EDITOR_PATH` auto-detected/optional, `search_mql5_docs` returns page text. Author-blind verified vs source | ✅ done | v0.62.0 |
+| [US-3.17](../stories/US-3.17-harness-design-trio.md) | koni-harness design-skill trio | UI features always run the trio — gstack `/design-consultation` (Frame) → Anthropic `frontend-design` (Execute) → gstack `/design-review` (Review) — desktop + mobile, to DESIGN.md + design LESSONS. Refines FR-21; tool invariant preserved | ✅ done | v0.63.0 |
 
 ## Cross-cutting invariants
 

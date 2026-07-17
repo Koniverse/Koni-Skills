@@ -33,13 +33,14 @@ sh .koni-harness/loop.sh enter frame
 Flip the story to `in-progress` (koni-docs). **Read `LESSONS.md` and cite it** —
 add `Lessons applied: §<n> — <how>` (or `none — <why>`) to the story; story-lint
 checks the line on new stories. Because this is
-UI, **read `DESIGN.md` in full now**, enumerate the component × state matrix,
-and build on **shadcn** primitives + the repo's tokens — then cite it in the
-story: `Design applied: DESIGN.md §tokens/§buttons; shadcn Button+Dialog;
-6 states enumerated` (the `design-first` gate blocks UI code shipped without
-an added citation; `/design-review` later confirms, it must not discover). If the
-shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD here — this is
-the only place those tools are used.
+UI, **run gstack `/design-consultation` now** to confirm the design system, **read
+`DESIGN.md` in full + the design LESSONS**, enumerate the component × state matrix,
+and build on **shadcn** primitives + the repo's tokens — then cite it in the story:
+`Design applied: /design-consultation → DESIGN.md §tokens/§buttons + LESSONS §15;
+shadcn Button+Dialog; 6 states; desktop+mobile` (the `design-first` gate blocks UI
+code shipped without an added citation; `/design-review` later confirms, it must not
+discover). If the shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD
+here — this is the only place those tools are used.
 
 ## 2. `execute` — implement with Anthropic Skills only
 
@@ -47,7 +48,8 @@ the only place those tools are used.
 sh .koni-harness/loop.sh enter execute
 ```
 
-Implement the panel with the **`frontend-design`** Anthropic Skill (UI). Keep TDD
+Implement the panel with the **`frontend-design`** Anthropic Skill (UI), **built for
+both desktop and mobile** to `DESIGN.md` + the design LESSONS. Keep TDD
 as the discipline **per function** — for each new/changed function + branch, write
 the failing unit test first, then the minimal code to pass it (RED→GREEN→REFACTOR,
 per koni-qc `unit-coverage.md`). For tier ≥ 1, delegate the implementation to a
@@ -76,7 +78,7 @@ sh .koni-harness/loop.sh enter review
 
 1. **spec-compliance** subagent — does the diff satisfy AC-1…AC-4?
 2. **koni-qc** — every AC has positive + negative + boundary tests (the AC↔TC gate).
-3. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).
+3. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** on **both breakpoints (desktop + mobile)** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).
 4. **code-quality** subagent.
 
 Fix findings and re-run the relevant step until clean.

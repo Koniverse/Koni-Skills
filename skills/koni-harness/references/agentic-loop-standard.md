@@ -26,8 +26,8 @@ between its stages.
 
 | # | Stage | Owned by | Entry gate (must be true to enter) |
 |---|---|---|---|
-| 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm) | A story exists in `docs/sprints/stories/` with status `in-progress` |
-| 2 | **Execute** | **Anthropic Skills only** (e.g. `frontend-design` for UI) | Plan approved; **LESSONS read + cited** (lessons-loop callout); for UI work **DESIGN.md read + cited before any UI code** (design-first callout) |
+| 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm; **gstack `/design-consultation` for a UI surface** — design-first callout) | A story exists in `docs/sprints/stories/` with status `in-progress` |
+| 2 | **Execute** | **Anthropic Skills only** (`frontend-design` for UI — **build both breakpoints, desktop AND mobile**) | Plan approved; **LESSONS read + cited** (lessons-loop callout); for UI work **DESIGN.md + design LESSONS read + cited before any UI code** (design-first callout) |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → **koni-qc security-review** *(when the change crosses a security trust boundary — auth, authz/multi-tenancy, money/asset movement, untrusted input, secrets/crypto, file upload, deserialization, a new outbound call)* → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
 | 5 | **Doc + Version gate** | koni-docs | Review clean; story AC all `[x]`; story frontmatter complete (`story-lint`); every touched doc surface updated to the **doc-completeness bar** (callout below) |
@@ -119,22 +119,37 @@ between its stages.
 > was recorded**, never which way it went. koni-docs owns the template; the
 > harness owns when to read (entry), when to write (here), and the two checks.
 
-> **Design-first UI — comply at write time, confirm at review (a hard rule at
-> Execute).** Conformance *discovered* by `/design-review` is **rework** — the
-> build → review-fail → redo loop is the failure mode this kills. Before the
-> first line of UI code: (1) **read the repo's `DESIGN.md` in full** + the
-> component contracts for the surfaces you'll touch, and the shadcn standard
-> (koni-qc [`nfr.md`](../../koni-qc/references/nfr.md) §UI); (2) **enumerate the
-> component × state matrix** (hover / focus / disabled / loading / empty /
-> error) *before* code — a state discovered while coding is a design decision
-> made off-contract; (3) **name the shadcn primitives you will compose** and
-> use tokens only — never hand-roll what the system provides; (4) **cite it**
-> in the story: `Design applied: <DESIGN.md sections + primitives + tokens>`.
-> The [`design-first`](gate-catalog.md) check blocks a release commit that
-> ships UI code without an added citation (added-lines-only, same mechanics as
-> lesson-capture). At Review, `/design-review` then **confirms**; a first-pass
-> failure on a rule `DESIGN.md` states is a process failure — capture it as a
-> lesson (LESSONS §15).
+> **Design-first UI — the design-skill trio, one per stage, desktop AND mobile (a
+> hard rule).** Any feature with a user-facing surface runs **all three** of the
+> popular design skills, each at the stage it owns. Conformance *discovered* at
+> review is **rework** — the build → review-fail → redo loop this kills:
+>
+> 1. **Frame / Design → gstack `/design-consultation`.** Before the first line of
+>    UI code: understand the surface, research the landscape, and **establish or
+>    confirm the design system** (aesthetic · type · color · layout · spacing ·
+>    motion) against the repo's **`DESIGN.md` and its design LESSONS**. (Skip only
+>    when `DESIGN.md` already covers this surface and you are *extending* an existing
+>    pattern, not introducing one.) Read `DESIGN.md` in full + the design LESSONS +
+>    the shadcn standard (koni-qc [`nfr.md`](../../koni-qc/references/nfr.md) §UI);
+>    **enumerate the component × state matrix** (hover / focus / disabled / loading /
+>    empty / error) and **name the shadcn primitives + tokens** you will compose — a
+>    state or primitive discovered while coding is a design decision made off-contract.
+> 2. **Execute / Build → Anthropic `frontend-design`.** Build to that contract,
+>    production-grade, avoiding generic AI aesthetics; tokens and the named primitives
+>    only, never hand-roll what the system provides. Build **both breakpoints —
+>    desktop AND mobile** (honor a `DESIGN-MOBILE.md` if the repo has one); a surface
+>    that works on only one is not done.
+> 3. **Review / QA → gstack `/design-review`.** Designer's-eye pass on **both
+>    breakpoints** for visual inconsistency, spacing, hierarchy, AI-slop, and slow
+>    interactions. It **confirms** conformance; anything it *discovers* on a rule
+>    `DESIGN.md` already states is a process failure — capture it as a lesson
+>    (LESSONS §15).
+>
+> **Cite the trio** in the story so the [`design-first`](gate-catalog.md) check sees
+> it (added-lines-only, same mechanics as lesson-capture — it blocks a release commit
+> that ships UI code in a `DESIGN.md` repo without the citation):
+> `Design applied: /design-consultation → DESIGN.md §… + LESSONS §…; frontend-design
+> (desktop+mobile, shadcn primitives/tokens); /design-review pass`.
 
 > **The doc-completeness bar — finish the docs meticulously, never "just
 > enough" (a hard rule at the Doc + Version gate).** Filling a template to
