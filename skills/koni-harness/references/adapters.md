@@ -5,6 +5,8 @@ thin adapters that invoke it. All three call the **same** runner with the same
 `--phase` contract; nothing about a check changes per tool. Pick the adapter(s)
 for the tools your repo uses, or use more than one.
 
+**Contents**: [git](#git) · [Claude Code](#claude-code) · [Gemini / Codex / Cursor](#gemini--codex--cursor)
+
 For the checks themselves see [`gate-catalog.md`](gate-catalog.md). For the
 non-destructive install procedure see [`adoption.md`](adoption.md).
 

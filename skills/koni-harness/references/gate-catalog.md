@@ -2,7 +2,10 @@
 
 The gate is driven by `gates.conf`, a line-oriented config read by
 `gate-runner.sh`. This file documents the built-in checks that ship in the
-default `gates.conf`, the config grammar, and how to add your own check.
+default `gates.conf` (the one `install-gate.sh` vendors), the config grammar, and
+how to add your own check. One check documented here — `skill-references` — is
+**monorepo-only** (it audits skill docs) and is *not* in the vendored default; it
+is flagged as such where it appears.
 
 For how the runner is wired into git / Claude Code / Gemini / Codex, see
 [`adapters.md`](adapters.md). For non-destructive install, see
@@ -65,11 +68,13 @@ What that means for what fires automatically on a normal `git commit`:
 | `lesson-capture` | `release-commit` | No — release-commit only |
 | `design-first` | `release-commit` | No — release-commit only |
 | `koni-docs-validate` | `release-commit` | No — release-commit only |
+| `security-review` | `release-commit` | No — release-commit only |
+| `tests` | `pre-push` | No — on push only |
 
 So `version-phase` — the critical 2-phase versioning gate — **does** run on
-every commit through the `pre-commit` hook. The six release-commit-only checks
+every commit through the `pre-commit` hook. The seven release-commit-only checks
 (`changelog-anchor`, `story-status`, `story-lint`, `lesson-capture`,
-`design-first`, `koni-docs-validate`) do **not** fire from
+`design-first`, `koni-docs-validate`, `security-review`) do **not** fire from
 an ordinary commit; they are opt-in at release time, run only when you (or CI)
 invoke `--phase release-commit`. Installing the hooks does not, on its own,
 enforce release-time checks.
@@ -258,7 +263,13 @@ enforce release-time checks.
   koni-docs-validate   | checks/koni-docs-validate.sh        | release-commit             | warn  |
   ```
 
-### `skill-references`
+### `skill-references` *(monorepo-only — not vendored)*
+
+> **This check does not ship in the default `gates.conf`.** It lives in the
+> Koni-Skills monorepo's **own** `.koni-harness/` (root), not in `scripts/gates.conf`,
+> so `install-gate.sh` never vendors it into a consumer repo. It audits *skill docs*;
+> a product repo has no `skills/` to check and does not receive it. Documented here
+> because it is part of *this* repo's gate, but a consumer install will not have it.
 
 - **What it asserts**: every markdown cross-reference in a changed skill resolves — a
   file link, an in-page anchor, a section pointer, a named script, and a count stated in
@@ -267,10 +278,10 @@ enforce release-time checks.
   self-test, mutation test, and branch-coverage gate — refusing the checker's verdict
   if any fail, because a guard whose own tests fail proves nothing (LESSONS §19-§24, §28).
 - **Phase(s)**: `work-commit`, `release-commit`
-- **Default severity**: `block`
+- **Severity**: `block`
 - **Generalizes from**: three rounds of false greens where a dangling reference — a dead
   §-pointer, a ghost script, a drifted count — was invisible to the author who wrote it.
-- **`gates.conf` row**:
+- **Row (in the monorepo's own `.koni-harness/gates.conf`, not the vendored default)**:
   ```
   skill-references     | checks/skill-references.sh          | work-commit,release-commit | block |
   ```

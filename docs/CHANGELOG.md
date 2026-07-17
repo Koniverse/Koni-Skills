@@ -16,6 +16,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.64.0] — 2026-07-17 — koni-harness skill-grading pass: verify the design-trio change, fix surfaced drift to ≥95 — v0.64.0
+
+Verified the v0.63.0 design-trio change to koni-harness with koni-qc skill-grading (4
+dimensions, re-graded the *whole* skill). Round 1 = **83.9 → FAIL** surfaced real drift the
+diff-only review missed; after the fix round, **96.25 → PASS**
+([US-3.18](sprints/stories/US-3.18-harness-skill-grading.md), FR-21).
+
+### Fixed
+- **`skills/koni-harness/references/gate-catalog.md`** — flagged `skill-references` as
+  **monorepo-only / not vendored** (it was documented as a default-shipped check but is not
+  in the vendored `scripts/gates.conf`; a consumer install never receives it — per US-3.10).
+- **Check-count staleness** (LESSONS §28): de-numbered "eight built-in checks" (SKILL.md);
+  corrected "six release-commit-only checks" → **seven** incl. `security-review` in
+  gate-catalog + example-loop; added `security-review`/`tests` to the release-phase table.
+- **`references/agentic-loop-standard.md`** — the gstack-role enumerations now name
+  `/design-consultation` at Frame; added an **objective `/design-consultation` skip test**
+  and an **enforcement-boundary** note (the `design-first` gate is a presence-check;
+  `/design-review` is the judge of whether desktop **and** mobile truly conform).
+- **`references/parallel-orchestration.md`** — Review passes reconciled with the conditional
+  `security-review` step.
+- **`SKILL.md`** description — bound the UI trigger to "a **story's UI work in the loop**"
+  (closes a `frontend-design` triggering over-reach; 1023 bytes, ≤ cap).
+- **`references/adapters.md`** — added the missing Contents TOC.
+
+---
+
 ## [0.63.0] — 2026-07-17 — koni-harness: UI features always run the design-skill trio (desktop + mobile) — v0.63.0
 
 Made the harness loop always invoke the three popular design skills for any UI feature

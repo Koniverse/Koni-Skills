@@ -22,8 +22,9 @@ goal: >-
 | US-3.15 | koni-ea-dev — compile-in-the-loop via an MQL5 MCP server    | EPIC-3 | P2  | 2      | ✅ done | v0.61.0           | [stories/US-3.15-koni-ea-dev-mcp-compile.md](stories/US-3.15-koni-ea-dev-mcp-compile.md)                 |
 | US-3.16 | koni-ea-dev — refine the MCP compile section (deeper read)  | EPIC-3 | P3  | 1      | ✅ done | v0.62.0           | [stories/US-3.16-koni-ea-dev-mcp-refine.md](stories/US-3.16-koni-ea-dev-mcp-refine.md)                   |
 | US-3.17 | koni-harness — UI features run the design-skill trio        | EPIC-3 | P2  | 2      | ✅ done | v0.63.0           | [stories/US-3.17-harness-design-trio.md](stories/US-3.17-harness-design-trio.md)                        |
+| US-3.18 | koni-harness skill-grading pass — verify + fix to ≥95       | EPIC-3 | P2  | 2      | ✅ done | v0.64.0           | [stories/US-3.18-harness-skill-grading.md](stories/US-3.18-harness-skill-grading.md)                    |
 
-**Total**: 10 stories / 25 pts / 1 contributor.
+**Total**: 11 stories / 27 pts / 1 contributor.
 
 ## Carried out of this sprint
 

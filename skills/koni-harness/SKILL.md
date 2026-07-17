@@ -8,12 +8,12 @@ description: >
   missing changelog anchor, leaked secrets, or broken doc references; to right-size
   process; when stories get too small/fragmented (story sprawl); to learn from past
   mistakes (read +
-  write LESSONS.md, lesson verdict); when **building a UI feature** — run the
+  write LESSONS.md, lesson verdict); for a **story's UI work in the loop** — run the
   design-skill trio (`/design-consultation` → `frontend-design` → `/design-review`)
   for desktop **and** mobile, to `DESIGN.md` + design lessons (design-first); when
   docs are filled "just enough" (doc-completeness bar); or to pick the next
   dependency-ready story. Also to run work **multi-agent / in parallel** — "run the
-  sprint in parallel / swarm the ready stories", "fan out review/tests across
+  sprint in parallel / swarm ready stories", "fan out review/tests across
   agents" (swarm planner + worktree-per-story).
 ---
 # koni-harness — Koni Agentic Loop + portable gate
@@ -98,7 +98,7 @@ sh .koni-harness/gate-runner.sh --phase pre-push
 ```
 
 A failing `block` check exits non-zero (stop and fix); a failing `warn` check
-prints `WARN:` and lets the commit through. The eight built-in checks, the config
+prints `WARN:` and lets the commit through. The built-in checks, the config
 grammar, and how to add your own are in
 [`references/gate-catalog.md`](references/gate-catalog.md); how to wire the
 runner into git / Claude Code / Gemini / Codex / Cursor is in
@@ -212,7 +212,7 @@ Load on demand based on what you're doing:
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
 | [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
-| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the eight built-in checks, the `gates.conf` grammar, or adding a custom check |
+| [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |
 | [`references/adoption.md`](references/adoption.md) | Installing/adopting the gate non-destructively into an existing repo (chain/wrap/merge/skip rules) |
 | [`references/sprint-sequencer.md`](references/sprint-sequencer.md) | Picking the next dependency-ready story or reading sprint status with `sprint.sh` (`next`/`status`, readiness + ordering, CLI flags/defaults, exit codes, limits) |

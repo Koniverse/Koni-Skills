@@ -63,15 +63,17 @@ between its stages.
 > that ended before it was created, or holds a stale `commit: pending` — fill
 > every field at creation, don't wait for the gate to catch you.
 >
-> **Tool split — brainstorm vs implement vs review (a hard rule).**
-> *Brainstorm / plan* uses **Superpowers** (brainstorming, writing-plans) and
-> **gstack** (plan-reviews, office-hours). *Implement* uses **Anthropic Skills
-> only** (`frontend-design` for UI, and the other Anthropic implementation
+> **Tool split — brainstorm/design vs implement vs review (a hard rule).**
+> *Brainstorm / plan / design* uses **Superpowers** (brainstorming, writing-plans)
+> and **gstack** (plan-reviews, office-hours, and **`/design-consultation`** to
+> establish/confirm a UI design system at Frame). *Implement* uses **Anthropic
+> Skills only** (`frontend-design` for UI, and the other Anthropic implementation
 > skills) — **never** Superpowers or gstack to write feature code. *Review* uses
 > gstack `/design-review` (UI conformance to the repo's `DESIGN.md` **+ the shadcn
 > standard** — both mandatory for UI; criteria in koni-qc [`nfr.md`](../../koni-qc/references/nfr.md) §UI), **koni-qc**
-> (test coverage), and code review. The one place gstack appears outside
-> brainstorm is the review stage (`/design-review`); it still never implements.
+> (test coverage), and code review. gstack's two UI skills sit at **design
+> (`/design-consultation`, Frame)** and **review (`/design-review`)** — it appears
+> only at those non-implementation stages and **still never implements**.
 >
 > **Execute keeps TDD as a discipline, per function** (RED→GREEN→REFACTOR: a
 > failing unit test for each new/changed function + branch *first*, per koni-qc
@@ -127,9 +129,11 @@ between its stages.
 > 1. **Frame / Design → gstack `/design-consultation`.** Before the first line of
 >    UI code: understand the surface, research the landscape, and **establish or
 >    confirm the design system** (aesthetic · type · color · layout · spacing ·
->    motion) against the repo's **`DESIGN.md` and its design LESSONS**. (Skip only
->    when `DESIGN.md` already covers this surface and you are *extending* an existing
->    pattern, not introducing one.) Read `DESIGN.md` in full + the design LESSONS +
+>    motion) against the repo's **`DESIGN.md` and its design LESSONS**. Objective
+>    skip test: skip `/design-consultation` **only if you can name every component ×
+>    state and every shadcn primitive/token for this surface from existing `DESIGN.md`
+>    sections *without adding one*** — introduce a single new token or state and
+>    consultation is required. Read `DESIGN.md` in full + the design LESSONS +
 >    the shadcn standard (koni-qc [`nfr.md`](../../koni-qc/references/nfr.md) §UI);
 >    **enumerate the component × state matrix** (hover / focus / disabled / loading /
 >    empty / error) and **name the shadcn primitives + tokens** you will compose — a
@@ -150,6 +154,11 @@ between its stages.
 > that ships UI code in a `DESIGN.md` repo without the citation):
 > `Design applied: /design-consultation → DESIGN.md §… + LESSONS §…; frontend-design
 > (desktop+mobile, shadcn primitives/tokens); /design-review pass`.
+> **Enforcement boundary**: the gate is a *presence-check* — it verifies the citation
+> line exists, not that the trio actually ran or that mobile was actually built (a
+> grep cannot see a rendered breakpoint). `/design-review` on both breakpoints is the
+> human judge of whether desktop **and** mobile truly conform; the citation records
+> the claim, the review confirms it.
 
 > **The doc-completeness bar — finish the docs meticulously, never "just
 > enough" (a hard rule at the Doc + Version gate).** Filling a template to
@@ -310,12 +319,12 @@ Practitioner guidance, derived from the harness's first principles:
    Gemini / Codex / Cursor (which share no hook spec) get the same gate. If a
    feature can't degrade to the portable core, it isn't in the harness yet.
 
-7. **Implement with Anthropic Skills; brainstorm/review with Superpowers &
+7. **Implement with Anthropic Skills; brainstorm/design/review with Superpowers &
    gstack.** Each tool family has one job. **Superpowers + gstack are for
-   brainstorming and planning** (and gstack `/design-review` for the review
-   stage) — they **must never write feature code**. **Implementation is Anthropic
-   Skills only** (`frontend-design` for UI, plus the other Anthropic
-   implementation skills). This keeps planning rigor and execution craft in the
+   brainstorming, planning, and design/review** (gstack `/design-consultation` at
+   Frame and `/design-review` at Review) — they **must never write feature code**.
+   **Implementation is Anthropic Skills only** (`frontend-design` for UI, plus the
+   other Anthropic implementation skills). This keeps planning rigor and execution craft in the
    tools each is best at, and it makes "who built this" unambiguous. The Review
    stage adds gstack `/design-review` (UI must track the repo's `DESIGN.md` **+ the
    shadcn standard**, both mandatory) and **koni-qc** (the test-coverage gate) on top

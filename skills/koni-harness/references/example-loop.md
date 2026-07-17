@@ -114,9 +114,9 @@ sh .koni-harness/loop.sh complete
 ```
 
 The `work-commit` phase runs only the two checks wired to it in the default
-`gates.conf` (`version-phase`, `credential-scan`). The six release-only checks
+`gates.conf` (`version-phase`, `credential-scan`). The seven release-only checks
 (`changelog-anchor`, `story-status`, `story-lint`, `lesson-capture`,
-`design-first`, `koni-docs-validate`) fire on
+`design-first`, `koni-docs-validate`, `security-review`) fire on
 `release-commit`, and `tests` fires on `pre-push` — see
 [`gate-catalog.md`](gate-catalog.md). If any `block` check fails the commit is
 stopped — fix and re-run the gate. Never `git commit --no-verify`.
