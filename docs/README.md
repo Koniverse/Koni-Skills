@@ -75,12 +75,18 @@ Run through every item before pushing a commit that changes code or scope:
 [ ] CONTEXT.md has new entry if a decision was made (RULE-7 append-only)
 [ ] LESSONS.md has new entry if a trap or pattern was discovered
 [ ] Story file: status → done, version_shipped set, Tasks all [x] (RULE-10)
-[ ] node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/
-[ ] node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/
+[ ] npx koni-docs status --docs-path docs/      — regenerate STATUS.md (RULE-5)
+[ ] npx koni-docs validate --docs-path docs/    — ID graph + FR refs resolve
+[ ] Touched a skill? python3 skills/koni-docs/scripts/check-references.py <skill-dir>
 [ ] CLAUDE.md `Active Context` block updated (T1–T7 as applicable)
 [ ] English-only for code, comments, UI, errors, commits, docs (RULE-13)
 [ ] Commit prefix: feat:/fix:/chore:/docs:/style:/refactor:/test: (RULE-14)
 ```
+
+> **`npx koni-docs sync` is deliberately absent from this list.** At CLI 0.10.0 it
+> over-aggregates the PRD/EPIC "Ship" column, corrupting curated `version_shipped`
+> narrative — so this repo runs `status` only and hand-maintains the FR tables. See
+> [CONTEXT D39](CONTEXT.md). Revisit if a newer CLI fixes the aggregation.
 
 For env-var changes (RULE-11), additionally:
 

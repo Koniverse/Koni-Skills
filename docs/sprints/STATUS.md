@@ -1,18 +1,19 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-20 07:55:57 UTC
-> Total stories: 70
+> Last generated: 2026-07-20 08:33:54 UTC
+> Total stories: 71
 
 ## ⏰ Deadlines (0)
 
 _No stories carry an explicit deadline._
 
-## 📋 Backlog (1)
+## 📋 Backlog (2)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
 | US-1.7 | Close the open skill-grading findings on koni-docs (the ≥95 bar) | EPIC-1 | P2 | 5 | — | — |
+| US-3.20 | Extend the reference sweep to docs/ — the doc hub is currently unguarded | EPIC-3 | P2 | 5 | — | jindo9986 |
 
 ## 🟢 Ready (0)
 
@@ -112,7 +113,7 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 1
+- 📋 **Backlog**: 2
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0

@@ -132,13 +132,19 @@ skills/<name>/
 └── assets/             ← optional: files referenced from output
 ```
 
-**No more `scripts/` inside skills.** Automation that used to live in
-`skills/koni-docs/scripts/*.mjs` (`agile-sync-up`, `generate-status`,
-`agile-inject-tasks`, `agile-backfill-fields`,
-`changelog-backfill-commits`) was migrated wholesale into the
-`@koniverse/koni-docs` npm package as typed subcommands. Consumers run
-`npx koni-docs <subcommand>` instead of
-`node skills/.../scripts/<name>.mjs`. See [AD-7](#architecture-decisions).
+**No consumer-facing automation inside skills.** The doc automation that used to live
+in `skills/koni-docs/scripts/*.mjs` (`agile-sync-up`, `generate-status`,
+`agile-inject-tasks`, `agile-backfill-fields`, `changelog-backfill-commits`) was
+migrated wholesale into the `@koniverse/koni-docs` npm package as typed subcommands.
+Consumers run `npx koni-docs <subcommand>`, never
+`node skills/.../scripts/<name>.mjs` — those files no longer exist. See
+[AD-7](#architecture-decisions).
+
+The one surviving `skills/*/scripts/` tree is **repo-internal tooling, not consumer
+automation**: `skills/koni-docs/scripts/check-references.py` (plus its `__tests__/`)
+is the guard the `skill-references` gate runs over this repo's own skill docs, and
+`skills/koni-harness/scripts/` holds the gate assets `install-gate.sh` vendors. Neither
+is something a consumer invokes by path.
 
 **Activation contract** (consumed by every coding agent):
 

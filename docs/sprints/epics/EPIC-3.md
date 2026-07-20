@@ -50,7 +50,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)           | ✅ shipped (v0.15.0) |
 | FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | ✅ shipped (v0.9.0)  |
 | FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) (+ [US-3.10](../stories/US-3.10-koni-setup-security-review-sync.md) docs sync) | ✅ shipped (v0.9.0; refined v0.56.0) |
-| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) (+ [US-3.17](../stories/US-3.17-harness-design-trio.md) design-trio, [US-3.18](../stories/US-3.18-harness-skill-grading.md) grading pass) | ✅ shipped (v0.10.0; refined v0.63.0, graded ≥95 v0.64.0) |
+| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) (+ [US-3.17](../stories/US-3.17-harness-design-trio.md) design-trio, [US-3.18](../stories/US-3.18-harness-skill-grading.md) grading pass, [US-3.19](../stories/US-3.19-mechanize-check-count-drift.md) count-guard) | ✅ shipped (v0.10.0; refined v0.63.0, graded ≥95 v0.64.0, count-guard v0.65.0) |
 | FR-22 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.11.0) |
 | FR-23 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.12.0) |
 | FR-24 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.13.0) |

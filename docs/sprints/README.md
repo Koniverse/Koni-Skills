@@ -50,24 +50,33 @@ AC `[x]` + all 5 doc layers consistent.
 
 ## Scripts (run from repo root)
 
+The `.mjs` scripts these commands used to name were migrated into the
+`@koniverse/koni-docs` npm package (ARCHITECTURE AD-7) and **no longer exist on disk** —
+invoke the typed CLI instead:
+
 ```bash
 # Regenerate STATUS.md (RULE-5 — never hand-edit it)
-node skills/koni-docs/scripts/generate-status.mjs --docs-path docs/
+npx koni-docs status --docs-path docs/
 
-# Propagate story status across epic, PRD Epics & User Stories, PRD Functional Requirements, sprint
-node skills/koni-docs/scripts/agile-sync-up.mjs --docs-path docs/
+# ID-graph + FR-ref integrity, and due-date checking (exits non-zero on error)
+npx koni-docs validate --docs-path docs/
 
 # Regenerate Tasks section from AC (AC is canonical)
-node skills/koni-docs/scripts/agile-inject-tasks.mjs --docs-path docs/ --story US-X.Y
+npx koni-docs inject-tasks --docs-path docs/ --story US-X.Y
 
 # Backfill missing frontmatter fields
-node skills/koni-docs/scripts/agile-backfill-fields.mjs --docs-path docs/
+npx koni-docs backfill-fields --docs-path docs/
 
-# Replace `pending` SHAs in CHANGELOG with real ones
-node skills/koni-docs/scripts/changelog-backfill-commits.mjs --docs-path docs/
+# Repair only — a CHANGELOG that already shipped with `pending` SHAs
+npx koni-docs backfill-commits --docs-path docs/
 ```
 
 All accept `--dry-run` for preview.
+
+> **`npx koni-docs sync` is intentionally not listed.** It propagates story status up
+> through epic / PRD / sprint, but at CLI 0.10.0 it over-aggregates the PRD/EPIC "Ship"
+> column and corrupts curated `version_shipped` narrative. This repo runs `status` only
+> and hand-maintains the FR tables — [CONTEXT D39](../CONTEXT.md).
 
 ## 5-layer consistency check
 

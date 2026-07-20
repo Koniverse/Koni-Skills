@@ -93,8 +93,9 @@ DEPLOY + .env.example together.
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
 | `npx skills list` shows nothing after clone | Lockfile not restored | `npx skills experimental_install` |
-| `agile-sync-up.mjs` crashes with "missing id" | Story file lacks `id:` frontmatter | Fix the story file — RULE-6 requires `id` to match filename |
-| `generate-status.mjs` ignores a story | Filename ≠ `id` frontmatter | Same as above — RULE-6 |
+| `npx koni-docs validate` errors on a story | Story file lacks `id:` frontmatter | Fix the story file — RULE-6 requires `id` to match filename |
+| `npx koni-docs status` ignores a story | Filename ≠ `id` frontmatter | Same as above — RULE-6 |
+| `check-references.py` reports a wrong stated count | Prose count drifted from what it counts (rules / subcommands / release-commit-only checks) | Fix the number, or de-number the phrase if its ground truth is ambiguous (LESSONS §28, §36) |
 | Sync test fails on Mac with EPERM | Tmpdir cleanup race | Re-run; pass `--keep` to inspect; file an issue if it persists |
 
 For anything else, log a [`LESSONS.md`](LESSONS.md) entry once you've
