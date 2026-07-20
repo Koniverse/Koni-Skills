@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-17 07:44:15 UTC
-> Total stories: 69
+> Last generated: 2026-07-20 07:55:57 UTC
+> Total stories: 70
 
 ## ⏰ Deadlines (0)
 
@@ -26,7 +26,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (68)
+## ✅ Done (69)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -54,6 +54,7 @@ _No stories_
 | US-3.16 | koni-ea-dev — refine the MCP compile section from a deeper read of the server | EPIC-3 | P3 | 1 | sprint-2026-W29 | jindo9986 |
 | US-3.17 | koni-harness — UI features always run the design-skill trio, desktop + mobile | EPIC-3 | P2 | 2 | sprint-2026-W29 | jindo9986 |
 | US-3.18 | koni-harness skill-grading pass — verify the design-trio change, fix surfaced drift to ≥95 | EPIC-3 | P2 | 2 | sprint-2026-W29 | jindo9986 |
+| US-3.19 | Mechanize the check-count drift class — the guard that would have caught US-3.18's defect | EPIC-3 | P2 | 3 | sprint-2026-W30 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -115,7 +116,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 68
+- ✅ **Done**: 69
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

@@ -78,6 +78,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.16](../stories/US-3.16-koni-ea-dev-mcp-refine.md) | koni-ea-dev MCP section refine | Refine the MCP section from a full read of the server: division of labor (verify engine, not code generator — the skill authors), `MQL5_EDITOR_PATH` auto-detected/optional, `search_mql5_docs` returns page text. Author-blind verified vs source | ✅ done | v0.62.0 |
 | [US-3.17](../stories/US-3.17-harness-design-trio.md) | koni-harness design-skill trio | UI features always run the trio — gstack `/design-consultation` (Frame) → Anthropic `frontend-design` (Execute) → gstack `/design-review` (Review) — desktop + mobile, to DESIGN.md + design LESSONS. Refines FR-21; tool invariant preserved | ✅ done | v0.63.0 |
 | [US-3.18](../stories/US-3.18-harness-skill-grading.md) | koni-harness skill-grading pass | Verify the design-trio change via koni-qc skill-grading; round 1 = 83.9 FAIL surfaced count drift + skill-references mis-documented-as-vendored; fixed to **96.25 PASS**. Applied LESSONS §8 (re-grade whole) / §28 (de-number counts) | ✅ done | v0.64.0 |
+| [US-3.19](../stories/US-3.19-mechanize-check-count-drift.md) | Mechanize check-count drift | Extend the shared checker to count `N release-commit-only checks` against the vendored `gates.conf` — the class that let US-3.18's defect survive every gate. Proven by a planted class (38) + a mutant (21); `built-in checks` deliberately excluded. LESSONS §36 | ✅ done | v0.65.0 |
 
 ## Cross-cutting invariants
 

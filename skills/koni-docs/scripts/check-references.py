@@ -75,8 +75,35 @@ RETIRED_NUMERIC_SECTION = re.compile(
 # "12 rules" drifted three times, in three files, across three rounds — including in the
 # file rewritten to purge staleness. The floor technique was applied to the scripts' own
 # counts and not to the docs'. This closes it: a stated count must match what is counted.
-STATED_COUNT = re.compile(r'\b(?:These |The )?(\d+|seven|twelve|thirteen)\s+(?:core |enforced )?(rules|subcommands)\b', re.I)
-WORD_NUM = {'seven': 7, 'twelve': 12, 'thirteen': 13}
+#
+# `release-commit-only checks` joined the noun set after a second drift of exactly this
+# shape: koni-harness said "six release-commit-only checks" for several versions while
+# `gates.conf` had grown a seventh (`security-review`). Every gate passed — the noun
+# `checks` was simply not in scope — and only a full manual re-grade caught it. A count
+# this checker cannot count is a count that will drift again.
+#
+# Deliberately NOT covered: "N built-in checks". Its ground truth is ambiguous (does the
+# `tests` passthrough count as a built-in check?), and an ambiguous count is the kind you
+# de-number rather than mechanize — which is what koni-harness now does.
+#
+# The two nouns carry SEPARATE word-number sets, on purpose. `rules` resolves through an
+# unconditional cross-skill fallback (any skill's "N rules" is measured against koni-docs'
+# rules.md), so every word form added there is a new way to false-positive: this repo
+# already writes "all eight rules" about koni-ea-dev's OWN rule set, and the day that
+# sentence moves into `skills/` it would be scored against koni-docs' count. The new forms
+# were added for `checks`; they stay on `checks`. A check that cries wolf is as useless as
+# silence — the same reason SCRIPT_NAME excludes `.ts`.
+STATED_COUNT = re.compile(
+    r'\b(?:These |The )?(?:'
+    r'(?P<n1>\d+|seven|twelve|thirteen)\s+(?:core |enforced )?(?P<w1>rules|subcommands)'
+    r'|'
+    r'(?P<n2>\d+|six|seven|eight|nine|ten)\s+'
+    r'(?P<w2>release-commit-only checks|release-only checks)'
+    r')\b',
+    re.I,
+)
+WORD_NUM = {'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+            'twelve': 12, 'thirteen': 13}
 
 # Backticked OR bare. The first version required backticks — so `agile-sync-up.mjs`,
 # the very ghost this check was written for, would still have slipped through unquoted.
@@ -245,6 +272,39 @@ def count_of(root: Path, what: str) -> int | None:
         if not m:
             return None
         return len(re.findall(r'^\| `[a-z-]+` \|', m.group(1), re.M))
+    if what in ('release-commit-only checks', 'release-only checks'):
+        # Ground truth is the *vendored* default — the file `install-gate.sh` ships — not
+        # the monorepo's own live `.koni-harness/gates.conf`. Both happen to yield the same
+        # number today (the live file's extra rows are `skill-references`, two-phase, and
+        # `tests`, pre-push — neither is release-commit-only), so this is a choice on
+        # principle, not one the current data forces: the docs describe what a consumer
+        # receives (LESSONS §30 — a repo runs two configs; document the one you hand out).
+        conf = root / 'scripts' / 'gates.conf'
+        if not conf.exists():
+            # Only reached when a skill OTHER than koni-harness states the count. No doc
+            # does today; the path exists so a sibling stating it is measured, not skipped
+            # — the same fallback shape the rule count uses.
+            found = list(root.parent.glob('koni-harness/scripts/gates.conf'))
+            if not found:
+                return None
+            conf = found[0]
+        n = parsed = 0
+        for row in conf.read_text(encoding='utf-8').splitlines():
+            row = row.strip()
+            if not row or row.startswith('#'):
+                continue
+            field = [c.strip() for c in row.split('|')]
+            # name | script | phases(csv) | severity | arg  — "release-commit only" means
+            # the phase list is exactly that one phase.
+            if len(field) < 3:
+                continue
+            parsed += 1
+            if field[2] == 'release-commit':
+                n += 1
+        # Fail safe, not loud: a config we could not parse at all is an environment
+        # problem, and reporting "there are 0" would flip every correct claim in the repo
+        # into a defect — the cry-wolf failure this checker is built to avoid.
+        return n if parsed else None
     return None
 
 
@@ -389,9 +449,12 @@ def check(root: Path) -> list[str]:
         for m in STATED_COUNT.finditer(text):
             # A quoted count is a *mention* — a doc describing the drift, not committing it.
             # Same rule as the retired-form check: quote it, or own it.
-            if in_fence(text, m.start()) or in_code_span(text, m.start(1)):
+            # Whichever alternative matched supplies the number and the noun.
+            num_at = m.start('n1') if m.group('n1') else m.start('n2')
+            if in_fence(text, m.start()) or in_code_span(text, num_at):
                 continue
-            raw, what = m.group(1).lower(), m.group(2).lower()
+            raw = (m.group('n1') or m.group('n2')).lower()
+            what = (m.group('w1') or m.group('w2')).lower()
             claimed = WORD_NUM.get(raw, int(raw) if raw.isdigit() else None)
             if claimed is None:
                 continue

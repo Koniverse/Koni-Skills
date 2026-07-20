@@ -16,6 +16,37 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.65.0] — 2026-07-20 — mechanize the check-count drift class (the guard that would have caught v0.64.0's defect) — v0.65.0
+
+US-3.18's count drift ("six release-commit-only checks" against a seven-row `gates.conf`)
+survived every gate for several versions and was found only by a manual re-grade. That class
+is now mechanically impossible to ship
+([US-3.19](sprints/stories/US-3.19-mechanize-check-count-drift.md), FR-21).
+
+### Added
+- **`skills/koni-docs/scripts/check-references.py`** — `STATED_COUNT` now also counts
+  **`N release-commit-only checks`** (and the `release-only` variant) against the **vendored**
+  `skills/koni-harness/scripts/gates.conf`, counting rows whose phase field is exactly
+  `release-commit`. The word-number set widened (`six|eight|nine|ten`). Composes with the
+  guard that already owned count-drift rather than adding a parallel check.
+  - Proven to **speak and fail**: a new planted defect class (MIN_CLASSES 37→38) plus a new
+    mutant that drops the noun (MIN_MUTANTS 20→21), both killed by the suite; branch-coverage
+    gate still green (252 lines). Reproduced and caught the *real* historical defect.
+  - **`N built-in checks` is deliberately excluded** — ambiguous ground truth (is the `tests`
+    passthrough a built-in check?); §28's answer there is de-numbering, already done. The
+    exclusion is argued in-source so it is scope, not a silent hole.
+- **`__tests__/fixtures/koni-harness/`** — ground-truth fixture (`scripts/gates.conf` + a
+  correct claim), exercising the primary resolution path; `fixtures/bad` exercises the
+  sibling-glob fallback.
+- **LESSONS §36** — a guard that advertises a class but implements an instance is a false
+  green (its stated scope is read as its actual scope).
+
+### Changed
+- **`skills/koni-harness/references/gate-catalog.md`** — the `skill-references` entry now
+  enumerates the counted nouns, so the doc matches the guard.
+
+---
+
 ## [0.64.0] — 2026-07-17 — koni-harness skill-grading pass: verify the design-trio change, fix surfaced drift to ≥95 — v0.64.0
 
 Verified the v0.63.0 design-trio change to koni-harness with koni-qc skill-grading (4

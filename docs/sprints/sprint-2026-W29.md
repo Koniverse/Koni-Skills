@@ -1,6 +1,6 @@
 ---
 id: sprint-2026-W29
-status: in-progress
+status: done
 start: 2026-07-13
 end: 2026-07-19
 goal: >-

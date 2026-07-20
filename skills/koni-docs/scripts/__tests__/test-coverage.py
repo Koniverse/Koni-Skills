@@ -51,7 +51,8 @@ EXEMPT: dict[str, str] = {
     "return 'fixtures' not in q.parts": 'the ValueError fallback above — same reason',
     "if repo == repo.parent:": 'filesystem-root guard on the .git walk — unreachable inside a repo',
     "break": 'loop guards on the bounded .git walk',
-    "return None": 'missing-file guards in count_of — a skill without rules.md/cli.md states no count',
+    "return None": 'missing-file / unparseable-config guards in count_of — a skill without '
+                   'rules.md, cli.md, or a readable gates.conf states no count',
     "return False": 'defensive returns on the paths exempted above',
     "if '__tests__' in md.relative_to(root).parts:": 'fixture-skip, exercised only when scanning the real skill',
 }

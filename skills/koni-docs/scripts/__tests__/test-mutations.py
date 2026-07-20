@@ -140,6 +140,14 @@ MUTATIONS: list[tuple[str, str, str]] = [
         '        for m in STATED_COUNT.finditer(text):',
         '        for m in ():',
     ),
+    (
+        # The exact regression this noun was added for: with `checks` out of the noun set
+        # the checker still prints 0 while "six release-commit-only checks" contradicts a
+        # gates.conf that has seven. The count silently stops being counted.
+        'the check-count noun is dropped — a wrong "N release-commit-only checks" passes again',
+        "    r'(?P<w2>release-commit-only checks|release-only checks)'",
+        "    r'(?P<w2>a-noun-no-doc-ever-writes)'",
+    ),
 ]
 
 
@@ -163,7 +171,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 20
+MIN_MUTANTS = 21
 
 
 def main() -> int:

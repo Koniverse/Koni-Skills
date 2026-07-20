@@ -1777,3 +1777,36 @@ frontmatter-migration task.
 **Date**: 2026-07-16
 **Version**: 0.62.0
 **Reference**: [sprint-2026-W29](sprints/sprint-2026-W29.md), [STATUS.md](sprints/STATUS.md), koni-docs skill §3c pre-commit checklist, RULE-5.
+
+---
+
+### D40. Story dates came from guessing the gate instead of reading the clock — W29 closed, W30 opened on the real date
+
+**Context**: Several stories in the v0.61.0–v0.64.0 run carry `created`/`updated` dates
+(2026-07-15 … 2026-07-17) earlier than the day they were actually authored and shipped
+(2026-07-20). The cause was procedural, not a tooling bug: when `story-lint` rejected a
+`commit: pending` as "beyond the same-day backfill window", the date was **incremented by
+one and retried** rather than read from the system clock. The gate was reporting the truth
+each time; the response inferred a date from the rejection instead of running `date`.
+
+**Decision**: (1) **Do not rewrite the shipped stories.** US-3.15–US-3.18 are committed and
+pushed; back-editing their dates to look tidy is precisely the rewrite [D32](#d32) and
+LESSONS §12 forbid. They stand, and this entry is the correction of record. (2) **US-3.19,
+not yet committed, is filed honestly**: authored and shipped 2026-07-20, so it belongs to a
+sprint that contains that date — **sprint-2026-W30 is opened** (2026-07-20 → 2026-07-26) and
+**W29 is closed** `done` at 11 stories / 27 pts, ending 2026-07-19 as scheduled. (3) **Read
+the clock, never infer it**: story dates come from `date "+%Y-%m-%d"` at the moment of
+filing.
+
+**Rationale**: A sprint is anchored to real ship dates (D32, LESSONS §12). Backdating
+US-3.19 into a sprint that had already closed would have produced the "filed into a closed
+sprint" defect `story-lint` exists to catch — using the story's own dates to defeat the
+check that guards those dates. Opening W30 costs one file and keeps the record true.
+
+**Impact**: `sprint-2026-W30.md` created; W29 `status: done`; the CLAUDE.md
+`active_sprint` pointer moves to W30. The historical date skew in US-3.15–US-3.18 is known
+and left as-is, documented here rather than silently repaired.
+
+**Date**: 2026-07-20
+**Version**: 0.65.0
+**Reference**: [sprint-2026-W30](sprints/sprint-2026-W30.md), [sprint-2026-W29](sprints/sprint-2026-W29.md), [US-3.19](sprints/stories/US-3.19-mechanize-check-count-drift.md), LESSONS §12.

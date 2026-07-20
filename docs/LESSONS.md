@@ -1272,3 +1272,34 @@ plausible config, like a resolving pointer, can still be false). The check is ch
 three files — and it is the difference between an integration that runs and one that fails on
 first use, quietly. The README itself is not exempt: this repo's README even listed the env
 var one way while the code read another; the **code won**.
+
+## 36. A guard that advertises a class but implements an instance is a false green
+
+**What happened**: `check-references.py` documents itself as checking "a count stated in
+prose — a promise to stay in sync with something you do not control." True in spirit. In
+code it was `(rules|subcommands)` — **two nouns**. So when koni-harness said "six
+release-commit-only checks" while `gates.conf` had grown a seventh, every gate printed
+green for several versions. The guard was not broken; it simply never claimed that noun,
+while its own comment implied it claimed the *category*. The drift was eventually found by a
+human-run full re-grade — the expensive path the guard exists to make unnecessary.
+
+**The lesson**: **when you write a guard, the unit of scope is the class you name, not the
+instance that prompted it.** A guard's stated scope is read as its actual scope — by the next
+author, by a reviewer, and by you six months later. If it says "counts stated in prose" and
+covers two nouns, every other noun is silently unguarded *and believed guarded*, which is
+worse than no guard: it converts an unchecked claim into a checked-looking one (§29's shape,
+one level up — the guard resolves, so nobody asks what it resolves over).
+
+Two practices that follow:
+- **Enumerate the class, then implement it** (§27's "derive from the claim surface"). When
+  adding a noun, ask what else belongs to the same category and either cover it or say
+  plainly, in the code, that it is out of scope and why.
+- **State the exclusion in the source.** The fix here covers `release-commit-only checks`
+  and *deliberately* excludes `N built-in checks`, with the reason written at the regex: its
+  ground truth is ambiguous (is the `tests` passthrough a "built-in check"?), and an
+  ambiguous count is one you **de-number** rather than mechanize (§28). An exclusion that is
+  argued is scope; an exclusion that is silent is a hole.
+
+The tell: a guard whose docstring uses a category noun ("a count", "a reference", "a secret")
+while its implementation lists specific members. Read the two against each other — that gap
+is where the next silent green lives.

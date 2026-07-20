@@ -13,7 +13,7 @@ This file holds only the Claude-Code activation surface for the
 koni-docs:
   plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W29     # active 2026-07-13 → 2026-07-19 (story deadlines: US-1.6 ships FR-38 at v0.39.0 — a `due` date distinct from the sprint cadence, sparse by design and non-blocking; see CONTEXT D37. W28 not opened: nothing shipped that week. W27 closed 07-05 at 12 stories/42 pts)
+  active_sprint: sprint-2026-W30     # active 2026-07-20 → 2026-07-26 (mechanize the check-count drift class: US-3.19 ships FR-21 at v0.65.0). W29 closed 07-19 at 11 stories/27 pts; W28 not opened (nothing shipped); W27 closed 07-05 at 12 stories/42 pts. Story dates come from `date`, never inferred from a gate rejection — CONTEXT D40
   version_file: VERSION              # path to semver file
 
 > **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.

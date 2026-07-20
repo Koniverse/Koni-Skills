@@ -23,6 +23,9 @@ HERE = Path(__file__).resolve().parent
 CHECKER = HERE.parent / 'check-references.py'
 GOOD = HERE / 'fixtures' / 'good'
 BAD = HERE / 'fixtures' / 'bad'
+# Scanned as a root of its own — see control 1b. It is also the sibling ground truth that
+# `bad`/`good` resolve their check-count against.
+HARNESS = HERE / 'fixtures' / 'koni-harness'
 
 # Every defect class the checker's docstring and the gate's promise cover.
 # The key is a substring that must appear in the report for that defect.
@@ -88,6 +91,10 @@ MUST_CATCH = {
     # A count in prose is a promise to stay in sync with something you do not control. It
     # drifted three times, in three files, across three rounds. Now it is checked.
     'a stated count that does not match what is counted': 'stated count is wrong -> claims 99 rules, there are 2',
+    # The same class, second noun. koni-harness said "six release-commit-only checks" for
+    # several versions while gates.conf had grown a seventh — every gate passed, because
+    # `checks` was not a counted noun. Counting it closes the hole for good.
+    'a stated check-count that does not match gates.conf': 'claims 9 release-only checks, there are 2',
     # Without this, removing the in_fence guard from the ANCHOR_LINK pass broke nothing
     # the suite could see — a surviving mutant names its own hole.
     'phantom anchor from a ``` fence': 'dead anchor #a-heading-that-only-exists-inside-a-backtick-fence',
@@ -96,7 +103,7 @@ MUST_CATCH = {
 # Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
 # all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
 # sixteenth way to print 0.
-MIN_CLASSES = 37
+MIN_CLASSES = 38
 
 
 def run(target: Path) -> tuple[int, str]:
@@ -121,6 +128,19 @@ def main() -> int:
     rc, out = run(GOOD)
     if rc != 0:
         failures.append(f'FALSE POSITIVE — the clean fixture must pass, got:\n{out}')
+
+    # 1b. The ground-truth fixture states its OWN check-count correctly and must pass too.
+    #     This is the only scan that resolves `gates.conf` by the primary path
+    #     (`root/scripts/gates.conf`) instead of the sibling glob, and the only one that
+    #     asserts a *correct* count stays SILENT. Without it, a narrowing that turned the
+    #     count check into a false-positive generator would survive the entire suite —
+    #     every other control only proves the checker can still shout.
+    rc, out = run(HARNESS)
+    if rc != 0:
+        failures.append(
+            f'FALSE POSITIVE — the correct-count fixture must pass (primary gates.conf '
+            f'path), got:\n{out}'
+        )
 
     # 2. Every planted defect must be reported by name.
     rc, out = run(BAD)

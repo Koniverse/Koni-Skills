@@ -66,6 +66,8 @@ See PRD §8 for the requirement.
 
 These 99 rules apply to everything.
 
+The 9 release-only checks fire at release time.
+
 [placeholder path, must be skipped](../stories/US-X.Y-<slug>.md)
 [placeholder epic, skipped](../epics/EPIC-N.md)
 [a consumer doc, not ours](../../DESIGN.md)

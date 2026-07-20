@@ -273,7 +273,10 @@ enforce release-time checks.
 
 - **What it asserts**: every markdown cross-reference in a changed skill resolves — a
   file link, an in-page anchor, a section pointer, a named script, and a count stated in
-  prose (a "13 rules" that has since become 14). Runs `skills/koni-docs/scripts/check-references.py`
+  prose — `N rules`, `N subcommands`, and `N release-commit-only checks` (or the
+  `N release-only checks` alias), which must match the vendored `gates.conf`; that noun was
+  added after a stale `six release-commit-only checks` survived several versions against a
+  seven-row config. Runs `skills/koni-docs/scripts/check-references.py`
   over **every** skill (touch one, sweep all), and first runs that checker's own
   self-test, mutation test, and branch-coverage gate — refusing the checker's verdict
   if any fail, because a guard whose own tests fail proves nothing (LESSONS §19-§24, §28).
