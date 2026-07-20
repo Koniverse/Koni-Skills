@@ -81,7 +81,10 @@ All accept `--dry-run` for preview.
 ## 5-layer consistency check
 
 Before merging a story-status change, verify these 5 layers reflect the
-same state. `agile-sync-up.mjs` propagates automatically.
+same state — **by hand**. There is no propagation step in this repo: `sync` is the
+subcommand that would do it, and it is deliberately not run ([CONTEXT D39](../CONTEXT.md)).
+Run `npx koni-docs validate --docs-path docs/` to catch ID-graph breakage, then check the
+five rows yourself.
 
 | Layer | File | What to verify |
 |---|---|---|
@@ -94,7 +97,7 @@ same state. `agile-sync-up.mjs` propagates automatically.
 ## Cross-references
 
 - [STATUS.md](STATUS.md) — auto-generated kanban
-- [Active sprint](sprint-2026-W22.md)
+- [Active sprint](sprint-2026-W30.md)
 - [EPIC-1](epics/EPIC-1.md) / [EPIC-2](epics/EPIC-2.md) / [EPIC-3](epics/EPIC-3.md)
 - [skills/koni-docs/references/sprint-system.md](../../skills/koni-docs/references/sprint-system.md) — canonical schema
-- [skills/koni-docs/references/rules.md](../../skills/koni-docs/references/rules.md) — 9 enforced rules
+- [skills/koni-docs/references/rules.md](../../skills/koni-docs/references/rules.md) — the enforced rules

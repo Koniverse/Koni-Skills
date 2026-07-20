@@ -1303,3 +1303,40 @@ Two practices that follow:
 The tell: a guard whose docstring uses a category noun ("a count", "a reference", "a secret")
 while its implementation lists specific members. Read the two against each other — that gap
 is where the next silent green lives.
+
+---
+
+## 37. "Docs-only" describes which files moved — not whether the change earns a story
+
+**What happened**: I shipped a doc-surface pass (`01fae57`) with no story, no version, no
+CHANGELOG entry, reasoning: *docs-only, so the story/version plumbing does not apply.* I
+even cited a precedent commit for it. The user asked, one commit later, "sao tôi chưa thấy
+US của phần cải tiến hôm nay nhỉ?" — and they were right. That commit fixed four real
+defects, the sharpest being **a pre-commit checklist that no longer ran**: it told every
+contributor to invoke `.mjs` scripts deleted in the AD-7 CLI migration. Anyone who followed
+it hit command-not-found. That is not bookkeeping; that is a broken instruction in the file
+that enforces doc integrity, and it was invisible in the record.
+
+**The lesson**: **"docs-only" is a statement about the file extensions in the diff. It is
+not a statement about whether the change is substantive.** I used a *location* test where a
+*consequence* test belongs. The real question is:
+
+> Did this change fix a defect, or alter what a reader will do?
+
+If yes, it earns a story, a version, and a CHANGELOG entry — regardless of whether any
+code moved. A doc that gives a wrong command is a bug with a worse blast radius than most
+code bugs: it fails silently for the reader, not for CI.
+
+The corollaries:
+- **A patch is the honest semver signal for corrective doc work.** Not "no version" —
+  nothing changed capability, but something *changed*, and the record should say so.
+- **Correct forward, don't rewrite.** The offending commit stands; the story cites its real
+  SHA and states plainly that it was filed retroactively and why (§12, RULE-2). A
+  retroactive story that hides its retroactivity is a second defect on top of the first.
+- **Beware the precedent you cite for skipping rigor.** I justified the omission with an
+  earlier story-less commit. That commit was smaller, but it was never *ratified* — I
+  promoted a prior lapse into a rule. Precedent is only precedent if someone decided it.
+
+The tell: any sentence of the form "this is just X, so the process doesn't apply." The
+word *just* is doing load-bearing work, and it is almost always carrying an unexamined
+location test where a consequence test belongs.

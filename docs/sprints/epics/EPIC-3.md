@@ -50,7 +50,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-9  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md)           | ✅ shipped (v0.15.0) |
 | FR-10 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md)        | ✅ shipped (v0.9.0)  |
 | FR-20 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) (+ [US-3.10](../stories/US-3.10-koni-setup-security-review-sync.md) docs sync) | ✅ shipped (v0.9.0; refined v0.56.0) |
-| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) (+ [US-3.17](../stories/US-3.17-harness-design-trio.md) design-trio, [US-3.18](../stories/US-3.18-harness-skill-grading.md) grading pass, [US-3.19](../stories/US-3.19-mechanize-check-count-drift.md) count-guard) | ✅ shipped (v0.10.0; refined v0.63.0, graded ≥95 v0.64.0, count-guard v0.65.0) |
+| FR-21 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) (+ [US-3.17](../stories/US-3.17-harness-design-trio.md) design-trio, [US-3.18](../stories/US-3.18-harness-skill-grading.md) grading pass, [US-3.19](../stories/US-3.19-mechanize-check-count-drift.md) count-guard, [US-3.21](../stories/US-3.21-koni-docs-standard-pass.md) doc pass; [US-3.20](../stories/US-3.20-extend-reference-sweep-to-docs.md) backlog) | ✅ shipped (v0.10.0; refined v0.63.0, graded ≥95 v0.64.0, count-guard v0.65.0, docs v0.65.1) |
 | FR-22 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.11.0) |
 | FR-23 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.12.0) |
 | FR-24 | [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md)      | ✅ shipped (v0.13.0) |
@@ -79,6 +79,8 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.17](../stories/US-3.17-harness-design-trio.md) | koni-harness design-skill trio | UI features always run the trio — gstack `/design-consultation` (Frame) → Anthropic `frontend-design` (Execute) → gstack `/design-review` (Review) — desktop + mobile, to DESIGN.md + design LESSONS. Refines FR-21; tool invariant preserved | ✅ done | v0.63.0 |
 | [US-3.18](../stories/US-3.18-harness-skill-grading.md) | koni-harness skill-grading pass | Verify the design-trio change via koni-qc skill-grading; round 1 = 83.9 FAIL surfaced count drift + skill-references mis-documented-as-vendored; fixed to **96.25 PASS**. Applied LESSONS §8 (re-grade whole) / §28 (de-number counts) | ✅ done | v0.64.0 |
 | [US-3.19](../stories/US-3.19-mechanize-check-count-drift.md) | Mechanize check-count drift | Extend the shared checker to count `N release-commit-only checks` against the vendored `gates.conf` — the class that let US-3.18's defect survive every gate. Proven by a planted class (38) + a mutant (21); `built-in checks` deliberately excluded. LESSONS §36 | ✅ done | v0.65.0 |
+| [US-3.20](../stories/US-3.20-extend-reference-sweep-to-docs.md) | Extend the reference sweep to `docs/` | The sweep stops at `skills/`, so the doc hub — including the pre-commit checklist — is unguarded. Not a wider glob: needs a policy for history-bearing paths (CHANGELOG, closed stories, append-only CONTEXT, frozen plans) that LESSONS §12 forbids rewriting | 📋 backlog | — |
+| [US-3.21](../stories/US-3.21-koni-docs-standard-pass.md) | koni-docs-standard doc pass | Fix four live doc defects — a pre-commit checklist invoking `.mjs` scripts deleted in AD-7, PRD TS-1 measuring a nonexistent test, TS-3 stating 9 rules against 13. **Filed retroactively**: shipped in `01fae57` with no story on a "docs-only" justification. LESSONS §37 | ✅ done | v0.65.1 |
 
 ## Cross-cutting invariants
 

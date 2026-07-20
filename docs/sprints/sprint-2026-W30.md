@@ -13,8 +13,9 @@ goal: >-
 | US      | Title                                 | Epic   | Pri | Points | Status | Ship    | Story file                                                                                       |
 | ------- | ------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------------ |
 | US-3.19 | Mechanize the check-count drift class | EPIC-3 | P2  | 3      | ✅ done | v0.65.0 | [stories/US-3.19-mechanize-check-count-drift.md](stories/US-3.19-mechanize-check-count-drift.md) |
+| US-3.21 | koni-docs-standard doc pass          | EPIC-3 | P2  | 2      | ✅ done | v0.65.1 | [stories/US-3.21-koni-docs-standard-pass.md](stories/US-3.21-koni-docs-standard-pass.md)         |
 
-**Total**: 1 story / 3 pts / 1 contributor.
+**Total**: 2 stories / 5 pts / 1 contributor.
 
 ## Goal detail
 
@@ -36,3 +37,9 @@ keep the work "in one place" is exactly the tidy-looking rewrite this repo refus
 [CONTEXT D32](../CONTEXT.md) and [LESSONS §12](../LESSONS.md). W29 is marked `done` at 11
 stories / 27 pts. The date drift that surfaced this is recorded in
 [CONTEXT D40](../CONTEXT.md).
+
+**US-3.21 is a retroactive filing, and says so.** The doc-surface pass it covers shipped in
+`01fae57` without a story, justified as "docs-only". That justification was wrong — the
+commit fixed four live defects, including a pre-commit checklist that no longer ran. The
+commit is not rewritten; the story cites its real SHA and v0.65.1 is the patch that records
+it. See [LESSONS §37](../LESSONS.md).

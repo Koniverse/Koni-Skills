@@ -16,6 +16,37 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.65.1] — 2026-07-20 — retroactive record for the doc-surface pass (`01fae57`) — v0.65.1
+
+**Process correction, filed after the fact.** The doc-surface pass shipped in `01fae57`
+with no story and no version, on the reasoning "docs-only, so no story needed". That
+reasoning was wrong — the commit fixed four real defects, including a **pre-commit
+checklist that no longer ran**. `01fae57` is not rewritten (LESSONS §12); this entry and
+[US-3.21](sprints/stories/US-3.21-koni-docs-standard-pass.md) are its record, and
+[LESSONS §37](LESSONS.md) states the test that was misapplied.
+
+### Fixed
+- **Doc-surface pass to the koni-docs standard** (shipped `01fae57`, recorded here). The
+  pre-commit checklist in `docs/README.md` — and the Scripts block in
+  `docs/sprints/README.md` — invoked `.mjs` scripts removed in the AD-7 CLI migration, so
+  following it verbatim failed with command-not-found. Replaced with `npx koni-docs …` +
+  `check-references.py`, with the `sync` omission explained ([CONTEXT D39](CONTEXT.md)).
+  `PRD` TS-1 now measures a command that exists and passes (144/144); TS-3 corrected
+  9 → **13** rules. `SETUP` troubleshooting updated; `ARCHITECTURE`'s false claim "No more
+  `scripts/` inside skills" corrected. `PRD` / `EPIC-3` FR-21 record the v0.63.0–v0.65.0
+  refinements. Historical records (CHANGELOG AD-7 table, closed stories, append-only
+  CONTEXT, frozen superpowers plans) left exactly as written.
+- **Residual gap filed, not dropped** — the sweep still stops at `skills/`, so `docs/`
+  remains unguarded: [US-3.20](sprints/stories/US-3.20-extend-reference-sweep-to-docs.md)
+  (backlog), which needs a policy for history-bearing paths, not a wider glob.
+
+### Documentation
+- **[LESSONS §37](LESSONS.md)** — *"docs-only" describes which files moved, not whether
+  the change earns a story.* The test is whether the change fixed defects or altered what
+  a reader will do, not whether code moved.
+
+---
+
 ## [0.65.0] — 2026-07-20 — mechanize the check-count drift class (the guard that would have caught v0.64.0's defect) — v0.65.0
 
 US-3.18's count drift ("six release-commit-only checks" against a seven-row `gates.conf`)
