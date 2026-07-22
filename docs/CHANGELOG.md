@@ -67,13 +67,18 @@ Proven to **speak and fail**: a full `sync` write pass over a copy of the corpus
 > formatting-only reflow** across your corpus — every long frontmatter value unfolds at
 > once. Review it as formatting.
 
-> **⚠ NOT YET ON npm.** `npm view @koniverse/koni-docs version` returns **`0.8.1`** — the
-> package has been version-bumped roughly twelve times without a publish, which is why
-> downstream repos hit this defect on 0.8.1 rather than on a stale pin. **The fix reaches
-> no consumer until `0.12.0` is published.** Tracked as
-> [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md) **AC-8, open**.
+> **📦 Published — and consumers must bump explicitly.** `0.12.0` is on npm (verified
+> 2026-07-22), closing a registry gap in one jump: the published list went
+> `… 0.8.0, 0.8.1, 0.12.0`, because the package had been version-bumped roughly twelve
+> times without a publish. That gap is why downstream repos hit this defect on 0.8.1 —
+> not a stale pin, but the newest release that existed.
+>
+> **A `^0.8.1` dependency will not pick this up.** Under semver a caret on a `0.x` version
+> is locked to that minor, so `npm update` is a no-op — consumers need an explicit
+> `npm i @koniverse/koni-docs@^0.12.0`. Downstream adoption tracked as
+> [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md) **AC-9, open**.
 
-koni-docs CLI **0.11.10 → 0.12.0** (in-repo; publish pending, see above).
+koni-docs CLI **0.11.10 → 0.12.0** (published).
 
 ---
 

@@ -98,10 +98,17 @@ at any width. Only quote-free long values fold.
   unfolded corpus.
 - [x] **AC-7** — AD-12 describes what the serializer now does; CONTEXT D41 + LESSONS §39
   recorded.
-- [ ] **AC-8 — OPEN** — `@koniverse/koni-docs@0.12.0` published to npm, and
-  `Koniverse/Senti-Quant` US-28.18 AC-7 closed against it. **Blocked on credentials, not on
-  work**: `npm whoami` returns `ENEEDAUTH` in this environment. See the registry-gap note
-  below — the fix is not in a consumer's hands until this is done.
+- [x] **AC-8** — `@koniverse/koni-docs@0.12.0` published to npm. Verified 2026-07-22:
+  `npm view @koniverse/koni-docs version` → `0.12.0`, and the published version list now
+  reads `… 0.8.0, 0.8.1, 0.12.0` — closing the registry gap described below in one jump.
+- [ ] **AC-9 — OPEN, and not merely a version bump** — `Koniverse/Senti-Quant` consuming
+  the fix and closing its own US-28.18 AC-7. Its `package.json` still pins
+  `"@koniverse/koni-docs": "^0.8.1"`, and **a `^0.8.1` caret does not range over
+  `0.12.0`** — under semver, caret on a `0.x` version is locked to that minor. So
+  `npm update` there is a no-op; it needs an explicit `npm i @koniverse/koni-docs@^0.12.0`.
+  Left open here deliberately: this repo cannot verify a change in another repo, and a tick
+  based on "we published, so they must have it" is exactly the unverified claim this story
+  was written about.
 
 ## Tasks
 
@@ -116,6 +123,10 @@ at any width. Only quote-free long values fold.
   with and without the fix (AC: 5)
 - [x] **TASK-4.37.6** — AD-12 + release-procedure correction, CONTEXT D41, LESSONS §39,
   CHANGELOG, VERSION + CLI bump (AC: 6, 7)
+- [x] **TASK-4.37.7** — publish `@koniverse/koni-docs@0.12.0`; verify by `npm view` rather
+  than by having run the command (AC: 8)
+- [ ] **TASK-4.37.8** — downstream: bump `Koniverse/Senti-Quant` to `^0.12.0` explicitly
+  (a caret on `^0.8.1` will not reach it), re-run their AC-1 grep, close their AC-7 (AC: 9)
 
 ## Dev notes
 
@@ -209,25 +220,30 @@ tree: the two `preview` tests time out waiting on the Astro dev server (145/147 
 `packages/koni-docs/package-lock.json` was 5 minors stale (`0.6.1` against a `0.11.10`
 manifest) and was repaired by `npm install`.
 
-### The registry gap — why AC-8 matters more than it looks
+### The registry gap — found here, closed by the publish
 
-`npm view @koniverse/koni-docs version` returns **`0.8.1`**, while `package.json` read
-`0.11.10` before this story bumped it. **The package has been version-bumped ~12 times
-without being published.** That is why `Koniverse/Senti-Quant` reported the defect against
-0.8.1: it is not a stale pin on their side, it is the newest release that exists.
+While verifying, `npm view @koniverse/koni-docs version` returned **`0.8.1`**, while
+`package.json` read `0.11.10` before this story bumped it. **The package had been
+version-bumped ~12 times without being published.** That is why `Koniverse/Senti-Quant`
+reported the defect against 0.8.1: not a stale pin on their side, but the newest release
+that existed. Every consumer was running a serializer four minors behind the source.
 
-The consequence for this story: shipping the commit does **not** ship the fix. Until
-`0.12.0` is on the registry, every consumer keeps running a serializer that folds. The
-CHANGELOG's "consumers see a one-time reflow" warning also does not begin to apply until
-then — and when it does, it will arrive bundled with four minors of unrelated CLI change,
-not just this one.
+Closed by the AC-8 publish — the version list now reads `… 0.8.0, 0.8.1, 0.12.0`, jumping
+the whole gap at once. The consequence is that **a consumer's first upgrade carries four
+minors of unrelated CLI change alongside this fix**, so the one-time reflow warning in the
+CHANGELOG will not be the only thing they see.
 
-Not fixed here because it is a release-process question, not a serializer question, and
-answering it (publish 0.12.0 as-is? reconcile the intermediate versions? change the
-procedure so a bump implies a publish?) needs a decision this story has no standing to
-make. The [release procedure in ARCHITECTURE](../../ARCHITECTURE.md) was corrected on the
-point this story could verify — that `VERSION` and the package version are independent
-tracks — and the gap itself is recorded here and in CHANGELOG v0.67.0.
+**And the upgrade is not automatic.** A `^0.8.1` dependency — which is what Senti-Quant
+still pins — does not range over `0.12.0`: semver locks a caret on a `0.x` version to that
+minor. `npm update` is a no-op there. That is why AC-9 is a separate, still-open criterion
+rather than a formality after AC-8.
+
+The underlying process question — should a version bump imply a publish? — is a
+release-process decision this story has no standing to make, and it is *not* answered by
+having published once. The [release procedure in ARCHITECTURE](../../ARCHITECTURE.md) was
+corrected only on the point this story could verify: that `VERSION` and the package version
+are independent tracks. The rest is recorded here and in CHANGELOG v0.67.0 for whoever
+takes it.
 
 ## Files modified
 
