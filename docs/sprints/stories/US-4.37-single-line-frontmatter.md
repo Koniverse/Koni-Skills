@@ -12,7 +12,7 @@ prd_ref: []
 arch_ref: [AD-12]
 depends_on: [US-4.24]
 assignee: bluezdot
-commit:
+commit: b7135fe
 created: 2026-07-22
 updated: 2026-07-22
 external_deps:
