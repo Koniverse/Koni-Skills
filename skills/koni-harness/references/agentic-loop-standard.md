@@ -84,6 +84,14 @@ between its stages.
 > covering tests? the AC↔TC gate) → (3) gstack `/design-review` for UI (DESIGN.md + shadcn) → (4)
 > code-quality. So the only thing *before* koni-qc is the spec-compliance pass.
 >
+> **The two in-house passes have a contract, not just a name**
+> ([`review-contract.md`](review-contract.md)): report **every** finding with
+> confidence + severity and let the loop filter — never write a severity cut into a
+> finder's prompt, because an unstated or conservative bar loses recall **as a green**;
+> use the shared finding schema; state what was *not* examined; and run **author-blind**
+> (a subagent that did not write the diff — LESSONS §19). The other three passes are
+> specified by their owners (koni-qc, gstack).
+>
 > **When the deliverable is a *skill*** (a `SKILL.md` + references/scripts), the
 > koni-qc review step runs **skill-grading** (koni-qc `references/skill-grading.md`)
 > instead of the product AC↔TC gate: score the skill /100 across four independent

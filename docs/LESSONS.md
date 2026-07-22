@@ -1340,3 +1340,52 @@ The corollaries:
 The tell: any sentence of the form "this is just X, so the process doesn't apply." The
 word *just* is doing load-bearing work, and it is almost always carrying an unexamined
 location test where a consequence test belongs.
+
+---
+
+## 38. An unspecified step is not an unconstrained step — it is one whose constraint you cannot see
+
+**What happened**: I went looking for conservative-reporting language in the harness's
+Review prompts — *"only report high-severity"*, *"be conservative"*, *"don't nitpick"* —
+on the theory that current models follow such instructions literally and quietly trade
+recall for precision. Grep across both skills: **zero hits**. The hypothesis was wrong.
+
+What the grep did surface was worse. Two of Review's five passes — `spec-compliance` and
+`code-quality` — appeared **six times, every one a name in a routing table**. The
+fullest specification in the repo was the string *"code-quality subagent."* No reporting
+bar, no schema, no author-blind requirement. I had been hunting for a bad instruction in
+passes that had **no instruction at all**.
+
+**The lesson**: **the absence of a rule is not the absence of a constraint — it is an
+unstated one, chosen at runtime by whoever executes the step, differently each time.** A
+pass with no stated reporting bar still has a bar; it is just invisible, unauditable, and
+subject to the executor's default (which, under uncertainty, is caution). The failure is
+doubly hidden: the pass returns green, and there is no schema, so two runs are not even
+comparable enough to notice the drift.
+
+This is [§29](#29-a-pointer-that-resolves-is-not-a-pointer-that-is-true--cross-reference-checks-verify-syntax-not-the-claim)
+one altitude up. There, a *reference* resolved without being true. Here, a whole *stage*
+resolves — it ran, it returned, the loop advanced — without anything establishing that
+what it returned was complete. A step you cannot measure is not a gate; it is a ritual
+that produces the same output shape as a gate.
+
+Three practices follow:
+
+- **Specify by contract, not by name.** A step named in a routing table is a promise the
+  routing table cannot keep. If a stage's exit depends on a step, that step owes the
+  stage a stated output: what it reports, what it does *not* examine, and what a clean
+  result looks like. "Never return a bare pass" is the minimal form.
+- **Audit for the *absence* of a spec, not only for wrong specs.** My grep pattern could
+  only find bad language. It could not find missing language — that showed up by accident,
+  from reading what the hits' neighbours looked like. When auditing a pipeline, enumerate
+  the steps first and ask which have contracts, before searching for defects inside the
+  ones that do.
+- **Report a failed hypothesis as failed.** The wrong theory is what caused the right
+  file to be opened. Rewriting the record to look like the defect was predicted would
+  have deleted the one reusable part — that "look for bad instructions" and "look for
+  missing instructions" are different sweeps, and only the second one found anything.
+
+The tell: any step referred to by a bare noun across your docs — "the review pass", "the
+validation step", "the sanity check" — with no file that says what it must produce.
+Count how many times it is *mentioned* versus how many times it is *defined*. Six to zero
+is not documentation; it is a name.

@@ -33,7 +33,7 @@ never reproduces:
 | Repo scaffold, skill wiring | koni-setup (invoked) |
 | Plan / brainstorm / **UI design** | BMAD + Superpowers + gstack (invoked — **brainstorm/plan only**); gstack **`/design-consultation`** to establish/confirm the design system for a UI surface (design-first) |
 | Implement (plan→code→test) | **Anthropic Skills only** — `frontend-design` for UI, **built for desktop AND mobile** to `DESIGN.md` + design LESSONS (invoked) |
-| Review / QA | gstack `/design-review` (UI vs `DESIGN.md` **+ shadcn standard**, both mandatory; **both breakpoints**) + **koni-qc** (test coverage — or its **skill-grading** rubric, **≥95 to pass**, when the deliverable is a skill; or its **security-review** method when the change crosses a security trust boundary, backstopped by the warn-level `security-review` gate) + code review (invoked) |
+| Review / QA | gstack `/design-review` (UI vs `DESIGN.md` **+ shadcn standard**, both mandatory; **both breakpoints**) + **koni-qc** (test coverage — or its **skill-grading** rubric, **≥95 to pass**, when the deliverable is a skill; or its **security-review** method when the change crosses a security trust boundary, backstopped by the warn-level `security-review` gate) + code review (invoked) — the two **in-house** passes (spec-compliance, code-quality) are specified by **koni-harness** in [`references/review-contract.md`](references/review-contract.md) |
 
 **Tool rule (the one non-obvious invariant):** Superpowers + gstack are for
 brainstorm/plan/review only; implementation is Anthropic Skills only. A **UI
@@ -211,6 +211,7 @@ Load on demand based on what you're doing:
 | [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
+| [`references/review-contract.md`](references/review-contract.md) | Running or specifying Review's two **in-house** passes — spec-compliance and code-quality: the reporting bar (report everything, filter downstream), the finding schema, the author-blind requirement, and triage. Load when a Review pass is about to run, or when a pass is returning bare passes |
 | [`references/example-loop.md`](references/example-loop.md) | A full worked example — one tier-2 UI story run end-to-end (frame→commit) with the exact commands, tool choices, and gate output; plus the same story at tier 0 |
 | [`references/gate-catalog.md`](references/gate-catalog.md) | Understanding the built-in checks, the `gates.conf` grammar, or adding a custom check |
 | [`references/adapters.md`](references/adapters.md) | Wiring the runner into git / Claude Code / Gemini / Codex / Cursor |

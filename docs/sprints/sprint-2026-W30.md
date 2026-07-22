@@ -14,8 +14,9 @@ goal: >-
 | ------- | ------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------------ |
 | US-3.19 | Mechanize the check-count drift class | EPIC-3 | P2  | 3      | ✅ done | v0.65.0 | [stories/US-3.19-mechanize-check-count-drift.md](stories/US-3.19-mechanize-check-count-drift.md) |
 | US-3.21 | koni-docs-standard doc pass          | EPIC-3 | P2  | 2      | ✅ done | v0.65.1 | [stories/US-3.21-koni-docs-standard-pass.md](stories/US-3.21-koni-docs-standard-pass.md)         |
+| US-3.22 | Review reporting contract            | EPIC-3 | P1  | 5      | ✅ done | v0.66.0 | [stories/US-3.22-review-reporting-contract.md](stories/US-3.22-review-reporting-contract.md)     |
 
-**Total**: 2 stories / 5 pts / 1 contributor.
+**Total**: 3 stories / 10 pts / 1 contributor.
 
 ## Goal detail
 

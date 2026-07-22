@@ -16,6 +16,54 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.66.0] — 2026-07-22 — Review's two in-house passes get a reporting contract — v0.66.0
+
+An audit of the harness's Review prompts, run on a hypothesis that turned out to be
+**wrong** (no conservative-reporting language exists — grep returned zero hits), surfaced
+the real defect: two of Review's five passes had **no specification at all**
+([US-3.22](sprints/stories/US-3.22-review-reporting-contract.md), FR-21).
+
+### Added
+- **`skills/koni-harness/references/review-contract.md`** — `spec-compliance` and
+  `code-quality` appeared **six times in the repo, every one a name in a routing table**;
+  the fullest specification was the string *"code-quality subagent."* They now have: a
+  **reporting contract** (report every finding with confidence + severity, filter at
+  triage, state what was *not* examined, **never return a bare pass**), a finding schema
+  mirroring koni-qc's security schema so a story's Review output is one comparable set,
+  **mandatory author-blind execution** ([LESSONS §19](LESSONS.md)) with the negative rule
+  stated (the reviewer never gets the executing context's reasoning), per-pass definitions
+  with explicit *does not own* boundaries, and a triage table where **a dismissal is
+  recorded with its reason**. Writing a severity cut into a finder's prompt is forbidden,
+  with the reason: an unstated bar is not the absence of a bar, and it loses recall **as a
+  green**.
+- Every route into those passes now points at the contract — `SKILL.md` (reference table
+  + Review ownership row), `agentic-loop-standard.md`, `loop-runner.md`,
+  `example-loop.md`, and `parallel-orchestration.md` (fan-out **satisfies** author-blind
+  rather than bypassing it).
+
+### Changed
+- **`skills/koni-qc/references/security-review.md`** — sub-confidence-7 findings are
+  **recorded in a low-confidence appendix, not deleted**. The ≥8 reporting threshold is
+  unchanged, the report's precision is unchanged, and the hard class-exclusions still
+  delete outright (an out-of-scope item is not an unproven finding). The `=7` band already
+  meant "neither reported nor silently dropped"; this applies that principle to the whole
+  cut instead of one value of it ([LESSONS §36](LESSONS.md)). A deleted finding and a
+  vuln that never existed leave the same trace: none.
+
+### Documentation
+- **[LESSONS §38](LESSONS.md)** — *an unspecified step is not an unconstrained step; it is
+  one whose constraint you cannot see.* Includes the audit lesson: searching for a **bad**
+  instruction cannot find a **missing** one — enumerate the steps and ask which have
+  contracts before hunting defects inside the ones that do.
+- **Follow-ups filed, not folded in**:
+  [US-3.23](sprints/stories/US-3.23-regrade-harness-after-review-contract.md) (re-grade the
+  whole harness ≥95 — US-3.22's own Review could not run author-blind, so its judgement
+  layer is unverified and says so) and
+  [US-3.24](sprints/stories/US-3.24-model-tier-policy.md) (model/effort tier policy, gated
+  on a **measured** recall floor against the planted-defect corpus).
+
+---
+
 ## [0.65.1] — 2026-07-20 — retroactive record for the doc-surface pass (`01fae57`) — v0.65.1
 
 **Process correction, filed after the fact.** The doc-surface pass shipped in `01fae57`
