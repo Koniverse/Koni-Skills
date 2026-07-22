@@ -3,10 +3,7 @@ id: sprint-2026-W29
 status: done
 start: 2026-07-13
 end: 2026-07-19
-goal: >-
-  Teach koni-docs to hold a calendar commitment: ship story deadlines (US-1.6,
-  FR-38, v0.39.0) — a `due` field distinct from the sprint cadence, surfaced in
-  STATUS.md and warned about (never blocked) by validate.
+goal: 'Teach koni-docs to hold a calendar commitment: ship story deadlines (US-1.6, FR-38, v0.39.0) — a `due` field distinct from the sprint cadence, surfaced in STATUS.md and warned about (never blocked) by validate.'
 ---
 ## Sprint scope
 

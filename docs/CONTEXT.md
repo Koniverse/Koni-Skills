@@ -1810,3 +1810,47 @@ and left as-is, documented here rather than silently repaired.
 **Date**: 2026-07-20
 **Version**: 0.65.0
 **Reference**: [sprint-2026-W30](sprints/sprint-2026-W30.md), [sprint-2026-W29](sprints/sprint-2026-W29.md), [US-3.19](sprints/stories/US-3.19-mechanize-check-count-drift.md), LESSONS §12.
+
+---
+
+### D41. Frontmatter stays on one line — fix the writer, not the written
+
+**Context**: `Koniverse/Senti-Quant` reported four epic titles rendering as the literal
+string `>-`. Nobody had authored them that way. `serializeDoc` dumped frontmatter through
+gray-matter → `js-yaml.safeDump` with **default options**, and js-yaml's default
+`lineWidth` is **80** — so any longer plain scalar came back as a folded block. A no-op
+`readDoc()` → `writeDoc()` round-trip was enough, meaning every `sync` anyone ran folded
+more titles, in commits that had nothing to do with titles. This repo's own corpus had
+accumulated 7. The v0.7.1 quote-preservation guard ([AD-12](ARCHITECTURE.md)) did not help:
+`reapplyQuoting` returns early on block scalars, so the field it promised to preserve was
+the field it reformatted.
+
+**Decision**: Serialize with `lineWidth: -1` in `serializeDoc` — one option, at the single
+choke point every CLI writer already routes through. Keep `reapplyQuoting`'s block-scalar
+bail-out: with width-folding off at the source, it now guards only `|` literals carrying
+real newlines, which is correct and load-bearing. Unfold this repo's 7 sprint goals with a
+normalizer that **asserts** a gray-matter round-trip leaves `data` deep-equal and `content`
+byte-identical, so the corpus edit is provably formatting-only.
+
+**Rationale**: The alternatives all treat the symptom. *Leave it* — consumers stay wrong
+and every future `sync` folds more. *Guard downstream* — a check that shouts while the tool
+keeps re-folding is friction without a fix, and it would have to be re-implemented in every
+consumer repo. *Patch the published `dist/`* — re-breaks on the next bump and hides the
+defect from every other Koniverse repo. *Keep titles under 80 characters* — silently
+constrains how epics may be named to accommodate a serializer bug. Only the writer fix
+removes the class, and it removes it for every consumer at once.
+
+Verified rather than assumed: a full `sync` write pass over a copy of this corpus yields
+**0** folds with the fix and **6** with `doc.ts` reverted.
+
+**Impact**: `packages/koni-docs/src/lib/doc.ts` + 3 new / 2 rewritten tests; 7 sprint files
+unfolded; AD-12 amended from *survives* the fold to *prevents* it. **Consumers see a
+one-time, formatting-only reflow** on their first `sync` after upgrading — every long value
+unfolds at once. Story: [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md).
+Related: [US-4.24](sprints/stories/US-4.24-yaml-quoting.md) wrote the guard this amends;
+[US-4.38](sprints/stories/US-4.38-typecheck-script-broken.md) is the broken `typecheck`
+found on the way and filed rather than folded in.
+
+**Date**: 2026-07-22
+**Version**: 0.66.0
+**Reference**: [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md), [AD-12](ARCHITECTURE.md), LESSONS §38, `Koniverse/Senti-Quant` US-28.18 / PR #377.

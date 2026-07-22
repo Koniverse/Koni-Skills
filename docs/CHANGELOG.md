@@ -16,6 +16,67 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.66.0] — 2026-07-22 — single-line frontmatter: stop js-yaml folding long scalars — v0.66.0
+
+`koni-docs` was silently rewriting long frontmatter values as YAML folded blocks
+(`title: >-`), which line-based external readers render literally as `>-`. Reported by
+`Koniverse/Senti-Quant` after four epic titles disappeared from their downstream views
+([US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md), AD-12).
+
+### Fixed
+- **`serializeDoc` no longer width-folds frontmatter.** It dumped through gray-matter →
+  `js-yaml.safeDump` with **default options**, and js-yaml's default `lineWidth` is **80** —
+  so any longer plain scalar came back as a folded block. A **no-op `readDoc()` →
+  `writeDoc()` round-trip was enough**, which is why titles *created* correctly flipped
+  later, inside unrelated commits that happened to run `sync`. Now serialized with
+  `lineWidth: -1` at the single choke point every CLI writer routes through. Quoting is
+  unchanged — js-yaml quotes on *content*, not width — so a long value needing quotes still
+  gets them, on one line.
+- **The v0.7.1 quote-preservation guard was the reason it went unnoticed.**
+  `reapplyQuoting` records that `title` was quoted, then returns early on block scalars — so
+  the field it promised to preserve was the field it reformatted. The bail-out stays
+  (quoting `>-` would orphan the continuation lines) but is now correctly scoped to `|`
+  literals carrying real newlines, with a test locking in why it must not be "fixed" into
+  collapsing them.
+- **This repo's own 7 folded sprint goals** (`W19/21/22/26/27/29/30`) unfolded. Each proven
+  meaning-preserving by a gray-matter round-trip assertion — deep-equal `data`,
+  byte-identical `content` — not by eye.
+
+### Changed
+- **AD-12 amended** from a serializer that *survives* js-yaml folded output to one that
+  *prevents* it.
+- **Release procedure corrected** — `VERSION` and `packages/koni-docs/package.json` are
+  **independent tracks** bumped in the same commit, not "the same semver". They diverged
+  long ago; the doc had been wrong for many releases.
+
+### Documentation
+- **[CONTEXT D41](CONTEXT.md)** — fix the writer, not the written; the four rejected
+  alternatives and why each treats the symptom.
+- **[LESSONS §38](LESSONS.md)** — a guard that bails out on the case it was written for is
+  a false green. Sibling of §36.
+- **[US-4.38](sprints/stories/US-4.38-typecheck-script-broken.md) filed** (backlog) —
+  `npm run typecheck` has never run at all: it exits on TS2209 before compiling anything,
+  and clearing that exposes the viewer self-importing `@koniverse/koni-docs/lib` through the
+  export map. Found while verifying US-4.37, filed rather than claimed as green.
+
+Proven to **speak and fail**: a full `sync` write pass over a copy of the corpus yields
+**0** folds with the fix and **6** with `doc.ts` reverted. Test suite 145/147 — the two
+`preview` failures are pre-existing Astro dev-server timeouts, identical on a clean tree.
+
+> **Upgrading**: the first `sync` after this release produces a **one-time,
+> formatting-only reflow** across your corpus — every long frontmatter value unfolds at
+> once. Review it as formatting.
+
+> **⚠ NOT YET ON npm.** `npm view @koniverse/koni-docs version` returns **`0.8.1`** — the
+> package has been version-bumped roughly twelve times without a publish, which is why
+> downstream repos hit this defect on 0.8.1 rather than on a stale pin. **The fix reaches
+> no consumer until `0.12.0` is published.** Tracked as
+> [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md) **AC-8, open**.
+
+koni-docs CLI **0.11.10 → 0.12.0** (in-repo; publish pending, see above).
+
+---
+
 ## [0.65.1] — 2026-07-20 — retroactive record for the doc-surface pass (`01fae57`) — v0.65.1
 
 **Process correction, filed after the fact.** The doc-surface pass shipped in `01fae57`

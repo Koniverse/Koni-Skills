@@ -3,10 +3,7 @@ id: sprint-2026-W30
 status: in-progress
 start: 2026-07-20
 end: 2026-07-26
-goal: >-
-  Close the loop on koni-harness self-verification: mechanize the drift class that
-  the W29 skill-grading pass had to catch by hand (US-3.19, FR-21, v0.65.0) — a
-  stated check-count is now measured against the vendored `gates.conf`.
+goal: 'Close the loop on koni-harness self-verification: mechanize the drift class that the W29 skill-grading pass had to catch by hand (US-3.19, FR-21, v0.65.0) — a stated check-count is now measured against the vendored `gates.conf`.'
 ---
 ## Sprint scope
 
@@ -14,8 +11,9 @@ goal: >-
 | ------- | ------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------------ |
 | US-3.19 | Mechanize the check-count drift class | EPIC-3 | P2  | 3      | ✅ done | v0.65.0 | [stories/US-3.19-mechanize-check-count-drift.md](stories/US-3.19-mechanize-check-count-drift.md) |
 | US-3.21 | koni-docs-standard doc pass          | EPIC-3 | P2  | 2      | ✅ done | v0.65.1 | [stories/US-3.21-koni-docs-standard-pass.md](stories/US-3.21-koni-docs-standard-pass.md)         |
+| US-4.37 | Single-line frontmatter — stop js-yaml folding long scalars | EPIC-4 | P1 | 3 | ✅ done | v0.66.0 | [stories/US-4.37-single-line-frontmatter.md](stories/US-4.37-single-line-frontmatter.md) |
 
-**Total**: 2 stories / 5 pts / 1 contributor.
+**Total**: 3 stories / 8 pts / 1 contributor.
 
 ## Goal detail
 
@@ -37,6 +35,19 @@ keep the work "in one place" is exactly the tidy-looking rewrite this repo refus
 [CONTEXT D32](../CONTEXT.md) and [LESSONS §12](../LESSONS.md). W29 is marked `done` at 11
 stories / 27 pts. The date drift that surfaced this is recorded in
 [CONTEXT D40](../CONTEXT.md).
+
+**US-4.37 arrived from downstream, mid-sprint.** `Koniverse/Senti-Quant` reported epic
+titles rendering as the literal string `>-` and traced it to this repo's `serializeDoc`.
+It is the third strand rather than a W31 item because the defect was **actively spreading**:
+every `sync` any consumer ran folded more titles, and this repo's own corpus had already
+accumulated 7. Sizing the sprint at 5 pts and letting it run would have meant knowingly
+shipping a corrupting writer for another week.
+
+**US-4.38 is filed, not fixed.** US-4.37's verification plan listed `npm run typecheck`;
+the command turned out never to have run at all. It is unrelated to the serializer and the
+fix is a design call, so it is a backlog story with the evidence attached — the same
+"residual gap filed, not dropped" move as [US-3.20](../sprints/stories/US-3.20-extend-reference-sweep-to-docs.md)
+in v0.65.1. It is not counted in the sprint total; it entered the backlog, not the board.
 
 **US-3.21 is a retroactive filing, and says so.** The doc-surface pass it covers shipped in
 `01fae57` without a story, justified as "docs-only". That justification was wrong — the

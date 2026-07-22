@@ -3,13 +3,7 @@ id: sprint-2026-W26
 status: closed
 start: 2026-06-22T00:00:00.000Z
 end: 2026-06-28T00:00:00.000Z
-goal: >-
-  Deliver EPIC-3 (Koniverse skill catalog expansion) end-to-end: ship
-  `koni-setup` (US-3.2, v0.9.0 — day-0 bootstrapper/onboarder), the full
-  `koni-harness` (US-3.3, v0.10.0–v0.14.0 across 5 phases — gate + loop-runner +
-  context-loader + sprint-sequencer + session-adapters), and the plugin-skill
-  pattern + `koni-nextjs` reference (US-3.1, v0.15.0). 3 stories / 24 pts / 1
-  contributor. Closes FR-9, FR-10, FR-20–FR-25 — EPIC-3 fully delivered.
+goal: 'Deliver EPIC-3 (Koniverse skill catalog expansion) end-to-end: ship `koni-setup` (US-3.2, v0.9.0 — day-0 bootstrapper/onboarder), the full `koni-harness` (US-3.3, v0.10.0–v0.14.0 across 5 phases — gate + loop-runner + context-loader + sprint-sequencer + session-adapters), and the plugin-skill pattern + `koni-nextjs` reference (US-3.1, v0.15.0). 3 stories / 24 pts / 1 contributor. Closes FR-9, FR-10, FR-20–FR-25 — EPIC-3 fully delivered.'
 ---
 ## Sprint scope
 

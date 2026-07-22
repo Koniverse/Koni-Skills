@@ -1340,3 +1340,47 @@ The corollaries:
 The tell: any sentence of the form "this is just X, so the process doesn't apply." The
 word *just* is doing load-bearing work, and it is almost always carrying an unexamined
 location test where a consequence test belongs.
+
+---
+
+## 38. A guard that bails out on the case it was written for is a false green
+
+**What happened**: v0.7.1 added `detectQuotedKeys` / `reapplyQuoting` so the serializer
+would stop churning YAML quote styles — it records that `title` was `"`-quoted and
+re-applies the quote on the way out. It also contained this line:
+
+```ts
+if (/^[>|][-+]?$/.test(value)) return line;   // ← sees `>-`, gives up
+```
+
+Every long title js-yaml folded into a `>-` block hit that branch and walked straight past
+the guard. **The field the serializer promised to preserve was the exact field it
+reformatted**, for over half a year, while the tests were green — because the tests
+asserted the folded output *re-parsed*, which it did. Downstream consumers found it, not us.
+
+**The lesson**: the early-return was not a bug. Quoting `>-` really would corrupt the file,
+and collapsing the block really would destroy a multi-line value. It was *locally* correct
+and *globally* a hole, because it silently declined to do its job on the one input class
+where the job mattered. Two distinct failures hid in one line:
+
+- **A bail-out is a scope decision, and scope decisions must be visible.** "This case is
+  someone else's problem" is a legitimate answer — but it has to be written down and, if it
+  leaves the promise unkept, it has to point at who *does* keep it. An unexplained `return`
+  reads to the next person as "handled".
+- **Asserting that output is *recoverable* is not asserting it is *correct*.** The
+  round-trip test proved the fold re-parsed. Nobody asserted the shape consumers actually
+  read. When a value has an external audience, test the rendering, not just the parse.
+
+The fix that worked was one level up: turn the fold off at the source (`lineWidth: -1`), so
+the branch stops being reached rather than being made cleverer. **When a guard keeps
+meeting a case it cannot handle, ask why the case is being produced at all.** The bail-out
+survived — correctly scoped now to `|` literals with real newlines, with a test that locks
+in why it must not be "fixed" into collapsing them.
+
+The tell: an early `return` or `continue` inside a function whose docstring makes an
+unconditional promise. Read the two together. If the promise says *always* and the code says
+*except*, the exception is either documented, or it is a lie with a green build.
+
+See [CONTEXT D41](CONTEXT.md), [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md).
+Sibling of §36 — there a guard advertised a class and implemented one instance; here a guard
+implemented the class and excused itself from the hardest member.

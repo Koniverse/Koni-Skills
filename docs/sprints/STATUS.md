@@ -1,19 +1,20 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-20 08:51:04 UTC
-> Total stories: 72
+> Last generated: 2026-07-22 07:34:27 UTC
+> Total stories: 74
 
 ## ⏰ Deadlines (0)
 
 _No stories carry an explicit deadline._
 
-## 📋 Backlog (2)
+## 📋 Backlog (3)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
 | US-1.7 | Close the open skill-grading findings on koni-docs (the ≥95 bar) | EPIC-1 | P2 | 5 | — | — |
 | US-3.20 | Extend the reference sweep to docs/ — the doc hub is currently unguarded | EPIC-3 | P2 | 5 | — | jindo9986 |
+| US-4.38 | npm run typecheck has not run at all — TS2209, then a viewer self-import through the export map | EPIC-4 | P2 | 3 | — | — |
 
 ## 🟢 Ready (0)
 
@@ -27,7 +28,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (70)
+## ✅ Done (71)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -92,6 +93,7 @@ _No stories_
 | US-4.34 | Viewer `/project` Warning view — required-field validator (replace filter-only impl) | EPIC-4 | P0 | 3 | sprint-2026-W22 | saltict |
 | US-4.35 | Viewer `/project` `?view=` URL param + legacy `?warn=1` compat shim | EPIC-4 | P1 | 1 | sprint-2026-W22 | saltict |
 | US-4.36 | Viewer `/project` footer metadata + UNION-semantics epic buckets + default sort | EPIC-4 | P1 | 2 | sprint-2026-W22 | saltict |
+| US-4.37 | Single-line frontmatter — stop js-yaml folding long scalars in serializeDoc | EPIC-4 | P1 | 3 | sprint-2026-W30 | bluezdot |
 | US-5.1 | koni-qc — QC methodology & coverage-intelligence skill | EPIC-5 | P1 | 5 | sprint-2026-W27 | jindo9986 |
 | US-5.2 | skill-grading — QC for skill artifacts, wired into the harness build/verify loop | EPIC-5 | P1 | 3 | sprint-2026-W27 | jindo9986 |
 | US-5.3 | test-organization — standard docs/tests taxonomy + scaffolding; round 2: standardize + enforce across the catalog (absorbs US-5.6) | EPIC-5 | P1 | 6 | sprint-2026-W27 | jindo9986 |
@@ -114,11 +116,11 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 2
+- 📋 **Backlog**: 3
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 70
+- ✅ **Done**: 71
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

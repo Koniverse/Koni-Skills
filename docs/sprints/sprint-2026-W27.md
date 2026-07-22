@@ -3,14 +3,7 @@ id: sprint-2026-W27
 status: in-progress
 start: 2026-06-29T00:00:00.000Z
 end: 2026-07-05T00:00:00.000Z
-goal: >-
-  The QC-intelligence drive: stand up koni-qc end-to-end (US-5.1 → US-5.10,
-  v0.16.0 → v0.34.0 — methodology, skill-grading, test organization,
-  unit-coverage, automation spine, whole-project QC, layered suites,
-  field-hardening from the ERP 100% drive, field reorg + the regression-learning
-  harness loop), plus koni-harness parallel orchestration (US-3.8) and the first
-  product/client skill koni-agent-monitoring (US-6.1). 12 stories / 42 pts / 1
-  contributor. Ships FR-26 → FR-37.
+goal: 'The QC-intelligence drive: stand up koni-qc end-to-end (US-5.1 → US-5.10, v0.16.0 → v0.34.0 — methodology, skill-grading, test organization, unit-coverage, automation spine, whole-project QC, layered suites, field-hardening from the ERP 100% drive, field reorg + the regression-learning harness loop), plus koni-harness parallel orchestration (US-3.8) and the first product/client skill koni-agent-monitoring (US-6.1). 12 stories / 42 pts / 1 contributor. Ships FR-26 → FR-37.'
 ---
 ## Sprint scope
 
