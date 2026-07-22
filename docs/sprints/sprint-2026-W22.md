@@ -3,14 +3,7 @@ id: sprint-2026-W22
 status: closed
 start: 2026-05-25T00:00:00.000Z
 end: 2026-05-31T00:00:00.000Z
-goal: >-
-  Seven ships in one sprint window — v0.3.0 → v0.4.0-dev.0 → v0.5.0-dev.0 →
-  v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 — taking @koniverse/koni-docs from a
-  skill-only artifact into a published npm package with typed CLI + Astro SSR
-  viewer + L3 ID-graph validator + the full 5-view /project tracker (Board /
-  Calendar / Analysis / Warning validator). 36 stories / 124 pts / 1
-  contributor. Continues directly from W21 (v0.2.0 dogfood + RULE-15 +
-  AGENTS-canonical + Pattern B).
+goal: Seven ships in one sprint window — v0.3.0 → v0.4.0-dev.0 → v0.5.0-dev.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 — taking @koniverse/koni-docs from a skill-only artifact into a published npm package with typed CLI + Astro SSR viewer + L3 ID-graph validator + the full 5-view /project tracker (Board / Calendar / Analysis / Warning validator). 36 stories / 124 pts / 1 contributor. Continues directly from W21 (v0.2.0 dogfood + RULE-15 + AGENTS-canonical + Pattern B).
 ---
 ## Sprint scope
 

@@ -3,11 +3,7 @@ id: sprint-2026-W21
 status: closed
 start: 2026-05-18T00:00:00.000Z
 end: 2026-05-24T00:00:00.000Z
-goal: >-
-  Ship v0.2.0 — make Koni-Skills its own first canonical koni-docs consumer
-  (full docs/ scaffolding + Pattern B active-context + RULE-15 +
-  AGENTS-canonical + CHANGELOG-at-docs canon). 7 stories / 17 pts / 1 primary
-  contributor + 2 cross-repo collaborators.
+goal: Ship v0.2.0 — make Koni-Skills its own first canonical koni-docs consumer (full docs/ scaffolding + Pattern B active-context + RULE-15 + AGENTS-canonical + CHANGELOG-at-docs canon). 7 stories / 17 pts / 1 primary contributor + 2 cross-repo collaborators.
 ---
 ## Sprint scope
 

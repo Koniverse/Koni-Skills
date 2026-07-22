@@ -3,9 +3,7 @@ id: sprint-2026-W19
 status: closed
 start: 2026-05-04T00:00:00.000Z
 end: 2026-05-26T00:00:00.000Z
-goal: >-
-  Ship koni-docs skill v0.1.0 — SKILL.md + 9 rules + 13 templates + 5 scripts +
-  npx skills distribution
+goal: Ship koni-docs skill v0.1.0 — SKILL.md + 9 rules + 13 templates + 5 scripts + npx skills distribution
 ---
 ## Sprint scope
 

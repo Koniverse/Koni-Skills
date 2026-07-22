@@ -109,6 +109,8 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 | [US-4.34](../stories/US-4.34-viewer-warning-validator.md)      | Viewer `/project` Warning view — required-field validator           | Replace US-4.20's filter-only Warning with the koni-erp-02 §4.8 validator: detect non-backlog stories missing required fields; missing-field chips; ignore sprint filter                                                                                        | ✅ done | v0.8.0       |
 | [US-4.35](../stories/US-4.35-viewer-url-view-persist.md)       | Viewer `/project` `?view=` URL persist + legacy `?warn=1` shim      | Persist active view across reload via `?view=table/board/calendar/analysis/warning`; silently rewrite legacy `?warn=1` → `?view=warning` for one minor version                                                                                                  | ✅ done | v0.8.0       |
 | [US-4.36](../stories/US-4.36-viewer-footer-union-sort.md)      | Viewer `/project` footer + UNION buckets + default sort             | Footer strip (`N of M stories · K epics · S skipped · Updated …`) + UNION-semantics epic buckets (empty epics still render as group headers) + `compareStories` (status → priority → updated) applied in Table / Board / groups                                 | ✅ done | v0.8.0       |
+| [US-4.37](../stories/US-4.37-single-line-frontmatter.md)       | Single-line frontmatter — stop js-yaml folding long scalars         | `serializeDoc` dumped through js-yaml with a default `lineWidth` of 80, so any longer plain scalar came back as a folded block (`title: >-`) that line-based external readers render literally; serialize with `lineWidth: -1` + unfold this repo's 7 sprint goals | ✅ done | v0.67.0      |
+| [US-4.38](../stories/US-4.38-typecheck-script-broken.md)       | `npm run typecheck` has never run — TS2209 + viewer self-import     | The package's declared type gate exits before compiling anything; clearing TS2209 exposes the viewer importing `@koniverse/koni-docs/lib` through its own export map. Found while shipping US-4.37, filed rather than claimed                                    | 📋 backlog | —          |
 
 ## Cross-cutting invariants
 
@@ -116,6 +118,7 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 - **Schema-graceful by default:** every story that touches the dashboard / project routes must handle the "no sprints" case without throwing. Enforced by AC on US-4.3 and a synthetic-minimal-docs fixture in `packages/koni-docs/__tests__/`.
 - **No hard-coded Koni-specific paths:** `DOCS_DIR`, top-level ordering, and folder ordering are all runtime-configurable. Hardcoded fallbacks are explicitly labeled `// default — overridable via koni-docs.config`.
 - **English-only (RULE-13):** matches the skill convention — package source, CLI help text, and config schema labels are all English.
+- **Frontmatter scalars stay on one line.** No width-folded block (`title: >-`, `goal: >-`) in epic, story, or sprint frontmatter — external tools read this state with line-based readers and render a fold literally as `>-`. Prevented at the serializer by [US-4.37](../stories/US-4.37-single-line-frontmatter.md) ([CONTEXT D41](../../CONTEXT.md), amending AD-12); the only sanctioned block scalar is a `|` literal carrying real newlines.
 
 ## Cross-story testing requirements
 
@@ -151,3 +154,4 @@ multi-repo aggregation, or auth hardening — see [Out of scope](#out-of-scope).
 - [x] Warning view: `findStoryWarnings` exits 0 against this repo's corpus OR every flagged story has chips for the missing fields (US-4.34)
 - [x] `?view=` URL persists active tab across reload; legacy `?warn=1` silently rewrites to `?view=warning` (US-4.35)
 - [x] Footer shows `N of M stories · K epics · S skipped · Updated …`; UNION-seeded epic buckets render empty epics; default sort applied (US-4.36)
+- [x] A >80-char frontmatter value serializes whole on one line; a value with real newlines is still a `|` literal block; a full `sync` over the corpus yields 0 folds (6 without the fix) (US-4.37)
