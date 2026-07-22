@@ -7,7 +7,7 @@ priority: P1
 points: 3
 sprint: sprint-2026-W30
 due:
-version_shipped: "0.66.0"
+version_shipped: "0.67.0"
 prd_ref: []
 arch_ref: [AD-12]
 depends_on: [US-4.24]
@@ -66,7 +66,7 @@ if (/^[>|][-+]?$/.test(value)) return line;   // ← sees `>-`, gives up
 The bail-out is *correct* (quoting `>-` would orphan the continuation lines) but it means
 **the field the serializer promised to preserve is the exact field it reformats**. A guard
 that advertises a class and silently exits on its hardest member is a false green — see
-[LESSONS §38](../../LESSONS.md), the sibling of §36.
+[LESSONS §39](../../LESSONS.md), the sibling of §36.
 
 ### Scope of the damage
 
@@ -96,7 +96,7 @@ at any width. Only quote-free long values fold.
   copy of the corpus yields **0** folds with the fix and **6** without it.
 - [x] **AC-6** — `koni-docs validate` exits 0 and `STATUS.md` regenerates against the
   unfolded corpus.
-- [x] **AC-7** — AD-12 describes what the serializer now does; CONTEXT D41 + LESSONS §38
+- [x] **AC-7** — AD-12 describes what the serializer now does; CONTEXT D41 + LESSONS §39
   recorded.
 - [ ] **AC-8 — OPEN** — `@koniverse/koni-docs@0.12.0` published to npm, and
   `Koniverse/Senti-Quant` US-28.18 AC-7 closed against it. **Blocked on credentials, not on
@@ -114,7 +114,7 @@ at any width. Only quote-free long values fold.
   normalizer (AC: 4)
 - [x] **TASK-4.37.5** — prove speak-and-fail by running `sync` over a throwaway corpus copy
   with and without the fix (AC: 5)
-- [x] **TASK-4.37.6** — AD-12 + release-procedure correction, CONTEXT D41, LESSONS §38,
+- [x] **TASK-4.37.6** — AD-12 + release-procedure correction, CONTEXT D41, LESSONS §39,
   CHANGELOG, VERSION + CLI bump (AC: 6, 7)
 
 ## Dev notes
@@ -158,7 +158,7 @@ once `@koniverse/koni-docs@0.12.0` is consumed there.
 
 - [Source: US-4.24](US-4.24-yaml-quoting.md) — the guard this story re-scopes
 - [Source: LESSONS §36](../../LESSONS.md) — a guard that advertises a class but implements
-  an instance is a false green; §38 records this sibling
+  an instance is a false green; §39 records this sibling
 - Downstream report: `Koniverse/Senti-Quant` PR #377 / US-28.18
 
 ## Verification commands
@@ -191,7 +191,7 @@ defect, so a green there is proof the class is closed rather than the symptom cl
 - **AD-12 amended** — the serializer *prevents* the fold instead of *surviving* it. The
   `reapplyQuoting` block-scalar bail-out stays, now scoped to genuine multi-line values,
   with a test locking why it must not be "fixed" into collapsing them.
-- **LESSONS §38** — a guard that bails out on the case it was written for is a false green.
+- **LESSONS §39** — a guard that bails out on the case it was written for is a false green.
 
 > **Consumers**: the first `sync` after upgrading produces a **one-time, formatting-only
 > reflow** — every long value unfolds at once. Review it as formatting.
@@ -227,7 +227,7 @@ answering it (publish 0.12.0 as-is? reconcile the intermediate versions? change 
 procedure so a bump implies a publish?) needs a decision this story has no standing to
 make. The [release procedure in ARCHITECTURE](../../ARCHITECTURE.md) was corrected on the
 point this story could verify — that `VERSION` and the package version are independent
-tracks — and the gap itself is recorded here and in CHANGELOG v0.66.0.
+tracks — and the gap itself is recorded here and in CHANGELOG v0.67.0.
 
 ## Files modified
 
@@ -242,5 +242,5 @@ tracks — and the gap itself is recorded here and in CHANGELOG v0.66.0.
 - [Epic EPIC-4](../epics/EPIC-4.md)
 - [US-4.24](US-4.24-yaml-quoting.md) — the quote-preservation guard this re-scopes
 - [US-4.38](US-4.38-typecheck-script-broken.md) — the broken typecheck found on the way
-- [CONTEXT D41](../../CONTEXT.md) · [LESSONS §38](../../LESSONS.md)
-- [CHANGELOG v0.66.0](../../CHANGELOG.md)
+- [CONTEXT D41](../../CONTEXT.md) · [LESSONS §39](../../LESSONS.md)
+- [CHANGELOG v0.67.0](../../CHANGELOG.md)

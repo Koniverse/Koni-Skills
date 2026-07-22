@@ -11,9 +11,10 @@ goal: 'Close the loop on koni-harness self-verification: mechanize the drift cla
 | ------- | ------------------------------------- | ------ | --- | ------ | ------ | ------- | ------------------------------------------------------------------------------------------------ |
 | US-3.19 | Mechanize the check-count drift class | EPIC-3 | P2  | 3      | ✅ done | v0.65.0 | [stories/US-3.19-mechanize-check-count-drift.md](stories/US-3.19-mechanize-check-count-drift.md) |
 | US-3.21 | koni-docs-standard doc pass          | EPIC-3 | P2  | 2      | ✅ done | v0.65.1 | [stories/US-3.21-koni-docs-standard-pass.md](stories/US-3.21-koni-docs-standard-pass.md)         |
-| US-4.37 | Single-line frontmatter — stop js-yaml folding long scalars | EPIC-4 | P1 | 3 | ✅ done | v0.66.0 | [stories/US-4.37-single-line-frontmatter.md](stories/US-4.37-single-line-frontmatter.md) |
+| US-3.22 | Review reporting contract            | EPIC-3 | P1  | 5      | ✅ done | v0.66.0 | [stories/US-3.22-review-reporting-contract.md](stories/US-3.22-review-reporting-contract.md)     |
+| US-4.37 | Single-line frontmatter — stop js-yaml folding long scalars | EPIC-4 | P1 | 3 | ✅ done | v0.67.0 | [stories/US-4.37-single-line-frontmatter.md](stories/US-4.37-single-line-frontmatter.md) |
 
-**Total**: 3 stories / 8 pts / 1 contributor.
+**Total**: 4 stories / 13 pts / 1 contributor.
 
 ## Goal detail
 
@@ -38,10 +39,16 @@ stories / 27 pts. The date drift that surfaced this is recorded in
 
 **US-4.37 arrived from downstream, mid-sprint.** `Koniverse/Senti-Quant` reported epic
 titles rendering as the literal string `>-` and traced it to this repo's `serializeDoc`.
-It is the third strand rather than a W31 item because the defect was **actively spreading**:
+It is a fourth strand rather than a W31 item because the defect was **actively spreading**:
 every `sync` any consumer ran folded more titles, and this repo's own corpus had already
-accumulated 7. Sizing the sprint at 5 pts and letting it run would have meant knowingly
+accumulated 7. Letting the sprint run to its planned close would have meant knowingly
 shipping a corrupting writer for another week.
+
+It also lands **after** US-3.22, which took v0.66.0 while this work was on a branch — so it
+ships as **v0.67.0**. The collision is worth noting because `VERSION` merged *cleanly* into
+the wrong answer: both sides wrote the identical string `0.66.0`, so git raised no conflict
+and a textual merge would have shipped two different releases under one version. A
+same-value merge is not agreement.
 
 **US-4.38 is filed, not fixed.** US-4.37's verification plan listed `npm run typecheck`;
 the command turned out never to have run at all. It is unrelated to the serializer and the

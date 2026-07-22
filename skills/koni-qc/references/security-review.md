@@ -283,13 +283,38 @@ scenario is not decision-grade:
 - **exactly 7** — a plausible path with an unresolved condition. **Raise it to the
   author as an open question**, never as a vuln — regardless of severity. This is the
   one tier that is neither reported nor silently dropped.
-- **< 7** — too speculative. **Do not report.** Silence here is not a miss; it is the
-  discipline that keeps the report trusted.
+- **< 7** — too speculative to report. **Do not report it — and do not delete it.**
+  Record it in the report's **low-confidence appendix** (title, category, location,
+  one-line description, confidence). It stays out of the findings list, so the report's
+  precision is unchanged; it stays *on the record*, so the drop is auditable.
 
 The bands do not overlap and severity does not move the cut — an unresolved condition is
 an open question at *any* severity, so a HIGH-severity confidence-7 finding is a question,
 not a vuln. Confidence measures "is the attack real?"; severity measures "how bad if it
 is." They are filtered independently.
+
+### Recorded is not the same as reported
+
+The `=7` band was always "neither reported nor silently dropped." The sub-7 band now
+follows the same principle, for the same reason applied to the whole class rather than
+one value of it: **a confidence cut is a judgement made with partial information.** The
+reviewer scores 6 from the code; the author may know the one fact that makes it an 8 —
+or the 2 that closes it. If the finding was deleted inside the pass, neither correction
+can ever happen, and a real vuln and a non-existent one leave exactly the same trace:
+none.
+
+Recording costs one line and changes nothing a reader of the findings list sees. It buys
+two things the deletion could not: the ship decision can see what was weighed and
+discarded, and **recall becomes measurable** — you can count what a review dropped, which
+is the only way to tell a thorough pass from a quiet one ([koni-harness
+`review-contract.md`](../../koni-harness/references/review-contract.md), LESSONS §16).
+
+**This is not a licence to lower the bar.** The reporting threshold is unchanged at ≥ 8,
+the [hard exclusions](#false-positive-discipline) below still delete outright — a
+class-excluded item (DoS, ReDoS, an outdated-dependency CVE) is **out of scope by
+definition**, not an unproven finding, and recording it would reintroduce exactly the
+noise the exclusions exist to remove. The appendix is for in-scope findings that did not
+clear the evidence bar, nothing else.
 
 ---
 
@@ -344,7 +369,12 @@ Security findings are recorded in the koni-docs test-report structure
 extended with the finding schema above. A security review of a release produces:
 
 - a **per-review findings list** (confirmed, refuted-and-dropped noted with the reason —
-  so the next reviewer does not re-raise them), and
+  so the next reviewer does not re-raise them),
+- a **low-confidence appendix** — the sub-7 band from
+  [Severity and confidence](#severity-and-confidence): in-scope candidates that did not
+  clear the evidence bar, one line each. Not findings, not part of the sign-off, and not
+  something a reader has to act on — the audit trail that makes a drop reviewable
+  instead of invisible. Class-excluded items never appear here, and
 - a **release security sign-off**: the named decision that the residual risk is
   acceptable to ship, or the blocking findings that are not. HIGH findings block;
   MEDIUM are triaged with an owner and a target release; LOW are logged.

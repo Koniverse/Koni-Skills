@@ -1852,5 +1852,5 @@ Related: [US-4.24](sprints/stories/US-4.24-yaml-quoting.md) wrote the guard this
 found on the way and filed rather than folded in.
 
 **Date**: 2026-07-22
-**Version**: 0.66.0
-**Reference**: [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md), [AD-12](ARCHITECTURE.md), LESSONS §38, `Koniverse/Senti-Quant` US-28.18 / PR #377.
+**Version**: 0.67.0
+**Reference**: [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md), [AD-12](ARCHITECTURE.md), LESSONS §39, `Koniverse/Senti-Quant` US-28.18 / PR #377.

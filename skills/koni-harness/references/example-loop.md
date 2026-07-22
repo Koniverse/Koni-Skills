@@ -76,6 +76,11 @@ gate must pass too.
 sh .koni-harness/loop.sh enter review
 ```
 
+Passes 1 and 4 run to [`review-contract.md`](review-contract.md): **author-blind**
+subagents (they did not write the diff), reporting **every** finding with confidence +
+severity plus what they did *not* examine — the loop filters at triage, the finder never
+does.
+
 1. **spec-compliance** subagent — does the diff satisfy AC-1…AC-4?
 2. **koni-qc** — every AC has positive + negative + boundary tests (the AC↔TC gate).
 3. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** on **both breakpoints (desktop + mobile)** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).

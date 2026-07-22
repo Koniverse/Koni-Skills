@@ -1,19 +1,21 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-22 07:34:27 UTC
-> Total stories: 74
+> Last generated: 2026-07-22 10:31:24 UTC
+> Total stories: 77
 
 ## ⏰ Deadlines (0)
 
 _No stories carry an explicit deadline._
 
-## 📋 Backlog (3)
+## 📋 Backlog (5)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
 | US-1.7 | Close the open skill-grading findings on koni-docs (the ≥95 bar) | EPIC-1 | P2 | 5 | — | — |
 | US-3.20 | Extend the reference sweep to docs/ — the doc hub is currently unguarded | EPIC-3 | P2 | 5 | — | jindo9986 |
+| US-3.23 | Re-grade koni-harness after the review contract — the whole skill, author-blind | EPIC-3 | P1 | 3 | — | jindo9986 |
+| US-3.24 | Model + effort tier policy for the harness fan-out — gated on a measured recall floor | EPIC-3 | P3 | 8 | — | jindo9986 |
 | US-4.38 | npm run typecheck has not run at all — TS2209, then a viewer self-import through the export map | EPIC-4 | P2 | 3 | — | — |
 
 ## 🟢 Ready (0)
@@ -28,7 +30,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (71)
+## ✅ Done (72)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -58,6 +60,7 @@ _No stories_
 | US-3.18 | koni-harness skill-grading pass — verify the design-trio change, fix surfaced drift to ≥95 | EPIC-3 | P2 | 2 | sprint-2026-W29 | jindo9986 |
 | US-3.19 | Mechanize the check-count drift class — the guard that would have caught US-3.18's defect | EPIC-3 | P2 | 3 | sprint-2026-W30 | jindo9986 |
 | US-3.21 | koni-docs-standard doc pass — fix ghost-script instructions, stale counts, FR coverage | EPIC-3 | P2 | 2 | sprint-2026-W30 | jindo9986 |
+| US-3.22 | Give Review's two in-house passes a reporting contract; stop deleting sub-7 security findings | EPIC-3 | P1 | 5 | sprint-2026-W30 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -116,11 +119,11 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 3
+- 📋 **Backlog**: 5
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 71
+- ✅ **Done**: 72
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

@@ -599,7 +599,7 @@ Release procedure (both channels bumped in lockstep):
 1. Bump `VERSION` (repo root) and `packages/koni-docs/package.json` in the
    same commit. The two numbers are **independent tracks**, not the same
    semver: `VERSION` counts repo releases (skills included), the package
-   counts CLI releases, and they diverged long ago (v0.66.0 ships CLI
+   counts CLI releases, and they diverged long ago (v0.67.0 ships CLI
    0.12.0). Bump each on its own merits and record the CLI move in the
    CHANGELOG entry's footer.
 2. Add a `docs/CHANGELOG.md` entry; commit SHA is filled by
@@ -635,7 +635,7 @@ Release procedure (both channels bumped in lockstep):
 | AD-9 | Schema-aware cell addressing | `updateCell` resolves columns by name from the header row; adding a column never silently shifts the target cell (closes Carry-column fragility) | v0.6.0 | [CONTEXT.md](CONTEXT.md) |
 | AD-10 | Zod schemas + L3 graph validator | Story / Epic / Sprint / Changelog-entry have explicit runtime shapes; `koni-docs validate` enforces L3 ID-graph integrity as a CLI gate | v0.7.0 | [CONTEXT.md](CONTEXT.md) |
 | AD-11 | Astro SSR viewer with SSE hot reload | Operators get a live, filterable doc browser; chokidar fans `*.md` writes into a singleton reload bus piped over SSE | v0.7.0 | [CONTEXT.md](CONTEXT.md) |
-| AD-12 | YAML single-line, quote-preserving serializer + file-path error surfacing | `serializeDoc` dumps with `lineWidth: -1`, so js-yaml never width-folds a frontmatter scalar into a `>-` block; `detectQuotedKeys` + `reapplyQuoting` preserve quote style on top of that, and their block-scalar bail-out now covers only `\|` literals carrying real newlines. Corpus parse errors include the offending file path so sync failures point at the broken file | v0.7.1, amended v0.66.0 | [CONTEXT.md](CONTEXT.md) |
+| AD-12 | YAML single-line, quote-preserving serializer + file-path error surfacing | `serializeDoc` dumps with `lineWidth: -1`, so js-yaml never width-folds a frontmatter scalar into a `>-` block; `detectQuotedKeys` + `reapplyQuoting` preserve quote style on top of that, and their block-scalar bail-out now covers only `\|` literals carrying real newlines. Corpus parse errors include the offending file path so sync failures point at the broken file | v0.7.1, amended v0.67.0 | [CONTEXT.md](CONTEXT.md) |
 
 Individual decisions are recorded in [CONTEXT.md](CONTEXT.md). Add a
 `D<N>` entry there first, then link it from this table.

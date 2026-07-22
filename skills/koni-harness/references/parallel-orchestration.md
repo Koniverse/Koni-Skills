@@ -72,6 +72,10 @@ before the stage's exit gate. The safe, high-value fan-out points:
   (agentic-loop-standard): all must return before Review exits, and a fail in *any*
   sends the story back to Execute — running them in parallel changes only wall-clock, not
   the "all-must-pass" gate or the spec-compliance→koni-qc precedence when triaging fails.
+  Fanning out **satisfies** the author-blind requirement in
+  [`review-contract.md`](review-contract.md) rather than bypassing it — each pass is
+  already its own context; give it the story and the diff, never the executing context's
+  reasoning about why the diff is correct.
   (Read-only fan-out is always safe to parallelize.)
 - **Execute (stage 2)** — per-function TDD across **independent functions** can run in
   parallel **only if each sub-task writes disjoint files** (same rule as Tier A, scoped
