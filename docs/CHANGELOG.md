@@ -75,8 +75,9 @@ Proven to **speak and fail**: a full `sync` write pass over a copy of the corpus
 >
 > **A `^0.8.1` dependency will not pick this up.** Under semver a caret on a `0.x` version
 > is locked to that minor, so `npm update` is a no-op — consumers need an explicit
-> `npm i @koniverse/koni-docs@^0.12.0`. Downstream adoption tracked as
-> [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md) **AC-9, open**.
+> `npm i @koniverse/koni-docs@^0.12.0`. `Koniverse/Senti-Quant` has adopted it
+> ([US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md) AC-9); any other repo
+> still on a `^0.8.x` pin needs the same explicit bump.
 
 koni-docs CLI **0.11.10 → 0.12.0** (published).
 

@@ -101,14 +101,14 @@ at any width. Only quote-free long values fold.
 - [x] **AC-8** — `@koniverse/koni-docs@0.12.0` published to npm. Verified 2026-07-22:
   `npm view @koniverse/koni-docs version` → `0.12.0`, and the published version list now
   reads `… 0.8.0, 0.8.1, 0.12.0` — closing the registry gap described below in one jump.
-- [ ] **AC-9 — OPEN, and not merely a version bump** — `Koniverse/Senti-Quant` consuming
-  the fix and closing its own US-28.18 AC-7. Its `package.json` still pins
-  `"@koniverse/koni-docs": "^0.8.1"`, and **a `^0.8.1` caret does not range over
-  `0.12.0`** — under semver, caret on a `0.x` version is locked to that minor. So
-  `npm update` there is a no-op; it needs an explicit `npm i @koniverse/koni-docs@^0.12.0`.
-  Left open here deliberately: this repo cannot verify a change in another repo, and a tick
-  based on "we published, so they must have it" is exactly the unverified claim this story
-  was written about.
+- [x] **AC-9** — `Koniverse/Senti-Quant` consuming the fix and closing its own US-28.18
+  AC-7. Closed on the owner's confirmation, 2026-07-22.
+
+  Recorded for whoever picks this up: the upgrade there is **not** automatic. Senti-Quant
+  pinned `"@koniverse/koni-docs": "^0.8.1"`, and a caret on a `0.x` version is locked by
+  semver to that minor — `^0.8.1` does not range over `0.12.0`, so `npm update` is a no-op
+  and it takes an explicit `npm i @koniverse/koni-docs@^0.12.0`. The same trap applies to
+  every other consumer still on a `^0.8.x` pin.
 
 ## Tasks
 
@@ -125,7 +125,7 @@ at any width. Only quote-free long values fold.
   CHANGELOG, VERSION + CLI bump (AC: 6, 7)
 - [x] **TASK-4.37.7** — publish `@koniverse/koni-docs@0.12.0`; verify by `npm view` rather
   than by having run the command (AC: 8)
-- [ ] **TASK-4.37.8** — downstream: bump `Koniverse/Senti-Quant` to `^0.12.0` explicitly
+- [x] **TASK-4.37.8** — downstream: bump `Koniverse/Senti-Quant` to `^0.12.0` explicitly
   (a caret on `^0.8.1` will not reach it), re-run their AC-1 grep, close their AC-7 (AC: 9)
 
 ## Dev notes
@@ -234,9 +234,10 @@ minors of unrelated CLI change alongside this fix**, so the one-time reflow warn
 CHANGELOG will not be the only thing they see.
 
 **And the upgrade is not automatic.** A `^0.8.1` dependency — which is what Senti-Quant
-still pins — does not range over `0.12.0`: semver locks a caret on a `0.x` version to that
-minor. `npm update` is a no-op there. That is why AC-9 is a separate, still-open criterion
-rather than a formality after AC-8.
+pinned — does not range over `0.12.0`: semver locks a caret on a `0.x` version to that
+minor, so `npm update` is a no-op and the bump has to be explicit. That is why AC-9 is a
+separate criterion rather than a formality that follows from AC-8, and it is the first
+thing to check on any consumer that reports still seeing folded titles.
 
 The underlying process question — should a version bump imply a publish? — is a
 release-process decision this story has no standing to make, and it is *not* answered by
