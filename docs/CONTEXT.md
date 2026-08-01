@@ -1854,3 +1854,48 @@ found on the way and filed rather than folded in.
 **Date**: 2026-07-22
 **Version**: 0.67.0
 **Reference**: [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md), [AD-12](ARCHITECTURE.md), LESSONS §39, `Koniverse/Senti-Quant` US-28.18 / PR #377.
+
+---
+
+### D42. The EA domain skills move out to `koni-ea` — a skills *library* is not a skills *product*
+
+**Context**: `koni-ea-dev` and `koni-ea-ops` were built here (EPIC-3, US-3.11→US-3.16,
+FR-41/FR-42) because this is where skills get built. But a new repo, `koni-ea`, was
+bootstrapped as the **delivery repo** for EA/bot work — the place partners, customers,
+and end users install skills and templates from (`npx skills add Koniverse/koni-ea`).
+That left the two EA skills in the wrong repo: authored in the methodology library,
+consumed from the product. Keeping a copy in both was the obvious shortcut and the
+obvious mistake — two copies of a skill drift, which is the duplication this repo's own
+conventions warn against (koni-setup: "never re-implement … that duplication is exactly
+what we are avoiding").
+
+**Decision**: Move `skills/koni-ea-dev/` and `skills/koni-ea-ops/` to `koni-ea`
+`skills/`, deleting them here. `Koni-Skills` keeps the skills that are *infrastructure
+for building anything* (koni-docs, koni-harness, koni-qc, koni-setup, koni-nextjs,
+koni-agent-monitoring); `koni-ea` owns the skills that are *a domain deliverable*.
+Development history stays here — EPIC-3, the six stories, the CHANGELOG entries, and
+FR-41/FR-42 are the record of what happened in this repo and are not rewritten (RULE-7).
+AGENTS.md gains a "Relocated skills" table pointing at the new home; the two FR rows are
+annotated `📦 moved to koni-ea` rather than removed.
+
+**Rationale**: The alternatives were worse. *Copy to both* — two sources of truth,
+guaranteed drift, and no rule for which one wins. *Leave them here and symlink from
+koni-ea* — makes the product repo unable to ship standalone, so `npx skills add
+Koniverse/koni-ea --skill koni-ea-dev` would resolve to nothing; the whole point of the
+new repo is that a customer can install from it. *Move and also rewrite the history* —
+violates the append-only contract for no gain; a reader asking "where did koni-ea-dev
+come from" is better served by finding the real stories than by finding nothing.
+
+Verified rather than assumed: `diff -r` confirmed both copies byte-identical before the
+delete, and a dependency scan found only two consumers — the global
+`~/.claude/skills/koni-ea-{dev,ops}` symlinks and `koni-ea`'s own wiring — both
+re-pointed at the new location. No other Koniverse repo referenced them.
+
+**Impact**: 14 files removed from `skills/`; AGENTS.md skill catalog + PRD FR-41/FR-42
+annotated. Consumers who symlinked these two skills from a `Koni-Skills` checkout must
+re-point at a `koni-ea` checkout — there is no compatibility shim, because a stub that
+resolves to nothing is worse than a link that fails loudly.
+
+**Date**: 2026-08-02
+**Version**: 0.68.0
+**Reference**: `koni-ea` repo bootstrap (koni-setup, content profile); EPIC-3, FR-41, FR-42.

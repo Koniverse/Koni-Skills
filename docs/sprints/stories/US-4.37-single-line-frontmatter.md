@@ -36,6 +36,11 @@ renders literally as `>-` — the title disappears from every downstream view.
 
 ## Background
 
+**Lessons applied:** §36 (a guard that advertises a class but implements
+an instance is a false green) — the frame for reading `reapplyQuoting`'s bail-out; §39
+was written by this story as its sibling. Marker line backfilled 2026-08-02; the
+citations themselves were already in Dev notes and Implementation notes.
+
 ### Who folds them
 
 `serializeDoc()` called `matter.stringify(newBody, doc.frontmatter)` with **no options**.

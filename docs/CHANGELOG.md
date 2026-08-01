@@ -16,6 +16,35 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.68.0] — 2026-08-02 — koni-ea-dev + koni-ea-ops relocate to the `koni-ea` repo — v0.68.0
+
+The EA/bot domain now has its own delivery repo,
+[`koni-ea`](https://github.com/Koniverse/koni-ea), from which partners and customers
+install skills and templates. The two EA skills follow the domain out of this library
+([D42](CONTEXT.md)).
+
+### Removed
+- **`skills/koni-ea-dev/`** (8 files) and **`skills/koni-ea-ops/`** (6 files) — moved to
+  `koni-ea` `skills/`. `Koni-Skills` keeps the skills that are infrastructure for building
+  anything; `koni-ea` owns the ones that are a domain deliverable. Both copies were verified
+  byte-identical (`diff -r`) before the delete.
+- No compatibility shim or stub is left behind. Anyone symlinking these two from a
+  `Koni-Skills` checkout must re-point at a `koni-ea` checkout — a link that fails loudly
+  beats a stub that resolves to nothing.
+
+### Changed
+- **AGENTS.md** — the two rows leave the *Current skills* catalog and reappear under a new
+  **Relocated skills** table pointing at the new home.
+- **PRD FR-41 / FR-42** — annotated `📦 moved to koni-ea`, not removed. They record
+  requirements this repo really did ship; deleting them would make the history lie.
+
+### Kept deliberately
+- **EPIC-3, US-3.11 → US-3.16, and every prior CHANGELOG entry** are untouched (RULE-7,
+  append-only). They are the record of work that happened here. A reader asking where
+  `koni-ea-dev` came from should find the real stories, not a gap.
+
+---
+
 ## [0.67.0] — 2026-07-22 — single-line frontmatter: stop js-yaml folding long scalars — v0.67.0
 
 `koni-docs` was silently rewriting long frontmatter values as YAML folded blocks

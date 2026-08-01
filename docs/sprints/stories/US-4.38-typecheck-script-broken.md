@@ -35,6 +35,10 @@ being decoration.
 
 ## Background
 
+**Lessons applied:** §36 (a guard that does not run is a false green) — the reason a
+broken `typecheck` script was filed rather than folded into the parent story. Marker
+line backfilled 2026-08-02; the citation was already in Dev notes.
+
 Found while shipping [US-4.37](US-4.37-single-line-frontmatter.md), which listed
 `npm run typecheck` in its verification plan. Confirmed **pre-existing**: the identical
 error reproduces on a clean tree with no working-copy changes, so no story has ever

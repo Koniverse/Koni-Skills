@@ -1433,3 +1433,48 @@ unconditional promise. Read the two together. If the promise says *always* and t
 See [CONTEXT D41](CONTEXT.md), [US-4.37](sprints/stories/US-4.37-single-line-frontmatter.md).
 Sibling of §36 — there a guard advertised a class and implemented one instance; here a guard
 implemented the class and excused itself from the hardest member.
+
+---
+
+## 40. A skill directory holds no record of who depends on it
+
+**What happened (v0.67.0 → v0.68.0)**: Relocating `koni-ea-dev` and `koni-ea-ops` out
+of this repo looked like copy-then-delete. Nothing in `skills/koni-ea-dev/` indicates
+that anything points at it. A sweep of every repo under the workspace root before
+deleting found four live consumers — two global symlinks in `~/.claude/skills/` and the
+destination repo's own `.claude` / `.agents` wiring, all still resolving to the old
+path. Deleting first would have left four dangling links across two repos plus the
+user's global skill directory, and the breakage would have surfaced later as "the skill
+mysteriously stopped loading".
+
+**Why**: Skills are consumed by **symlink**, and a symlink records no back-pointer. The
+dependency graph exists only in the filesystem of whoever installed it — not in this
+repo, not in `skills-lock.json`, not anywhere a reader of the skill directory would
+look. The information is real but it lives outside the artifact, so the only way to
+have it is to go get it.
+
+This generalizes past skills: any artifact consumed by reference rather than by copy
+has the same property. The absence of visible dependents is not evidence of no
+dependents.
+
+**How to avoid**:
+- Sweep for consumers **before** removing or moving a shared skill. The scan costs
+  seconds; a bad delete costs a debugging session in a repo you are not looking at.
+- Re-point every consumer **before** deleting the source, so no window exists where a
+  link is broken.
+- Verify the copy with `diff -r` **while the original still exists**. A verification
+  that runs after the delete verifies nothing.
+- Prefer a loudly broken link over a compatibility stub. A stub that resolves to an
+  empty skill fails silently at the worst moment; a missing path fails immediately.
+
+**Pattern**:
+```bash
+for d in ~/Documents/GitHub/*/; do
+  for s in <skill>; do p="$d.claude/skills/$s"; [ -L "$p" ] && echo "$p -> $(readlink "$p")"; done
+done
+ls -la ~/.claude/skills/ | grep <skill>
+diff -r skills/<skill> <destination>/skills/<skill> && echo IDENTICAL   # before rm
+```
+
+See [CONTEXT D42](CONTEXT.md). The receiving repo recorded the same trap as its own
+[LESSONS §1](https://github.com/Koniverse/koni-ea/blob/main/docs/LESSONS.md).

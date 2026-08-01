@@ -108,8 +108,17 @@ During active development with skill-creator, iteration results go in a sibling 
 | koni-setup | `skills/koni-setup/` | Day-0 project bootstrapper/onboarder — detect profile, scaffold, wire skills, audit an existing repo |
 | koni-nextjs | `skills/koni-nextjs/` | Plugin-skill reference — Next.js rules extending koni-docs (`plugins: [nextjs]`) |
 | koni-agent-monitoring | `skills/koni-agent-monitoring/` | Install/verify the Koni Agent Ops monitoring client (content-free usage metrics → ERP dashboard) |
-| koni-ea-dev | `skills/koni-ea-dev/` | Programming a correct MQL5 Expert Advisor for MetaTrader 5 — lifecycle & event model, trading & risk-coding mechanics, the MQL5 pitfalls, compile-clean & honest testing, shared `.mqh` conventions |
-| koni-ea-ops | `skills/koni-ea-ops/` | The operational lifecycle of an MQL5 EA — `v<X.YY>` versioning, registry & MagicNumber, deployment, release backtesting, per-version documentation |
+
+### Relocated skills
+
+| Skill | Now lives in | Why |
+|---|---|---|
+| koni-ea-dev | [`koni-ea`](https://github.com/Koniverse/koni-ea) `skills/koni-ea-dev/` | The EA/bot domain moved to its own delivery repo — see CONTEXT decision on the koni-ea split |
+| koni-ea-ops | [`koni-ea`](https://github.com/Koniverse/koni-ea) `skills/koni-ea-ops/` | same |
+
+Their development history (EPIC-3, US-3.11→US-3.16, FR-41/FR-42) stays in this
+repo's `docs/` — that is the record of what happened here. New work on them
+happens in `koni-ea`.
 
 ## Installed helper skills
 
