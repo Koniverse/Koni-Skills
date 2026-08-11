@@ -12,6 +12,59 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+---
+
+## [0.69.0] — 2026-08-11 — version-phase refuses a version that moves backwards
+
+### Added
+
+- **`version-phase` now asserts that `VERSION` moves forward**, not only that it
+  moves together with `CHANGELOG.md`. The staged `VERSION` must be greater than
+  or equal to `git show HEAD:VERSION`; equal passes, strictly lower blocks and
+  names both values.
+
+  Comparison is **numeric, field by field** — `0.9.0` → `0.10.0` is an increase
+  and a lexical compare says otherwise. Leading zeros are stripped with
+  `${n#0}` rather than `$((n))`, because `$((08))` is a syntax error under `dash`
+  and calver hits it. A version string the check cannot order (`nightly`, a
+  pre-release suffix) is declined rather than guessed at. Merges need no special
+  case: during one, `HEAD` *is* the first parent.
+
+- `scripts/checks/__tests__/test-version-phase.sh` — 15 cases in scratch repos,
+  covering both real incidents, both directions of the numeric-versus-lexical
+  trap, calver leading zeros, the no-baseline case, and a merge resolved to the
+  older side. Verified by mutation: removing the guard fails 5, and swapping the
+  numeric compare for a lexical one fails 5.
+
+### Why
+
+koni-tao-data lowered `VERSION` **twice in one day** with this gate passing both
+times:
+
+| | |
+|---|---|
+| `0.49.1 → 0.49.0` | a branch cut from 0.48.0 merged while 0.49.0 and 0.49.1 shipped in parallel |
+| `0.50.0 → 0.45.0` | a release commit picked up another file's version, while its changelog entry and its tag both said 0.51.0 |
+
+The pairing rule asks whether `VERSION` and `CHANGELOG.md` moved *together*,
+never whether `VERSION` moved *forward*, so a backwards bump with a matching
+changelog entry is indistinguishable from a correct release. Both were caught by
+something **outside** the repository — git refusing a duplicate tag, then a CI
+step comparing the tag to `VERSION`. Neither was caught by this harness.
+
+### Why the rule went into `version-phase` rather than a new check
+
+`install-gate.sh` copies every check it ships but **preserves an existing
+`gates.conf`**. A repo that adopted the harness earlier keeps its own config
+forever, so a new check file would ship and never run there. Adding a rule to a
+check that is already wired is the only way a rule reaches an existing install.
+
+Downstream, in a repo, those same two lines argue the opposite — a repo-local fix
+must be a new file, because an edit to a vendored check is reverted on upgrade.
+koni-tao-data carries exactly that, as `version-monotonic.sh` plus a `gates.conf`
+row, with a note to delete both when this release reaches it.
+
+
 (empty — track here while in dev but not yet shipped)
 
 ---

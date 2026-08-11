@@ -85,12 +85,52 @@ enforce release-time checks.
 
 ### `version-phase`
 
-- **What it asserts**: if `VERSION` is staged in this commit, a `CHANGELOG.md`
-  must also be staged *and* the staged CHANGELOG must contain a `[<newver>]`
-  section matching the new VERSION (literal match on `[<version>]`, searched in
-  `docs/CHANGELOG.md` then `CHANGELOG.md`). If `VERSION` is not staged, the
-  check passes immediately (an ordinary work commit is fine). An empty staged
-  `VERSION` blocks.
+- **What it asserts**: two rules, both only when `VERSION` is staged.
+
+  1. **The bump is described.** A `CHANGELOG.md` must also be staged *and* the
+     staged CHANGELOG must contain a `[<newver>]` section matching the new
+     VERSION (literal match on `[<version>]`, searched in `docs/CHANGELOG.md`
+     then `CHANGELOG.md`). An empty staged `VERSION` blocks.
+  2. **The bump goes forward.** The staged `VERSION` must be greater than or
+     equal to `git show HEAD:VERSION`. Equal passes; strictly lower blocks,
+     naming both values.
+
+  If `VERSION` is not staged, the check passes immediately — an ordinary work
+  commit is fine.
+
+  Rule 2 compares **numerically, field by field**, never lexically: `0.9.0` →
+  `0.10.0` is an increase and a string comparison says otherwise. Leading zeros
+  are stripped with `${n#0}` rather than `$((n))`, because `$((08))` is a syntax
+  error under `dash` and calver (`2026.08`) hits it. A version string it cannot
+  order — `nightly`, a pre-release suffix — is **declined rather than guessed
+  at**, and passes. During a merge no special case is needed: `HEAD` *is* the
+  first parent, and the incoming side is `MERGE_HEAD`.
+
+- **Why rule 2 lives here and not in a check of its own**: `install-gate.sh`
+  copies every check it ships (`cp "$SRC"/checks/*.sh`) but **preserves an
+  existing `gates.conf`**. A repo that adopted the harness earlier keeps its own
+  config forever, so a *new* check file would ship and never run there — its row
+  is not in the config it already has. Adding a rule to a check that is already
+  wired is the only way a rule reaches an existing install.
+
+  (Downstream, inside a repo, those same two lines argue the opposite: a
+  repo-local fix must be a *new* file, because an edit to a vendored check is
+  overwritten on the next upgrade. Same mechanism, opposite conclusion,
+  depending on which side of the `cp` you are on.)
+
+- **Where rule 2 came from**: koni-tao-data lowered `VERSION` twice in one day
+  with this gate passing both times — `0.49.1 → 0.49.0` when a stale branch
+  merged over a newer release, and `0.50.0 → 0.45.0` when a release commit
+  picked up another file's version. The pairing rule asks whether `VERSION` and
+  `CHANGELOG` moved *together*, never whether `VERSION` moved *forward*, so a
+  backwards bump with a matching changelog entry is indistinguishable from a
+  correct release. Both were caught by something **outside** the repository:
+  git refusing a duplicate tag, then a CI step comparing the tag to `VERSION`.
+
+- **Tests**: `scripts/checks/__tests__/test-version-phase.sh` — 15 cases in
+  scratch repos, including both real incidents, both directions of the
+  numeric-versus-lexical trap, calver leading zeros, the no-baseline case and a
+  merge resolved to the older side.
 - **Phase(s)**: `work-commit`, `release-commit`
 - **Default severity**: `block`
 - **Generalizes from**: Senti-Quant's `scripts/hooks/pre-commit` 2-phase
