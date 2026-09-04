@@ -107,12 +107,18 @@ MUST_CATCH = {
     'an over-length frontmatter name': 'frontmatter `name` is 70 chars, limit 64',
     'an over-length frontmatter description': 'frontmatter `description` is 1100 chars, limit 1024',
     'frontmatter missing description entirely': 'frontmatter is missing `description:`',
+    # The worst input, and the one the check was written for. Guarding the whole
+    # frontmatter block behind `if fm:` made this the single case it could not see:
+    # a SKILL.md with no `---` block loads with no description and never triggers,
+    # and the checker reported zero problems. LESSONS §39 — a guard that bails out
+    # on the case it exists for is a false green.
+    'no frontmatter block at all': 'has no YAML frontmatter block',
 }
 
 # Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
 # all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
 # sixteenth way to print 0.
-MIN_CLASSES = 41
+MIN_CLASSES = 42
 
 
 def run(target: Path) -> tuple[int, str]:

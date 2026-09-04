@@ -29,7 +29,7 @@ description: >
 | Concern | Owner |
 |---|---|
 | Test-design techniques, edge taxonomy, AC↔TC matrix, NFR/security, risk priority, the quality rubric | **koni-qc** (this) |
-| **Security coverage intelligence** — threat model, per-category case derivation, the finding + confidence rubric, false-positive discipline, the adversarial identify→refute→filter method | **koni-qc** [`security-review.md`](references/security-review.md) — delegates *running* the exploit to gstack and the *gate* to koni-harness. This method is the **`security` concern extension** (koni-docs [`plugin-pattern.md`](../koni-docs/references/plugin-pattern.md) §Concern extensions): koni-qc owns *how*, the repo's `.koni-harness/security-paths` declares *where*, and the harness `security-review` gate watches it. It is **trigger-enforced** — a trust boundary in the diff owes a review whether or not `concerns:` lists it |
+| **Security coverage intelligence** — threat model, per-category case derivation, the finding + confidence rubric, false-positive discipline, the adversarial identify→refute→filter method | **koni-qc** [`security-review.md`](references/security-review.md) — delegates *running* the exploit to gstack and the *gate* to koni-harness. This method is the **`security` concern extension** (koni-docs [`plugin-pattern.md`](../koni-docs/references/plugin-pattern.md) §Concern extensions): koni-qc owns *how*, the repo's `.koni-harness/security-paths` declares *where*, and the harness `security-review` gate watches it. The **concern** is trigger-enforced — a trust boundary in the diff owes a review whether or not `concerns:` lists it — while the **gate** stays dormant until `security-paths` is declared; the two are different objects and the distinction is load-bearing |
 | Test-doc templates / structure / `docs/tests/` layout | **koni-docs** — `references/templates/test-cases.md`, `test-report.md` (invoke; fill, don't redefine) |
 | Execution (browser / systematic QA, bug reports) | **gstack** — `qa` / `qa-only` / `investigate` / `browse` (invoke) |
 | UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` **and the shadcn standard** (both mandatory; criteria in `references/nfr.md` §UI) (invoke) |
@@ -93,10 +93,12 @@ never re-implements the right-column owners.
 ## 4. The quality bar
 
 koni-qc's promise is **test docs better than both** the weak hand-made Koniverse
-suites *and* the best deliberately-authored ones. A suite is graded in three
+suites *and* the best deliberately-authored ones. A suite is graded in **four**
 bands (A beat the manual baseline · B match the production standard · C close
-even its residual gaps) and passes only when it clears all of Band A and
-demonstrably exceeds B and C. The bands, their items, and the pass rule live in
+even its residual gaps · **D density & exhaustiveness**) and passes only when it
+clears **every item of Band A *and* Band D** and demonstrably exceeds B and C. A
+suite that clears Band A but fails Band D is *thin* — Band D is the gate that
+stops the 10× density gap recurring, and it is the band most often forgotten. The bands, their items, and the pass rule live in
 [`references/quality-bar.md`](references/quality-bar.md) — self-grade against it
 before review; do not restate the bands here.
 
@@ -119,7 +121,7 @@ before review; do not restate the bands here.
 | [`references/whole-project-qc.md`](references/whole-project-qc.md) | Load when **standing up or auditing QC for a whole repo** (not one epic) — the layer above `qc-workflow.md`; the Modes row lists what it does |
 | [`references/nfr.md`](references/nfr.md) | Non-functional coverage — the security shortlist + trigger, performance/SLA, accessibility, i18n, reliability, compatibility, observability |
 | [`references/security-review.md`](references/security-review.md) | The **security method** behind nfr.md's shortlist — threat model, the per-category case-derivation taxonomy (authn/authz/IDOR, injection, XSS, RCE, SSRF, secrets/crypto, RLS, data exposure), the adversarial identify→refute→confidence-filter review, the finding schema + severity/confidence + false-positive discipline, escaped-vuln→REG-test, and the release security sign-off |
-| [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the three-band "better than both" rubric |
+| [`references/quality-bar.md`](references/quality-bar.md) | Grading a test doc against the four-band "better than both" rubric (Band D — density — is part of the pass rule) |
 | [`references/skill-grading.md`](references/skill-grading.md) | Grading a **skill artifact** /100 across 4 dimensions (triggering · rule-robustness · content · best-practices); the harness Review stage uses it when building a skill |
 | [`references/test-organization.md`](references/test-organization.md) | The standard `docs/tests/` taxonomy + by-epic/suffix test-code layout + the 3-place sync rule + status legend + scaffolding (koni-setup at setup, koni-qc self-scaffold fallback) |
 | [`references/customize-network-test-cases.example.md`](references/customize-network-test-cases.example.md) | A worked pilot showing the standard + the uplift over a manual suite |

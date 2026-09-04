@@ -14,6 +14,130 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.72.0] — 2026-09-04 — the four-dimension grade ran, all four skills failed, and this fixes what the grade found
+
+Nine graders — one per dimension per skill, D1 as a single blind router over all six
+descriptions. **All four skills fail the ≥95 catalog bar.** The scores below exclude D4,
+which the author ran and which therefore is not a grade; the totals are upper bounds, so
+the verdict does not depend on it.
+
+| Skill | D1 | D2 | D3 | D4 | ceiling |
+|---|---|---|---|---|---|
+| koni-harness | 24 | 20.5 | 16 | UNGRADED | ≤85.5 |
+| koni-qc | 21 | 21.9 | 16 | UNGRADED | ≤83.9 |
+| koni-setup | 24 | 16.7 | 17 | UNGRADED | ≤82.7 |
+| koni-docs | 20 | 20.0 | 17 | UNGRADED | ≤82.0 |
+
+Residual findings are filed with evidence in
+[US-3.29](sprints/stories/US-3.29-skill-grading-residual-findings.md). This release fixes
+the defects v0.70.0–v0.71.0 introduced, plus the two most dangerous pre-existing ones.
+
+### Fixed — defects this work introduced
+
+- **koni-setup's `§6 Verify` had three non-functional checks out of four.** The
+  gate-runner call used `--dry-run`, which prints the gate list and exits 0 without
+  running anything — attached to the exact claim ("real content, not stubs") the pass
+  exists to establish. The component-path `awk` targeted the *Responsibility* column of
+  koni-docs' own architecture template and reported the `|---|` separator as a missing
+  path on every table (four false STALE lines on a correct document, when the reviewer
+  ran it). The backlog-story check counted every backlog story in the repo, so it passed
+  at zero as silently as at seven. All three replaced with checks that were **run** this
+  time — which immediately surfaced two more bugs (a scoped npm package name read as a
+  path, `wc -l` whitespace). Each check now states whether it fails or only reports.
+
+- **The `(inferred)` marker was a unilateral contract.** koni-docs' architecture template
+  has no confidence-marker convention, so the documented happy path derived findings,
+  handed them to koni-docs, and greped for markers a template never writes. The handoff
+  is now stated explicitly as the deriver's job.
+
+- **The reverse-engineering approval gate was escapable three ways**: scoped to `docs/`
+  while `repo-types.md` puts `ARCHITECTURE.md` at the root for some profiles; no waiver
+  clause, so "skip the approval" read as pre-approval; no defined non-interactive
+  behaviour. The gate is now on the *writing*, not the directory, and a waived review
+  produces a **labelled** document (markers, an unreviewed banner, filed stories, a
+  CONTEXT entry) rather than a confident one.
+
+- **koni-setup contradicted itself on stubs.** §2 licensed writing "if absent or a stub",
+  §3 required asking first, and the new RE table said stubs may be overwritten — with no
+  precedence rule and no definition of "stub". Now defined, with §2 scoped to bootstrap.
+
+- **The frontmatter budget check went silent on the case it was written for.** Everything
+  sat behind `if fm:`, so a `SKILL.md` with **no frontmatter at all** — the catastrophic
+  case the check's own comment cites — reported zero problems, and the fixture used a
+  well-formed block so nothing exercised the hole. LESSONS §39's exact shape, one file
+  away from where it was cited. Also fixed: hyphenated frontmatter keys
+  (`allowed-tools:`) were swallowed into the value and over-counted, and block-scalar
+  indicators (`|`, `>-`) leaked into the character count.
+
+- **`security` was asserted trigger-enforced in four places without reading the code**,
+  which says "opt-in by design" in bold. Both are true of *different objects*: the
+  **obligation** is trigger-enforced, the **gate** is dormant until
+  `.koni-harness/security-paths` is declared. That split is now stated at all four sites
+  — two independent reviewers reached opposite verdicts on this, which is itself the
+  evidence it was under-specified.
+
+- **"Skipping is a claim, so it is stated" was contradicted** by "those skips are allowed
+  and silent" in two older files, with no precedence rule. Resolved: `loop.sh` is silent
+  because it tracks position, not process; once a story exists the skip and its named
+  condition go in it. And the obligation is now a stated **human exit criterion** rather
+  than being withdrawn by its own "documented, not gated" sentence.
+
+- **`example-loop.md` — the file SKILL.md calls "the example to copy" — did not obey the
+  protocol this work made mandatory at tier 2.** It now carries the questions file and the
+  `Applied:` / `Skipped:` block.
+
+- **`frame-protocol.md`'s worked example contradicted itself**: Q1 recorded as answered
+  `A`, then a CONTEXT D-entry recording `B chosen over A/C`. And "that block is four
+  lines" described a six-line block.
+
+- **`gate-catalog.md` declared assertion counts "deliberately absent" while four
+  remained** — the four that predated the rule. Removing only the ones just added, then
+  stating the rule as if it held file-wide, is the same class the rule exists to prevent.
+
+- **The concern axis could not author a second concern**: no "where it lives", no
+  resolution rule from `concerns: [x]` to files, and the suggested `SEC-` / `A11Y-`
+  prefixes **already collide** with koni-qc's test-case category IDs. Concerns now
+  explicitly carry no rule table of their own.
+
+### Fixed — pre-existing, and the two most dangerous
+
+- **A false verification claim.** `gate-catalog.md` stated the `security-review` check
+  "is checked against three mutations" — no mutation harness existed anywhere for it. The
+  claim sat four paragraphs above the section arguing that an unverified guard is
+  worthless. **Made true rather than deleted**: the suite now runs its five cases against
+  three deliberately broken copies of the check (opt-in guard removed, warn exit forced to
+  0, reminder pointing at a nonexistent reference) and fails if any survives — plus a
+  guard that reports a mutation which no longer matches anything.
+
+- **Band D never propagated.** `quality-bar.md` gained a fourth band (density) and the
+  pass rule requires it, but koni-qc's `SKILL.md` still taught "three bands", and
+  `quality-bar.md`'s own Contents omitted Band D. An agent self-grading from the router
+  applied a bar that permits thin suites. LESSONS §18, again.
+
+### Changed
+
+- `check-references.py`'s docstring claimed **three** defect classes while implementing
+  **seven** — the drift class the file exists to catch, in its own header.
+- The "Testing a check" section is now marked monorepo-only: `install-gate.sh` vendors no
+  `__tests__/` and no `run-all.sh`, so step 4 of *Adding a custom check* does not exist in
+  a consumer repo.
+- CI is described as running "on pushes to `main` and on every PR" — a feature-branch push
+  with no PR open runs nothing.
+
+- **`story-lint` rejected a spec-legal story.** `frontmatter-spec.md` §3.1 documents
+  `sprint: ''` as the legal empty value for an unscheduled story, but the field reader
+  stripped only *double* quotes — so filing the first backlog story of this round failed
+  the gate with `sprint '' has no file at docs/sprints/''.md`. Found by the gate blocking
+  a correct commit; pinned by three assertions (both quote styles pass; a quoted sprint
+  naming a missing file still fails), proven to die when the fix is reverted.
+
+### Guards
+
+Self-test 41 → **42** planted classes, mutants 24 → **25**, both floors raised. Coverage
+gate green (272 lines). Harness evaluator: 15 suites, 0 failed, 10 checks, 0 uncovered.
+
+---
+
 ## [0.71.0] — 2026-09-04 — run the skill-grading pass v0.70.0 owed, and guard the budget it broke
 
 The koni-harness loop says that when the deliverable is a **skill**, Review runs koni-qc
@@ -52,11 +176,10 @@ best-practices) and fixes what it found.
 
 ### Notes
 
-- **D1 / D2 / D3 have not run.** Triggering (blind router), rule-robustness (pressure
-  scenarios), and author-blind content review each require subagents by method — D3
-  explicitly requires an agent that did *not* write the diff. The four skills are therefore
-  **not yet graded to the ≥95 bar**; only D4 is done. Recorded as outstanding rather than
-  passed.
+- **D1 / D2 / D3 had not run at the time of this release.** They ran immediately after,
+  in v0.72.0 — see that entry for the scorecard. This bullet is left as written and
+  corrected here rather than edited away: the state it describes was true when it shipped.
+  D4 remains **UNGRADED**, because it was run by the author (see v0.72.0).
 - No story: a Review-stage pass over already-shipped FRs ([D33](CONTEXT.md) anti-sprawl →
   sprint note + CHANGELOG).
 

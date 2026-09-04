@@ -82,7 +82,8 @@ Four filters, applied in order. A question survives only if it passes all four.
 One file per story, at `.koni-harness/frame/<story-id>-questions.md`. It is
 **working state, not a doc** — gitignored, the same as `loop-state`. The durable
 record is the story and `CONTEXT.md` ([§4](#4-where-the-answers-go)); the
-questions file is scratch that gets deleted when the loop leaves Frame.
+questions file is scratch — delete it yourself when the loop leaves Frame; nothing
+in `loop.sh` removes it, and a stale questions file outlives the decision it recorded.
 
 This is the deliberate divergence from the tool this pattern was borrowed from,
 which persists its entire question-and-approval history into a parallel doc
@@ -154,7 +155,12 @@ options is what stops the same fork being re-litigated by the next agent — whi
 is the failure this whole file exists to prevent, displaced in time rather than
 in stage.
 
-**Enforcement, stated honestly**: this routing is **documented, not gated**.
+**Enforcement, stated honestly**: this routing is not *machine*-gated — it is a
+**human exit criterion of the Doc + Version gate**. A story that ships without an
+`Applied:` / `Skipped:` block is incomplete and Review returns it. Absence of a
+check is absence of *automation*, never absence of the obligation; and **"no time"
+is not one of the named conditions** — the block is six lines and costs less than
+reconstructing it later.
 There is no `frame-answers` check, because the harness adds a gate only for a
 mistake that has actually bitten this repo (principle 2 in
 [`agentic-loop-standard.md`](agentic-loop-standard.md)) and this class has not
@@ -220,7 +226,7 @@ asking it would have spent the user's attention to buy nothing.
 **Applicability, from §5** — recorded in the story:
 
 ```
-Frame: 2 questions (.koni-harness/frame/US-4.12-questions.md → answered A, B)
+Frame: 2 questions (.koni-harness/frame/US-4.12-questions.md → Q1=B, Q2=A)
 Applied: security-review (untrusted input + new inbound surface), written plan (6 files),
          CONTEXT D-entry (retry policy — B chosen over A/C)
 Skipped: /design-consultation — no UI surface
@@ -228,5 +234,5 @@ Skipped: /design-consultation — no UI surface
          deploy note — rides the existing service, no new runtime config
 ```
 
-That block is four lines, and it makes every process decision in the story
+That block is six lines, and it makes every process decision in the story
 auditable at Review without the reviewer reconstructing any of it.

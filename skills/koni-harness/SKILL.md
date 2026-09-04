@@ -110,6 +110,7 @@ coverage is derived from `gates.conf`, so a check named by no suite fails the
 run rather than passing unnoticed:
 
 ```sh
+# monorepo-only: install-gate.sh does not vendor the evaluator into a consumer repo
 sh skills/koni-harness/scripts/__tests__/run-all.sh
 ```
 
@@ -117,7 +118,7 @@ sh skills/koni-harness/scripts/__tests__/run-all.sh
 fail *before* asserting the clean case, and pin the skip-passes as skip-passes
 (most checks no-op when their subject is absent, which is how a check can exit
 `0` forever without ever running). The obligations, the floors, and the CI
-matrix (`sh`/dash **and** bash on every push and PR) are in
+matrix (`sh`/dash **and** bash, on pushes to `main` and on every PR) are in
 [`references/gate-catalog.md`](references/gate-catalog.md#testing-a-check).
 
 ## Run a story through the loop

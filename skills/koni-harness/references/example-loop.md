@@ -42,6 +42,29 @@ code shipped without an added citation; `/design-review` later confirms, it must
 discover). If the shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD
 here — this is the only place those tools are used.
 
+**This is tier 2, so the Frame protocol applies** ([`frame-protocol.md`](frame-protocol.md)):
+surviving questions go in a batched file, and the story records which process elements
+fired and which were skipped, each by a named condition.
+
+```sh
+# the two questions that survived the §2 filters (the other four were answerable
+# from DESIGN.md and a grep — those are unread context, not questions)
+$EDITOR .koni-harness/frame/US-7.3-questions.md
+```
+
+```
+Frame: 2 questions (.koni-harness/frame/US-7.3-questions.md → Q1=A, Q2=B)
+Applied: /design-consultation (new token + 2 new states), written plan (5 files),
+         CONTEXT D-entry (custom-RPC validation: reject-on-save chosen over warn-on-use)
+Skipped: security-review — no trust boundary; the panel writes local settings only
+         NFR pass — no stated latency target for a settings panel
+         deploy note — ships inside the existing bundle, no new runtime config
+```
+
+Both blocks go in the story. The `Skipped:` lines are the point: an element that is
+simply absent is indistinguishable from one that was forgotten, and the reviewer
+cannot tell either.
+
 ## 2. `execute` — implement with Anthropic Skills only
 
 ```sh
@@ -132,6 +155,8 @@ stopped — fix and re-run the gate. Never `git commit --no-verify`.
 
 A one-line copy tweak in that panel later is **tier 0**: `frame` (light) →
 `execute` → `commit` + gate. You skip the process steps (no brainstorm, no
-subagent review, no koni-qc) — those skips are allowed and silent — but the gate
+subagent review, no koni-qc) — and at tier 0 there is **no story to record them in**,
+so they are silent because there is nothing to be silent *in*. The moment a story
+exists, the §5 conditions are written into it ([`frame-protocol.md`](frame-protocol.md)) — but the gate
 still runs. The gate is never skipped at any tier; that is the whole point of a
 cheap deterministic backbone.

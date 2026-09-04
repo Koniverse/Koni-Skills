@@ -84,11 +84,8 @@ under `koni-docs:`** — neither is ever a top-level key, and neither is spelled
 Leave either list empty when nothing applies — `plugins: []` is a real answer,
 not an unfinished one.
 
-**One asymmetry worth knowing before you leave `concerns:` empty**: some concerns
-are *trigger-enforced* rather than opt-in — they apply whenever their trigger
-surface is present, listed or not. `security` is one. What a repo opts into is
-declaring **where** its trust boundaries are (`.koni-harness/security-paths`), not
-whether they get reviewed. Both axes, and how to author a new one, are in
+**One asymmetry worth knowing before you leave `concerns:` empty**: for `security`,
+the **obligation** is trigger-enforced (a trust boundary in the diff owes a review whether or not `concerns:` lists it); the **gate** is opt-in and stays dormant until `.koni-harness/security-paths` declares where the boundaries are. Removing the declaration removes the reminder, never the obligation. Both axes, and how to author a new one, are in
 [`../plugin-pattern.md`](../plugin-pattern.md).
 
 ---

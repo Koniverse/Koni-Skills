@@ -127,8 +127,8 @@ enforce release-time checks.
   correct release. Both were caught by something **outside** the repository:
   git refusing a duplicate tag, then a CI step comparing the tag to `VERSION`.
 
-- **Tests**: `scripts/checks/__tests__/test-version-phase.sh` — 15 cases in
-  scratch repos, including both real incidents, both directions of the
+- **Tests**: `scripts/checks/__tests__/test-version-phase.sh` — plant→assert
+  cases in scratch repos, including both real incidents, both directions of the
   numeric-versus-lexical trap, calver leading zeros, the no-baseline case and a
   merge resolved to the older side.
 - **Phase(s)**: `work-commit`, `release-commit`
@@ -239,7 +239,7 @@ enforce release-time checks.
   shipped without `points:`, 12 filed into an ended sprint; LESSONS §12). On
   its **first run** it caught the same drift from two months earlier (7
   v0.2.0 stories, D34) — the class recurs whenever it isn't gated.
-- **Self-test**: `__tests__/story-lint-test.sh` (16 assertions freezing the
+- **Self-test**: `__tests__/story-lint-test.sh` (freezing the
   D32 failure classes + the D35 read-evidence rule).
 - **`gates.conf` row**:
   ```
@@ -270,7 +270,7 @@ enforce release-time checks.
   write step; D35 made both halves always-on after the user rule "luôn ghi
   LESSONS khi hoàn thành nhiệm vụ"). The read half is enforced by
   `story-lint`'s `Lessons applied:` rule on new stories.
-- **Self-test**: `__tests__/lesson-capture-test.sh` (12 assertions: exemptions,
+- **Self-test**: `__tests__/lesson-capture-test.sh` (exemptions,
   both verdict forms, unstaged-verdict and missing-reason failures).
 - **`gates.conf` row**:
   ```
@@ -302,7 +302,7 @@ enforce release-time checks.
 - **Generalizes from**: the Koniverse UI rework loop the user named ("làm đi
   làm lại phần giao diện") — CONTEXT D36; the citation-evidence pattern of
   D35 (LESSONS §14/§15).
-- **Self-test**: `__tests__/design-first-test.sh` (11 assertions, bash + dash).
+- **Self-test**: `__tests__/design-first-test.sh` (bash + dash).
 - **`gates.conf` row**:
   ```
   design-first         | checks/design-first.sh             | release-commit             | block |
@@ -473,7 +473,9 @@ same reason koni-docs' fixture suites carry `MIN_CLASSES`: emptying a corpus use
 to read as passing it. Raise them when the real number rises; never lower one to
 turn a build green.
 
-**Assertion counts are deliberately absent from these entries.** A number in prose is
+**Assertion counts are deliberately absent from every entry in this file** — including
+the four that predated the rule, which an author-blind review caught still carrying
+numbers four paragraphs after the rule declaring them gone. A number in prose is
 a promise to stay in sync with something you do not control (LESSONS §28), and the
 ground truth here is genuinely ambiguous — the suites report in three dialects and one
 of them prints a single line covering five cases, so "how many assertions" has no single
@@ -498,7 +500,16 @@ they are skipped:
    tolerance is indistinguishable from an accident, which is exactly how
    `story-status` shipped unable to read `**status**: done`.
 
-CI reproduces all of it on every push and PR ([`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)),
+> **This section is monorepo-only, and the installer says so by omission.**
+> `install-gate.sh` vendors the runner, the helpers, the checks, and `gates.conf` — it
+> does **not** vendor `__tests__/` or `run-all.sh`. So a consumer repo has the gate but
+> not the evaluator: steps 1–3 of *Adding a custom check* work there, step 4 does not.
+> A repo-local check is tested by whatever that repo tests with; the coverage obligation
+> binds checks contributed **back** to the harness, which is where `run-all.sh` lives.
+
+CI reproduces all of it on pushes to `main` and on every pull request
+([`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)) — note a feature-branch
+push with no PR open runs nothing —
 running the evaluator under **both `sh` (dash) and `bash`** — a suite that passes
 only under the author's shell is not portable, it is lucky.
 

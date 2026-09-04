@@ -164,6 +164,18 @@ assert_exit 0 "new story with Lessons-applied passes" "$d"
 d=$(scaffold); story "$d" US-9.1-good.md US-9.1 done 3 sprint-2026-W27 abc1234 2026-07-01 2026-07-01
 assert_exit 0 "pre-adoption story exempt from Lessons-applied" "$d"
 
+# A backlog story carries `sprint: ''` — documented legal in frontmatter-spec §3.1.
+# Stripping only double quotes made the check reject it with a nonsense message
+# ("sprint '' has no file at docs/sprints/''.md"), so a spec-legal story could not pass.
+d=$(scaffold); story "$d" US-9.9-backlog.md US-9.9 backlog 3 "''"
+assert_exit 0 "single-quoted empty sprint (backlog story) passes" "$d"
+# ...and the double-quoted form still works
+d=$(scaffold); story "$d" US-9.8-backlog.md US-9.8 backlog 3 '""'
+assert_exit 0 "double-quoted empty sprint passes" "$d"
+# ...while a quoted sprint that names a MISSING file still fails
+d=$(scaffold); story "$d" US-9.7-bad.md US-9.7 backlog 3 "'sprint-2026-W01'"
+assert_exit 1 "quoted sprint naming a missing file still fails" "$d"
+
 echo
 echo "story-lint-test: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

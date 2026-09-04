@@ -149,3 +149,37 @@ missing-field branch (the coverage gate rejected the first attempt for exactly t
 **D1 / D2 / D3 have not run.** All three require subagents by method — a blind router
 (D1), pressure-test agents (D2), and an author-blind reviewer (D3, and it must not be the
 agent that wrote the diff). They are outstanding, not passed.
+
+**v0.72.0 — the grade ran, and all four skills failed it.** Nine graders (one per
+dimension per skill; D1 as a single blind router over all six descriptions, because
+near-miss detection needs the siblings present). Ceilings: koni-harness ≤85.5,
+koni-qc ≤83.9, koni-setup ≤82.7, koni-docs ≤82.0 — all against a ≥95 bar.
+
+**D4 is recorded UNGRADED, not scored.** I ran it myself, ×1, which by the rule the D2
+run pressure-tested is not a grade at all. Reporting a self-produced number with a
+caveat is exactly the failure that run found in another agent; the caveat does not
+survive a copy-paste, the number does. The ceilings above are therefore upper bounds
+and the verdict does not depend on D4.
+
+**The findings landed hardest on the executable layer, and the pattern is uniform**: I
+wrote good guards for other people and did not run my own. koni-setup's `§6 Verify`
+shipped three non-functional checks out of four; the frontmatter budget check went
+silent on the one input it was written for; `example-loop.md` did not obey the protocol
+this sprint made mandatory. Every one was found by someone running the thing, not
+reading it.
+
+Two independent reviewers **disagreed** on whether `security` is opt-in or
+trigger-enforced. Both were right about different objects — the obligation vs the gate —
+which is itself the evidence the claim was under-specified. Fixed by stating the split
+everywhere rather than by picking a side.
+
+Residual findings are filed in
+[US-3.29](stories/US-3.29-skill-grading-residual-findings.md) with file:line evidence —
+not dropped, and not claimed closed.
+
+Lessons: none new — every defect this round is a fresh instance of a lesson already
+written. §39 (a guard bailing out on the case it exists for), §18 (a rule enforced only
+where it is defined, not where it is read), §36 (a class advertised, an instance
+implemented), §19/§20/§22 (shell written but never run). Four instances of §18 alone.
+Writing §44 to say "and again" would grow the file without growing what it knows; the
+honest verdict is that the lessons were adequate and I did not apply them.

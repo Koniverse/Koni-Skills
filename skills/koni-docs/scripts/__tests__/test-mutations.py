@@ -159,6 +159,11 @@ MUTATIONS: list[tuple[str, str, str]] = [
         "                for field, limit in (('name', 64), ('description', 99999)):",
     ),
     (
+        'the no-frontmatter case is skipped instead of reported (the LESSONS §39 shape)',
+        "            if not fm:",
+        "            if False:",
+    ),
+    (
         'a missing frontmatter field is skipped instead of reported',
         "                        problems.append(f'{md}: frontmatter is missing `{field}:`')",
         "                        pass",
@@ -186,7 +191,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 24
+MIN_MUTANTS = 25
 
 
 def main() -> int:

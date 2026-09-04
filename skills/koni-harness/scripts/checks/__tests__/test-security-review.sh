@@ -7,8 +7,9 @@
 # its own tempdir.
 set -eu
 
-CHECK=$(CDPATH= cd "$(dirname "$0")/.." && pwd)/security-review.sh
-[ -f "$CHECK" ] || { echo "no check at $CHECK"; exit 2; }
+REAL=$(CDPATH= cd "$(dirname "$0")/.." && pwd)/security-review.sh
+[ -f "$REAL" ] || { echo "no check at $REAL"; exit 2; }
+CHECK=$REAL
 
 fails=0
 assert() { # want_rc  got_rc  label
@@ -18,8 +19,11 @@ assert() { # want_rc  got_rc  label
   fi
 }
 
+# The five cases live in a function so the SAME corpus can be re-run against a
+# deliberately broken copy of the check. A suite that has only ever seen the correct
+# implementation cannot tell you it would notice an incorrect one (LESSONS §24).
+run_cases() {
 tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT
 cd "$tmp"
 git init -q
 # Identity is set on the throwaway repo, not inherited. `git commit` (case 4) fails with
@@ -67,10 +71,49 @@ mkdir -p src/crypto/aead
 echo z > src/crypto/aead/seal.ts
 git add -A
 rc=0; sh "$CHECK" >/dev/null 2>&1 || rc=$?; assert 1 "$rc" "** glob matches a nested boundary path"
+cd /; rm -rf "$tmp"
+}
 
-if [ "$fails" -eq 0 ]; then
-  echo "✓ security-review check: warns on a declared boundary, silent otherwise (5 cases)"
+# --- the real check must pass every case -------------------------------------
+run_cases
+real_fails=$fails
+if [ "$real_fails" -ne 0 ]; then
+  echo "$real_fails case(s) failed — the check is not trustworthy until these pass."
+  exit 1
+fi
+
+# --- and three mutants must each DIE against that same corpus -----------------
+# Without this, "5 cases passed" only means the check behaved once. A mutant that
+# survives names a hole in the corpus, which is the thing being certified here.
+mut_dir=$(mktemp -d)
+trap 'rm -rf "$mut_dir"' EXIT
+survivors=0
+mutate() { # label  sed-expression
+  m="$mut_dir/mutant.sh"
+  sed "$2" "$REAL" > "$m"
+  if cmp -s "$m" "$REAL"; then
+    echo "  ✗ mutation [$1] changed nothing — the sed no longer matches the check"
+    survivors=$((survivors + 1)); return
+  fi
+  # A dying mutant prints the case failures that killed it — expected noise, so it is
+  # swallowed. Only a SURVIVOR is news, and then the detail is worth seeing.
+  fails=0; CHECK=$m; run_cases >/dev/null 2>&1; CHECK=$REAL
+  if [ "$fails" -eq 0 ]; then
+    echo "  ✗ mutant SURVIVED: $1 — the corpus cannot see this regression"
+    survivors=$((survivors + 1))
+  fi
+}
+
+# 1. guard removed: the opt-in bail-out is deleted, so the check fires with no config
+mutate "opt-in guard removed" 's#^\[ -f .*cfg.*exit 0.*#:#'
+# 2. never warns: the warn exit is forced to 0, so a real boundary change goes silent
+mutate "never warns (warn exit forced to 0)" 's#^exit 1  *#exit 0        #'
+# 3. wrong reference path: the reminder points at a doc that does not exist
+mutate "reminder names a nonexistent reference" 's#references/security-review\.md#references/GONE.md#'
+
+if [ "$survivors" -eq 0 ]; then
+  echo "✓ security-review check: 5 plant→assert cases pass, 3 mutants killed"
   exit 0
 fi
-echo "$fails case(s) failed — the check is not trustworthy until these pass."
+echo "$survivors mutant(s) survived — the corpus certifies less than it claims."
 exit 1

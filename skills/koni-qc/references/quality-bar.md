@@ -3,13 +3,14 @@
 > **Load when**: the **Self-review** stage of [`qc-workflow.md`](qc-workflow.md),
 > and again in author-blind review. This is the bar koni-qc must clear: it must
 > **beat** the weak manual backup, **match** the Koni-Finance production standard,
-> and **close** Koni-Finance's residual gaps. Grade a suite against all three bands.
+> and **close** Koni-Finance's residual gaps. Grade a suite against all four bands.
 
 Score each item as a checkbox. The **Pass rule** at the bottom is the gate.
 
 **Contents**: [Band A — beat the manual backup](#band-a--beat-the-manual-backup-must-clear-all) ·
 [Band B — match the Koni-Finance standard](#band-b--match-the-koni-finance-standard) ·
 [Band C — close its residual gaps](#band-c--close-its-residual-gaps) ·
+[Band D — density & exhaustiveness](#band-d--density--exhaustiveness-the-gate-that-stops-the-10-gap-recurring) ·
 [Pass rule](#pass-rule)
 
 ---
