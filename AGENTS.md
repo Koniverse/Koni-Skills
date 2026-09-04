@@ -41,7 +41,10 @@ Koni-Skills/
 │       └── SKILL.md       ← Skill definition + instructions
 ├── docs/                  ← Project documentation (managed by koni-docs)
 │   ├── CHANGELOG.md       ← Full release history (canonical, per skill §0)
-│   └── ...                ← BRIEF / PRD / ARCH / CONTEXT / LESSONS / SETUP / sprints/
+│   └── ...                ← BRIEF / PRD / ARCH / CONTEXT / LESSONS / SETUP / sprints/ / tests/
+├── packages/koni-docs/    ← The @koniverse/koni-docs CLI + lib (npm-published)
+├── .koni-harness/         ← Vendored commit/release gate (runner + checks + gates.conf)
+├── .github/workflows/     ← CI — runs the guards on every push and PR
 └── .agents/               ← Managed skill installations (do not hand-edit)
     └── skills/
         └── <installed-skill>/
@@ -137,6 +140,10 @@ happens in `koni-ea`.
 | Test a skill | Use skill-creator eval workflow with test prompts |
 | Optimize a skill's description | Use skill-creator's description optimization loop |
 | Package a skill for distribution | `python .agents/skills/skill-creator/scripts/package_skill.py skills/<name>/` |
+| **Verify a skill doc edit** | `python3 skills/koni-docs/scripts/check-references.py skills/<name>` — every link, anchor, §-pointer, and named script must resolve |
+| **Verify a gate change** | `sh skills/koni-harness/scripts/__tests__/run-all.sh` — runs every self-test and proves coverage against `gates.conf`; a check with no suite fails the run |
+| Run the commit gate by hand | `sh .koni-harness/gate-runner.sh --phase {work-commit,release-commit,pre-push}` |
+| Add a check to the gate | Add the row **and its self-test** — see [`gate-catalog.md`](skills/koni-harness/references/gate-catalog.md) §Testing a check |
 
 ## Conventions
 

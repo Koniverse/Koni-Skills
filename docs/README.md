@@ -31,6 +31,8 @@ docs/
 
 Repo-root:
   VERSION                  ← current semver string
+  .koni-harness/           ← vendored commit/release gate (runner + checks + gates.conf)
+  .github/workflows/ci.yml ← CI: runs the guards on every push and PR
   CLAUDE.md / AGENTS.md    ← project guides with koni-docs integration block
   .active-context.example.md  ← committed template (per-developer snapshot)
   .active-context.md       ← gitignored local snapshot
@@ -45,6 +47,15 @@ Repo-root:
 > **Why no `DESIGN.md`?** Koni-Skills has no UI. Skill output formatting
 > conventions live inside each skill's own `SKILL.md` body, not in a
 > top-level design system.
+>
+> **Why no `tests/` doc tree?** This repo's testable surface is *executable*, not
+> scenario-driven: three guard layers (the gate's check suites, the skill-reference
+> checker, the CLI package tests) run from source and in CI — see
+> [SETUP.md §Run the guards](SETUP.md). There is no user-facing feature to write
+> E2E scenarios against, so the koni-qc `docs/tests/` taxonomy would be an empty
+> scaffold rather than a coverage record. An untracked empty `docs/tests/` exists
+> locally from an earlier scaffold and carries nothing; it is not the standard being
+> half-applied. When a skill ships a user-facing surface, the taxonomy lands then.
 
 ---
 
@@ -78,6 +89,8 @@ Run through every item before pushing a commit that changes code or scope:
 [ ] npx koni-docs status --docs-path docs/      — regenerate STATUS.md (RULE-5)
 [ ] npx koni-docs validate --docs-path docs/    — ID graph + FR refs resolve
 [ ] Touched a skill? python3 skills/koni-docs/scripts/check-references.py <skill-dir>
+[ ] Touched the gate or a check? sh skills/koni-harness/scripts/__tests__/run-all.sh
+[ ] Added a gate check? It needs a self-test — run-all.sh fails on an UNCOVERED check
 [ ] CLAUDE.md `Active Context` block updated (T1–T7 as applicable)
 [ ] English-only for code, comments, UI, errors, commits, docs (RULE-13)
 [ ] Commit prefix: feat:/fix:/chore:/docs:/style:/refactor:/test: (RULE-14)
@@ -122,5 +135,6 @@ For env-var changes (RULE-11), additionally:
 - [LESSONS.md](LESSONS.md) — recurring traps + patterns
 - [sprints/README.md](sprints/README.md) — sprint schema + scripts
 - [sprints/STATUS.md](sprints/STATUS.md) — current kanban (auto-generated)
+- [SETUP.md](SETUP.md) §Run the guards — the three verification layers + how to run them
 - [skills/koni-docs/SKILL.md](../skills/koni-docs/SKILL.md) — the skill this repo builds
 - [AGENTS.md](../AGENTS.md) / [CLAUDE.md](../CLAUDE.md) — agent guides

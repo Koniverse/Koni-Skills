@@ -11,9 +11,10 @@ This file holds only the Claude-Code activation surface for the
 ## Koni-Docs Integration
 
 koni-docs:
-  plugins: []                        # e.g. [supabase, nextjs] — none in v0.1
+  plugins: []                        # BUILT WITH — e.g. [supabase, nextjs]; none, this is a skills repo
+  concerns: []                       # MUST GUARANTEE — e.g. [security]; none: no trust boundary ships here
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W30     # active 2026-07-20 → 2026-07-26 (mechanize the check-count drift class: US-3.19 ships FR-21 at v0.65.0). W29 closed 07-19 at 11 stories/27 pts; W28 not opened (nothing shipped); W27 closed 07-05 at 12 stories/42 pts. Story dates come from `date`, never inferred from a gate rejection — CONTEXT D40
+  active_sprint: sprint-2026-W36     # active 2026-08-31 → 2026-09-06 (absorb five AI-DLC patterns: US-3.25–US-3.28, FR-43–FR-46, v0.70.0). W30 closed 2026-09-04 at 4 stories/13 pts, five weeks after its real end date; W31–W35 not opened (nothing shipped). Sprint dates come from `date`, never inferred — this release hit CONTEXT D40 a second time and corrected before commit
   version_file: VERSION              # path to semver file
 
 > **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.

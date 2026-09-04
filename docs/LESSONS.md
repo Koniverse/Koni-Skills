@@ -1478,3 +1478,117 @@ diff -r skills/<skill> <destination>/skills/<skill> && echo IDENTICAL   # before
 
 See [CONTEXT D42](CONTEXT.md). The receiving repo recorded the same trap as its own
 [LESSONS §1](https://github.com/Koniverse/koni-ea/blob/main/docs/LESSONS.md).
+
+---
+
+## 41. Idempotence implemented as "already ran, skip" is an upgrade path that silently never runs
+
+**What happened**: `install-gate.sh` gitignores the harness's ephemeral working state.
+Adding a third path to that set (`.koni-harness/frame/`) looked like a one-line edit. It
+was not, because of this:
+
+```sh
+if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
+  printf '%s\n.koni-harness/loop-state\n.koni-harness/worktrees/\n%s\n' "$gbegin" "$gend" >> "$gi"
+fi
+```
+
+The marker check is what makes the installer safe to re-run — and it is also the reason
+a re-run can never *change* anything. Every repo installed before a path joined the set
+was frozen at its install-day config, permanently, and the installer reported success
+every time. The new path would have reached only repos that had never installed the
+harness: precisely the repos that did not need the upgrade.
+
+**The lesson**: **idempotence and upgrade are different properties, and the cheap way to
+get the first destroys the second.** "Has this run before?" and "is the result current?"
+are not the same question, but a marker block answers only the first — so the guard that
+protects the user's file also blinds the installer to its own drift. The tell is a
+conditional whose test is *presence of the marker* rather than *presence of the content*:
+the block exists, therefore nothing to do.
+
+The fix is to make the unit of idempotence the **line**, not the block: check each
+required entry, insert only what is missing, inside the existing markers, leaving every
+other line alone. Additive-only survives; the upgrade path appears.
+
+This has teeth beyond one script, because marker-bounded editing is how the entire
+koni-harness adoption model works — git hooks, `.gitignore`, and the documented Claude
+`settings.json` merge all use `# >>> koni-harness >>>`. Every one of them owes the same
+question: *if the block's contents change in a future version, does a re-install deliver
+them?* For the hooks the answer is yes by accident (the block's content is a single
+invariant line). It was no for `.gitignore`.
+
+Sibling of [§39](#39-a-guard-that-bails-out-on-the-case-it-was-written-for-is-a-false-green):
+there an early `return` declined the job on the case that mattered; here an early
+short-circuit declines the job on every repo that already has the feature. Both are
+locally correct, globally a hole, and green.
+
+**Grep check** — a marker-block writer that never reads what is inside the block:
+
+```bash
+# Any install/merge script whose only test is marker PRESENCE is frozen at install day.
+rg -n 'grep -q "\$?g?begin|>>> .* >>>' skills/*/scripts/*.sh | rg -v 'grep -qxF|while IFS'
+```
+
+**How this was found**: not by reading the code. By writing the test for the new path and
+watching it fail on an already-installed fixture — then planting the old short-circuit
+back to confirm the two new assertions die with it (§20, §22). Six assertions now cover
+the fresh install, the upgrade, the untouched user lines, and the no-duplicate re-run.
+
+See [CONTEXT D43](CONTEXT.md), [US-3.26](sprints/stories/US-3.26-frame-protocol.md).
+
+---
+
+## 42. A suite that reads ambient environment state is testing the environment, and it fails in both directions at once
+
+**What happened**: the repo's first CI run — added in v0.70.0 to reproduce "all green" on a
+machine that is not the author's — failed immediately, and then passed while running fewer
+assertions than it printed. Two defects, opposite in shape, from the same cause.
+
+1. **The hard failure.** `test-security-review.sh` ran `git init` and later `git commit`
+   without setting `user.name` / `user.email` on the throwaway repo. Every developer machine
+   has a global git identity, so the suite had always passed. A fresh runner has none:
+   `fatal: empty ident name`. The suite had been latently broken since it was written, and
+   the only reason nobody knew is that nobody had ever run it anywhere else.
+
+2. **The silent one, which is worse.** `swarm-test.sh`'s zsh leg self-skips when zsh is not
+   installed — a reasonable courtesy — and the runner has no zsh. So the three assertions
+   that exist *specifically* to guard [§9](#9-a-scaffolds-for-f-in-unquoted_var-silently-breaks-under-zsh--iterate-literal-lists)
+   (an unquoted-var `for` fuses the wave into one bad id under zsh) **did not run**, and the
+   job reported success. The tell was a number: 24 assertions locally, 21 in CI. Nothing
+   flagged the gap; the count had to be read and compared by hand.
+
+**The lesson**: **a test that depends on ambient host state is not testing your code, it is
+testing your machine — and the two failure directions are not symmetric.** The hard failure
+is loud, cheap, and self-announcing the moment the host changes. The soft one — a
+courtesy-skip that quietly removes coverage — is *invisible*, because a skipped assertion
+and a passing assertion produce the same exit code. The second is how a guard for a known
+lesson ends up not running in the one place it most needs to.
+
+Three practices:
+
+- **Set every input the test depends on, inside the test.** Identity, locale, `TZ`, `HOME`,
+  git config — if the assertion's outcome can change with it, the fixture owns it. `git init`
+  in a suite is always followed by `git config user.email` / `user.name`.
+- **A self-skip must be visible in the aggregate, not just in its own line.** The evaluator
+  prints per-suite assertion counts, which is what made this findable at all — but a count
+  a human has to diff against memory is not a guard. Prefer *installing the dependency* in
+  CI over tolerating the skip; a skip that becomes permanent is a deleted test with better
+  manners.
+- **Enumerate the class after fixing the instance** (§36). One suite was missing git
+  identity; the sweep across all ten that call `git init` confirmed the other nine already
+  set it. That sweep is the difference between "fixed the failure" and "fixed the class".
+
+**Grep check** — a throwaway repo that will commit must own its identity:
+
+```bash
+# every suite that inits a repo must configure it
+for f in $(grep -ln 'git init' skills/*/scripts/__tests__/*.sh skills/*/scripts/checks/__tests__/*.sh); do
+  grep -q 'git config user' "$f" || echo "AMBIENT-IDENTITY: $f"
+done
+```
+
+Sibling of §22 (trust the guard's silence only after you have made it speak): here the guard
+*was* silent for a third reason neither §20 nor §22 covers — it never ran, and said so in a
+line nobody was reading.
+
+See [CONTEXT D43](CONTEXT.md), [US-3.27](sprints/stories/US-3.27-guard-evaluator-ci.md).

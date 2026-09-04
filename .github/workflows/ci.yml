@@ -1,0 +1,89 @@
+name: CI
+
+# The gate runs at commit and push time on a developer's machine, which means it
+# runs on exactly one shell, one OS, and one set of installed tools — whichever
+# the author happens to have. Everything below already existed as a local script;
+# what was missing was a place where "all green" is reproduced by something other
+# than the person claiming it.
+#
+# Three independent guards, deliberately not merged into one job: a red build
+# should name which layer broke without anyone reading a log.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  harness-guards:
+    name: harness guards (${{ matrix.shell }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The harness ships POSIX sh and claims portability. On Ubuntu `sh` is
+        # dash, which is the strict reader that catches bashisms; bash is what
+        # most contributors actually run. A suite that passes only under the
+        # author's shell is not portable, it is lucky.
+        shell: [sh, bash]
+    steps:
+      - uses: actions/checkout@v4
+      # swarm-test's zsh leg guards LESSONS §9 (an unquoted-var `for` fuses the wave
+      # into one bad id under zsh) and *self-skips* when zsh is absent. The runner has
+      # no zsh, so on the first CI run those three assertions silently did not execute
+      # while the job printed green — the lesson's own guard, unguarded. Install it.
+      - name: Install zsh (swarm-test's word-splitting leg needs it)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq zsh
+      - name: Run every self-test + prove gates.conf coverage
+        run: ${{ matrix.shell }} skills/koni-harness/scripts/__tests__/run-all.sh
+
+  skill-references:
+    name: skill docs resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # The checker is trusted only because its planted-defect suite passes; the
+      # suite is trusted only because mutant checkers die against it; and the
+      # corpus is trusted only because it is derived from the checker's own
+      # branches. Run all three before believing the sweep's `0`.
+      - name: Checker self-test (planted defects must be caught)
+        run: python3 skills/koni-docs/scripts/__tests__/test-check-references.py
+      - name: Mutation test (a mutant checker must not survive)
+        run: python3 skills/koni-docs/scripts/__tests__/test-mutations.py
+      - name: Fixture coverage (every branch must be exercised)
+        run: python3 skills/koni-docs/scripts/__tests__/test-coverage.py
+      - name: Sweep every skill for dangling references
+        run: |
+          rc=0
+          for skill in skills/*/; do
+            [ -d "$skill" ] || continue
+            python3 skills/koni-docs/scripts/check-references.py "$skill" || rc=1
+          done
+          exit $rc
+
+  package:
+    name: '@koniverse/koni-docs'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/koni-docs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: packages/koni-docs/package-lock.json
+      - run: npm ci
+      - run: npm test

@@ -29,7 +29,7 @@ description: >
 | Concern | Owner |
 |---|---|
 | Test-design techniques, edge taxonomy, AC↔TC matrix, NFR/security, risk priority, the quality rubric | **koni-qc** (this) |
-| **Security coverage intelligence** — threat model, per-category case derivation, the finding + confidence rubric, false-positive discipline, the adversarial identify→refute→filter method | **koni-qc** [`security-review.md`](references/security-review.md) — delegates *running* the exploit to gstack and the *gate* to koni-harness |
+| **Security coverage intelligence** — threat model, per-category case derivation, the finding + confidence rubric, false-positive discipline, the adversarial identify→refute→filter method | **koni-qc** [`security-review.md`](references/security-review.md) — delegates *running* the exploit to gstack and the *gate* to koni-harness. This method is the **`security` concern extension** (koni-docs [`plugin-pattern.md`](../koni-docs/references/plugin-pattern.md) §Concern extensions): koni-qc owns *how*, the repo's `.koni-harness/security-paths` declares *where*, and the harness `security-review` gate watches it. It is **trigger-enforced** — a trust boundary in the diff owes a review whether or not `concerns:` lists it |
 | Test-doc templates / structure / `docs/tests/` layout | **koni-docs** — `references/templates/test-cases.md`, `test-report.md` (invoke; fill, don't redefine) |
 | Execution (browser / systematic QA, bug reports) | **gstack** — `qa` / `qa-only` / `investigate` / `browse` (invoke) |
 | UI verification against the repo's design | **gstack** `/design-review` — for any UI-bearing case, check it tracks the repo's `DESIGN.md` **and the shadcn standard** (both mandatory; criteria in `references/nfr.md` §UI) (invoke) |

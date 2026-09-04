@@ -105,8 +105,20 @@ These 13 rules apply to ALL Koniverse projects. Full enforcement details in `ref
 | RULE-17 | Frontmatter ID fields = bare canonical IDs only, never prose  | During     |
 | RULE-18 | `due` = a commitment from outside the sprint cadence — sparse, bare date, never moved silently | During |
 
-**Technology-specific rules** (Supabase, Next.js) live in plugin skills. When a project's CLAUDE.md declares them under the `koni-docs:` block (`koni-docs:` → `plugins: [supabase, nextjs]`), load those plugin skills for the additional rules.
-See [`references/plugin-pattern.md`](references/plugin-pattern.md) for how plugin skills are structured, discovered (the `plugins:` key under `koni-docs:`), and composed; `koni-nextjs` is the reference.
+Extra rules arrive on **two axes**, both declared under the `koni-docs:` block in
+CLAUDE.md and both loaded *alongside* this rule set, never instead of it:
+
+- **`plugins:`** — what the repo is *built with*. Technology rules (Supabase, Next.js)
+  live in plugin skills; `koni-docs:` → `plugins: [supabase, nextjs]` loads them.
+- **`concerns:`** — what the repo must *guarantee*, independent of stack;
+  `koni-docs:` → `concerns: [security]`. A concern names its own trigger surface, and
+  some are **trigger-enforced** — they apply when that surface is present whether or
+  not the repo listed them.
+
+See [`references/plugin-pattern.md`](references/plugin-pattern.md) for both axes: how each
+is structured, discovered, and composed. `koni-nextjs` is the reference plugin; `security`
+(koni-qc's method + the harness `security-review` gate + `.koni-harness/security-paths`)
+is the reference concern.
 
 ---
 
@@ -236,14 +248,16 @@ before reading it.
 | [`references/cli.md`](references/cli.md) | Installing, upgrading, or running the CLI; a subcommand, a flag, the commit loops, the typed lib |
 | [`references/templates.md`](references/templates.md) | You want the index of every template, or just the frontmatter shape |
 | [`references/templates/*.md`](references/templates/) | Writing the artifact itself — one file per doc type, each with a filled example; the larger ones open with a section index |
-| [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project sets `plugins:` under its `koni-docs:` block and you need how plugin skills compose |
+| [`references/plugin-pattern.md`](references/plugin-pattern.md) | The project sets `plugins:` or `concerns:` under its `koni-docs:` block and you need how the two extension axes compose — or you are authoring a stack plugin or a concern extension |
 | [`references/bmad-template-analysis.md`](references/bmad-template-analysis.md) | Migrating from BMad, or mapping BMad artifacts into koni-docs |
 | [`evals/`](evals/) | You changed a rule, a template, or the description — run the behavioural evals. They measure what the skill *causes*: does an agent holding it produce a conformant story, resist a `due` that is really just the sprint end, write the CONTEXT entry when a date moves, refuse `--amend`, resolve an assignee to a login? The scripts below test the linter; these test the skill. |
 | [`scripts/check-references.py`](scripts/check-references.py) | **Run it after editing any skill doc** — it asserts that every link, anchor, section pointer, and named script resolves. The `skill-references` gate runs it on every commit that touches a skill. |
 
-**Plugin skills**: if the project's CLAUDE.md sets `plugins:` under its `koni-docs:` block, load those
-skills for technology-specific rules that extend this rule set. `koni-nextjs` is the
-worked example.
+**Extensions**: if the project's CLAUDE.md sets `plugins:` or `concerns:` under its
+`koni-docs:` block, load those alongside this rule set — `plugins:` for
+technology-specific rules (`koni-nextjs` is the worked example), `concerns:` for
+stack-independent guarantees (`security` is the worked example). Both keys are
+**nested under `koni-docs:`**, never top-level.
 
 ---
 

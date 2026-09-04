@@ -9,7 +9,11 @@ description: >
   even if they don't name koni-setup. Also use when a repo is missing its standard
   skeleton, its skill wiring (`.claude` / `.agents` symlinks), the Koniverse skill
   set, VERSION, `_bmad`, or the agile npm scripts, or when checking a repo against
-  the shared standard.
+  the shared standard. Also when onboarding a **brownfield** repo needs its system
+  model derived from the code first — "document this existing codebase", "what is
+  this repo / how is it structured", "write ARCHITECTURE.md from the source",
+  "reverse-engineer this project", "our docs describe nothing", or an
+  `ARCHITECTURE.md` / `BRIEF.md` that exists but is an empty stub.
 ---
 # koni-setup — Koniverse project bootstrapper & onboarder
 
@@ -35,6 +39,13 @@ Two entry points. Decide which one the user is in before doing anything.
 | **Onboard / Audit** | "make this repo match the others", "add sprints/skills", "audit setup", repo already has code | §3 — detect what exists, report gaps, fill only what's missing |
 
 When unsure, run the **detect** step (§1) first — its output tells you which mode fits.
+
+> **Brownfield onboarding has a third act that is easy to skip.** A repo with code
+> gets a `docs/ARCHITECTURE.md` and a `docs/BRIEF.md` that are *shaped* correctly
+> and *say nothing* — the audit marks them ⚠️ stub and moves on, and every future
+> agent re-derives the system from source. §3 step 3 closes that: derive the
+> system model from the code, gate it on the user, then let koni-docs write it.
+> Method: [`references/reverse-engineering.md`](references/reverse-engineering.md).
 
 ---
 
@@ -188,9 +199,19 @@ to live".
    ✅ koni-docs   ⬜ koni-harness   ⬜ koni-qc   ⬜ .koni-harness/ gate
    ```
 
-3. **Fill missing scaffolding only** — for each ⬜, create it (skeleton via this
+3. **Reverse-engineer the system model** *(brownfield only)* — a repo with source
+   files gets its `ARCHITECTURE` / `BRIEF` / component inventory **derived from
+   the code**, presented to the user for approval, and then written by koni-docs.
+   Skip only if the existing docs already name every component, its interface,
+   and its callers without opening a source file. Five passes (purpose →
+   architecture → interfaces → components → flows), the evidence/confidence
+   discipline that keeps an inferred claim from reading like an observed one, and
+   the approval gate are in
+   [`references/reverse-engineering.md`](references/reverse-engineering.md).
+   Doing this **before** step 4 is the point: it is what step 4 has to write.
+4. **Fill missing scaffolding only** — for each ⬜, create it (skeleton via this
    skill, content via koni-docs). For each ⚠️ stub, ask before touching.
-4. **Re-wire skills if broken** — confirm the **core trio** (koni-docs +
+5. **Re-wire skills if broken** — confirm the **core trio** (koni-docs +
    koni-harness + koni-qc) is wired and re-point any dangling symlink (see
    `references/skill-wiring.md` §repair); if koni-harness is wired but
    `.koni-harness/gate-runner.sh` is absent, run its `install-gate.sh` (the
@@ -200,10 +221,10 @@ to live".
    zero means `npx bmad-method install` was never run — the most common onboarding
    gap (see
    [`references/skill-inventory.md`](references/skill-inventory.md) §audit).
-5. **Hand off doc backfill to koni-docs** — if stories/CHANGELOG/PRD need real
+6. **Hand off doc backfill to koni-docs** — if stories/CHANGELOG/PRD need real
    content or a consistency sweep, that's koni-docs' job: run its audit loop
    (`koni-docs validate` / `backfill-fields` / `status`).
-6. **Verify** (§4) and summarize the diff.
+7. **Verify** (§4) and summarize the diff.
 
 ---
 
@@ -248,6 +269,7 @@ Load on demand based on the step you're in:
 | [`references/skill-inventory.md`](references/skill-inventory.md) | **Which AI skills to install** and from which source — the BMAD pack (~40, via `bmad-method install`), koni-docs, global gstack, and the per-profile extras (shadcn, Anthropic doc/design skills). Load whenever installing or auditing the skill set |
 | [`references/skill-wiring.md`](references/skill-wiring.md) | Wiring `.claude` / `.agents` skill dirs, symlink-vs-vendor decision, repairing dangling links, the `agile:*` npm scripts + devDep block |
 | [`references/onboarding-audit.md`](references/onboarding-audit.md) | The present/missing audit matrix for onboarding an existing repo |
+| [`references/reverse-engineering.md`](references/reverse-engineering.md) | **Brownfield onboarding (§3 step 3)** — deriving purpose / architecture / interfaces / components / flows from an existing codebase: the five passes, the evidence-and-confidence discipline, the approval gate, and where each finding lands in koni-docs' templates |
 
 **Boundary reminder**: anything about *documentation content* — koni-docs' rule set,
 story/epic/PRD/CHANGELOG templates, the doc pre-commit checklist, the
