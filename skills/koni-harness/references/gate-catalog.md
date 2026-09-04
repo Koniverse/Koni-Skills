@@ -149,11 +149,11 @@ enforce release-time checks.
 - **Default severity**: `block`
 - **Generalizes from**: koni-docs RULE-1 (the CHANGELOG `## [Unreleased]`
   surface that pending entries land under).
-- **Self-test**: `checks/__tests__/test-changelog-anchor.sh` (8 assertions).
-  Two of them are the reason an eight-line check needed a suite at all: `docs/`
-  **takes precedence** over a root copy even when the root copy would pass (a
-  repo mid-D10 migration can hold both, and reading the stale one certifies
-  nothing), and a repo with **no** CHANGELOG fails rather than skips.
+- **Self-test**: `checks/__tests__/test-changelog-anchor.sh`. Two assertions are
+  the reason an eight-line check needed a suite at all: `docs/` **takes
+  precedence** over a root copy even when the root copy would pass (a repo
+  mid-D10 migration can hold both, and reading the stale one certifies nothing),
+  and a repo with **no** CHANGELOG fails rather than skips.
 - **`gates.conf` row**:
   ```
   changelog-anchor     | checks/changelog-anchor.sh         | release-commit             | block |
@@ -178,7 +178,7 @@ enforce release-time checks.
 - **Phase(s)**: `work-commit`, `pre-push`
 - **Default severity**: `block`
 - **Generalizes from**: Senti-Quant's credential-isolation discipline.
-- **Self-test**: `checks/__tests__/test-credential-scan.sh` (12 assertions).
+- **Self-test**: `checks/__tests__/test-credential-scan.sh`.
   It pins both error directions, plus the boundary that makes the check usable:
   **removing** a secret must not block the commit that removes it (added lines
   only), the 24-char floor holds so `token = "abc"` does not fire, and an
@@ -209,7 +209,7 @@ enforce release-time checks.
 - **Generalizes from**: the koni-docs sprint model (a `done` story should have
   all AC checked).
 - **Self-test**: `checks/__tests__/test-story-status-consistency.sh`
-  (12 assertions). Writing it **found a live false negative**: the pattern
+  Writing it **found a live false negative**: the pattern
   accepted `**status:** done` but not `**status**: done` — the more common bold
   spelling — so a story written that way was skipped in silence. Both forms are
   now pinned, along with the `doneish` guard and the rule that an `in-progress`
@@ -324,7 +324,7 @@ enforce release-time checks.
 - **Default severity**: `warn` (warn first; a repo opts into `block` once its
   docs validate clean)
 - **Generalizes from**: the koni-docs `validate` CLI.
-- **Self-test**: `checks/__tests__/test-koni-docs-validate.sh` (10 assertions),
+- **Self-test**: `checks/__tests__/test-koni-docs-validate.sh`,
   driven by a stub `npx` so no network or install is needed. Three skip-passes
   make it possible for this check to exit `0` forever without validating
   anything, so the suite's load-bearing assertion is the opposite one: **a
@@ -472,6 +472,15 @@ Two floors (`MIN_SUITES`, `MIN_CHECKS`) sit at the top of the runner, for the
 same reason koni-docs' fixture suites carry `MIN_CLASSES`: emptying a corpus used
 to read as passing it. Raise them when the real number rises; never lower one to
 turn a build green.
+
+**Assertion counts are deliberately absent from these entries.** A number in prose is
+a promise to stay in sync with something you do not control (LESSONS §28), and the
+ground truth here is genuinely ambiguous — the suites report in three dialects and one
+of them prints a single line covering five cases, so "how many assertions" has no single
+right answer. `run-all.sh` prints the live count per suite; read it there rather than
+re-numbering these entries. The counts that *are* mechanized — a stated
+`N release-commit-only checks` against `gates.conf` — are enforced by
+`check-references.py` (US-3.19).
 
 **Writing the suite for a new check** — three obligations, in order of how often
 they are skipped:

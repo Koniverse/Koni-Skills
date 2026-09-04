@@ -98,12 +98,21 @@ MUST_CATCH = {
     # Without this, removing the in_fence guard from the ANCHOR_LINK pass broke nothing
     # the suite could see — a surviving mutant names its own hole.
     'phantom anchor from a ``` fence': 'dead anchor #a-heading-that-only-exists-inside-a-backtick-fence',
+    # The two hard platform limits on SKILL.md frontmatter. Over either, the field is
+    # truncated at load — and a truncated `description` is a skill that silently stops
+    # triggering on whatever fell off the end. koni-harness sat at 1013/1024 with eleven
+    # characters of headroom and one round of added triggers took it to 1282; nothing in
+    # the repo read that budget. Three separate needles, because a single 'frontmatter'
+    # substring would let a checker that only measures `name` satisfy all three.
+    'an over-length frontmatter name': 'frontmatter `name` is 70 chars, limit 64',
+    'an over-length frontmatter description': 'frontmatter `description` is 1100 chars, limit 1024',
+    'frontmatter missing description entirely': 'frontmatter is missing `description:`',
 }
 
 # Floors. A reviewer emptied MUST_CATCH and the suite reported "0 planted defect classes
 # all caught" — rc=0, gate green, checker fully blind. A suite with no floor is the
 # sixteenth way to print 0.
-MIN_CLASSES = 38
+MIN_CLASSES = 41
 
 
 def run(target: Path) -> tuple[int, str]:

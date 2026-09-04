@@ -148,6 +148,21 @@ MUTATIONS: list[tuple[str, str, str]] = [
         "    r'(?P<w2>release-commit-only checks|release-only checks)'",
         "    r'(?P<w2>a-noun-no-doc-ever-writes)'",
     ),
+    (
+        'the frontmatter budget checks only `name` — an over-length description slips through',
+        "                for field, limit in (('name', 64), ('description', 1024)):",
+        "                for field, limit in (('name', 64),):",
+    ),
+    (
+        'the description limit is raised past the platform maximum',
+        "                for field, limit in (('name', 64), ('description', 1024)):",
+        "                for field, limit in (('name', 64), ('description', 99999)):",
+    ),
+    (
+        'a missing frontmatter field is skipped instead of reported',
+        "                        problems.append(f'{md}: frontmatter is missing `{field}:`')",
+        "                        pass",
+    ),
 ]
 
 
@@ -171,7 +186,7 @@ def run_suite(checker_source: str) -> tuple[int, str]:
         return p.returncode, p.stdout + p.stderr
 
 
-MIN_MUTANTS = 21
+MIN_MUTANTS = 24
 
 
 def main() -> int:

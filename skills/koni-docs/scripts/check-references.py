@@ -499,6 +499,28 @@ def check(root: Path) -> list[str]:
             if not found:
                 problems.append(f'{md}: names a script that does not exist -> {m.group(1)}')
 
+        # A SKILL.md's frontmatter carries two hard platform limits: name <= 64 chars,
+        # description <= 1024. Over the limit the field is truncated at load, and a
+        # truncated description is a skill that stops triggering on whatever fell off
+        # the end — silently, because nothing else in the repo reads that budget.
+        # This bit for real: koni-harness sat at 1013/1024 with 11 characters of
+        # headroom, and one round of added triggers pushed it to 1282.
+        if md.name == 'SKILL.md':
+            fm = re.match(r'---\n(.*?)\n---\n', text, re.S)
+            if fm:
+                for field, limit in (('name', 64), ('description', 1024)):
+                    v = re.search(
+                        rf'^{field}:[ \t]*>?[ \t]*\n?(.*?)(?=\n[a-z_]+:|\Z)',
+                        fm.group(1), re.S | re.M)
+                    if not v:
+                        problems.append(f'{md}: frontmatter is missing `{field}:`')
+                        continue
+                    n = len(' '.join(v.group(1).split()))
+                    if n > limit:
+                        problems.append(
+                            f'{md}: frontmatter `{field}` is {n} chars, limit {limit} '
+                            f'— it will be truncated at load')
+
     return problems
 
 

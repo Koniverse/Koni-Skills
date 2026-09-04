@@ -14,6 +14,54 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.71.0] — 2026-09-04 — run the skill-grading pass v0.70.0 owed, and guard the budget it broke
+
+The koni-harness loop says that when the deliverable is a **skill**, Review runs koni-qc
+**skill-grading** (≥95/100, [D19](CONTEXT.md)) instead of the product AC↔TC gate. Four
+skills changed in v0.70.0 and none was graded — the Review stage was reported complete on
+a step that never ran. This runs the dimension that needs no subagents (D4,
+best-practices) and fixes what it found.
+
+### Fixed
+
+- **`koni-harness`'s `description` was 1282 characters against a 1024 platform maximum.**
+  Over the limit the field truncates at load, and a truncated description is a skill that
+  silently stops triggering on whatever fell off the end. It had been at 1013/1024 —
+  eleven characters of headroom — for several versions; one round of added triggers took
+  it 269 past the edge, and nothing objected because nothing here read that budget.
+  Rewritten **triggers-only** (the rubric forbids workflow/ownership prose in
+  frontmatter): 876 chars. New: [LESSONS §43](LESSONS.md).
+
+- **Four prose assertion-counts in `gate-catalog.md`** — added in v0.70.0, and the exact
+  drift class US-3.19 mechanized for `checks`. Per [LESSONS §28](LESSONS.md) an ambiguous
+  count is de-numbered rather than mechanized, and this one genuinely is: the suites report
+  in three dialects and one prints a single line covering five cases. Removed, with the
+  reason stated in place so the next author does not helpfully restore them.
+
+### Added
+
+- **`check-references.py` now enforces the two SKILL.md frontmatter budgets** (`name` ≤ 64,
+  `description` ≤ 1024) and reports a missing `name:` / `description:`. A limit that lives
+  in the platform's spec rather than in this repo is one nobody here was checking — so it
+  is imported into the guard, with the number and the consequence in the failure message.
+
+  Pinned to the repo's existing discipline: three planted defect classes in the self-test
+  (floor 38 → 41), three mutants that narrow the new branch (floor 21 → 24), and a fixture
+  for the missing-field path. The coverage gate rejected the first attempt for precisely
+  that missing fixture, which is the gate working.
+
+### Notes
+
+- **D1 / D2 / D3 have not run.** Triggering (blind router), rule-robustness (pressure
+  scenarios), and author-blind content review each require subagents by method — D3
+  explicitly requires an agent that did *not* write the diff. The four skills are therefore
+  **not yet graded to the ≥95 bar**; only D4 is done. Recorded as outstanding rather than
+  passed.
+- No story: a Review-stage pass over already-shipped FRs ([D33](CONTEXT.md) anti-sprawl →
+  sprint note + CHANGELOG).
+
+---
+
 ## [0.70.2] — 2026-09-04 — the first CI run failed, and the way it failed was the point
 
 v0.70.0 added CI so that "all green" would be reproduced by something other than the

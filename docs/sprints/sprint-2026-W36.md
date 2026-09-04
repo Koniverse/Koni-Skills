@@ -121,3 +121,31 @@ the class swept across all ten suites that call `git init`. Recorded as
 The sequence is worth keeping: US-3.27 argued that a guard's green is only worth what its
 own verification is worth, and then the guard it added immediately proved the point
 against the repo's existing suites.
+
+**v0.71.0 — the skill-grading pass this sprint owed and had not run.** The koni-harness
+loop says that when the deliverable is a *skill*, Review runs koni-qc **skill-grading**
+(≥95/100, [D19](../CONTEXT.md)) instead of the product AC↔TC gate. Four skills changed in
+v0.70.0 and none was graded — the Review stage was declared complete on a step that never
+ran, which is [LESSONS §38](../LESSONS.md)'s shape exactly (a stage resolves, so nobody
+asks what it resolved over).
+
+**D4 (best-practices) found two defects, both mechanical and both mine:**
+
+1. `koni-harness`'s `description` was **1282 chars against a 1024 platform maximum** — over
+   the limit it truncates at load, and a truncated description is a skill that stops
+   triggering. It had sat at 1013/1024 for versions; one round of added triggers crossed it.
+   Rewritten triggers-only (the rubric forbids workflow/ownership prose in frontmatter):
+   876 chars. New: [LESSONS §43](../LESSONS.md).
+2. Four **prose assertion-counts** added to `gate-catalog.md` in v0.70.0 — the exact drift
+   class US-3.19 mechanized for `checks`. Per [LESSONS §28](../LESSONS.md) an ambiguous
+   count is de-numbered rather than mechanized, and this one is genuinely ambiguous (the
+   suites report in three dialects; one prints a single line covering five cases). Removed,
+   with the reason stated so the next author does not helpfully restore them.
+
+The budget is now guarded rather than remembered: `check-references.py` enforces both
+frontmatter limits, pinned by three planted classes, three mutants, and a fixture for the
+missing-field branch (the coverage gate rejected the first attempt for exactly that).
+
+**D1 / D2 / D3 have not run.** All three require subagents by method — a blind router
+(D1), pressure-test agents (D2), and an author-blind reviewer (D3, and it must not be the
+agent that wrote the diff). They are outstanding, not passed.
