@@ -36,6 +36,12 @@ jobs:
         shell: [sh, bash]
     steps:
       - uses: actions/checkout@v4
+      # swarm-test's zsh leg guards LESSONS §9 (an unquoted-var `for` fuses the wave
+      # into one bad id under zsh) and *self-skips* when zsh is absent. The runner has
+      # no zsh, so on the first CI run those three assertions silently did not execute
+      # while the job printed green — the lesson's own guard, unguarded. Install it.
+      - name: Install zsh (swarm-test's word-splitting leg needs it)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq zsh
       - name: Run every self-test + prove gates.conf coverage
         run: ${{ matrix.shell }} skills/koni-harness/scripts/__tests__/run-all.sh
 

@@ -14,6 +14,40 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.70.2] — 2026-09-04 — the first CI run failed, and the way it failed was the point
+
+v0.70.0 added CI so that "all green" would be reproduced by something other than the
+machine claiming it. Its first run found two defects on the first try, both invisible
+locally, and in opposite directions. New: [LESSONS §42](LESSONS.md).
+
+### Fixed
+
+- **`test-security-review.sh` depended on the developer's global git identity.** It ran
+  `git init` and later `git commit` without configuring `user.name` / `user.email` on the
+  throwaway repo. Every dev machine has a global identity, so the suite had always passed;
+  a fresh runner has none and it died with `fatal: empty ident name`. Latently broken since
+  it was written — the only reason nobody knew is that nobody had run it anywhere else.
+  Verified by reproducing the runner's condition locally (`GIT_CONFIG_GLOBAL=/dev/null`).
+
+  Class swept, not just the instance (LESSONS §36): all ten suites that call `git init`
+  were checked; the other nine already configure identity.
+
+- **CI silently ran three fewer assertions than it printed.** `swarm-test.sh`'s zsh leg
+  self-skips when zsh is absent, and the runner has no zsh — so the assertions that exist
+  *specifically* to guard LESSONS §9 (an unquoted-var `for` fuses the wave into one bad id
+  under zsh) did not execute, while the job reported success. The tell was a number only:
+  24 assertions locally, 21 in CI. The workflow now installs zsh, because a skip that
+  becomes permanent is a deleted test with better manners.
+
+### Notes
+
+- The `story-status` WARN in the release gate remains pre-existing and unchanged (7 stories
+  from the v0.2.0–v0.7.0 era).
+- No story: a fix to a shipped FR's verification layer, recorded in the sprint note and
+  here ([D33](CONTEXT.md) anti-sprawl).
+
+---
+
 ## [0.70.1] — 2026-09-04 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
 
 v0.70.0 shipped its CHANGELOG / CONTEXT / LESSONS / PRD / EPIC / story surface and stopped

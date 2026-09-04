@@ -109,3 +109,15 @@ recurring, not a new trap; §18 already prescribes the fix, which is to grep for
 rule's *recipe* rather than its name. Adding a §42 that restated it would lengthen the
 file without teaching anything it does not already say. The `docs/tests/` honesty catch
 is likewise §12 working as intended, caught in draft rather than shipped.
+
+**v0.70.2 — the CI added in v0.70.0 failed on its first run, which is the result.** Two
+defects, opposite in shape, neither visible on any developer machine: a suite that
+inherited the author's global git identity (hard failure, latent since it was written),
+and a courtesy-skip that removed three assertions while printing green — the assertions
+guarding LESSONS §9, absent from the one environment that most needed them. Both fixed;
+the class swept across all ten suites that call `git init`. Recorded as
+[LESSONS §42](../LESSONS.md).
+
+The sequence is worth keeping: US-3.27 argued that a guard's green is only worth what its
+own verification is worth, and then the guard it added immediately proved the point
+against the repo's existing suites.

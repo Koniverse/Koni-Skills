@@ -22,6 +22,12 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 cd "$tmp"
 git init -q
+# Identity is set on the throwaway repo, not inherited. `git commit` (case 4) fails with
+# "empty ident name" wherever no global user.name/user.email exists — which is every CI
+# runner and every fresh container. The suite passed for the same reason it was broken:
+# it was only ever run on a machine that happened to have a global git identity.
+git config user.email t@t
+git config user.name t
 mkdir -p .koni-harness src/auth
 
 # 1. No security-paths file → the check is a documented no-op: exit 0 AND no output.
