@@ -14,6 +14,62 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.70.1] — 2026-09-04 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
+
+v0.70.0 shipped its CHANGELOG / CONTEXT / LESSONS / PRD / EPIC / story surface and stopped
+there. This completes it. One of the four was a live defect, not a gap.
+
+### Fixed
+
+- **`ARCHITECTURE.md`'s activation contract listed `plugins` alone** after `concerns`
+  shipped. That section is the canonical description of what an agent reads in a project's
+  `CLAUDE.md` at session start, so it was teaching an incomplete key set — LESSONS §18 (a
+  rule is only enforced where it is *read*) recurring. The diff-to-doc mapping missed it
+  because "adding a config key" did not look like "module boundaries move"; an activation
+  contract **is** architecture.
+
+- **`SETUP.md` still taught `npx koni-docs sync`**, which [CONTEXT D39](CONTEXT.md) forbids
+  in this repo (at CLI 0.10.0 it over-aggregates the PRD/EPIC Ship column and overwrites
+  curated `version_shipped` narrative). The rule was recorded in the doc hub and in
+  CONTEXT, and contradicted in the file a developer actually opens to learn the commands.
+
+### Added
+
+- **`SETUP.md` §Run the guards** — the three verification layers and how to run each
+  locally (`run-all.sh`, `check-references.py`, `npm test`), plus the gate phases, plus the
+  rule that adding a gate check means adding its self-test.
+
+- **`ARCHITECTURE.md` §Verification architecture** — the three layers as a table (subject,
+  entry point, and *why each is trustworthy*), why they are deliberately not merged into
+  one command, and the floors/shell-matrix rationale. Two rows added to the security table:
+  the `credential-scan` allowlist's missing file scoping, and guard trustworthiness.
+
+- **`AGENTS.md`** — `.github/workflows/`, `.koni-harness/`, and `packages/koni-docs/` in
+  the structure tree; four verification rows in the quick-reference table.
+
+- **`docs/README.md`** — the two guard lines in the pre-commit checklist, `.koni-harness/`
+  and `.github/` in the repo-root tree, and a callout explaining why there is no
+  `docs/tests/` taxonomy (the testable surface here is executable, not scenario-driven).
+
+### Changed
+
+- **`STATUS.md` regenerated** — last generated 2026-07-23; now current at 81 stories
+  (76 done), including US-3.25–US-3.28.
+
+### Notes
+
+- **No story for this round, deliberately** — it refines four already-shipped FRs rather
+  than delivering a new one, which the anti-sprawl rule ([D33](CONTEXT.md)) sends to a
+  sprint note + CHANGELOG rather than a US. This is not the LESSONS §37 "docs-only" excuse:
+  that lesson is about a commit fixing live defects while claiming to be cosmetic, and the
+  live defect here is named rather than waved past.
+- **An honesty correction caught in draft**: a line describing `docs/tests/` as carrying
+  "test docs (koni-qc test-organization standard)" was written and then removed — the
+  directory is empty and untracked, so the claim would have been the LESSONS §12 failure
+  this repo keeps auditing for.
+
+---
+
 ## [0.70.0] — 2026-09-04 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
 
 A comparative read of AWS Labs' [`aidlc-workflows`](https://github.com/awslabs/aidlc-workflows)

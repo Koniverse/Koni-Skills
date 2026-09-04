@@ -50,12 +50,47 @@ skill-creator    .agents/skills/skill-creator/SKILL.md  anthropics/skills
 # Regenerate STATUS.md from story frontmatter
 npx koni-docs status --docs-path docs/
 
-# Propagate story status across epic, PRD Epics & User Stories, sprint, FR row
-npx koni-docs sync --docs-path docs/
-
-# Preview before writing
-npx koni-docs sync --docs-path docs/ --dry-run
+# Check the ID graph + FR references resolve
+npx koni-docs validate --docs-path docs/
 ```
+
+> **Do not run `koni-docs sync` in this repo.** At CLI 0.10.0 it over-aggregates the
+> PRD/EPIC "Ship" column and overwrites curated `version_shipped` narrative. This repo
+> runs `status` + `validate` only and hand-maintains the FR tables — see
+> [CONTEXT D39](CONTEXT.md). Revisit when a newer CLI fixes the aggregation.
+
+### Run the guards
+
+Three layers, each with its own subject. CI runs all of them on every push and PR
+([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)); run them locally before you
+push so the feedback is seconds instead of minutes.
+
+```bash
+# 1. The gate's checks — runs every self-test AND proves the coverage.
+#    Coverage is derived from gates.conf: a check with no suite fails the run.
+sh skills/koni-harness/scripts/__tests__/run-all.sh
+
+# 2. The skill docs — every link, anchor, §-pointer, and named script must resolve.
+#    Run after editing ANY skill file.
+python3 skills/koni-docs/scripts/check-references.py skills/<skill-name>
+
+# 3. The CLI package
+npm test --prefix packages/koni-docs
+```
+
+The gate itself can be run directly for any phase:
+
+```bash
+sh .koni-harness/gate-runner.sh --phase work-commit
+sh .koni-harness/gate-runner.sh --phase release-commit
+sh .koni-harness/gate-runner.sh --phase pre-push
+```
+
+> **Adding a check to the gate means adding its self-test.** `run-all.sh` reads
+> `gates.conf` and reports any check no suite references as `UNCOVERED`, failing the run —
+> so a new row without a test is a red build, not a quiet gap. The obligations (plant the
+> defect first; pin the skip-passes *as* skip-passes; pin the tolerances) are in
+> [`gate-catalog.md`](../skills/koni-harness/references/gate-catalog.md).
 
 ### Create a new skill in this repo
 

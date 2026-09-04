@@ -75,3 +75,37 @@ without growing what it knows.
 exists, because harness principle 2 earns a gate with an observed failure and this
 class has not yet escaped this repo. If answers start going missing, that is the
 evidence the check is owed.
+
+**v0.70.1 — the doc surface v0.70.0 did not finish.** The release shipped its
+CHANGELOG / CONTEXT / LESSONS / PRD / EPIC / story surface and stopped there. Four
+surfaces were left stale, and one of them was a live defect rather than a gap:
+`ARCHITECTURE.md`'s **activation contract** still listed `plugins` alone after
+`concerns` shipped — the canonical description of what an agent reads at session
+start, teaching an incomplete key set. That is [LESSONS §18](../LESSONS.md) again
+(a rule is only enforced where it is *read*), and the diff-to-doc mapping missed it
+because "adding a config key" did not look like "module boundaries move" — but an
+activation contract **is** architecture.
+
+The other three were gaps: `SETUP.md` had no way to run the new guards (and still
+taught `koni-docs sync`, which [D39](../CONTEXT.md) forbids in this repo), `AGENTS.md`'s
+structure tree predated `.github/` and `.koni-harness/`, and `STATUS.md` had not been
+regenerated since 2026-07-23.
+
+**No story, deliberately.** This refines four already-shipped FRs rather than
+delivering a new one, which the anti-sprawl rule sends to a sprint note + CHANGELOG
+rather than a US ([D33](../CONTEXT.md)). It is *not* the [LESSONS §37](../LESSONS.md)
+"docs-only" excuse: that lesson is about a commit fixing live defects while claiming to
+be cosmetic, and the one live defect here is named above rather than waved past.
+
+**One honesty correction while writing it.** A draft line described `docs/tests/` as
+carrying "test docs (koni-qc test-organization standard)". The directory is empty and
+untracked — the claim would have been exactly the [LESSONS §12](../LESSONS.md) failure
+this repo keeps auditing for. `docs/README.md` now states plainly why the taxonomy is
+absent and that the empty directory is not the standard half-applied.
+
+Lessons: none new — the one real defect in this round (ARCHITECTURE's activation
+contract still teaching `plugins` alone after `concerns` shipped) is LESSONS §18
+recurring, not a new trap; §18 already prescribes the fix, which is to grep for the
+rule's *recipe* rather than its name. Adding a §42 that restated it would lengthen the
+file without teaching anything it does not already say. The `docs/tests/` honesty catch
+is likewise §12 working as intended, caught in draft rather than shipped.

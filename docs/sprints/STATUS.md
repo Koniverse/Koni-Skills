@@ -1,8 +1,8 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-07-23 07:38:54 UTC
-> Total stories: 77
+> Last generated: 2026-09-04 10:36:27 UTC
+> Total stories: 81
 
 ## ⏰ Deadlines (0)
 
@@ -30,7 +30,7 @@ _No stories_
 
 _No stories_
 
-## ✅ Done (72)
+## ✅ Done (76)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -61,6 +61,10 @@ _No stories_
 | US-3.19 | Mechanize the check-count drift class — the guard that would have caught US-3.18's defect | EPIC-3 | P2 | 3 | sprint-2026-W30 | jindo9986 |
 | US-3.21 | koni-docs-standard doc pass — fix ghost-script instructions, stale counts, FR coverage | EPIC-3 | P2 | 2 | sprint-2026-W30 | jindo9986 |
 | US-3.22 | Give Review's two in-house passes a reporting contract; stop deleting sub-7 security findings | EPIC-3 | P1 | 5 | sprint-2026-W30 | jindo9986 |
+| US-3.25 | koni-setup reverse-engineering pass — a brownfield repo gets its system model derived from the code before it is called onboarded | EPIC-3 | P2 | 3 | sprint-2026-W36 | jindo9986 |
+| US-3.26 | Frame protocol + stage-applicability table — give the front half of the loop the specification the back half already has | EPIC-3 | P1 | 5 | sprint-2026-W36 | jindo9986 |
+| US-3.27 | Guard evaluator — one command runs every check self-test and proves the coverage against gates.conf, reproduced in CI | EPIC-3 | P1 | 5 | sprint-2026-W36 | jindo9986 |
+| US-3.28 | Concern extensions — name the second koni-docs extension axis the catalog has been running unnamed | EPIC-3 | P2 | 3 | sprint-2026-W36 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -123,7 +127,7 @@ _No stories_
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0
-- ✅ **Done**: 72
+- ✅ **Done**: 76
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 

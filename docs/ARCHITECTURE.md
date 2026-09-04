@@ -146,11 +146,38 @@ is the guard the `skill-references` gate runs over this repo's own skill docs, a
 `skills/koni-harness/scripts/` holds the gate assets `install-gate.sh` vendors. Neither
 is something a consumer invokes by path.
 
+### Verification architecture (v0.70.0)
+
+Three guard layers, each with a different subject, all reproduced in CI
+([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) rather than trusted from one
+developer's machine:
+
+| Layer | Guards | Entry point | Trusted because |
+|---|---|---|---|
+| **The gate's checks** | that each `gates.conf` check catches what it claims | `skills/koni-harness/scripts/__tests__/run-all.sh` | every suite plants its defect classes; **coverage is derived from `gates.conf`**, so an untested check fails the run rather than passing unseen |
+| **The skill docs** | that every link, anchor, §-pointer, and named script resolves | `skills/koni-docs/scripts/check-references.py` | its own planted-defect suite passes, mutant checkers die against that suite, and every checker branch is exercised by a fixture |
+| **The CLI package** | `@koniverse/koni-docs` behaviour | `npm test --prefix packages/koni-docs` | 147 node:test cases over lib + CLI + viewer |
+
+The recurring principle across all three is that **a guard's green is only worth what its
+own verification is worth** — hence floors (`MIN_SUITES` / `MIN_CHECKS` / `MIN_CLASSES`) so
+an emptied corpus fails instead of reporting zero problems, and hence the dash **and** bash
+CI matrix, since a POSIX guard that passes only under its author's shell is not portable.
+
+The layers are deliberately **not** merged into one command: a red build should name the
+broken layer without anyone reading a log.
+
 **Activation contract** (consumed by every coding agent):
 
 1. Agent reads project's `CLAUDE.md` / `AGENTS.md` at session start.
 2. Agent encounters a **Koni-Docs Integration** config block
-   (`docs_path`, `active_sprint`, `plugins`, `version_file`).
+   (`docs_path`, `active_sprint`, `plugins`, `concerns`, `version_file`).
+   The two extension keys are orthogonal and both nest under `koni-docs:` —
+   `plugins` says what the repo is *built with* (loads a `koni-<tech>` skill),
+   `concerns` says what it must *guarantee* regardless of stack (loads a
+   concern's method + its gate row). A concern may be **trigger-enforced**:
+   `security` applies whenever `.koni-harness/security-paths` declares a
+   boundary, listed or not. See
+   [plugin-pattern.md](../skills/koni-docs/references/plugin-pattern.md).
 3. On a matching user request, agent loads `SKILL.md` body, then loads
    the specific reference file from the activation table on demand
    (e.g. `references/rules.md`, `references/templates/story.md`).
@@ -562,6 +589,8 @@ Owned upstream; the catalog only consumes it.
 | Secrets in skills | Forbidden — skills are public artifacts | No `.env` inside `skills/<name>/`; reviewers reject |
 | Secrets in docs | Forbidden — `docs/` is committed | `.env.example` triplet only (RULE-11); real `.env*` are gitignored |
 | Doc rule enforcement | `koni-docs` rules (RULE-1..14) + `koni-docs validate` | Pre-commit checklist + L3 ID-graph CLI gate |
+| Credential leakage | `credential-scan` gate (blocking, `work-commit` + `pre-push`) | Scans **added** lines only, so removing a leak is never blocked. The `.koni-harness/secret-allow` escape hatch is a substring filter with **no file scoping** — never allowlist a generic pattern (a PEM header) to satisfy a test fixture; assemble the fixture from concatenated halves instead (see `gate-catalog.md` → `credential-scan`) |
+| Guard trustworthiness | Every guard carries its own planted-defect suite, and CI runs them | A guard that has matched nothing is indistinguishable from one that found nothing (LESSONS §16) — so silence counts as evidence only after the guard has been made to speak |
 | Parser error surfacing | `corpus.parseMatterWithPath` wraps gray-matter (v0.7.1) | YAML parse errors include the offending file path, not just `line:col` |
 
 ## Deployment architecture
