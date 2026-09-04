@@ -2,9 +2,9 @@
 id: EPIC-3
 title: "Koniverse skill catalog expansion"
 status: done
-prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-33, FR-41, FR-42'
+prd_ref: 'FR-9, FR-10, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-33, FR-41, FR-42, FR-43, FR-44, FR-45, FR-46'
 created: 2026-05-27T00:00:00.000Z
-updated: 2026-07-15T00:00:00.000Z
+updated: 2026-09-04
 ---
 ## Goal
 
@@ -29,6 +29,11 @@ delivered the pattern + the `koni-nextjs` reference (US-3.1, v0.15.0). All EPIC-
 FRs (FR-9, FR-10, FR-20–FR-25) shipped. (koni-harness was consolidated from five
 phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 
+The epic stayed **open to post-completion enhancement** rather than being re-opened per
+round: pillar 3 (v0.27.0) and pillar 4 (v0.70.0) both landed after the original close.
+Pillar 4 absorbed five patterns from a comparative read of `awslabs/aidlc-workflows`
+(FR-43–FR-46) — see [CONTEXT D43](../../CONTEXT.md).
+
 ### Feature pillars
 
 | # | Pillar                                                              | Stories                                                                                                               | Purpose                                                                                                                                                             |
@@ -36,6 +41,7 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | 1 | **Plugin pattern**                                                  | [US-3.1](../stories/US-3.1-plugin-skill-pattern.md) ✅                                                                 | Define how a plugin skill extends koni-docs rules + ship `koni-nextjs` as the reference implementation                                                              |
 | 2 | **First non-docs Koniverse skills**                                 | [US-3.2](../stories/US-3.2-koni-setup-bootstrapper.md) ✅ · [US-3.3](../stories/US-3.3-koni-harness-agentic-loop.md) ✅ | `koni-setup` (day-0 bootstrapper/onboarder) + `koni-harness` (Agentic Loop standard + portable gate) — prove the multi-skill catalog                                |
 | 3 | **Harness multi-agent orchestration** (post-completion enhancement) | [US-3.8](../stories/US-3.8-harness-parallel-orchestration.md) ✅                                                       | koni-harness parallel execution mode: sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out; `swarm.sh` planner, no stage/gate change |
+| 4 | **AI-DLC absorption** (post-completion enhancement) | [US-3.25](../stories/US-3.25-reverse-engineering-onboard.md) ✅ · [US-3.26](../stories/US-3.26-frame-protocol.md) ✅ · [US-3.27](../stories/US-3.27-guard-evaluator-ci.md) ✅ · [US-3.28](../stories/US-3.28-concern-extensions.md) ✅ | Five patterns absorbed from a comparative read of `awslabs/aidlc-workflows`: a brownfield reverse-engineering pass, a specified Frame stage (question bar + per-element applicability), a coverage-derived guard evaluator with the repo's first CI, and the second extension axis (`concerns:`). See [CONTEXT D43](../../CONTEXT.md) |
 
 ### Out of scope
 
@@ -59,6 +65,10 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | FR-40 | [US-3.9](../stories/US-3.9-harness-security-review-gate.md) | ✅ shipped (v0.55.0) |
 | FR-41 | [US-3.11](../stories/US-3.11-koni-ea-mql5-standard.md) (+ [US-3.12](../stories/US-3.12-koni-ea-programming-focus.md) refocus, [US-3.13](../stories/US-3.13-koni-ea-split-dev-ops.md) rename → koni-ea-dev) | ✅ shipped (v0.57.0; renamed v0.59.0) |
 | FR-42 | [US-3.13](../stories/US-3.13-koni-ea-split-dev-ops.md) | ✅ shipped (v0.59.0) |
+| FR-43 | [US-3.25](../stories/US-3.25-reverse-engineering-onboard.md) | ✅ shipped (v0.70.0) |
+| FR-44 | [US-3.26](../stories/US-3.26-frame-protocol.md) | ✅ shipped (v0.70.0) |
+| FR-45 | [US-3.27](../stories/US-3.27-guard-evaluator-ci.md) | ✅ shipped (v0.70.0) |
+| FR-46 | [US-3.28](../stories/US-3.28-concern-extensions.md) | ✅ shipped (v0.70.0) |
 
 ## Stories
 
@@ -84,6 +94,10 @@ phase-stories into US-3.3 — see [CONTEXT D14](../../CONTEXT.md).)
 | [US-3.23](../stories/US-3.23-regrade-harness-after-review-contract.md) | Re-grade harness after the contract | US-3.22's own Review could not run author-blind (no subagents in session), so its judgement layer is unverified. Four-dimension skill-grading, whole skill, ≥95, D4 ×2 averaged | 📋 backlog | — |
 | [US-3.24](../stories/US-3.24-model-tier-policy.md) | Model + effort tier policy | Per-pass model/effort assignment on the *existing* Tier B fan-out points, **gated on a measured recall floor** against the planted-defect corpus. No orchestrator tier, no mid-session model switch; skill-grading + security-review + author-blind content out of scope | 📋 backlog | — |
 | [US-3.21](../stories/US-3.21-koni-docs-standard-pass.md) | koni-docs-standard doc pass | Fix four live doc defects — a pre-commit checklist invoking `.mjs` scripts deleted in AD-7, PRD TS-1 measuring a nonexistent test, TS-3 stating 9 rules against 13. **Filed retroactively**: shipped in `01fae57` with no story on a "docs-only" justification. LESSONS §37 | ✅ done | v0.65.1 |
+| [US-3.25](../stories/US-3.25-reverse-engineering-onboard.md) | koni-setup reverse-engineering | A brownfield onboard derives purpose/architecture/interfaces/components/flows **from the code** before the repo is called onboarded — five passes, evidence + `(inferred)` markers, unknowns to `backlog` stories, a user-approval gate, landing in existing koni-docs artifacts (no parallel doc tree). Borrowed from AI-DLC's Reverse Engineering stage, with the confidence discipline added | ✅ done | v0.70.0 |
+| [US-3.26](../stories/US-3.26-frame-protocol.md) | Frame protocol + applicability table | Give Frame the specification Review/Doc-gate/Commit already have: a bar for what is worth asking, a frozen question/answer format, answer-routing into CONTEXT D-entries, and a per-element run/skip condition so a skipped step is skipped by a named condition. Also fixed `install-gate.sh`'s ignore-block upgrade path (LESSONS §41) | ✅ done | v0.70.0 |
+| [US-3.27](../stories/US-3.27-guard-evaluator-ci.md) | Guard evaluator + first CI | `run-all.sh` runs all 15 suites and derives coverage from `gates.conf`; an uncovered check fails the run. Closes the 5/10 self-test gap (4 suites, 42 assertions) and adds CI (dash + bash matrix). Writing the suites found a live false negative in `story-status` — LESSONS §36 again | ✅ done | v0.70.0 |
+| [US-3.28](../stories/US-3.28-concern-extensions.md) | Concern extensions (2nd axis) | `plugins:` = what it is built with; `concerns:` = what it must guarantee. Two enrolment modes (opt-in / trigger-enforced), a required trigger surface, and `security` documented as the worked example. Names the axis the catalog already ran unnamed; no speculative concern packs | ✅ done | v0.70.0 |
 
 ## Cross-cutting invariants
 

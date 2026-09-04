@@ -1478,3 +1478,60 @@ diff -r skills/<skill> <destination>/skills/<skill> && echo IDENTICAL   # before
 
 See [CONTEXT D42](CONTEXT.md). The receiving repo recorded the same trap as its own
 [LESSONS §1](https://github.com/Koniverse/koni-ea/blob/main/docs/LESSONS.md).
+
+---
+
+## 41. Idempotence implemented as "already ran, skip" is an upgrade path that silently never runs
+
+**What happened**: `install-gate.sh` gitignores the harness's ephemeral working state.
+Adding a third path to that set (`.koni-harness/frame/`) looked like a one-line edit. It
+was not, because of this:
+
+```sh
+if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
+  printf '%s\n.koni-harness/loop-state\n.koni-harness/worktrees/\n%s\n' "$gbegin" "$gend" >> "$gi"
+fi
+```
+
+The marker check is what makes the installer safe to re-run — and it is also the reason
+a re-run can never *change* anything. Every repo installed before a path joined the set
+was frozen at its install-day config, permanently, and the installer reported success
+every time. The new path would have reached only repos that had never installed the
+harness: precisely the repos that did not need the upgrade.
+
+**The lesson**: **idempotence and upgrade are different properties, and the cheap way to
+get the first destroys the second.** "Has this run before?" and "is the result current?"
+are not the same question, but a marker block answers only the first — so the guard that
+protects the user's file also blinds the installer to its own drift. The tell is a
+conditional whose test is *presence of the marker* rather than *presence of the content*:
+the block exists, therefore nothing to do.
+
+The fix is to make the unit of idempotence the **line**, not the block: check each
+required entry, insert only what is missing, inside the existing markers, leaving every
+other line alone. Additive-only survives; the upgrade path appears.
+
+This has teeth beyond one script, because marker-bounded editing is how the entire
+koni-harness adoption model works — git hooks, `.gitignore`, and the documented Claude
+`settings.json` merge all use `# >>> koni-harness >>>`. Every one of them owes the same
+question: *if the block's contents change in a future version, does a re-install deliver
+them?* For the hooks the answer is yes by accident (the block's content is a single
+invariant line). It was no for `.gitignore`.
+
+Sibling of [§39](#39-a-guard-that-bails-out-on-the-case-it-was-written-for-is-a-false-green):
+there an early `return` declined the job on the case that mattered; here an early
+short-circuit declines the job on every repo that already has the feature. Both are
+locally correct, globally a hole, and green.
+
+**Grep check** — a marker-block writer that never reads what is inside the block:
+
+```bash
+# Any install/merge script whose only test is marker PRESENCE is frozen at install day.
+rg -n 'grep -q "\$?g?begin|>>> .* >>>' skills/*/scripts/*.sh | rg -v 'grep -qxF|while IFS'
+```
+
+**How this was found**: not by reading the code. By writing the test for the new path and
+watching it fail on an already-installed fixture — then planting the old short-circuit
+back to confirm the two new assertions die with it (§20, §22). Six assertions now cover
+the fresh install, the upgrade, the untouched user lines, and the no-duplicate re-run.
+
+See [CONTEXT D43](CONTEXT.md), [US-3.26](sprints/stories/US-3.26-frame-protocol.md).

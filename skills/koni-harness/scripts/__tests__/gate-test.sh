@@ -249,6 +249,60 @@ test_install_from_subdir() {
 }
 test_install_from_subdir
 
+# A repo installed before a path joined the ignore set must still receive it.
+# "Marker present" used to short-circuit the whole block, so every already-installed
+# repo was frozen at whatever the ignore set looked like on its install day.
+test_install_gitignore_upgrade() {
+  INS="$SCRIPTS/install-gate.sh"
+  d=$(newrepo)
+  cat > "$d/.gitignore" <<'EOF'
+node_modules/
+# >>> koni-harness >>>
+.koni-harness/loop-state
+.koni-harness/worktrees/
+# <<< koni-harness <<<
+my-own-thing/
+EOF
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  grep -qxF '.koni-harness/frame/' "$d/.gitignore" \
+    && ok "install: stale ignore block gains the missing path" \
+    || no "install: stale ignore block gains the missing path"
+  # the new line lands INSIDE the block, not after the end marker
+  awk '/>>> koni-harness >>>/{i=1} /<<< koni-harness <<</{i=0} i && /frame\//{f=1} END{exit !f}' \
+    "$d/.gitignore" \
+    && ok "install: missing path lands inside the marker block" \
+    || no "install: missing path lands inside the marker block"
+  # user content on both sides survives
+  grep -qxF 'node_modules/' "$d/.gitignore" && grep -qxF 'my-own-thing/' "$d/.gitignore" \
+    && ok "install: user gitignore lines preserved" || no "install: user gitignore lines preserved"
+  # no duplicate markers, and no duplicated pre-existing path
+  n=$(grep -c '>>> koni-harness >>>' "$d/.gitignore")
+  [ "$n" -eq 1 ] && ok "install: gitignore block not duplicated" || no "install: gitignore block duplicated ($n)"
+  n=$(grep -cxF '.koni-harness/loop-state' "$d/.gitignore")
+  [ "$n" -eq 1 ] && ok "install: existing path not re-added" || no "install: existing path re-added ($n)"
+  # re-running adds nothing further
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  n=$(grep -cxF '.koni-harness/frame/' "$d/.gitignore")
+  [ "$n" -eq 1 ] && ok "install: gitignore upgrade is idempotent" || no "install: gitignore upgrade duplicated ($n)"
+  rm -rf "$d"
+}
+test_install_gitignore_upgrade
+
+# A fresh repo with no .gitignore at all gets the whole set, bounded by markers.
+test_install_gitignore_fresh() {
+  INS="$SCRIPTS/install-gate.sh"
+  d=$(newrepo)
+  ( cd "$d" && sh "$INS" --source "$SCRIPTS" >/dev/null 2>&1 )
+  miss=""
+  for p in .koni-harness/loop-state .koni-harness/worktrees/ .koni-harness/frame/; do
+    grep -qxF "$p" "$d/.gitignore" || miss="$miss $p"
+  done
+  [ -z "$miss" ] && ok "install: fresh gitignore carries the full ignore set" \
+    || no "install: fresh gitignore missing$miss"
+  rm -rf "$d"
+}
+test_install_gitignore_fresh
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

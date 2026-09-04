@@ -52,7 +52,8 @@ gitignored snapshot; the durable record stays in `docs/sprints/`,
 ## Koni-Docs Integration
 
 koni-docs:
-  plugins: []                        # e.g. [supabase, nextjs]
+  plugins: []                        # what it is BUILT WITH — e.g. [supabase, nextjs]
+  concerns: []                       # what it must GUARANTEE — e.g. [security]
   docs_path: docs/                   # where docs live
   active_sprint: sprint-YYYY-WNN     # current sprint ID
   version_file: VERSION              # path to semver file
@@ -69,6 +70,27 @@ koni-docs:
 The agent updates the block between the `<!-- koni-docs:auto-update -->`
 and `<!-- /koni-docs:auto-update -->` markers using `Edit`.
 
+### The two extension keys
+
+`plugins:` and `concerns:` are the repo's two extension axes. Both are **nested
+under `koni-docs:`** — neither is ever a top-level key, and neither is spelled
+`koni-docs-plugins:`, a key that has never existed (LESSONS §21).
+
+| Key | Answers | Loads | Example |
+|---|---|---|---|
+| `plugins:` | what this repo is **built with** | a `koni-<tech>` skill alongside koni-docs | `[nextjs]` → `koni-nextjs`, with its `NX-` rules |
+| `concerns:` | what this repo must **guarantee**, whatever it is built with | a concern's method + its gate row | `[security]` → koni-qc's security-review method + the harness `security-review` gate |
+
+Leave either list empty when nothing applies — `plugins: []` is a real answer,
+not an unfinished one.
+
+**One asymmetry worth knowing before you leave `concerns:` empty**: some concerns
+are *trigger-enforced* rather than opt-in — they apply whenever their trigger
+surface is present, listed or not. `security` is one. What a repo opts into is
+declaring **where** its trust boundaries are (`.koni-harness/security-paths`), not
+whether they get reviewed. Both axes, and how to author a new one, are in
+[`../plugin-pattern.md`](../plugin-pattern.md).
+
 ---
 
 ## 2. Pattern B — File-extracted active-context (recommended for teams)
@@ -80,6 +102,7 @@ and `<!-- /koni-docs:auto-update -->` markers using `Edit`.
 
 koni-docs:
   plugins: []
+  concerns: []
   docs_path: docs/
   active_sprint: sprint-YYYY-WNN
   version_file: VERSION
@@ -248,6 +271,7 @@ documentation map, and behavioral guidelines.
 
 koni-docs:
   plugins: []
+  concerns: []
   docs_path: docs/
   active_sprint: sprint-YYYY-WNN
   version_file: VERSION
@@ -363,6 +387,7 @@ Same triggers for both patterns. Only the *file* the agent writes to differs.
 
 koni-docs:
   plugins: [supabase, nextjs]
+  concerns: [security]
   docs_path: docs/
   active_sprint: sprint-2026-W19
   version_file: VERSION

@@ -149,6 +149,11 @@ enforce release-time checks.
 - **Default severity**: `block`
 - **Generalizes from**: koni-docs RULE-1 (the CHANGELOG `## [Unreleased]`
   surface that pending entries land under).
+- **Self-test**: `checks/__tests__/test-changelog-anchor.sh` (8 assertions).
+  Two of them are the reason an eight-line check needed a suite at all: `docs/`
+  **takes precedence** over a root copy even when the root copy would pass (a
+  repo mid-D10 migration can hold both, and reading the stale one certifies
+  nothing), and a repo with **no** CHANGELOG fails rather than skips.
 - **`gates.conf` row**:
   ```
   changelog-anchor     | checks/changelog-anchor.sh         | release-commit             | block |
@@ -173,6 +178,19 @@ enforce release-time checks.
 - **Phase(s)**: `work-commit`, `pre-push`
 - **Default severity**: `block`
 - **Generalizes from**: Senti-Quant's credential-isolation discipline.
+- **Self-test**: `checks/__tests__/test-credential-scan.sh` (12 assertions).
+  It pins both error directions, plus the boundary that makes the check usable:
+  **removing** a secret must not block the commit that removes it (added lines
+  only), the 24-char floor holds so `token = "abc"` does not fire, and an
+  **empty** allowlist line does not disarm the scan — an empty pattern handed to
+  `grep -vF` matches every line, which is how an escape hatch silently becomes an
+  off switch.
+- **Testing this check without weakening it**: secret-shaped fixtures in a file that is
+  itself staged will trip the check — correctly. Do **not** reach for the allowlist to
+  silence it. The allowlist has no file scoping, so exempting a PEM header for a fixture
+  exempts a real leaked key's first line too, repo-wide, forever. Assemble the fixtures
+  from concatenated halves instead (`'-----BEGIN RSA PRIVATE'' KEY-----'`): the exact
+  string exists at runtime and never appears on a line in the file.
 - **`gates.conf` row**:
   ```
   credential-scan      | checks/credential-scan.sh          | work-commit,pre-push       | block |
@@ -182,12 +200,20 @@ enforce release-time checks.
 
 - **What it asserts**: no story file under `docs/sprints/stories/` is marked
   `status: done` while it still has an unchecked acceptance-criteria/task box
-  (`- [ ]`). The status match is tolerant (case-insensitive, allows surrounding
-  markdown emphasis like `**status:** done`). Missing stories directory → pass.
+  (`- [ ]`). The status match is tolerant (case-insensitive; emphasis is allowed
+  on **either side of the colon** — `status: done`, `**status:** done`, and
+  `**status**: done` all count), and `doneish` does not. Missing stories
+  directory → pass.
 - **Phase(s)**: `release-commit`
 - **Default severity**: `warn`
 - **Generalizes from**: the koni-docs sprint model (a `done` story should have
   all AC checked).
+- **Self-test**: `checks/__tests__/test-story-status-consistency.sh`
+  (12 assertions). Writing it **found a live false negative**: the pattern
+  accepted `**status:** done` but not `**status**: done` — the more common bold
+  spelling — so a story written that way was skipped in silence. Both forms are
+  now pinned, along with the `doneish` guard and the rule that an `in-progress`
+  story is *supposed* to have open boxes.
 - **`gates.conf` row**:
   ```
   story-status         | checks/story-status-consistency.sh | release-commit             | warn  |
@@ -298,6 +324,13 @@ enforce release-time checks.
 - **Default severity**: `warn` (warn first; a repo opts into `block` once its
   docs validate clean)
 - **Generalizes from**: the koni-docs `validate` CLI.
+- **Self-test**: `checks/__tests__/test-koni-docs-validate.sh` (10 assertions),
+  driven by a stub `npx` so no network or install is needed. Three skip-passes
+  make it possible for this check to exit `0` forever without validating
+  anything, so the suite's load-bearing assertion is the opposite one: **a
+  failing validator fails the check**, and its exit code passes through
+  unflattened. The stub also freezes the argv — `--no-install` on both the probe
+  and the run — which is what keeps a pre-commit hook off the registry.
 - **`gates.conf` row**:
   ```
   koni-docs-validate   | checks/koni-docs-validate.sh        | release-commit             | warn  |
@@ -410,6 +443,58 @@ Parsing rules:
 
 ---
 
+## Testing a check
+
+A check is a guard, and **a guard you wrote yourself is a hypothesis until you
+try to break it** (LESSONS §20). Running it over a clean repo and getting `0`
+proves nothing — a check that always prints `0` also prints `0`.
+
+**The evaluator** runs every suite and then proves the set is complete:
+
+```sh
+sh skills/koni-harness/scripts/__tests__/run-all.sh          # run + coverage
+sh skills/koni-harness/scripts/__tests__/run-all.sh --list   # just the suite paths
+```
+
+It does two things. It **runs** every `*-test.sh` / `test-*.sh` under
+`scripts/__tests__/` and `scripts/checks/__tests__/` — previously a hand-run set,
+so "all green" was a claim nobody could reproduce. And it **derives coverage from
+`gates.conf`**: every row names a check script, and a script named by no suite is
+reported `UNCOVERED` and fails the run. Adding a row without a test is a red
+build, not a quiet gap.
+
+Coverage is scoped to the **shipped** `gates.conf`. A consumer repo's vendored
+config may carry local rows — this monorepo's own adds `skill-references` and a
+repo-specific `tests` command — and the harness has no standing to demand a
+shipped self-test for a check it does not ship.
+
+Two floors (`MIN_SUITES`, `MIN_CHECKS`) sit at the top of the runner, for the
+same reason koni-docs' fixture suites carry `MIN_CLASSES`: emptying a corpus used
+to read as passing it. Raise them when the real number rises; never lower one to
+turn a build green.
+
+**Writing the suite for a new check** — three obligations, in order of how often
+they are skipped:
+
+1. **Plant the defect and watch it fail.** Assert the failing exit code for each
+   class the check claims to catch, *before* asserting the clean case passes.
+   Silence is evidence only after you have made the thing speak (LESSONS §22).
+2. **Pin the skip-passes as skip-passes, and pin at least one real failure.** Most
+   of these checks no-op when their subject is absent (no `docs/`, no stories, no
+   staged lines). Every such branch is defensible, and together they let a check
+   exit `0` forever without ever running — so a suite that only exercises skips
+   is a fifteenth way to print `0`.
+3. **Pin the tolerances.** Every deliberate looseness in a pattern — allowed
+   emphasis, case-insensitivity, a length floor — is a claim. An untested
+   tolerance is indistinguishable from an accident, which is exactly how
+   `story-status` shipped unable to read `**status**: done`.
+
+CI reproduces all of it on every push and PR ([`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)),
+running the evaluator under **both `sh` (dash) and `bash`** — a suite that passes
+only under the author's shell is not portable, it is lucky.
+
+---
+
 ## Adding a custom check
 
 1. Write a script that reads the staged state and exits `0` (pass) or `1`
@@ -424,6 +509,12 @@ Parsing rules:
    ```
 3. Dry-run to confirm it is wired:
    `sh .koni-harness/gate-runner.sh --phase work-commit --dry-run`
+4. **Write its self-test** ([Testing a check](#testing-a-check)) — a
+   `test-<name>.sh` beside the other suites in `scripts/checks/__tests__/`,
+   planting each defect class before asserting the clean case. For a check being
+   contributed *back* to the harness this is not optional: `run-all.sh` derives
+   coverage from `gates.conf` and will report the new row `UNCOVERED` until a
+   suite names its script.
 
 The runner is the only orchestrator — checks never call each other. New checks
 should start at `warn` and graduate to `block` once the repo runs clean.

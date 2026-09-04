@@ -39,6 +39,25 @@ profile; untagged rows apply to all.
 - [ ] `<app>/tests/epic/` — the test **code** root exists (koni-qc §2); code repos only
 - [ ] `docs/design/`
 
+### Brownfield system model (code repos — a stub here is a ⬜, not a ✅)
+
+The rows above ask whether the *file* exists. These ask whether it **says
+anything**, which is the only question a brownfield onboard actually turns on —
+a shaped-but-empty `ARCHITECTURE.md` passes a file-existence audit and teaches
+the next agent nothing.
+
+- [ ] `docs/ARCHITECTURE.md` names every top-level component **and its path**
+- [ ] every inbound interface (route / CLI / webhook / queue consumer / package
+      export) and every **outbound** call is enumerated
+- [ ] `docs/BRIEF.md` states what the system is for, not what the template asks for
+- [ ] at least one traced interaction flow (primary journey; plus the money and
+      auth paths where they exist)
+- [ ] inferred claims are marked `(inferred)`; unknowns are `backlog` stories, not blanks
+- [ ] a `docs/CONTEXT.md` D-entry records that the model was derived, when, and from which commit
+
+Any unchecked row ⇒ run [`reverse-engineering.md`](reverse-engineering.md)
+(SKILL.md §3 step 3) **before** filling the remaining scaffolding.
+
 ### Test-doc drift (the ERP-02 patterns — flag, don't silently pass)
 - [ ] **Report path** — run folders are `test-reports/EPIC-NN/<MMDDYYYY>/`, **not** a flat
   `test-reports/<date>/` and **not** ISO `YYYY-MM-DD` (koni-qc test-automation §2 validator)

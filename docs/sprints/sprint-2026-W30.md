@@ -1,6 +1,6 @@
 ---
 id: sprint-2026-W30
-status: in-progress
+status: done
 start: 2026-07-20
 end: 2026-07-26
 goal: 'Close the loop on koni-harness self-verification: mechanize the drift class that the W29 skill-grading pass had to catch by hand (US-3.19, FR-21, v0.65.0) — a stated check-count is now measured against the vendored `gates.conf`.'
@@ -61,3 +61,14 @@ in v0.65.1. It is not counted in the sprint total; it entered the backlog, not t
 commit fixed four live defects, including a pre-commit checklist that no longer ran. The
 commit is not rewritten; the story cites its real SHA and v0.65.1 is the patch that records
 it. See [LESSONS §37](../LESSONS.md).
+
+**Closed on 2026-09-04, at its real end date.** All four stories were `done` and shipped
+(v0.65.0 → v0.67.0) before 2026-07-26; the sprint file simply sat at `status: in-progress`
+for five weeks afterwards because no work touched the repo and nothing forced the close.
+That is the [D32](../CONTEXT.md) shape in its quiet form — not a sprint stretched to
+swallow later work, but a board that stopped being true while nobody was looking. The
+close records the totals as they stood at the end date: **4 stories / 13 pts**.
+
+W31–W35 are **not opened**. Nothing shipped in those weeks, and a sprint file with no work
+in it is bookkeeping, not history — the same call as W28. The next sprint is
+[W36](sprint-2026-W36.md), opened on the real date work resumed.

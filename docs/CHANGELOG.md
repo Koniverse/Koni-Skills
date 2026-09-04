@@ -14,6 +14,113 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.70.0] — 2026-09-04 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
+
+A comparative read of AWS Labs' [`aidlc-workflows`](https://github.com/awslabs/aidlc-workflows)
+against the Koni Agentic Loop came out lopsided in a useful way: Koni leads on the back half
+of the lifecycle (deterministic gates, VERSION/CHANGELOG atomicity, the lessons loop, a
+persistent backlog — none of which AI-DLC has) and trailed on the front half, where AI-DLC
+carries per-stage applicability criteria and a structured question protocol. This release
+absorbs five patterns from it and explicitly declines two. See [CONTEXT D43](CONTEXT.md).
+
+### Added
+
+- **A specified Frame stage** (`koni-harness/references/frame-protocol.md`). Frame was the
+  one loop stage with no contract — so a fork could be resolved by silent assumption, or a
+  user could be asked six questions already answered in `AGENTS.md`, and neither was
+  visible afterwards. Now: a bar for what is worth asking (**different answers must produce
+  different work**; anything answerable from the repo's context files or a `grep` is unread
+  context, not a question), a frozen question/answer file format, and a routing table that
+  sends every answer to a durable home — an architectural fork with real rejected
+  alternatives becomes a `CONTEXT.md` D-entry.
+
+- **A stage-applicability table** (same file, §5). Tiers scale process in bulk; they cannot
+  say whether *this* change needs a security review or an ADR. Each process element now has
+  a named run/skip condition, and the story records which fired:
+  `Applied: … / Skipped: /design-consultation — no UI surface`. Skipping is a claim, so it
+  is stated; when two conditions disagree, run the step.
+
+- **A brownfield reverse-engineering pass** (`koni-setup/references/reverse-engineering.md`).
+  Onboarding a repo with code used to produce an `ARCHITECTURE.md` that was correctly shaped
+  and said nothing — so every future agent re-derived the system from source. Five ordered
+  passes now derive purpose, architecture, interfaces, components, and flows **from the
+  code**, gate the result on the user, and hand it to koni-docs to write. Every claim carries
+  a path; anything not read is marked `(inferred)`; anything unknown becomes a `backlog`
+  story instead of invented text.
+
+- **A guard evaluator** (`koni-harness/scripts/__tests__/run-all.sh`). One command runs all
+  15 self-test suites (215 assertions) and then **derives coverage from `gates.conf`** — a
+  check named by no suite fails the run. Adding a gate row without a test is now a red
+  build, not a quiet gap. Floors (`MIN_SUITES`/`MIN_CHECKS`) keep an emptied corpus from
+  reading as a pass.
+
+- **Self-tests for the four checks that had none** — `changelog-anchor` (8 assertions),
+  `credential-scan` (12), `koni-docs-validate` (10), `story-status-consistency` (12).
+  Coverage of the shipped gate is now 10/10.
+
+- **CI, for the first time in this repo** (`.github/workflows/ci.yml`). Three independent
+  jobs so a red build names the broken layer: harness guards (matrix: **dash and bash**),
+  skill-reference guards (self-test → mutants → coverage → sweep), and the package tests.
+  Everything was previously local-only, meaning "all green" was reproduced by exactly one
+  machine.
+
+- **A second extension axis** — `concerns:` beside `plugins:`, both nested under
+  `koni-docs:`. `plugins:` answers *what the repo is built with*; `concerns:` answers *what
+  it must guarantee*, independent of stack. Some concerns are **trigger-enforced**: a repo
+  cannot opt out of a security review by omitting a line — what it opts into is declaring
+  *where* its trust boundaries are. This names an axis the catalog has run unnamed for
+  versions (`security` = koni-qc's method + `.koni-harness/security-paths` + the harness
+  gate); no speculative concern packs were added.
+
+### Fixed
+
+- **`story-status-consistency` could not read the bold form `**status**: done`** — a live false negative
+  found by writing its first self-test. The check advertised tolerance for markdown
+  emphasis and implemented only the colon-inside spelling, so a story using the more common
+  bold form was passed in silence for as long as the check has existed. Emphasis is now
+  accepted on either side of the colon; both spellings and the `doneish` guard are pinned.
+  This is LESSONS §36 recurring, not a new lesson.
+
+- **`install-gate.sh` could never upgrade an existing `.gitignore` block.** The marker test
+  that makes the installer safe to re-run also short-circuited the whole step, so any repo
+  installed before a path joined the ignore set was frozen at its install-day config —
+  permanently, while the installer reported success. The unit of idempotence is now the
+  *line*, not the block. New in [LESSONS §41](LESSONS.md).
+
+### Changed
+
+- `agentic-loop-standard.md` — stage 1's entry gate names the Frame protocol; a callout
+  under Right-sizing introduces the per-element override.
+- `gate-catalog.md` — a **Testing a check** section (the three obligations, the floors, the
+  CI matrix), self-test lines on the four newly covered checks, and a fourth step in
+  *Adding a custom check*.
+- `koni-docs` SKILL.md + `templates/integration.md` — both extension keys taught wherever
+  either is taught, with the nesting restated each time (LESSONS §21).
+- `koni-qc` SKILL.md — the security-review row now names itself as the `security` concern.
+- Sprint bookkeeping: **W30 closed** at its real end date after five weeks at
+  `in-progress`; W31–W35 not opened (nothing shipped); [W36](sprints/sprint-2026-W36.md)
+  opened on the date `date` reports. The first attempt at this release opened the sprint as
+  W35 from an inferred date — the [D40](CONTEXT.md) trap, hit a second time and corrected
+  before commit.
+
+### Notes
+
+- **The credential-scan suite blocked its own commit**, and the allowlist was deliberately
+  *not* used to unblock it. `.koni-harness/secret-allow` is a substring filter with no file
+  scoping, so exempting a PEM header to satisfy a test fixture would exempt a real leaked
+  key's first line too, repo-wide and permanently. The fixtures are assembled from
+  concatenated halves instead — the exact string exists at runtime, never on a line in the
+  file. Recorded in the gate catalog so the next author does not take the easy path.
+
+### Not adopted, deliberately
+
+- **AI-DLC's ~13 human approval gates per feature** — Koni's gate is a script with an exit
+  code precisely so that advancing a stage is not a judgement call.
+- **A parallel `aidlc-docs/` doc tree** — a second source of truth beside `docs/`, and the
+  copy that is easier to write is the one that goes stale.
+
+---
+
 ## [0.69.0] — 2026-08-11 — version-phase refuses a version that moves backwards
 
 ### Added

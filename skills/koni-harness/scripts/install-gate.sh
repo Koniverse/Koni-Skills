@@ -43,13 +43,30 @@ chmod +x .koni-harness/swarm.sh
 cp "$SRC/session-start.sh" .koni-harness/session-start.sh
 chmod +x .koni-harness/session-start.sh
 
-# gitignore the ephemeral loop-state + swarm worktrees (additive, marker-bounded, idempotent)
+# gitignore the ephemeral harness working state (additive, marker-bounded, idempotent).
+# Every path here is scratch the loop writes and the repo must never carry:
+#   loop-state  — the single-story loop position
+#   worktrees/  — swarm isolation checkouts
+#   frame/      — Frame question files (the durable record is the story + CONTEXT)
 gi=.gitignore
 gbegin='# >>> koni-harness >>>'
 gend='# <<< koni-harness <<<'
+IGNORES='.koni-harness/loop-state
+.koni-harness/worktrees/
+.koni-harness/frame/'
 if [ ! -f "$gi" ] || ! grep -q "$gbegin" "$gi"; then
   if [ -s "$gi" ] && [ -n "$(tail -c1 "$gi")" ]; then printf '\n' >> "$gi"; fi
-  printf '%s\n.koni-harness/loop-state\n.koni-harness/worktrees/\n%s\n' "$gbegin" "$gend" >> "$gi"
+  { printf '%s\n' "$gbegin"; printf '%s\n' "$IGNORES"; printf '%s\n' "$gend"; } >> "$gi"
+else
+  # The block already exists — a repo installed before a path was added would never
+  # receive it, because "marker present" used to mean "nothing left to do". Add only
+  # the missing lines, inside the existing block, leaving every other line untouched.
+  printf '%s\n' "$IGNORES" | while IFS= read -r want; do
+    [ -n "$want" ] || continue
+    grep -qxF "$want" "$gi" && continue
+    gtmp="$gi.koni-harness.$$"
+    awk -v e="$gend" -v l="$want" '$0 == e { print l } { print }' "$gi" > "$gtmp" && mv "$gtmp" "$gi"
+  done
 fi
 
 # 2. chain a git hook behind a marker block, preserving any existing content

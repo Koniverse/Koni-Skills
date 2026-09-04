@@ -1899,3 +1899,78 @@ resolves to nothing is worse than a link that fails loudly.
 **Date**: 2026-08-02
 **Version**: 0.68.0
 **Reference**: `koni-ea` repo bootstrap (koni-setup, content profile); EPIC-3, FR-41, FR-42.
+
+---
+
+### D43. Absorb five patterns from AI-DLC — the front half of the loop gets specified, and the back half gets a machine to check it
+
+**Context**: A comparative read of AWS Labs'
+[`awslabs/aidlc-workflows`](https://github.com/awslabs/aidlc-workflows) (`aidlc-rules`
+v1.0.1 on `main`) against the Koni Agentic Loop. AI-DLC is a three-phase, stage-gated
+agentic SDLC ruleset — Inception / Construction / Operations — distributed as a zip of
+markdown rules that install into whichever per-tool path the agent reads.
+
+The comparison came out lopsided, and the lopsidedness is the finding. Koni leads
+decisively on the **back half** of the lifecycle: deterministic gates with exit codes,
+`VERSION`/`CHANGELOG` atomicity, the lessons loop, a persistent agile backlog, an
+Operations story — none of which AI-DLC has at all (its Operations phase is an empty
+placeholder). Koni trailed on the **front half**, where AI-DLC carries per-stage
+applicability criteria and a structured, file-based question protocol, and Koni had a
+three-tier dial plus judgement.
+
+**Decision**: Adopt five patterns, as four stories (US-3.25–US-3.28, FR-43–FR-46):
+
+1. **Reverse-engineering pass** (US-3.25) — a brownfield onboard derives its system model
+   from the code before the repo is called onboarded.
+2. **Structured question protocol** (US-3.26) — a stated bar for what is worth asking, a
+   frozen format, and answers routed to durable homes.
+3. **Per-element applicability criteria** (US-3.26) — the tier stays a bulk dial; each
+   process element gains a named run/skip condition, recorded in the story.
+4. **Guard evaluator + CI** (US-3.27) — one command runs every check self-test and derives
+   coverage from `gates.conf`; CI reproduces it on two shells.
+5. **Concern extensions** (US-3.28) — a second extension axis (`concerns:`) beside
+   `plugins:`.
+
+And reject two, explicitly:
+
+- **AI-DLC's ~13 human approval gates per feature.** Koni's gate design exists to avoid
+  exactly this: "a gate is a script with an exit code, not a paragraph of advice… no
+  vibes, no LLM-in-the-loop for a deterministic rule" (harness principle 3). Importing
+  approval bureaucracy would trade the property that makes the cheap tiers safe to take.
+- **The parallel `aidlc-docs/` tree.** A second doc tree beside `docs/` is a second source
+  of truth, and the copy that is easier to write is the copy that goes stale (LESSONS
+  §21). Every borrowed artifact lands in a doc class that already exists; the one new
+  file class (Frame questions) is gitignored scratch whose durable record is the story
+  and this file.
+
+**Rationale**: The alternatives were worse.
+
+*Adopt AI-DLC wholesale* — it installs into `AGENTS.md`, the exact file this repo declares
+canonical (D9), and would fight the koni-docs rule set for the same surface while adding a
+duplicate doc tree. *Adopt nothing* — the comparison found two real gaps, and "we are
+ahead on balance" is not an argument about the places where we are not. *Write our own
+front-half spec without the comparison* — we had had the opportunity for 40 versions and
+had not; the external read is what made the absence visible, which is LESSONS §38's point
+that you must audit for the *absence* of a spec, not only for wrong specs.
+
+One item was **re-scoped by reading our own repo properly**. The evaluator was initially
+framed as "Koni lacks AI-DLC's golden-case CI evaluator". False: koni-docs'
+`check-references.py` already carries a stricter apparatus — planted-defect suite,
+mutation suite, branch-coverage gate. The real gaps were narrower and both true: there was
+**no CI at all**, and the mutation/coverage discipline had never been applied to the
+gate's own checks (5 of 10 had self-tests, and nothing named the gap).
+
+**Impact**: 4 stories / 16 pts. Three new reference files, one new script, four new check
+suites, the repo's first CI workflow, and edits across all five in-repo skills. Writing
+US-3.27's suites found a live false negative in `story-status-consistency` — a fresh
+instance of LESSONS §36, fixed in the same release. `install-gate.sh`'s ignore-block
+upgrade path was found the same way and is [LESSONS §41](LESSONS.md).
+
+Stated limits: the Frame answer-routing is **documented, not gated** (principle 2 earns a
+gate with an observed failure, and this class has not yet escaped this repo), and no
+speculative concern packs were added — `security` is documented as the worked example
+because it is the one concern this catalog actually runs.
+
+**Date**: 2026-09-04
+**Version**: 0.70.0
+**Reference**: [US-3.25](sprints/stories/US-3.25-reverse-engineering-onboard.md), [US-3.26](sprints/stories/US-3.26-frame-protocol.md), [US-3.27](sprints/stories/US-3.27-guard-evaluator-ci.md), [US-3.28](sprints/stories/US-3.28-concern-extensions.md), [EPIC-3](sprints/epics/EPIC-3.md) pillar 4, FR-43–FR-46, [sprint-2026-W36](sprints/sprint-2026-W36.md), [LESSONS §41](LESSONS.md), CHANGELOG [0.70.0].

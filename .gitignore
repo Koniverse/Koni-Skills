@@ -13,4 +13,5 @@ examples/
 # >>> koni-harness >>>
 .koni-harness/loop-state
 .koni-harness/worktrees/
+.koni-harness/frame/
 # <<< koni-harness <<<

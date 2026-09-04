@@ -16,6 +16,7 @@ between its stages.
 
 **Contents**: [The six stages](#the-six-stages) ·
 [Right-sizing the loop](#right-sizing-the-loop) ·
+[Frame protocol](frame-protocol.md) ·
 [Context layers and load order](#context-layers-and-load-order) ·
 [Portability contract](#portability-contract) ·
 [Harness engineering principles](#harness-engineering-principles)
@@ -26,7 +27,7 @@ between its stages.
 
 | # | Stage | Owned by | Entry gate (must be true to enter) |
 |---|---|---|---|
-| 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm; **gstack `/design-consultation` for a UI surface** — design-first callout) | A story exists in `docs/sprints/stories/` with status `in-progress` |
+| 1 | **Frame / Plan** | BMAD (+ Superpowers / gstack for brainstorm; **gstack `/design-consultation` for a UI surface** — design-first callout) | A story exists in `docs/sprints/stories/` with status `in-progress`; **every surviving ambiguity is asked, not assumed** ([`frame-protocol.md`](frame-protocol.md)) |
 | 2 | **Execute** | **Anthropic Skills only** (`frontend-design` for UI — **build both breakpoints, desktop AND mobile**) | Plan approved; **LESSONS read + cited** (lessons-loop callout); for UI work **DESIGN.md + design LESSONS read + cited before any UI code** (design-first callout) |
 | 3 | **Self-verify** | the agent | Code compiles; **new/changed functions have unit tests + meet the unit-coverage bar** (koni-qc `unit-coverage.md`); all tests green |
 | 4 | **Review / QA** | in order: spec-compliance review → **koni-qc** (AC↔TC coverage) → **koni-qc security-review** *(when the change crosses a security trust boundary — auth, authz/multi-tenancy, money/asset movement, untrusted input, secrets/crypto, file upload, deserialization, a new outbound call)* → gstack `/design-review` (UI vs DESIGN.md **+ the shadcn standard** — both mandatory) → code-quality review | Self-verify passed; diff is reviewable |
@@ -235,6 +236,34 @@ symmetric — *full SOP for tier-0 work* burns time, *tier-0 treatment for tier-
 work* ships architecture nobody reviewed. The gate makes the cheap tiers safe to
 take: even a tier-0 commit can't leak a secret or bump a version without a
 changelog, because the gate is non-negotiable.
+
+> **A tier is a bulk dial, not a decision — the per-element override.** The three
+> tiers set how much process runs; they cannot say whether *this* change needs a
+> security review, an ADR, or a design consultation. Leaving that to judgement
+> means a skipped step and a forgotten step look identical in the story, and the
+> reviewer cannot tell them apart either. The **stage-applicability table**
+> ([`frame-protocol.md`](frame-protocol.md) §5) gives each process element a
+> named run/skip condition, and asks the story to record which fired:
+>
+> ```
+> Applied: security-review (untrusted input), written plan (6 files), CONTEXT D-entry
+> Skipped: /design-consultation — no UI surface; NFR pass — no stated target
+> ```
+>
+> **Skipping is a claim, so it is stated.** When two conditions disagree, run the
+> step — a needless design consultation costs an hour, a skipped security review
+> costs an incident. The line is documented, not gated: no failure of this class
+> has escaped this repo yet, and principle 2 below says a gate is earned by a real
+> mistake, not a predicted one.
+>
+> **The same stage owns ambiguity.** Frame is where a fork is either asked about
+> or silently assumed, and a silent assumption surfaces at Review as rework —
+> LESSONS §15 one stage early. `frame-protocol.md` sets the bar for what is worth
+> asking (different answers must produce different work; anything answerable from
+> `AGENTS.md` / `CONTEXT.md` / `DESIGN.md` or a `grep` is unread context, not a
+> question), freezes the question/answer format, and routes every answer to a
+> durable home — an architectural fork with real rejected alternatives becomes a
+> `CONTEXT.md` D-entry, which is what stops the next agent re-litigating it.
 
 This Standard, and the koni-harness skill that ships it, were built at **tier 2**
 (foundational, many architectural decisions, reused everywhere). A landing-page

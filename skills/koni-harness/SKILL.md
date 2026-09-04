@@ -14,7 +14,10 @@ description: >
   docs are filled "just enough" (doc-completeness bar); or to pick the next
   dependency-ready story. Also to run work **multi-agent / in parallel** — "run the
   sprint in parallel / swarm ready stories", "fan out review/tests across
-  agents" (swarm planner + worktree-per-story).
+  agents" (swarm planner + worktree-per-story). Also at **Frame**, before code:
+  "what should I ask before building this", "is this ambiguous enough to stop",
+  "do I need an ADR / security review / design consultation for this change", or
+  "record why we skipped that step" (frame protocol + stage-applicability table).
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -103,6 +106,24 @@ grammar, and how to add your own are in
 [`references/gate-catalog.md`](references/gate-catalog.md); how to wire the
 runner into git / Claude Code / Gemini / Codex / Cursor is in
 [`references/adapters.md`](references/adapters.md).
+
+## Test the gate itself
+
+The checks are guards, and a guard is a hypothesis until you try to break it.
+The **evaluator** runs every self-test and then proves the set is complete —
+coverage is derived from `gates.conf`, so a check named by no suite fails the
+run rather than passing unnoticed:
+
+```sh
+sh skills/koni-harness/scripts/__tests__/run-all.sh
+```
+
+**Adding a check means adding its suite** — plant each defect class and watch it
+fail *before* asserting the clean case, and pin the skip-passes as skip-passes
+(most checks no-op when their subject is absent, which is how a check can exit
+`0` forever without ever running). The obligations, the floors, and the CI
+matrix (`sh`/dash **and** bash on every push and PR) are in
+[`references/gate-catalog.md`](references/gate-catalog.md#testing-a-check).
 
 ## Run a story through the loop
 
@@ -209,6 +230,7 @@ Load on demand based on what you're doing:
 | File | When to load |
 |---|---|
 | [`references/agentic-loop-standard.md`](references/agentic-loop-standard.md) | Explaining the loop, the gates between stages, the context load order, or the portability contract |
+| [`references/frame-protocol.md`](references/frame-protocol.md) | **At Frame, before any code** — deciding what to ask the user vs. what to assume vs. what to just go read, the frozen question/answer file format, where each answer lands (CONTEXT D-entry / story / DESIGN.md), and the **stage-applicability table** that gives every process element a named run/skip condition. Load when a change has a real fork in it, or when you are about to skip a step and want the condition on record |
 | [`references/loop-runner.md`](references/loop-runner.md) | Driving one story through the six stages with `loop.sh` (stage-by-stage drive, tiers, portable fallback, resumability, command reference) |
 | [`references/parallel-orchestration.md`](references/parallel-orchestration.md) | Running the loop **multi-agent / in parallel** — the sprint swarm (worktree per story, wave-by-wave over the DAG) + within-story fan-out, the isolation + integration contract, and `swarm.sh`. Load when you want to run many stories/sub-tasks at once |
 | [`references/review-contract.md`](references/review-contract.md) | Running or specifying Review's two **in-house** passes — spec-compliance and code-quality: the reporting bar (report everything, filter downstream), the finding schema, the author-blind requirement, and triage. Load when a Review pass is about to run, or when a pass is returning bare passes |
