@@ -14,6 +14,67 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.73.0] — 2026-09-29 — the behavioural evals actually ran, and CI now refuses a skill edited since they did
+
+Phase 1 of the AI-native SDLC alignment plan ([program plan](superpowers/plans/2026-09-04-ai-native-sdlc-alignment.md)),
+and the only phase that pays down existing debt while adding the capability.
+[US-3.30](sprints/stories/US-3.30-continuous-evals-in-ci.md) · FR-47.
+
+### Added
+
+- **A byte-reproducible eval corpus** (`skills/koni-docs/evals/fixture/build.sh`). The
+  suite's README warns that *"two runs of the same scenario against different corpora are
+  not comparable"*, which makes the corpus part of the measurement — and it did not exist.
+  A builder rather than a committed tree, so it cannot drift from koni-docs' templates in
+  silence. Two builds produce identical git SHAs.
+
+- **Six blind runs, recorded**: 5 PASS, 1 FAIL. Every agent was given the verbatim prompt
+  and nothing else — never the rule under test, which is the difference between an eval and
+  skill-grading's D2. Four results were verified mechanically rather than believed: eval 04
+  shows 0 amends in the reflog and a recorded SHA that is an ancestor of HEAD; eval 06 is 21
+  insertions and 0 deletions.
+
+- **`skills/koni-qc/references/eval-gate.md`** — the method. What an eval is and is not, why
+  it hides the rule while D2 names it, the frozen-corpus requirement, scoring on the artifact,
+  and corpus growth from real failures rather than to a target number.
+
+- **A CI freshness job.** CI has no agent, so it does not pretend to run one — a job claiming
+  to would be a check that cannot fail. It asserts that **no skill was edited since its evals
+  last ran**, which is a real claim about the exact drift being guarded. Proven able to fail
+  on a post-run skill edit before being trusted.
+
+### Fixed
+
+- **A claim this project repeated three times was false.** US-3.29 finding F, the program
+  plan, and the v0.72.0 CHANGELOG all state that *every* `## Runs` table was empty. Two of
+  six already carried a 2026-07-13 run. The claim came from an author-blind reviewer's
+  report and was propagated without checking; the freshness script written for this story
+  disproved it on its first execution. Finding F is corrected and closed.
+
+- **The eval corpus was `story-lint`-dirty at baseline** (US-2.3 pointed at a sprint file
+  that did not exist), which made eval 01's "story-lint must be clean" criterion unpassable
+  regardless of agent behaviour. A criterion that cannot pass is as useless as one that
+  cannot fail.
+
+### Found, not fixed — a cross-skill gap
+
+Eval 01's FAIL is not agent error. **`koni-docs` never mentions `Lessons applied:`** — `grep`
+returns zero across the whole skill — while `story-lint` requires it on every story created
+after 2026-07-04 (D35). The skill that authors the artifact does not teach a field another
+skill gates, so any agent writing a story with koni-docs alone trips the gate. LESSONS §18
+exactly. Filed into US-3.29's class-A work; the fix is a koni-docs template change.
+
+### Scope honesty
+
+**Most of this shipped inside `be6b0a5`, whose message describes only the clock correction.**
+A `git add -A` during that fix swept in the fixture builder, `eval-gate.md`,
+`eval-freshness.sh`, the filled Runs tables and the koni-qc wiring. The commit is pushed and
+its parent is merged, so it is not rewritten — it is *named*, here and in the story, because
+`git log --grep eval` would otherwise find nothing. Only the CI job and the gate-catalog
+pointer landed in this release's own commit.
+
+---
+
 ## [0.72.1] — 2026-09-29 — the clock was 25 days behind, and "read the clock" had no cross-check
 
 Every date this release cycle wrote was taken from `date`, exactly as CONTEXT D40

@@ -72,6 +72,18 @@ jobs:
           done
           exit $rc
 
+  eval-freshness:
+    name: evals not stale
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }   # the check reads `git log` for each skill's last edit
+      # CI has no agent, so it cannot RUN an eval — claiming otherwise would ship a check
+      # that cannot fail. What it can assert is that nobody edited a skill since its
+      # behavioural evals were last recorded. Method: koni-qc references/eval-gate.md §5.
+      - name: No skill edited since its evals last ran
+        run: sh skills/koni-qc/scripts/eval-freshness.sh --list
+
   package:
     name: '@koniverse/koni-docs'
     runs-on: ubuntu-latest

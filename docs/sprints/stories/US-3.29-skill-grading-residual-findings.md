@@ -113,12 +113,18 @@ blocks and no Band D — 25 cases where Band D expects 40–150, and its own hea
 manual suite it beats had 58. `SKILL.md` routes "show me a worked example" here. Band D's
 *wording* was propagated in v0.72.0; the exemplar itself was not regraded.
 
-### F. Behavioural evals are unrun
+### F. Behavioural evals are unrun — ✅ CLOSED by [US-3.30](US-3.30-continuous-evals-in-ci.md), and the finding as written was partly wrong
 
-`skills/koni-docs/evals/` holds six pressure scenarios (04 is the `--amend` trap, 06 the
-RULE-7 rewrite) and **every `## Runs` table is empty**. By the suite's own standard —
-"a scenario with an empty Runs table is a specification, not a test" — no koni-docs D2
-GREEN has behavioural evidence behind it.
+**Corrected**: this finding claimed **every** `## Runs` table was empty. Two of six (02 and
+06) already carried a 2026-07-13 run. The claim came from an author-blind reviewer's report
+and was propagated into the program plan and the v0.72.0 CHANGELOG without being checked;
+the freshness script written for US-3.30 disproved it on its first execution.
+
+All six now have recorded runs (5 PASS / 1 FAIL), the corpus is frozen and reproducible,
+and CI gates freshness. **A new finding replaces it** — eval 01's FAIL is a cross-skill gap:
+**koni-docs never mentions `Lessons applied:` while `story-lint` requires it on every story
+created after 2026-07-04.** The skill that authors the artifact does not teach a field
+another skill gates. That belongs to class A above.
 
 ## Acceptance criteria
 

@@ -13,8 +13,9 @@ goal: 'Absorb five patterns from a comparative read of `awslabs/aidlc-workflows`
 | US-3.26 | Frame protocol + stage-applicability table                       | EPIC-3 | P1  | 5      | ✅ done | v0.70.0 | [stories/US-3.26-frame-protocol.md](stories/US-3.26-frame-protocol.md)                           |
 | US-3.27 | Guard evaluator — run every check self-test, prove the coverage  | EPIC-3 | P1  | 5      | ✅ done | v0.70.0 | [stories/US-3.27-guard-evaluator-ci.md](stories/US-3.27-guard-evaluator-ci.md)                   |
 | US-3.28 | Concern extensions — the second koni-docs extension axis          | EPIC-3 | P2  | 3      | ✅ done | v0.70.0 | [stories/US-3.28-concern-extensions.md](stories/US-3.28-concern-extensions.md)                   |
+| US-3.30 | Continuous evals — blind runs on a frozen corpus + CI freshness gate | EPIC-3 | P1 | 5 | ✅ done | v0.73.0 | [stories/US-3.30-continuous-evals-in-ci.md](stories/US-3.30-continuous-evals-in-ci.md) |
 
-**Total**: 4 stories / 16 pts / 1 contributor.
+**Total**: 5 stories / 21 pts / 1 contributor.
 
 ## Goal detail
 
@@ -202,3 +203,19 @@ explanation rather than a mystery.
 which nothing happened, and a board that shows a phantom sprint is the same
 doc-dishonesty class as a backdated one. The D33 precedent applies: delete, repoint every
 reference, and leave a resolvable note (this paragraph, plus D44).
+
+**v0.73.0 — US-3.30, Phase 1 of the AI-native SDLC alignment.** Six behavioural evals run
+blind against a frozen reproducible corpus: 5 PASS, 1 FAIL. The FAIL is the useful one —
+koni-docs never teaches `Lessons applied:` while `story-lint` gates it on every new story,
+so the skill that authors the artifact does not know about a field another skill enforces.
+Filed into US-3.29's class A.
+
+Two of my own claims were disproved by my own tooling this round: "every Runs table is
+empty" (two of six already had runs) and a corpus that was lint-dirty at baseline, which
+made one eval's criterion unpassable no matter how the agent behaved.
+
+Lessons: none new — the eval work produced no trap that LESSONS does not already name. The
+one new lesson this sprint earned was §44, and it came from the clock failure in v0.72.1,
+not from here. The "I repeated a reviewer's claim three times without checking it" mistake
+is §19's shape (a check that shares its author's blind spot) seen from the other side —
+worth noting, not worth a §45.

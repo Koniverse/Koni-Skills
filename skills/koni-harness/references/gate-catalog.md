@@ -484,6 +484,11 @@ re-numbering these entries. The counts that *are* mechanized — a stated
 `N release-commit-only checks` against `gates.conf` — are enforced by
 `check-references.py` (US-3.19).
 
+**A fourth layer sits beside these three, and it is not a gate**: behavioural **evals**
+measure what a skill *causes* in another agent, which no check here can see. CI cannot run
+one (no agent), so it asserts freshness instead — no skill ships edited-since-its-evals-ran.
+Method and the freshness gate: koni-qc [`eval-gate.md`](../../koni-qc/references/eval-gate.md).
+
 **Writing the suite for a new check** — three obligations, in order of how often
 they are skipped:
 

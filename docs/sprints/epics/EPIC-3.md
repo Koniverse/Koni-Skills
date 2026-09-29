@@ -69,6 +69,7 @@ Pillar 4 absorbed five patterns from a comparative read of `awslabs/aidlc-workfl
 | FR-44 | [US-3.26](../stories/US-3.26-frame-protocol.md) | ✅ shipped (v0.70.0) |
 | FR-45 | [US-3.27](../stories/US-3.27-guard-evaluator-ci.md) | ✅ shipped (v0.70.0) |
 | FR-46 | [US-3.28](../stories/US-3.28-concern-extensions.md) | ✅ shipped (v0.70.0) |
+| FR-47 | [US-3.30](../stories/US-3.30-continuous-evals-in-ci.md) | ✅ shipped (v0.73.0) |
 
 ## Stories
 
@@ -98,6 +99,7 @@ Pillar 4 absorbed five patterns from a comparative read of `awslabs/aidlc-workfl
 | [US-3.26](../stories/US-3.26-frame-protocol.md) | Frame protocol + applicability table | Give Frame the specification Review/Doc-gate/Commit already have: a bar for what is worth asking, a frozen question/answer format, answer-routing into CONTEXT D-entries, and a per-element run/skip condition so a skipped step is skipped by a named condition. Also fixed `install-gate.sh`'s ignore-block upgrade path (LESSONS §41) | ✅ done | v0.70.0 |
 | [US-3.27](../stories/US-3.27-guard-evaluator-ci.md) | Guard evaluator + first CI | `run-all.sh` runs all 15 suites and derives coverage from `gates.conf`; an uncovered check fails the run. Closes the 5/10 self-test gap (4 suites, 42 assertions) and adds CI (dash + bash matrix). Writing the suites found a live false negative in `story-status` — LESSONS §36 again | ✅ done | v0.70.0 |
 | [US-3.28](../stories/US-3.28-concern-extensions.md) | Concern extensions (2nd axis) | `plugins:` = what it is built with; `concerns:` = what it must guarantee. Two enrolment modes (opt-in / trigger-enforced), a required trigger surface, and `security` documented as the worked example. Names the axis the catalog already ran unnamed; no speculative concern packs | ✅ done | v0.70.0 |
+| [US-3.30](../stories/US-3.30-continuous-evals-in-ci.md) | Continuous evals + CI freshness gate | Phase 1 of the AI-native SDLC alignment plan, and the only phase that also pays down debt (US-3.29 finding F). Frozen reproducible corpus, six blind runs (5 PASS / 1 FAIL), the method in `eval-gate.md`, and a CI job asserting no skill ships edited-since-its-evals-ran. The FAIL is a cross-skill gap: koni-docs never teaches `Lessons applied:` while story-lint gates it | ✅ done | v0.73.0 |
 
 ## Cross-cutting invariants
 
