@@ -5,7 +5,7 @@ epic: EPIC-3
 status: done
 priority: P1
 points: 5
-sprint: sprint-2026-W36
+sprint: sprint-2026-W40
 due:
 version_shipped: 0.70.0
 prd_ref: [FR-44]
@@ -13,8 +13,8 @@ arch_ref: []
 depends_on: []
 assignee: jindo9986
 commit: c62be91
-created: 2026-09-04
-updated: 2026-09-04
+created: 2026-09-29
+updated: 2026-09-29
 external_deps:
 ---
 

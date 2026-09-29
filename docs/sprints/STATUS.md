@@ -1,14 +1,14 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-09-04 10:36:27 UTC
-> Total stories: 81
+> Last generated: 2026-09-29 08:01:23 UTC
+> Total stories: 82
 
 ## ⏰ Deadlines (0)
 
 _No stories carry an explicit deadline._
 
-## 📋 Backlog (5)
+## 📋 Backlog (6)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -16,6 +16,7 @@ _No stories carry an explicit deadline._
 | US-3.20 | Extend the reference sweep to docs/ — the doc hub is currently unguarded | EPIC-3 | P2 | 5 | — | jindo9986 |
 | US-3.23 | Re-grade koni-harness after the review contract — the whole skill, author-blind | EPIC-3 | P1 | 3 | — | jindo9986 |
 | US-3.24 | Model + effort tier policy for the harness fan-out — gated on a measured recall floor | EPIC-3 | P3 | 8 | — | jindo9986 |
+| US-3.29 | Close the residual skill-grading findings — the four skills sit at 80–86/100 against a ≥95 bar | EPIC-3 | P1 | 8 |  | jindo9986 |
 | US-4.38 | npm run typecheck has not run at all — TS2209, then a viewer self-import through the export map | EPIC-4 | P2 | 3 | — | — |
 
 ## 🟢 Ready (0)
@@ -61,10 +62,10 @@ _No stories_
 | US-3.19 | Mechanize the check-count drift class — the guard that would have caught US-3.18's defect | EPIC-3 | P2 | 3 | sprint-2026-W30 | jindo9986 |
 | US-3.21 | koni-docs-standard doc pass — fix ghost-script instructions, stale counts, FR coverage | EPIC-3 | P2 | 2 | sprint-2026-W30 | jindo9986 |
 | US-3.22 | Give Review's two in-house passes a reporting contract; stop deleting sub-7 security findings | EPIC-3 | P1 | 5 | sprint-2026-W30 | jindo9986 |
-| US-3.25 | koni-setup reverse-engineering pass — a brownfield repo gets its system model derived from the code before it is called onboarded | EPIC-3 | P2 | 3 | sprint-2026-W36 | jindo9986 |
-| US-3.26 | Frame protocol + stage-applicability table — give the front half of the loop the specification the back half already has | EPIC-3 | P1 | 5 | sprint-2026-W36 | jindo9986 |
-| US-3.27 | Guard evaluator — one command runs every check self-test and proves the coverage against gates.conf, reproduced in CI | EPIC-3 | P1 | 5 | sprint-2026-W36 | jindo9986 |
-| US-3.28 | Concern extensions — name the second koni-docs extension axis the catalog has been running unnamed | EPIC-3 | P2 | 3 | sprint-2026-W36 | jindo9986 |
+| US-3.25 | koni-setup reverse-engineering pass — a brownfield repo gets its system model derived from the code before it is called onboarded | EPIC-3 | P2 | 3 | sprint-2026-W40 | jindo9986 |
+| US-3.26 | Frame protocol + stage-applicability table — give the front half of the loop the specification the back half already has | EPIC-3 | P1 | 5 | sprint-2026-W40 | jindo9986 |
+| US-3.27 | Guard evaluator — one command runs every check self-test and proves the coverage against gates.conf, reproduced in CI | EPIC-3 | P1 | 5 | sprint-2026-W40 | jindo9986 |
+| US-3.28 | Concern extensions — name the second koni-docs extension axis the catalog has been running unnamed | EPIC-3 | P2 | 3 | sprint-2026-W40 | jindo9986 |
 | US-4.1 | Scaffold packages/koni-docs/src/viewer + Astro SSR | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.2 | CLI bin + koni-docs.config.{json,mjs} support | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
 | US-4.3 | Graceful schema fallback + chokidar/SSE live reload | EPIC-4 | P0 | 5 | sprint-2026-W22 | saltict |
@@ -123,7 +124,7 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 5
+- 📋 **Backlog**: 6
 - 🟢 **Ready**: 0
 - 🟡 **In Progress**: 0
 - 👀 **Review**: 0

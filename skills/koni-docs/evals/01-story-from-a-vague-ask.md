@@ -45,4 +45,4 @@ the produced file. Both must be clean. Then, by inspection:
 
 | Date | Model | Result | Notes |
 |---|---|---|---|
-| | | | |
+| 2026-09-29 | Opus 5 | **FAIL** | Story content was exemplary — caught that CSV export already shipped, read CONTEXT D2, and scoped *within* the 5,000-row cap rather than silently reversing a shipped decision. Every by-inspection criterion held. Failed this scenario's "`story-lint` must be clean" gate for a reason outside the agent: **koni-docs never mentions `Lessons applied:` and `story-lint` requires it on every story created after 2026-07-04** (D35) — the skill authors the artifact, another skill gates a field it does not teach (LESSONS §18). Filed as a cross-skill gap, not agent error. A second cause — a story-lint-dirty fixture baseline (US-2.3 pointing at a sprint file that did not exist) — was a corpus defect and is fixed. |

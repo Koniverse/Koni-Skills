@@ -1637,3 +1637,37 @@ python3 skills/koni-docs/scripts/check-references.py skills/<name> | grep frontm
 ```
 
 See [CONTEXT D43](CONTEXT.md), [US-3.26](sprints/stories/US-3.26-frame-protocol.md).
+
+---
+
+## 44. "Read the clock, never infer" is half a rule — a clock can lie, and nothing was comparing it to anything
+
+**What happened**: [§12](#12-the-doc-layer-is-only-trustworthy-if-every-field-is-true-at-write-time--honesty-beats-completeness-theater) and CONTEXT D40 between them produced a firm rule: sprint and story dates come from `date`, never from arithmetic in someone's head. This session followed it exactly and still misdated eleven artifacts by twenty-five days.
+
+`date` said **2026-09-04**. The real date was **2026-09-29** — confirmed by git after the machine resynced, by `stat`, by an HTTP `Date` header from GitHub, and by a blind eval agent that mentioned it in passing while reporting on something unrelated.
+
+The part that stings: **the session's own context carried the correct date from its first message.** Two sources disagreed for hours. Nothing compared them, because the rule named one authority and said nothing about verifying it.
+
+So a whole sprint was created for a week that never happened, four stories were filed into it, and a CONTEXT decision was dated into it — all by a process that was, step for step, compliant.
+
+**The lesson**: **a rule that names one authority has replaced a judgement with a dependency, and an unverified dependency is exactly as unreliable as the judgement it replaced.** "Never infer, read the instrument" is better than guessing, and it is not the same as being right. It converts a *reasoning* error into an *instrument* error and then stops looking.
+
+The shape generalizes past clocks. Any rule of the form *"take this value from X, don't derive it"* — a version from `VERSION`, an author from `gh api`, a branch from `git rev-parse`, a schema from the server — inherits the same hole the moment X can be stale, skewed, cached, or mocked. The rule tells you where to read; it does not tell you the reading is true.
+
+**The amended rule**: *read the clock, and cross-check it against a second, independently-sourced value before the date enters a durable artifact.* Cheap, because a second source is almost always already present — this session had one sitting in its own context, unread.
+
+Two practices:
+
+- **Before writing a date into a story, sprint, CHANGELOG or CONTEXT entry, compare two sources.** A network `Date` header is authoritative and free; the session's stated date is free; a recent upstream commit's timestamp is free. Any disagreement is a stop, not a rounding error.
+- **When an instrument's reading is surprising, distrust the instrument before the surprise.** "The last release was seven weeks ago" was visible in `git log` the whole time and read as a quiet repo rather than as a clock 25 days behind. A surprising reading is evidence about the instrument as much as about the world.
+
+**Grep check** — a durable date should never be the only one of its kind in the room:
+
+```bash
+# disagreement between the machine clock and an independent source is a stop
+[ "$(date -u +%Y-%m-%d)" = "$(curl -sI https://api.github.com | awk 'tolower($1)=="date:"{print $4" "$3" "$5}' | xargs -I{} date -ju -f '%d %b %Y' '{}' +%Y-%m-%d 2>/dev/null)" ] || echo "CLOCK DISAGREEMENT — do not write a date"
+```
+
+Sibling of §16 and §39 in one respect: all three are cases where the thing that was supposed to tell you the truth returned a confident answer and nobody asked it for a second opinion.
+
+See [CONTEXT D44](CONTEXT.md), [sprint-2026-W40](sprints/sprint-2026-W40.md).

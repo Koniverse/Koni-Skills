@@ -12,8 +12,8 @@ arch_ref: []
 depends_on: []
 assignee: jindo9986
 commit: ''
-created: 2026-09-04
-updated: 2026-09-04
+created: 2026-09-29
+updated: 2026-09-29
 external_deps:
 ---
 
@@ -87,7 +87,7 @@ class while implementing an instance).
 - **C1 — sprint backdating.** koni-docs `SKILL.md` is silent; the only statement is a
   parenthetical in `sprint-system.md:134-136`, with no RULE-n, no severity, no grep
   check. Empirical evidence it does not hold: this very sprint was first opened from an
-  inferred date (see [W36](../sprint-2026-W36.md) notes).
+  inferred date (see [W40](../sprint-2026-W40.md) notes).
 - **C2 — composition/duplication.** SKILL.md forbids *replacing* the core rules, never
   *copying* them; the "self-contained (AD-1)" clause in `plugin-pattern.md:59-64` is the
   hook a "paste RULE-1 in for convenience" request quotes back.

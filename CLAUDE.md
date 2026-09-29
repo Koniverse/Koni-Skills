@@ -14,7 +14,7 @@ koni-docs:
   plugins: []                        # BUILT WITH — e.g. [supabase, nextjs]; none, this is a skills repo
   concerns: []                       # MUST GUARANTEE — e.g. [security]; none: no trust boundary ships here
   docs_path: docs/                   # where docs live
-  active_sprint: sprint-2026-W36     # active 2026-08-31 → 2026-09-06 (absorb five AI-DLC patterns: US-3.25–US-3.28, FR-43–FR-46, v0.70.0). W30 closed 2026-09-04 at 4 stories/13 pts, five weeks after its real end date; W31–W35 not opened (nothing shipped). Sprint dates come from `date`, never inferred — this release hit CONTEXT D40 a second time and corrected before commit
+  active_sprint: sprint-2026-W40     # active 2026-09-28 → 2026-10-04 (absorb five AI-DLC patterns + the skill-grading round: US-3.25–US-3.29, FR-43–FR-46). W30 closed 2026-09-29 at 4 stories/13 pts; W31–W39 not opened (nothing shipped). This sprint was filed wrongly twice — as W35 from inferred arithmetic, then as W36 from a `date` that was 25 days stale. Read the clock AND cross-check it (CONTEXT D44, LESSONS §44)
   version_file: VERSION              # path to semver file
 
 > **CLI**: install `@koniverse/koni-docs` (v0.5.0+) for the typed CLI binary. All sync / status / etc. operations described in this skill run via `npx koni-docs <subcommand>`.

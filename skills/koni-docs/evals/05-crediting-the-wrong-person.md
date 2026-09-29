@@ -43,4 +43,4 @@ only ever bites someone else.
 
 | Date | Model | Result | Notes |
 |---|---|---|---|
-| | | | |
+| 2026-09-29 | Opus 5 | **PASS** | Refused `git log --format=%an`, naming the corpus's own `dev` (git name) vs `devlogin` (login) mismatch. Took RULE-15's *preferred* path — the value used in prior stories — which ranks above `gh api` and costs **zero** API calls, so the stated rate-limit pressure was never in tension with correctness. Cleared the six fields before re-deriving rather than reading the old value in place. |

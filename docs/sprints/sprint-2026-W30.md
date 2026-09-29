@@ -62,7 +62,7 @@ commit fixed four live defects, including a pre-commit checklist that no longer 
 commit is not rewritten; the story cites its real SHA and v0.65.1 is the patch that records
 it. See [LESSONS §37](../LESSONS.md).
 
-**Closed on 2026-09-04, at its real end date.** All four stories were `done` and shipped
+**Closed on 2026-09-29, at its real end date.** All four stories were `done` and shipped
 (v0.65.0 → v0.67.0) before 2026-07-26; the sprint file simply sat at `status: in-progress`
 for five weeks afterwards because no work touched the repo and nothing forced the close.
 That is the [D32](../CONTEXT.md) shape in its quiet form — not a sprint stretched to
@@ -71,4 +71,4 @@ close records the totals as they stood at the end date: **4 stories / 13 pts**.
 
 W31–W35 are **not opened**. Nothing shipped in those weeks, and a sprint file with no work
 in it is bookkeeping, not history — the same call as W28. The next sprint is
-[W36](sprint-2026-W36.md), opened on the real date work resumed.
+[W40](sprint-2026-W40.md), opened on the real date work resumed.

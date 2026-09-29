@@ -1,8 +1,8 @@
 ---
-id: sprint-2026-W36
+id: sprint-2026-W40
 status: in-progress
-start: 2026-08-31
-end: 2026-09-06
+start: 2026-09-28
+end: 2026-10-04
 goal: 'Absorb five patterns from a comparative read of `awslabs/aidlc-workflows` into the Koni skills: give brownfield onboarding a reverse-engineering pass (US-3.25), make the Frame stage as specified as the back half of the loop (US-3.26), put the gate checks under a coverage-derived evaluator and CI (US-3.27), and name the second extension axis the catalog has been running unnamed (US-3.28).'
 ---
 ## Sprint scope
@@ -41,14 +41,19 @@ the copy that is easier to write is the one that goes stale (LESSONS §21).
 
 ## Notes
 
-**Opened on the real date, from `date` — and the first attempt got it wrong.**
-This sprint was initially opened as W35 (2026-08-24 → 2026-08-30) from an inferred
-date. `date` says 2026-09-04, which is **W36**. The wrong file was deleted rather
-than kept "for continuity" — a sprint whose dates were guessed is the exact artifact
-[D40](../CONTEXT.md) was written about, and it was made twice now. The date comes
-from the clock, never from arithmetic in someone's head.
+**Opened three times before it was right, and each wrong attempt failed differently.**
+First as W35, from a date inferred by arithmetic rather than read — the plain
+[D40](../CONTEXT.md) failure. Then as W36, from `date`, which is what D40 prescribes —
+and `date` was wrong by 25 days. Only the third reading, cross-checked against git,
+`stat`, and an HTTP `Date` header from GitHub, produced **W40**. Every wrong file was
+deleted rather than kept "for continuity"; the full account is in
+[CONTEXT D44](../CONTEXT.md) and [LESSONS §44](../LESSONS.md).
 
-**W30 closed at its real end date; W31–W35 not opened.** W30 sat at
+The lesson D40 did not contain: *read the clock* has no cross-check, and a clock can
+lie. The session's own context said 2026-09-29 from the first message while `date` said
+2026-09-29, and nothing compared them.
+
+**W30 closed at its real end date; W31–W39 not opened.** W30 sat at
 `status: in-progress` for five weeks past its 2026-07-26 end because no work touched
 the repo. It is now `done` at its real totals (4 stories / 13 pts). The empty weeks
 get no files — nothing shipped in them, and a sprint file with no work in it is
@@ -183,3 +188,17 @@ where it is defined, not where it is read), §36 (a class advertised, an instanc
 implemented), §19/§20/§22 (shell written but never run). Four instances of §18 alone.
 Writing §44 to say "and again" would grow the file without growing what it knows; the
 honest verdict is that the lessons were adequate and I did not apply them.
+
+**This sprint was first filed as W36, from a clock that was wrong.** `date` reported
+2026-09-29 for most of this session; the real date is **2026-09-29**, corroborated by git,
+`stat`, an HTTP `Date` header from GitHub's servers, and an unrelated blind agent that
+volunteered it. 2026-09-29 is W36; 2026-09-29 is **W40**. The six commits `c62be91`…
+`18639cf` carry the skewed committer date in git and are **not** rewritten — history is
+history. Every doc date is corrected to the true one, and the discrepancy between the two
+is recorded in [CONTEXT D44](../CONTEXT.md) so a reader who notices it finds the
+explanation rather than a mystery.
+
+`sprint-2026-W40.md` is deleted rather than kept as a void record — it described a week in
+which nothing happened, and a board that shows a phantom sprint is the same
+doc-dishonesty class as a backdated one. The D33 precedent applies: delete, repoint every
+reference, and leave a resolvable note (this paragraph, plus D44).

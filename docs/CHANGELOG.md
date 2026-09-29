@@ -14,7 +14,51 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [0.72.0] — 2026-09-04 — the four-dimension grade ran, all four skills failed, and this fixes what the grade found
+## [0.72.1] — 2026-09-29 — the clock was 25 days behind, and "read the clock" had no cross-check
+
+Every date this release cycle wrote was taken from `date`, exactly as CONTEXT D40
+prescribes. `date` was wrong by 25 days. The real date is **2026-09-29**, corroborated by
+git after the machine resynced, by `stat`, by an HTTP `Date` header from GitHub, and by a
+blind eval agent that mentioned it while reporting on something else.
+
+The session's own context stated the correct date from its first message. Two sources
+disagreed for hours and nothing compared them, because the rule named one authority and
+stopped there. New: [LESSONS §44](LESSONS.md) · [CONTEXT D44](CONTEXT.md).
+
+### Fixed
+
+- **Eleven artifacts carried `2026-09-04`** and now carry `2026-09-29`: stories
+  US-3.25–US-3.29, the CHANGELOG entries for 0.70.0 / 0.70.1 / 0.70.2 / 0.71.0 / 0.72.0,
+  `EPIC-3.md`, the W30 close note, `STATUS.md`, and the `CLAUDE.md` active-sprint pointer.
+
+- **`sprint-2026-W36.md` deleted, replaced by `sprint-2026-W40.md`** (2026-09-28 →
+  2026-10-04), with all four stories repointed. W36 described a week in which nothing
+  happened; a board showing a phantom sprint is the same dishonesty class as a backdated
+  one. Deleting and repointing follows the D33 precedent rather than leaving a void record.
+
+  The sprint was filed wrongly **twice** before this: first as W35 from inferred
+  arithmetic (D40's original shape), then as W36 from a faithful reading of a stale clock.
+  Only the third attempt cross-checked.
+
+### Not changed, deliberately
+
+- **The six commits `c62be91` … `18639cf` keep their `2026-09-04` committer dates.** Four
+  are already merged to `main` through a closed PR. Rewriting merged history to make a
+  clock error invisible is the failure the decision log exists to prevent — so git and the
+  docs now disagree *on purpose*, and D44 is where a reader who notices finds out why.
+- **D43's entry is untouched.** CONTEXT is append-only (RULE-7); its wrong `**Date**` line
+  stays and D44 is the correction. Its true date is 2026-09-29.
+
+### Amended
+
+- D40 said *read the clock, never infer*. It now reads **read the clock and cross-check it
+  against a second, independently-sourced value** before a date enters a durable artifact.
+  The second source is nearly always already present — this session had one in its own
+  context, unread.
+
+---
+
+## [0.72.0] — 2026-09-29 — the four-dimension grade ran, all four skills failed, and this fixes what the grade found
 
 Nine graders — one per dimension per skill, D1 as a single blind router over all six
 descriptions. **All four skills fail the ≥95 catalog bar.** The scores below exclude D4,
@@ -138,7 +182,7 @@ gate green (272 lines). Harness evaluator: 15 suites, 0 failed, 10 checks, 0 unc
 
 ---
 
-## [0.71.0] — 2026-09-04 — run the skill-grading pass v0.70.0 owed, and guard the budget it broke
+## [0.71.0] — 2026-09-29 — run the skill-grading pass v0.70.0 owed, and guard the budget it broke
 
 The koni-harness loop says that when the deliverable is a **skill**, Review runs koni-qc
 **skill-grading** (≥95/100, [D19](CONTEXT.md)) instead of the product AC↔TC gate. Four
@@ -185,7 +229,7 @@ best-practices) and fixes what it found.
 
 ---
 
-## [0.70.2] — 2026-09-04 — the first CI run failed, and the way it failed was the point
+## [0.70.2] — 2026-09-29 — the first CI run failed, and the way it failed was the point
 
 v0.70.0 added CI so that "all green" would be reproduced by something other than the
 machine claiming it. Its first run found two defects on the first try, both invisible
@@ -219,7 +263,7 @@ locally, and in opposite directions. New: [LESSONS §42](LESSONS.md).
 
 ---
 
-## [0.70.1] — 2026-09-04 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
+## [0.70.1] — 2026-09-29 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
 
 v0.70.0 shipped its CHANGELOG / CONTEXT / LESSONS / PRD / EPIC / story surface and stopped
 there. This completes it. One of the four was a live defect, not a gap.
@@ -275,7 +319,7 @@ there. This completes it. One of the four was a live defect, not a gap.
 
 ---
 
-## [0.70.0] — 2026-09-04 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
+## [0.70.0] — 2026-09-29 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
 
 A comparative read of AWS Labs' [`aidlc-workflows`](https://github.com/awslabs/aidlc-workflows)
 against the Koni Agentic Loop came out lopsided in a useful way: Koni leads on the back half
@@ -359,7 +403,7 @@ absorbs five patterns from it and explicitly declines two. See [CONTEXT D43](CON
   either is taught, with the nesting restated each time (LESSONS §21).
 - `koni-qc` SKILL.md — the security-review row now names itself as the `security` concern.
 - Sprint bookkeeping: **W30 closed** at its real end date after five weeks at
-  `in-progress`; W31–W35 not opened (nothing shipped); [W36](sprints/sprint-2026-W36.md)
+  `in-progress`; W31–W35 not opened (nothing shipped); [W40](sprints/sprint-2026-W40.md)
   opened on the date `date` reports. The first attempt at this release opened the sprint as
   W35 from an inferred date — the [D40](CONTEXT.md) trap, hit a second time and corrected
   before commit.
