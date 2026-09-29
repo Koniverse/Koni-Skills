@@ -70,6 +70,33 @@ d=$(mktemp -d); mkdir -p "$d/docs"
 assert_exit 1 "empty CHANGELOG fails" "$d"
 rm -rf "$d"
 
+# --- the index is the subject, not the worktree (principle 3) ---
+# Both directions are real at release-commit and neither is exotic: anyone with WIP has
+# a dirty worktree. The old check read the file on disk and got both backwards.
+newrepo() { d=$(mktemp -d); ( cd "$d" && git init -q && git config user.email t@t && git config user.name t ); printf '%s' "$d"; }
+
+# 9. anchor exists ONLY as an unstaged edit -> must FAIL (it would ship without it)
+d=$(newrepo); mkdir -p "$d/docs"
+printf '# Changelog\n\n## [0.1.0]\n' > "$d/docs/CHANGELOG.md"
+( cd "$d" && git add -A && git commit -qm seed )
+printf '# Changelog\n\n## [Unreleased]\n' > "$d/docs/CHANGELOG.md"   # written, NOT staged
+assert_exit 1 "anchor present only in the dirty worktree fails" "$d"
+rm -rf "$d"
+
+# 10. anchor STAGED while the worktree copy lost it -> must PASS (the staged fix ships)
+d=$(newrepo); mkdir -p "$d/docs"
+printf '# Changelog\n\n## [Unreleased]\n' > "$d/docs/CHANGELOG.md"
+( cd "$d" && git add -A )
+printf '# Changelog\n\n## [0.1.0]\n' > "$d/docs/CHANGELOG.md"        # worktree regressed
+assert_exit 0 "staged anchor passes despite a regressed worktree copy" "$d"
+rm -rf "$d"
+
+# 11. outside a git repo the worktree is the only truth available -> graceful fallback
+d=$(mktemp -d); mkdir -p "$d/docs"
+printf '# Changelog\n\n## [Unreleased]\n' > "$d/docs/CHANGELOG.md"
+assert_exit 0 "falls back to the worktree outside a git repo" "$d"
+rm -rf "$d"
+
 echo "----"
 echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

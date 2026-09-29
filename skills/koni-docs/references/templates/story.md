@@ -29,6 +29,7 @@ tell *story size* from which sections are filled in.
 | 2   | Goal                                 | required       | required           | required         |
 | 2b  | Deadline                             | required *iff* `due` is set | required *iff* `due` is set | required *iff* `due` is set |
 | 3   | Background                           | optional       | required           | required         |
+| 3b  | **Lessons applied** (inside Background) | **required** | **required** | **required** |
 | 4   | Acceptance criteria                  | required       | required           | required         |
 | 5   | Tasks                                | required       | required           | required         |
 | 6   | Dev notes — Architecture constraints | optional       | required           | required         |
@@ -129,6 +130,8 @@ Cite:
 
 For stories that are *scope-reduced replacements* of an earlier plan,
 state explicitly: what was the original plan, what changed, why.>
+
+**Lessons applied**: <§N — how it applied to this story; or `none — <why nothing matched>`>
 
 ## Acceptance criteria
 
@@ -295,6 +298,32 @@ per file explaining what changed and why — not just what was added.>
 ---
 
 ## 3. Per-section guidance
+
+### §3b — `Lessons applied:` is a literal line, and a gate reads it
+
+Every story carries a line of this exact shape inside Background:
+
+```
+**Lessons applied**: §17, §20 — refused `--amend`; planted the defect before trusting the guard
+```
+
+or, when nothing in `LESSONS.md` bears on the work:
+
+```
+**Lessons applied**: none — new surface, no prior entry touches it
+```
+
+**It is not optional and it is not prose.** koni-harness's `story-lint` check greps for
+`^[[:space:]>*-]*\**Lessons applied\**:` and **blocks a release commit** on any story
+created on or after 2026-07-04 that lacks it. The rule and its rationale belong to
+koni-harness (the lessons loop: read-with-citation at entry, write-with-verdict at exit) —
+this template does not restate them, it produces the line the gate requires.
+
+**Why this is spelled out here at all**: it was not, and a behavioural eval caught the
+consequence. An agent given only koni-docs wrote a well-formed story, correct on every
+other count, and tripped `story-lint` — because the skill that *authors* the artifact never
+mentioned a field another skill *gates*. That is [LESSONS §18](../../../docs/LESSONS.md)
+(a rule is enforced only where it is read) and it is filed as US-3.30's eval-01 finding.
 
 ### §1 Frontmatter
 

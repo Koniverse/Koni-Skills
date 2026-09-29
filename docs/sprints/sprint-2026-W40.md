@@ -219,3 +219,17 @@ one new lesson this sprint earned was §44, and it came from the clock failure i
 not from here. The "I repeated a reviewer's claim three times without checking it" mistake
 is §19's shape (a check that shares its author's blind spot) seen from the other side —
 worth noting, not worth a §45.
+
+**v0.74.0 — US-3.29 class A closed, and the eval loop turned over once.** The gap eval 01
+found in US-3.30 (koni-docs never teaching `Lessons applied:` while story-lint gates it)
+was fixed in the template and **re-verified by re-running the same eval blind on a fresh
+corpus: FAIL → PASS**. That is the whole point of the previous release, demonstrated
+rather than asserted.
+
+Class A was four files disagreeing about how many Review passes there are. The answer is
+five, two conditional — "four" was a count of what fired on a non-UI change, and nobody had
+written that down.
+
+Lessons: none new — class A is four instances of §18 (a rule enforced only where it is
+defined), which is exactly why they were grouped as one class. The fix is the lesson's own
+prescription applied at scale, not a new trap.

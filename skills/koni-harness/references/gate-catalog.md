@@ -149,6 +149,9 @@ enforce release-time checks.
 - **Default severity**: `block`
 - **Generalizes from**: koni-docs RULE-1 (the CHANGELOG `## [Unreleased]`
   surface that pending entries land under).
+- **Reads the index**, not the worktree (`git show :<path>`), with a worktree fallback
+  outside a git repo. A worktree copy carrying the anchor as an *unstaged* edit used to
+  pass and ship without it; a staged fix to a dirty file used to be invisible.
 - **Self-test**: `checks/__tests__/test-changelog-anchor.sh`. Two assertions are
   the reason an eight-line check needed a suite at all: `docs/` **takes
   precedence** over a root copy even when the root copy would pass (a repo
@@ -442,6 +445,32 @@ Parsing rules:
   without a newline does not silently drop its last check.
 
 ---
+
+## What each check reads: the index, or the worktree
+
+Principle 3 says a check reads the **staged** state (`git diff --cached` / `git show :<path>`).
+Three release-commit checks do not, and the divergence was undisclosed until an author-blind
+review found it. Silence about a known divergence is worse than the divergence.
+
+| Check | Reads | Consequence |
+|---|---|---|
+| `version-phase` | index | — |
+| `credential-scan` | index (added lines) | — |
+| `changelog-anchor` | **index** (`git show :<path>`, worktree fallback outside a repo) | fixed; both directions pinned by its suite |
+| `story-lint` | **worktree** | an unstaged edit to any story can block a release commit that does not include it; a *staged* fix to a story that is dirty on disk is invisible |
+| `story-status` | **worktree** | same, at `warn` severity — noise rather than a block |
+| `koni-docs-validate` | **worktree** | inherent: it shells out to a CLI that reads the filesystem. Reading the index would mean materialising the whole staged tree to a temp dir first |
+| `security-review` | index | — |
+
+**Why the three are not converted here.** `story-lint` and `story-status` scan the *whole
+corpus*, not a diff — so "read the staged state" means iterating the index for every story
+file, which is a behaviour change with real regression surface on a `block`-severity check.
+`koni-docs-validate` cannot be converted without a temp-tree checkout. All three are filed
+in [US-3.29](../../../docs/sprints/stories/US-3.29-skill-grading-residual-findings.md)
+class B with this reasoning attached, rather than half-done under time pressure.
+
+**The practical consequence today**: run the release gate on a clean worktree. If it blocks
+on a story you did not touch, check `git status` before believing the finding.
 
 ## Testing a check
 

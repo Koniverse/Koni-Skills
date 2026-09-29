@@ -1,14 +1,14 @@
 # Sprint Status
 
 > **AUTO-GENERATED** by `koni-docs status`. Do not hand-edit (RULE-5).
-> Last generated: 2026-09-29 08:04:10 UTC
+> Last generated: 2026-09-29 08:17:17 UTC
 > Total stories: 83
 
 ## ⏰ Deadlines (0)
 
 _No stories carry an explicit deadline._
 
-## 📋 Backlog (6)
+## 📋 Backlog (5)
 
 | ID | Title | Epic | Pri | Points | Sprint | Assignee |
 |---|---|---|---|---|---|---|
@@ -16,16 +16,17 @@ _No stories carry an explicit deadline._
 | US-3.20 | Extend the reference sweep to docs/ — the doc hub is currently unguarded | EPIC-3 | P2 | 5 | — | jindo9986 |
 | US-3.23 | Re-grade koni-harness after the review contract — the whole skill, author-blind | EPIC-3 | P1 | 3 | — | jindo9986 |
 | US-3.24 | Model + effort tier policy for the harness fan-out — gated on a measured recall floor | EPIC-3 | P3 | 8 | — | jindo9986 |
-| US-3.29 | Close the residual skill-grading findings — the four skills sit at 80–86/100 against a ≥95 bar | EPIC-3 | P1 | 8 |  | jindo9986 |
 | US-4.38 | npm run typecheck has not run at all — TS2209, then a viewer self-import through the export map | EPIC-4 | P2 | 3 | — | — |
 
 ## 🟢 Ready (0)
 
 _No stories_
 
-## 🟡 In Progress (0)
+## 🟡 In Progress (1)
 
-_No stories_
+| ID | Title | Epic | Pri | Points | Sprint | Assignee |
+|---|---|---|---|---|---|---|
+| US-3.29 | Close the residual skill-grading findings — the four skills sit at 80–86/100 against a ≥95 bar | EPIC-3 | P1 | 8 | sprint-2026-W40 | jindo9986 |
 
 ## 👀 Review (0)
 
@@ -125,14 +126,14 @@ _No stories_
 
 ## Summary
 
-- 📋 **Backlog**: 6
+- 📋 **Backlog**: 5
 - 🟢 **Ready**: 0
-- 🟡 **In Progress**: 0
+- 🟡 **In Progress**: 1
 - 👀 **Review**: 0
 - ✅ **Done**: 77
 - 🚫 **Blocked**: 0
 - 🗑️ **Deprecated**: 0
 
-✓ WIP: 0/3 stories in-progress.
+✓ WIP: 1/3 stories in-progress.
 
 ✓ No overdue stories.

@@ -14,7 +14,7 @@
 [The finding schema](#the-finding-schema) ·
 [Author-blind is mandatory](#author-blind-is-mandatory) ·
 [Pass 1: spec-compliance](#pass-1-spec-compliance) ·
-[Pass 4: code-quality](#pass-4-code-quality) ·
+[Pass 5: code-quality](#pass-5-code-quality) ·
 [Triage: what the loop does with findings](#triage-what-the-loop-does-with-findings) ·
 [Composes, never reproduces](#composes-never-reproduces)
 
@@ -160,18 +160,18 @@ premature tick and a `done` story. Verify the claim; do not take it.
 
 ---
 
-## Pass 4: code-quality
+## Pass 5: code-quality
 
 **Question**: will the next person to touch this be misled by it?
 
-Runs last because the earlier passes can send the story back to Execute, and there is
+Numbered 5 because it runs last — the earlier passes can send the story back to Execute, and there is
 no point polishing a diff that is about to change.
 
 | | |
 |---|---|
 | **Inputs** | the diff, plus the surrounding code it must live with |
 | **In scope** | correctness risks the tests do not cover (unhandled path, swallowed error, off-by-one, resource left open) · reuse missed (this repo already has this helper) · structure that will mislead (misleading name, dead branch, comment contradicting code) · duplication introduced |
-| **Out of scope** | security (pass 3, koni-qc) · UI against `DESIGN.md` (gstack `/design-review`) · test coverage (pass 2, koni-qc) · pure style a formatter owns |
+| **Out of scope** | security (pass 3, koni-qc) · UI against `DESIGN.md` (pass 4, gstack `/design-review`) · test coverage (pass 2, koni-qc) · pure style a formatter owns |
 | **House rule** | match the surrounding code's idiom, comment density, and naming. A diff that is individually elegant and locally alien is a finding |
 
 **Do not report absence of speculative generality.** Missing abstraction for a
@@ -214,7 +214,7 @@ other three:
 | 3 — security-review *(trust-boundary changes only)* | koni-qc | koni-qc [`security-review.md`](../../koni-qc/references/security-review.md) |
 | 5 — `/design-review` *(UI only)* | gstack | gstack |
 
-If a finding from pass 1 or 4 belongs to one of those — a missing test, a potential
+If a finding from pass 1 or 5 belongs to one of those — a missing test, a potential
 injection, a `DESIGN.md` deviation — **report it and name the owner**; do not adopt the
 other pass's method. The tool invariant holds here as everywhere in the loop: gstack
 and Superpowers review, Anthropic Skills implement, and no pass silently grows into

@@ -32,11 +32,14 @@ Tier sets the default; the surface overrides it.
 | Tier | Default | Mechanism |
 |---|---|---|
 | **0** — trivial / mechanical | ask nothing | if you find yourself with a question, you are not at tier 0 — re-tier |
-| **1** — small feature / bugfix | at most **2** questions, inline in chat | no file; the answers go in the story's Background |
+| **1** — small feature / bugfix | at most **2** questions, inline in chat | no file; the answers go in the story's Background — and where a tier-1 refinement legitimately has **no story** (the anti-sprawl carve-out in [`agentic-loop-standard.md`](agentic-loop-standard.md)), they go in the sprint-file note beside the refinement, which is where that carve-out already sends its record |
 | **2** — substantial / many decisions | write the questions **to a file**, batched | [§3](#3-the-format); answers route per [§4](#4-where-the-answers-go) |
 
-**Override, upward only**: any change touching money, secrets, auth, migrations,
-or a public contract writes the file regardless of tier. These are the surfaces
+**Override, upward only — it re-tiers, it does not bolt a file onto tier 0.** A change
+touching money, secrets, auth, migrations, or a public contract **is not tier 0 or 1**;
+re-tier it to 2 and the file follows from the row above. (An earlier wording said such a
+change "writes the file regardless of tier", which collided head-on with tier 0's "ask
+nothing" — two instructions for one change, which is how a rule stops being followable.) These are the surfaces
 where a silent assumption is not recoverable by a follow-up commit.
 
 **Batch, never trickle.** One file with every open question beats five
@@ -190,7 +193,7 @@ condition says whether.
 | koni-qc **security-review** | the change crosses a trust boundary — auth, authz / multi-tenancy, money or asset movement, untrusted input, secrets / crypto, file upload, deserialization, a new outbound call | none of those boundaries is touched | koni-qc |
 | NFR pass | a stated perf / accessibility / capacity target applies | no target is stated for this surface | koni-qc |
 | Deploy / ops note | the change alters how the thing is run, configured, or rolled back | code-only change behind an existing entry point | koni-docs `DEPLOY.md` |
-| Author-blind review passes | tier 2, always | tier 0 | koni-harness |
+| Author-blind review passes | tier 2, always; **tier 1, for the two in-house passes** ([`review-contract.md`](review-contract.md) makes author-blind mandatory for both, and tier does not relax it) | tier 0 — nothing to review author-blind on a one-line mechanical edit | koni-harness |
 
 **Two rules about the table itself**, and they are what keep it from becoming
 decoration:

@@ -2,10 +2,10 @@
 id: US-3.29
 title: "Close the residual skill-grading findings — the four skills sit at 80–86/100 against a ≥95 bar"
 epic: EPIC-3
-status: backlog
+status: in-progress
 priority: P1
 points: 8
-sprint: ''
+sprint: sprint-2026-W40
 due:
 prd_ref: [FR-21]
 arch_ref: []
@@ -68,7 +68,12 @@ class while implementing an instance).
 
 ### B. Guards whose behaviour disagrees with their documentation
 
-- **B1 — four of ten shipped checks read the working tree, not the staged state.**
+- **B1 — ~~four~~ three of ten shipped checks read the working tree, not the staged state.**
+  *(partially closed in v0.74.0: `changelog-anchor` now reads the index, with both error
+  directions pinned by its suite. The remaining three are **disclosed** in `gate-catalog.md`
+  with their exact consequence — AC-2's second branch — because `story-lint` and
+  `story-status` scan the whole corpus rather than a diff, and `koni-docs-validate` shells
+  out to a CLI that reads the filesystem.)*
   `changelog-anchor.sh`, `story-lint.sh`, `story-status-consistency.sh`,
   `koni-docs-validate.sh` — zero `--cached` / `git show :` calls. Principle 3 and
   `gate-catalog.md` both instruct the opposite. Two are `block`-severity, so an
@@ -128,10 +133,11 @@ another skill gates. That belongs to class A above.
 
 ## Acceptance criteria
 
-- [ ] AC-1 — Each finding in A is resolved by naming one authority file per rule and
-  propagating it; every other locus references rather than restates.
-- [ ] AC-2 — B1 resolved: the four checks read staged state, **or** the divergence is
-  disclosed in `gate-catalog.md` with the reason. Either is acceptable; silence is not.
+- [x] AC-1 — Each finding in A is resolved by naming one authority file per rule and
+  propagating it; every other locus references rather than restates. *(v0.74.0)*
+- [x] AC-2 — B1 resolved: `changelog-anchor` converted to read the index (both error
+  directions pinned); the other three **disclosed** in `gate-catalog.md` with their exact
+  consequence and the reason each was not converted. *(v0.74.0)*
 - [ ] AC-3 — B2/B3 fixed, each with a planted-defect assertion proving the fix can fail.
 - [ ] AC-4 — Each C finding is stated in the SKILL.md an agent loads, not only in a
   reference.
@@ -143,6 +149,36 @@ another skill gates. That belongs to class A above.
   marked unrun in `evals/README.md` so its status is not ambiguous.
 - [ ] AC-8 — All four skills re-graded on **all four dimensions** (D4 by an agent that
   did not write the skill, ×2 averaged) and each clears **≥95**.
+
+## Progress
+
+**v0.74.0 — class A closed, B1 partially.**
+
+- **A1** — the Review pass set had four incompatible numberings. Reconciled to one
+  authority (`agentic-loop-standard.md`): **five passes, two conditional**, code-quality
+  always last. "Four passes" was never a different set — it is a count of what *fired* on a
+  non-UI change with no trust boundary, and the worked example now shows pass 3 struck
+  through with its skip condition rather than renumbering around it.
+  `review-contract.md` renumbered code-quality 4 → **5**, which is what makes its own
+  "runs last" true.
+- **A2** — `agentic-loop-standard.md` said tier-0/1 "skip Frame" while `frame-protocol.md`
+  gave tier 1 a question budget. Neither was wrong about intent: those tiers skip Frame's
+  *artifacts*, not the stage. Stated that way, with `frame-protocol.md` §1 named as the
+  authority. The money/secrets override no longer "writes the file regardless of tier" —
+  it **re-tiers to 2**, which removes the head-on collision with tier 0's "ask nothing".
+- **A3** — tier-1 answers now have a destination when the refinement legitimately has no
+  story: the sprint-file note, which is where the anti-sprawl carve-out already sends its
+  record. The §5 author-blind row gained its missing tier-1 case.
+- **B1** — `changelog-anchor` reads the index. The other three are disclosed rather than
+  half-converted; see AC-2.
+- **Plus the cross-skill gap US-3.30 found**: koni-docs' story template now teaches
+  `Lessons applied:` as a literal, gate-read line, with §3b in the section index and the
+  reason spelled out.
+
+**Still open**: B2, B3, C1–C3, D, E, and AC-8 (the re-grade). No skill has been re-graded
+since v0.72.0, so the 82–86 ceilings above still stand — **class A being closed does not
+mean a dimension moved**, and claiming otherwise without a re-grade is the exact inference
+`skill-grading.md` forbids.
 
 ## Implementation notes
 

@@ -14,6 +14,70 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.74.0] — 2026-09-29 — the eval loop closed on its own first finding, and Review stopped being numbered four different ways
+
+[US-3.29](sprints/stories/US-3.29-skill-grading-residual-findings.md) class A closed, B1
+partially, plus the cross-skill gap [US-3.30](sprints/stories/US-3.30-continuous-evals-in-ci.md)'s
+eval run surfaced.
+
+### Fixed — the gap a behavioural eval found, closed and re-verified by the same eval
+
+- **koni-docs' story template never taught `Lessons applied:`**, while koni-harness's
+  `story-lint` **blocks a release commit** on any story created after 2026-07-04 without it.
+  The skill that authors the artifact did not mention a field another skill gates, so an
+  agent given only koni-docs wrote a well-formed story and tripped the gate. The template
+  now carries it as §3b in the section index, as a literal line in the skeleton, and as
+  per-section guidance naming whose rule it is — a reference, not a restatement.
+
+  **Verified by re-running the eval that found it**: same prompt, same blind conditions,
+  fresh corpus. Eval 01 goes **FAIL → PASS**. That is the first full turn of the loop the
+  previous release built — a guard found a real defect, the defect was fixed in the skill,
+  and the guard re-run proves it.
+
+### Fixed — class A: one authority per rule, propagated
+
+- **The Review pass set was numbered four incompatible ways** across four files, and
+  `review-contract.md` contradicted *itself* — code-quality was "Pass 4" and "runs last"
+  while `/design-review` was pass 5. Reconciled to one authority
+  (`agentic-loop-standard.md`): **five passes, two conditional** (security-review when a
+  trust boundary is crossed; `/design-review` for UI), code-quality always **last** and
+  therefore renumbered **5**. "Four passes" was never a different set — it is a count of
+  what *fired*. The worked example now shows pass 3 struck through with its skip condition
+  rather than renumbering around the gap.
+
+- **The tier model contradicted itself in two places.** `agentic-loop-standard.md` said
+  tier-0/1 "skip Frame" while `frame-protocol.md` gave tier 1 a question budget — both were
+  right about intent: those tiers skip Frame's *artifacts*, not the stage. And the
+  money/secrets override said it "writes the file regardless of tier", colliding head-on
+  with tier 0's "ask nothing"; it now **re-tiers to 2**, which is what it always meant.
+
+- **Tier-1 answers had no destination** when a refinement legitimately has no story. They
+  now go to the sprint-file note — where the anti-sprawl carve-out already sends its record.
+  The stage-applicability table's author-blind row gained its missing tier-1 case.
+
+### Fixed — class B1: what a check actually reads
+
+- **`changelog-anchor` now reads the index** (`git show :<path>`, worktree fallback outside
+  a repo). It read the worktree, so a CHANGELOG carrying the `[Unreleased]` anchor as an
+  *unstaged* edit passed and shipped without it, and a *staged* fix to a dirty file was
+  invisible. Both directions are pinned by three new assertions, each proven to fail when
+  the fix is reverted.
+
+- **The remaining three are disclosed, not silently divergent.** `story-lint`,
+  `story-status` and `koni-docs-validate` still read the worktree; `gate-catalog.md` now
+  carries a table of what each check reads and the exact consequence, plus why each was not
+  converted (the first two scan the whole corpus rather than a diff; the third shells out to
+  a CLI that reads the filesystem). Half-converting a `block`-severity check under time
+  pressure is how the defects in the last three releases got made.
+
+### Notes
+
+- **No skill has been re-graded since v0.72.0**, so the 82–86 ceilings still stand. Class A
+  being closed does not mean a dimension moved — inferring that without a re-grade is
+  precisely what `skill-grading.md` forbids.
+
+---
+
 ## [0.73.0] — 2026-09-29 — the behavioural evals actually ran, and CI now refuses a skill edited since they did
 
 Phase 1 of the AI-native SDLC alignment plan ([program plan](superpowers/plans/2026-09-04-ai-native-sdlc-alignment.md)),
