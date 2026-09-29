@@ -43,12 +43,15 @@ a different subset of the six stages:
 |---|---|
 | **0 — trivial / mechanical** | `frame` (light) → `execute` → `commit` + gate |
 | **1 — small feature / bugfix** | tier 0 + `self-verify` + a single-pass `review` + `doc-gate` |
-| **2 — substantial / many decisions** | the full table, incl. the four-step `review` (spec-compliance → koni-qc → `/design-review` for UI (DESIGN.md + shadcn) → code-quality) + koni-docs backfill at `doc-gate` |
+| **2 — substantial / many decisions** | the full table, incl. the fixed-order `review` — five passes, two conditional (spec-compliance → koni-qc AC↔TC → koni-qc security-review *if a trust boundary is crossed* → `/design-review` *if UI* → code-quality last); the set and order are owned by [`agentic-loop-standard.md`](agentic-loop-standard.md) + koni-docs backfill at `doc-gate` |
 
 **The gate stage runs at every tier** — that is the whole point of a cheap
 deterministic backbone: even a tier-0 commit cannot leak a secret or bump a
 version without a changelog. Forward *skips* (tier 0 legitimately skipping
-`self-verify` / `review`) are allowed and silent; `loop.sh` only warns when you
+`self-verify` / `review`) are allowed by `loop.sh` and silent **to it** — the runner
+tracks position, not process. It is not permission to leave the skip unrecorded: if a
+story exists, the skipped element and its named condition go in the story
+([`frame-protocol.md`](frame-protocol.md) §5). `loop.sh` only warns when you
 go *backward* or enter `commit` without `self-verify` at tier ≥ 1.
 
 ## Portable fallback

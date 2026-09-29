@@ -11,7 +11,7 @@ written in `docs/sprints/stories/US-7.3-custom-rpc-panel.md`.
 **Contents**: [1. frame](#1-frame--pick-the-work-open-the-loop) ·
 [2. execute](#2-execute--implement-with-anthropic-skills-only) ·
 [3. self-verify](#3-self-verify--green-and-unit-covered-before-advancing) ·
-[4. review](#4-review--the-fixed-four-step-order) ·
+[4. review](#4-review--the-fixed-order-four-of-five-fire-here) ·
 [5. doc-gate](#5-doc-gate--docs--version-then-validate) ·
 [6. commit](#6-commit--the-gate-decides) ·
 [The same story at tier 0](#the-same-story-at-tier-0)
@@ -42,6 +42,29 @@ code shipped without an added citation; `/design-review` later confirms, it must
 discover). If the shape is unclear, *brainstorm* with Superpowers / *plan* with BMAD
 here — this is the only place those tools are used.
 
+**This is tier 2, so the Frame protocol applies** ([`frame-protocol.md`](frame-protocol.md)):
+surviving questions go in a batched file, and the story records which process elements
+fired and which were skipped, each by a named condition.
+
+```sh
+# the two questions that survived the §2 filters (the other four were answerable
+# from DESIGN.md and a grep — those are unread context, not questions)
+$EDITOR .koni-harness/frame/US-7.3-questions.md
+```
+
+```
+Frame: 2 questions (.koni-harness/frame/US-7.3-questions.md → Q1=A, Q2=B)
+Applied: /design-consultation (new token + 2 new states), written plan (5 files),
+         CONTEXT D-entry (custom-RPC validation: reject-on-save chosen over warn-on-use)
+Skipped: security-review — no trust boundary; the panel writes local settings only
+         NFR pass — no stated latency target for a settings panel
+         deploy note — ships inside the existing bundle, no new runtime config
+```
+
+Both blocks go in the story. The `Skipped:` lines are the point: an element that is
+simply absent is indistinguishable from one that was forgotten, and the reviewer
+cannot tell either.
+
 ## 2. `execute` — implement with Anthropic Skills only
 
 ```sh
@@ -70,21 +93,28 @@ Each new/changed function got its unit tests in Execute (RED→GREEN→REFACTOR,
 koni-qc `unit-coverage.md`). "Build green" alone does not pass — the unit-coverage
 gate must pass too.
 
-## 4. `review` — the fixed four-step order
+## 4. `review` — the fixed order (four of five fire here)
 
 ```sh
 sh .koni-harness/loop.sh enter review
 ```
 
-Passes 1 and 4 run to [`review-contract.md`](review-contract.md): **author-blind**
+Passes 1 and 5 — the two the harness owns in-house — run to
+[`review-contract.md`](review-contract.md): **author-blind**
 subagents (they did not write the diff), reporting **every** finding with confidence +
 severity plus what they did *not* examine — the loop filters at triage, the finder never
 does.
 
+The numbers below are the canonical pass numbers from
+[`agentic-loop-standard.md`](agentic-loop-standard.md), not a local 1..n — **pass 3 is
+absent because it did not fire**, and showing the gap is the point:
+
 1. **spec-compliance** subagent — does the diff satisfy AC-1…AC-4?
 2. **koni-qc** — every AC has positive + negative + boundary tests (the AC↔TC gate).
-3. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** on **both breakpoints (desktop + mobile)** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).
-4. **code-quality** subagent.
+3. ~~**koni-qc security-review**~~ — *skipped: no trust boundary; the panel writes local
+   settings only* (the named condition, recorded in the story's `Skipped:` block at Frame).
+4. **gstack `/design-review`** — the panel matches `DESIGN.md` **and the shadcn standard** on **both breakpoints (desktop + mobile)** (UI; both mandatory — shadcn primitives + design tokens, not a hand-rolled panel).
+5. **code-quality** subagent — last, because 1–4 can send the story back to Execute.
 
 Fix findings and re-run the relevant step until clean.
 
@@ -132,6 +162,8 @@ stopped — fix and re-run the gate. Never `git commit --no-verify`.
 
 A one-line copy tweak in that panel later is **tier 0**: `frame` (light) →
 `execute` → `commit` + gate. You skip the process steps (no brainstorm, no
-subagent review, no koni-qc) — those skips are allowed and silent — but the gate
+subagent review, no koni-qc) — and at tier 0 there is **no story to record them in**,
+so they are silent because there is nothing to be silent *in*. The moment a story
+exists, the §5 conditions are written into it ([`frame-protocol.md`](frame-protocol.md)) — but the gate
 still runs. The gate is never skipped at any tier; that is the whole point of a
 cheap deterministic backbone.

@@ -40,4 +40,4 @@ one just written. An agent that has not *reasoned* about the fixed point will re
 
 | Date | Model | Result | Notes |
 |---|---|---|---|
-| | | | |
+| 2026-09-29 | Opus 5 | **PASS** | Refused `--amend`; explained that "one clean commit" and "a real SHA" are mutually exclusive; used the two-commit backfill and verified reachability with `git merge-base --is-ancestor`. Mechanically confirmed by the scorer: 0 amends in reflog, the recorded SHA is an ancestor of HEAD, no `pending` anywhere. Also declined to bump VERSION (already 0.4.0, unreleased) and recorded why as a decision. |

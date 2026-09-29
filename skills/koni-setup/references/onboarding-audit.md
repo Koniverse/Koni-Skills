@@ -121,7 +121,12 @@ grep -q "Koni-Docs Integration" CLAUDE.md 2>/dev/null && echo "✅ integration b
 ## Filling rules
 
 - **⬜ missing scaffolding** → create the skeleton (this skill) and hand the
-  *content* to koni-docs templates.
+  *content* to koni-docs templates. **Exception — `ARCHITECTURE.md` / `BRIEF.md`
+  on a brownfield repo**: those two are not scaffolding, they are *derived*, and
+  they go through the reverse-engineering pass and its approval gate
+  ([`reverse-engineering.md`](reverse-engineering.md) §4) before anything is
+  written. Filling them straight from a template is the gap the Brownfield
+  system model rows above exist to catch.
 - **⚠️ stub / partial** → ask the user before editing. A populated-but-thin PRD
   is theirs to extend, not yours to replace.
 - **✅ present** → leave it. Do not "improve" working files during onboarding.

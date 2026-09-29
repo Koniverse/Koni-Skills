@@ -155,14 +155,41 @@ Two enrolment modes, and the second is the point of the axis:
 - **Opt-in** — the repo lists the concern. Most concerns work this way; a repo
   with no payment flow owes nothing to a PCI concern.
 - **Trigger-enforced** — the concern applies **whenever its trigger surface is
-  present**, listed or not. A repo does not get to opt out of security review by
-  omitting a line from CLAUDE.md; what it opts into is the *declaration* of where
-  its boundaries are, which is a different thing.
+  present**, listed or not.
+
+  **The two layers are not the same thing, and the skills that implement them say
+  so in different words.** For `security`: the **obligation** is trigger-enforced (a trust boundary in the diff owes a review whether or not `concerns:` lists it); the **gate** is opt-in and stays dormant until `.koni-harness/security-paths` declares where the boundaries are. Removing the declaration removes the reminder, never the obligation. So koni-docs calling
+  the concern *trigger-enforced* and koni-harness calling its gate *opt-in* are
+  both correct and describe different objects — state which one you mean, every
+  time, or a reader gets opposite answers from two files (found by author-blind
+  review, D3).
 
 Write the mode in the concern's own rule table. An unstated mode reads as opt-in,
 which is the failure direction.
 
-### 2. The trigger surface is declared, not guessed
+### 2. Where a concern lives
+
+A concern has **no directory of its own**. Unlike a stack plugin (`skills/koni-<tech>/`),
+a concern is a *registration*: it names an owning skill that already holds the method, a
+trigger surface in the repo, and a gate row. `concerns: [x]` resolves through the table
+in [§4](#4-worked-example--the-security-concern)-style form that each concern publishes:
+
+| What | Where it lives |
+|---|---|
+| The method (*how*) | an existing skill's reference — never a new file, never restated here |
+| The trigger surface (*where*) | a file in the consuming repo (`.koni-harness/security-paths`) |
+| The gate row (*when it reminds*) | the koni-harness `gates.conf` row the concern declares |
+| The registration itself | one row in this file, plus a self-declaring line in the owning skill |
+
+**Concerns do not carry their own rule tables.** The `SEC-`/`RES-`/`A11Y-` prefixing
+advice that an earlier draft of this section gave was wrong twice over: a concern's rules
+belong in its owning skill's existing structure, and those prefixes are already taken —
+`SEC-` and `A11Y-` are live koni-qc test-case category IDs
+([`traceability.md`](../../koni-qc/references/traceability.md)). If a concern ever does
+need namespaced rules, check koni-qc's ID space first and pick something that does not
+collide.
+
+### 3. The trigger surface is declared, not guessed
 
 A stack plugin knows it applies because `next.config.ts` exists. A concern has no
 such tell, so it names its trigger surface explicitly — and that declaration is a
@@ -174,7 +201,7 @@ line). Declaring it activates the harness's `security-review` gate, which is
 trust boundaries are; the gate watches those paths; koni-qc supplies the method
 when one changes.
 
-### 3. Worked example — the `security` concern
+### 4. Worked example — the `security` concern
 
 This axis is being *named*, not invented: Koniverse has run exactly this shape for
 several versions without a word for it, spread across three skills. Naming it is
@@ -190,17 +217,20 @@ what makes the next one cheap to add.
 Note what no piece does: none of them restates a core rule, and none builds a
 second gate runner. That is the contract holding across the axis change.
 
-### 4. Authoring a new concern
+### 5. Authoring a new concern
 
 1. **Name it for the guarantee**, not the technique — `security`, `resiliency`,
    `accessibility`. `property-based-testing` is a technique; the concern it serves
    is `correctness`.
-2. **Pick a rule prefix** that cannot collide with `RULE-n` or a stack plugin's
-   (`SEC-`, `RES-`, `A11Y-`).
+2. **Name the owning skill** that already holds the method. A concern registers
+   *when* and *where*; it does not author *how*, and it does not get a rule table of
+   its own (§2).
 3. **Name the trigger surface** — the file, glob list, or code shape that says
    "this concern applies here". If you cannot name one, the concern is not ready:
    an obligation nobody can locate is decoration (LESSONS §20).
-4. **State the enrolment mode** — opt-in or trigger-enforced — in the rule table.
+4. **State the enrolment mode** — opt-in or trigger-enforced — in the concern's row
+   here *and* in the owning skill, naming **which object** each applies to (the
+   obligation or the gate; they can differ, as `security` shows).
 5. **Declare a gate row** if the concern has a mechanizable surface, per the
    composition contract above. Start at `warn`; graduate to `block` when the repo
    runs clean. A concern whose only enforcement is prose will drift.

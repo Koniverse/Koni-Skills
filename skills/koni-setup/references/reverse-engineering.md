@@ -135,9 +135,19 @@ field is true at write time.
      confirm.
    - **unknown** — could not determine. Never fill it in. It becomes an
      open question.
-3. **Unknowns are output, not failure.** Collect them into an explicit
-   `## Open questions` list. Each one is a candidate `backlog` story or a
-   question for the user — this is what §4 asks about.
+3. **Unknowns are output, not failure.** Collect them into `open-questions.txt`
+   at the repo root (working state, deleted when the pass ends — the durable
+   record is the `backlog` stories of §5). Each line is `- <question>`. This is
+   the list §4 presents and §6 check 3 counts against.
+
+> **The `(inferred)` marker is a handoff contract, and koni-docs does not know
+> about it.** koni-docs' `templates/architecture.md` has no confidence-marker
+> convention — so the markers survive only if *you* carry them across. When you
+> invoke koni-docs (§5), pass the findings with the markers already inline in the
+> claim text, and state that they must be preserved verbatim. If you hand over
+> unmarked findings expecting the template to add them, §6 check 2 will list
+> nothing and the inference will have vanished silently — which is this whole
+> section's failure mode, one handoff later.
 
 **The failure mode this prevents**, stated plainly: an agent that reads 60% of a
 system and writes 100% of a document. The 40% it invented is indistinguishable
@@ -148,7 +158,10 @@ Confidence markers are what make the document safe to trust *selectively*.
 
 ## 4. The approval gate
 
-**Present the findings to the user before anything is written to `docs/`.**
+**Present the findings before anything is written to any doc file — `docs/`, the
+repo root, or elsewhere. The gate is on the writing, not on the directory.**
+(`repo-types.md` places `ARCHITECTURE.md` / `REPO_STRUCTURE.md` at the root for
+some profiles; a directory-scoped gate would miss exactly those.)
 
 This is the one human-approval gate koni-setup adds, and it earns its place for
 the same reason the harness gates earn theirs: the class of error it catches —
@@ -170,7 +183,7 @@ Flows:       <named flows traced>
 Inferred (needs your confirmation):
   - <claim> — <why it is an inference>
 
-Open questions (blocking nothing; each becomes a backlog story or a Q for you):
+Open questions (each becomes a backlog story before this pass is done):
   - <question>
 
 Write these into docs/ via koni-docs?  [yes / revise / skip]
@@ -179,6 +192,20 @@ Write these into docs/ via koni-docs?  [yes / revise / skip]
 **`revise` is not a formality.** The user is the only reader who knows what the
 system was *meant* to be; a correction here costs a sentence and saves every
 downstream doc that would have cited the wrong model.
+
+**The review can be waived; what the review protects cannot.** If the user
+pre-approves ("skip it, just write it"), or the session is non-interactive and
+nobody can answer, you still do all four of these — they are the gate's residue,
+not the gate:
+
+1. every `(inferred)` marker and the full open-questions list go into the doc body;
+2. the doc opens with `> Derived by koni-setup reverse-engineering on <date> from
+   <SHA>. **Not user-reviewed** — inferred claims below are unconfirmed.`;
+3. the open-question `backlog` stories are filed (§5);
+4. the CONTEXT D-entry records the waiver.
+
+Then say in one line which claims a review would have checked. A waived review
+produces a **labelled** document, never a confident one.
 
 ---
 
@@ -211,6 +238,15 @@ parked in a doc comment is invisible to `sprint.sh`; a `backlog` story is in the
 board and gets picked up. Points may be empty (`points: ''` — unsized is a legal
 value); `status: backlog`, and the body carries the evidence gathered so far.
 
+**Each such story's body carries the line `Source: reverse-engineering pass
+<date>`.** That marker is what makes §6 check 3 able to fail: without it the
+check can only count *all* backlog stories, and an onboarded repo already has
+some — so it would pass at zero exactly as silently as at seven.
+
+**Filing them is part of the pass, not follow-up work.** The pass is not
+complete while an open question exists only in `open-questions.txt`. A story is
+three lines; "no time" is never why one is missing.
+
 ---
 
 ## 6. Verify
@@ -219,17 +255,41 @@ The pass is done when the derived docs beat the code as a first read — not whe
 the files are non-empty (koni-qc's depth bar: creating a file is not authoring
 it, [`whole-project-qc.md`](../../koni-qc/references/whole-project-qc.md) §6).
 
+Two checks below **fail loudly**; two only **report**, and say so. A check that
+cannot fail is worse than no check, because it reads as verification
+(LESSONS §16) — so each one states which kind it is.
+
 ```sh
-# 1. Every component in the inventory resolves to a real path
-#    (replace the awk column if your table shape differs)
-awk -F'|' '/^\|/ {gsub(/ |`/,"",$3); if ($3 != "" && $3 != "Path") print $3}' docs/ARCHITECTURE.md \
-  | while read -r p; do [ -e "$p" ] || echo "STALE: $p"; done
-# 2. No inference shipped unmarked: every claim the pass could not read is labelled
-grep -c '(inferred)' docs/ARCHITECTURE.md
-# 3. The open questions actually entered the board
-grep -l 'status: backlog' docs/sprints/stories/*.md | wc -l
-# 4. The doc surface the audit matrix expects is now real content, not stubs
-sh .koni-harness/gate-runner.sh --phase release-commit --dry-run
+# 1. FAILS — every backticked path in ARCHITECTURE.md resolves.
+#    Column-agnostic on purpose: koni-docs' architecture template writes paths in
+#    backticks, and its component table's column order is not fixed. Targeting a
+#    column number breaks the moment the table shape differs, and reports the
+#    separator row as a missing path on every table.
+#    `grep -v '^@'` drops scoped npm package names (`@koniverse/koni-docs`), which
+#    are backticked and slash-shaped and are not paths — found by running this.
+grep -o '`[^`]*`' docs/ARCHITECTURE.md | tr -d '`' | grep -v '^@' \
+  | grep -E '^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)*/?$' | grep '/' | sort -u \
+  | while read -r p; do [ -e "${p%/}" ] || echo "STALE: $p"; done
+# ↑ any STALE line = fail. Silence = every named path exists.
+
+# 2. REPORTS ONLY — lists the inference markers for the reader to eyeball.
+#    There is no count to assert against: how many claims *should* be inferred is a
+#    judgement made during the passes, not a number a script can derive.
+grep -n '(inferred)' docs/ARCHITECTURE.md || echo 'no inferred claims recorded'
+
+# 3. FAILS — every open question reached the board.
+#    Compare against the derivation marker, never against a bare count of backlog
+#    stories: an onboarded repo has pre-existing backlog stories, so a bare count
+#    passes at zero exactly as silently as at seven.
+OPEN_Q=$(grep -c '^- ' open-questions.txt)   # the §4 gate's list, saved verbatim
+FILED=$(grep -rl 'Source: reverse-engineering pass' docs/sprints/stories/ 2>/dev/null | wc -l | tr -d ' ')
+[ "$FILED" -ge "$OPEN_Q" ] || echo "UNFILED: $OPEN_Q open questions, $FILED filed"
+
+# 4. REPORTS ONLY — the doc validator, if the repo has the CLI.
+#    NOT a stub-vs-content check: no gate reads ARCHITECTURE.md for depth, and
+#    `--dry-run` prints the gate list without running anything. Depth is the
+#    reader test below, which is not mechanizable.
+npx --no-install koni-docs validate --docs-path docs/ 2>/dev/null || true
 ```
 
 **The reader test** — the one that is not mechanizable, and the one that

@@ -32,11 +32,14 @@ Tier sets the default; the surface overrides it.
 | Tier | Default | Mechanism |
 |---|---|---|
 | **0** — trivial / mechanical | ask nothing | if you find yourself with a question, you are not at tier 0 — re-tier |
-| **1** — small feature / bugfix | at most **2** questions, inline in chat | no file; the answers go in the story's Background |
+| **1** — small feature / bugfix | at most **2** questions, inline in chat | no file; the answers go in the story's Background — and where a tier-1 refinement legitimately has **no story** (the anti-sprawl carve-out in [`agentic-loop-standard.md`](agentic-loop-standard.md)), they go in the sprint-file note beside the refinement, which is where that carve-out already sends its record |
 | **2** — substantial / many decisions | write the questions **to a file**, batched | [§3](#3-the-format); answers route per [§4](#4-where-the-answers-go) |
 
-**Override, upward only**: any change touching money, secrets, auth, migrations,
-or a public contract writes the file regardless of tier. These are the surfaces
+**Override, upward only — it re-tiers, it does not bolt a file onto tier 0.** A change
+touching money, secrets, auth, migrations, or a public contract **is not tier 0 or 1**;
+re-tier it to 2 and the file follows from the row above. (An earlier wording said such a
+change "writes the file regardless of tier", which collided head-on with tier 0's "ask
+nothing" — two instructions for one change, which is how a rule stops being followable.) These are the surfaces
 where a silent assumption is not recoverable by a follow-up commit.
 
 **Batch, never trickle.** One file with every open question beats five
@@ -82,7 +85,8 @@ Four filters, applied in order. A question survives only if it passes all four.
 One file per story, at `.koni-harness/frame/<story-id>-questions.md`. It is
 **working state, not a doc** — gitignored, the same as `loop-state`. The durable
 record is the story and `CONTEXT.md` ([§4](#4-where-the-answers-go)); the
-questions file is scratch that gets deleted when the loop leaves Frame.
+questions file is scratch — delete it yourself when the loop leaves Frame; nothing
+in `loop.sh` removes it, and a stale questions file outlives the decision it recorded.
 
 This is the deliberate divergence from the tool this pattern was borrowed from,
 which persists its entire question-and-approval history into a parallel doc
@@ -154,7 +158,12 @@ options is what stops the same fork being re-litigated by the next agent — whi
 is the failure this whole file exists to prevent, displaced in time rather than
 in stage.
 
-**Enforcement, stated honestly**: this routing is **documented, not gated**.
+**Enforcement, stated honestly**: this routing is not *machine*-gated — it is a
+**human exit criterion of the Doc + Version gate**. A story that ships without an
+`Applied:` / `Skipped:` block is incomplete and Review returns it. Absence of a
+check is absence of *automation*, never absence of the obligation; and **"no time"
+is not one of the named conditions** — the block is six lines and costs less than
+reconstructing it later.
 There is no `frame-answers` check, because the harness adds a gate only for a
 mistake that has actually bitten this repo (principle 2 in
 [`agentic-loop-standard.md`](agentic-loop-standard.md)) and this class has not
@@ -184,7 +193,7 @@ condition says whether.
 | koni-qc **security-review** | the change crosses a trust boundary — auth, authz / multi-tenancy, money or asset movement, untrusted input, secrets / crypto, file upload, deserialization, a new outbound call | none of those boundaries is touched | koni-qc |
 | NFR pass | a stated perf / accessibility / capacity target applies | no target is stated for this surface | koni-qc |
 | Deploy / ops note | the change alters how the thing is run, configured, or rolled back | code-only change behind an existing entry point | koni-docs `DEPLOY.md` |
-| Author-blind review passes | tier 2, always | tier 0 | koni-harness |
+| Author-blind review passes | tier 2, always; **tier 1, for the two in-house passes** ([`review-contract.md`](review-contract.md) makes author-blind mandatory for both, and tier does not relax it) | tier 0 — nothing to review author-blind on a one-line mechanical edit | koni-harness |
 
 **Two rules about the table itself**, and they are what keep it from becoming
 decoration:
@@ -220,7 +229,7 @@ asking it would have spent the user's attention to buy nothing.
 **Applicability, from §5** — recorded in the story:
 
 ```
-Frame: 2 questions (.koni-harness/frame/US-4.12-questions.md → answered A, B)
+Frame: 2 questions (.koni-harness/frame/US-4.12-questions.md → Q1=B, Q2=A)
 Applied: security-review (untrusted input + new inbound surface), written plan (6 files),
          CONTEXT D-entry (retry policy — B chosen over A/C)
 Skipped: /design-consultation — no UI surface
@@ -228,5 +237,5 @@ Skipped: /design-consultation — no UI surface
          deploy note — rides the existing service, no new runtime config
 ```
 
-That block is four lines, and it makes every process decision in the story
+That block is six lines, and it makes every process decision in the story
 auditable at Review without the reviewer reconstructing any of it.

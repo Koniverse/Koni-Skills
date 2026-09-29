@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Assert every cross-reference in a skill points at something that exists.
+"""Assert every claim a skill doc makes about its own files points at something real.
 
-Three defect classes, all found the hard way (LESSONS §18, §19), all invisible
-to a human re-reading their own edit:
+Seven defect classes, all found the hard way (LESSONS §18, §19, §36, §43), all
+invisible to a human re-reading their own edit. The first three are the original
+set; the rest were added as each new class shipped green:
 
 1. **Dead file links** — a doc routes to `references/migration-from-bmad.md`
    that was never written, or a moved file's link was not re-based.
@@ -12,6 +13,16 @@ to a human re-reading their own edit:
    150 dead links as green.
 3. **Dead section pointers** — `See: templates.md §Story file` after
    `templates.md` became a thin index with no such section.
+4. **Dead HTML links / anchors** — `<a href>`, `<img src>`, and the `name`/`id`
+   anchors they resolve against.
+5. **Named scripts that do not exist** — a BLOCKER rule citing a `.sh`/`.py`/`.mjs`
+   that was deleted, or never written.
+6. **Stated counts that drifted** — "N rules", "N subcommands", "N
+   release-commit-only checks" measured against the file that defines them, and
+   the retired numeric `PRD §8` section form.
+7. **SKILL.md frontmatter budgets** — `name` > 64 or `description` > 1024 chars
+   (silently truncated at load), a missing `name:`/`description:`, or no
+   frontmatter block at all.
 
 Run from the repo root:
 
@@ -498,6 +509,44 @@ def check(root: Path) -> list[str]:
                      or [q for q in repo.rglob(name) if script_ok(q)])
             if not found:
                 problems.append(f'{md}: names a script that does not exist -> {m.group(1)}')
+
+        # A SKILL.md's frontmatter carries two hard platform limits: name <= 64 chars,
+        # description <= 1024. Over the limit the field is truncated at load, and a
+        # truncated description is a skill that stops triggering on whatever fell off
+        # the end — silently, because nothing else in the repo reads that budget.
+        # This bit for real: koni-harness sat at 1013/1024 with 11 characters of
+        # headroom, and one round of added triggers pushed it to 1282.
+        if md.name == 'SKILL.md':
+            # A leading BOM or blank line makes the block unmatchable; strip before the
+            # match rather than after, or the no-frontmatter branch fires on a file that
+            # HAS frontmatter. CRLF is normalized for the same reason.
+            head = text.lstrip('\ufeff').replace('\r\n', '\n').lstrip('\n')
+            fm = re.match(r'---\n(.*?)\n---\n', head, re.S)
+            if not fm:
+                # The worst input, and the one the check exists for: no frontmatter at
+                # all means the skill loads with no description and never triggers
+                # (LESSONS §19). Guarding the whole check behind `if fm:` made this the
+                # one case it could not see — a guard that goes silent on its own
+                # motivating input (LESSONS §39).
+                problems.append(f'{md}: has no YAML frontmatter block — the skill will '
+                                f'load with no name or description and never trigger')
+            else:
+                for field, limit in (('name', 64), ('description', 1024)):
+                    # Keys may be hyphenated (`allowed-tools:`) or capitalized; a
+                    # lowercase-only lookahead swallows the next key into the value and
+                    # over-counts. Block-scalar indicators (`>`, `|`, `>-`, `|+`) are
+                    # consumed rather than counted as content.
+                    v = re.search(
+                        rf'^{field}:[ \t]*[>|]?[-+]?[ \t]*\n?(.*?)(?=\n[A-Za-z_][A-Za-z0-9_-]*:|\Z)',
+                        fm.group(1), re.S | re.M)
+                    if not v:
+                        problems.append(f'{md}: frontmatter is missing `{field}:`')
+                        continue
+                    n = len(' '.join(v.group(1).split()))
+                    if n > limit:
+                        problems.append(
+                            f'{md}: frontmatter `{field}` is {n} chars, limit {limit} '
+                            f'— it will be truncated at load')
 
     return problems
 

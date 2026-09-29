@@ -55,7 +55,11 @@ between its stages.
 > round's AC are `[x]` (dependents' readiness in the sprint sequencer follows
 > the status, as usual). Refinements-without-a-story do not violate stage 1's
 > "a story exists" entry gate — they enter as tier-0/1 changes (see the
-> right-sizing tier table), which skip Frame. Precedents: CONTEXT D14 (5
+> right-sizing tier table). Those tiers do **not** skip Frame — Frame at tier 0 is
+> "ask nothing, decide it yourself"; at tier 1 it is at most two questions. What they skip
+> is Frame's *artifacts* (a written plan, a questions file), not the stage. The per-tier
+> behaviour is [`frame-protocol.md`](frame-protocol.md) §1, which is the authority; this
+> callout must not restate it. Precedents: CONTEXT D14 (5
 > harness phase-stories → US-3.3), D33 (koni-qc rounds → US-5.3 / US-5.8).
 > Test: if two stories would share one Goal sentence with only the version
 > changing, they are one story. **Field completeness is mechanically gated**:
@@ -80,10 +84,15 @@ between its stages.
 > failing unit test for each new/changed function + branch *first*, per koni-qc
 > `unit-coverage.md`), but TDD is the *practice* — the implementation tool is an
 > Anthropic Skill, **not** the Superpowers TDD skill. Self-verify then gates that
-> the unit-coverage bar is met (the layer below the AC↔TC matrix). **Review runs in a fixed order**: (1) spec-compliance
-> (does the diff meet the story AC?) → (2) **koni-qc** (does every AC have
-> covering tests? the AC↔TC gate) → (3) gstack `/design-review` for UI (DESIGN.md + shadcn) → (4)
-> code-quality. So the only thing *before* koni-qc is the spec-compliance pass.
+> the unit-coverage bar is met (the layer below the AC↔TC matrix). **Review runs five passes in a fixed order, two of
+> them conditional** — this list is the authority; every other file references it rather
+> than restating a count: (1) spec-compliance (does the diff meet the story AC?) →
+> (2) **koni-qc** AC↔TC (does every AC have covering tests?) → (3) **koni-qc
+> security-review** *(conditional — only when the change crosses a trust boundary)* →
+> (4) gstack `/design-review` *(conditional — only for a UI surface; DESIGN.md + shadcn)* →
+> (5) code-quality, which **runs last** because every earlier pass can send the story back
+> to Execute. A non-UI change with no trust boundary therefore runs four of the five, and
+> "four passes" is a *count of what fired*, never a different pass set.
 >
 > **The two in-house passes have a contract, not just a name**
 > ([`review-contract.md`](review-contract.md)): report **every** finding with
@@ -221,7 +230,8 @@ The trick is to separate two kinds of step:
   safety net — **they run at every tier, always on.** This is the whole point of
   a deterministic backbone: it's too cheap to skip.
 - **Process steps cost judgment** (brainstorm → spec → plan, BMAD planning,
-  two-stage subagent review). These are the expensive part — **scale them to the
+  the two in-house subagent passes — spec-compliance and code-quality —
+  of Review's five). These are the expensive part — **scale them to the
   work.**
 
 | Tier | When | Process steps | Gate |

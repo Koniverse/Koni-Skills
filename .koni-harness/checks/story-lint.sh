@@ -30,8 +30,11 @@ for f in "$dir"/US-*.md; do
   fm=$(awk '/^---[[:space:]]*$/{n++; next} n==1{print} n>=2{exit}' "$f")
 
   # strip surrounding quotes + trailing space/CR — a quoted sprint: or a status
-  # with a trailing blank must not silently skip or false-fail a check
-  get() { printf '%s\n' "$fm" | awk -F': *' -v k="$1" '$1==k{sub(/^[^:]*: */,""); gsub(/\r/,""); sub(/[[:space:]]+$/,""); gsub(/^"|"$/,""); print; exit}'; }
+  # with a trailing blank must not silently skip or false-fail a check.
+  # BOTH quote styles: frontmatter-spec documents `sprint: ''` as the legal empty
+  # value, and stripping only double quotes made the check reject a spec-legal
+  # story with "sprint '' has no file at docs/sprints/''.md".
+  get() { printf '%s\n' "$fm" | awk -F': *' -v k="$1" '$1==k{sub(/^[^:]*: */,""); gsub(/\r/,""); sub(/[[:space:]]+$/,""); gsub(/^"|"$/,""); gsub(/^'"'"'|'"'"'$/,""); print; exit}'; }
 
   for key in id title epic status priority points sprint assignee commit created updated; do
     printf '%s\n' "$fm" | grep -Eq "^${key}:" || fail "$f: missing mandatory field '${key}:'"

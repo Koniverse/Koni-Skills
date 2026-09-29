@@ -14,7 +14,347 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [0.70.2] — 2026-09-04 — the first CI run failed, and the way it failed was the point
+## [0.74.0] — 2026-09-29 — the eval loop closed on its own first finding, and Review stopped being numbered four different ways
+
+[US-3.29](sprints/stories/US-3.29-skill-grading-residual-findings.md) class A closed, B1
+partially, plus the cross-skill gap [US-3.30](sprints/stories/US-3.30-continuous-evals-in-ci.md)'s
+eval run surfaced.
+
+### Fixed — the gap a behavioural eval found, closed and re-verified by the same eval
+
+- **koni-docs' story template never taught `Lessons applied:`**, while koni-harness's
+  `story-lint` **blocks a release commit** on any story created after 2026-07-04 without it.
+  The skill that authors the artifact did not mention a field another skill gates, so an
+  agent given only koni-docs wrote a well-formed story and tripped the gate. The template
+  now carries it as §3b in the section index, as a literal line in the skeleton, and as
+  per-section guidance naming whose rule it is — a reference, not a restatement.
+
+  **Verified by re-running the eval that found it**: same prompt, same blind conditions,
+  fresh corpus. Eval 01 goes **FAIL → PASS**. That is the first full turn of the loop the
+  previous release built — a guard found a real defect, the defect was fixed in the skill,
+  and the guard re-run proves it.
+
+### Fixed — class A: one authority per rule, propagated
+
+- **The Review pass set was numbered four incompatible ways** across four files, and
+  `review-contract.md` contradicted *itself* — code-quality was "Pass 4" and "runs last"
+  while `/design-review` was pass 5. Reconciled to one authority
+  (`agentic-loop-standard.md`): **five passes, two conditional** (security-review when a
+  trust boundary is crossed; `/design-review` for UI), code-quality always **last** and
+  therefore renumbered **5**. "Four passes" was never a different set — it is a count of
+  what *fired*. The worked example now shows pass 3 struck through with its skip condition
+  rather than renumbering around the gap.
+
+- **The tier model contradicted itself in two places.** `agentic-loop-standard.md` said
+  tier-0/1 "skip Frame" while `frame-protocol.md` gave tier 1 a question budget — both were
+  right about intent: those tiers skip Frame's *artifacts*, not the stage. And the
+  money/secrets override said it "writes the file regardless of tier", colliding head-on
+  with tier 0's "ask nothing"; it now **re-tiers to 2**, which is what it always meant.
+
+- **Tier-1 answers had no destination** when a refinement legitimately has no story. They
+  now go to the sprint-file note — where the anti-sprawl carve-out already sends its record.
+  The stage-applicability table's author-blind row gained its missing tier-1 case.
+
+### Fixed — class B1: what a check actually reads
+
+- **`changelog-anchor` now reads the index** (`git show :<path>`, worktree fallback outside
+  a repo). It read the worktree, so a CHANGELOG carrying the `[Unreleased]` anchor as an
+  *unstaged* edit passed and shipped without it, and a *staged* fix to a dirty file was
+  invisible. Both directions are pinned by three new assertions, each proven to fail when
+  the fix is reverted.
+
+- **The remaining three are disclosed, not silently divergent.** `story-lint`,
+  `story-status` and `koni-docs-validate` still read the worktree; `gate-catalog.md` now
+  carries a table of what each check reads and the exact consequence, plus why each was not
+  converted (the first two scan the whole corpus rather than a diff; the third shells out to
+  a CLI that reads the filesystem). Half-converting a `block`-severity check under time
+  pressure is how the defects in the last three releases got made.
+
+### Notes
+
+- **No skill has been re-graded since v0.72.0**, so the 82–86 ceilings still stand. Class A
+  being closed does not mean a dimension moved — inferring that without a re-grade is
+  precisely what `skill-grading.md` forbids.
+
+---
+
+## [0.73.0] — 2026-09-29 — the behavioural evals actually ran, and CI now refuses a skill edited since they did
+
+Phase 1 of the AI-native SDLC alignment plan ([program plan](superpowers/plans/2026-09-04-ai-native-sdlc-alignment.md)),
+and the only phase that pays down existing debt while adding the capability.
+[US-3.30](sprints/stories/US-3.30-continuous-evals-in-ci.md) · FR-47.
+
+### Added
+
+- **A byte-reproducible eval corpus** (`skills/koni-docs/evals/fixture/build.sh`). The
+  suite's README warns that *"two runs of the same scenario against different corpora are
+  not comparable"*, which makes the corpus part of the measurement — and it did not exist.
+  A builder rather than a committed tree, so it cannot drift from koni-docs' templates in
+  silence. Two builds produce identical git SHAs.
+
+- **Six blind runs, recorded**: 5 PASS, 1 FAIL. Every agent was given the verbatim prompt
+  and nothing else — never the rule under test, which is the difference between an eval and
+  skill-grading's D2. Four results were verified mechanically rather than believed: eval 04
+  shows 0 amends in the reflog and a recorded SHA that is an ancestor of HEAD; eval 06 is 21
+  insertions and 0 deletions.
+
+- **`skills/koni-qc/references/eval-gate.md`** — the method. What an eval is and is not, why
+  it hides the rule while D2 names it, the frozen-corpus requirement, scoring on the artifact,
+  and corpus growth from real failures rather than to a target number.
+
+- **A CI freshness job.** CI has no agent, so it does not pretend to run one — a job claiming
+  to would be a check that cannot fail. It asserts that **no skill was edited since its evals
+  last ran**, which is a real claim about the exact drift being guarded. Proven able to fail
+  on a post-run skill edit before being trusted.
+
+### Fixed
+
+- **A claim this project repeated three times was false.** US-3.29 finding F, the program
+  plan, and the v0.72.0 CHANGELOG all state that *every* `## Runs` table was empty. Two of
+  six already carried a 2026-07-13 run. The claim came from an author-blind reviewer's
+  report and was propagated without checking; the freshness script written for this story
+  disproved it on its first execution. Finding F is corrected and closed.
+
+- **The eval corpus was `story-lint`-dirty at baseline** (US-2.3 pointed at a sprint file
+  that did not exist), which made eval 01's "story-lint must be clean" criterion unpassable
+  regardless of agent behaviour. A criterion that cannot pass is as useless as one that
+  cannot fail.
+
+### Found, not fixed — a cross-skill gap
+
+Eval 01's FAIL is not agent error. **`koni-docs` never mentions `Lessons applied:`** — `grep`
+returns zero across the whole skill — while `story-lint` requires it on every story created
+after 2026-07-04 (D35). The skill that authors the artifact does not teach a field another
+skill gates, so any agent writing a story with koni-docs alone trips the gate. LESSONS §18
+exactly. Filed into US-3.29's class-A work; the fix is a koni-docs template change.
+
+### Scope honesty
+
+**Most of this shipped inside `be6b0a5`, whose message describes only the clock correction.**
+A `git add -A` during that fix swept in the fixture builder, `eval-gate.md`,
+`eval-freshness.sh`, the filled Runs tables and the koni-qc wiring. The commit is pushed and
+its parent is merged, so it is not rewritten — it is *named*, here and in the story, because
+`git log --grep eval` would otherwise find nothing. Only the CI job and the gate-catalog
+pointer landed in this release's own commit.
+
+---
+
+## [0.72.1] — 2026-09-29 — the clock was 25 days behind, and "read the clock" had no cross-check
+
+Every date this release cycle wrote was taken from `date`, exactly as CONTEXT D40
+prescribes. `date` was wrong by 25 days. The real date is **2026-09-29**, corroborated by
+git after the machine resynced, by `stat`, by an HTTP `Date` header from GitHub, and by a
+blind eval agent that mentioned it while reporting on something else.
+
+The session's own context stated the correct date from its first message. Two sources
+disagreed for hours and nothing compared them, because the rule named one authority and
+stopped there. New: [LESSONS §44](LESSONS.md) · [CONTEXT D44](CONTEXT.md).
+
+### Fixed
+
+- **Eleven artifacts carried `2026-09-04`** and now carry `2026-09-29`: stories
+  US-3.25–US-3.29, the CHANGELOG entries for 0.70.0 / 0.70.1 / 0.70.2 / 0.71.0 / 0.72.0,
+  `EPIC-3.md`, the W30 close note, `STATUS.md`, and the `CLAUDE.md` active-sprint pointer.
+
+- **`sprint-2026-W36.md` deleted, replaced by `sprint-2026-W40.md`** (2026-09-28 →
+  2026-10-04), with all four stories repointed. W36 described a week in which nothing
+  happened; a board showing a phantom sprint is the same dishonesty class as a backdated
+  one. Deleting and repointing follows the D33 precedent rather than leaving a void record.
+
+  The sprint was filed wrongly **twice** before this: first as W35 from inferred
+  arithmetic (D40's original shape), then as W36 from a faithful reading of a stale clock.
+  Only the third attempt cross-checked.
+
+### Not changed, deliberately
+
+- **The six commits `c62be91` … `18639cf` keep their `2026-09-04` committer dates.** Four
+  are already merged to `main` through a closed PR. Rewriting merged history to make a
+  clock error invisible is the failure the decision log exists to prevent — so git and the
+  docs now disagree *on purpose*, and D44 is where a reader who notices finds out why.
+- **D43's entry is untouched.** CONTEXT is append-only (RULE-7); its wrong `**Date**` line
+  stays and D44 is the correction. Its true date is 2026-09-29.
+
+### Amended
+
+- D40 said *read the clock, never infer*. It now reads **read the clock and cross-check it
+  against a second, independently-sourced value** before a date enters a durable artifact.
+  The second source is nearly always already present — this session had one in its own
+  context, unread.
+
+---
+
+## [0.72.0] — 2026-09-29 — the four-dimension grade ran, all four skills failed, and this fixes what the grade found
+
+Nine graders — one per dimension per skill, D1 as a single blind router over all six
+descriptions. **All four skills fail the ≥95 catalog bar.** The scores below exclude D4,
+which the author ran and which therefore is not a grade; the totals are upper bounds, so
+the verdict does not depend on it.
+
+| Skill | D1 | D2 | D3 | D4 | ceiling |
+|---|---|---|---|---|---|
+| koni-harness | 24 | 20.5 | 16 | UNGRADED | ≤85.5 |
+| koni-qc | 21 | 21.9 | 16 | UNGRADED | ≤83.9 |
+| koni-setup | 24 | 16.7 | 17 | UNGRADED | ≤82.7 |
+| koni-docs | 20 | 20.0 | 17 | UNGRADED | ≤82.0 |
+
+Residual findings are filed with evidence in
+[US-3.29](sprints/stories/US-3.29-skill-grading-residual-findings.md). This release fixes
+the defects v0.70.0–v0.71.0 introduced, plus the two most dangerous pre-existing ones.
+
+### Fixed — defects this work introduced
+
+- **koni-setup's `§6 Verify` had three non-functional checks out of four.** The
+  gate-runner call used `--dry-run`, which prints the gate list and exits 0 without
+  running anything — attached to the exact claim ("real content, not stubs") the pass
+  exists to establish. The component-path `awk` targeted the *Responsibility* column of
+  koni-docs' own architecture template and reported the `|---|` separator as a missing
+  path on every table (four false STALE lines on a correct document, when the reviewer
+  ran it). The backlog-story check counted every backlog story in the repo, so it passed
+  at zero as silently as at seven. All three replaced with checks that were **run** this
+  time — which immediately surfaced two more bugs (a scoped npm package name read as a
+  path, `wc -l` whitespace). Each check now states whether it fails or only reports.
+
+- **The `(inferred)` marker was a unilateral contract.** koni-docs' architecture template
+  has no confidence-marker convention, so the documented happy path derived findings,
+  handed them to koni-docs, and greped for markers a template never writes. The handoff
+  is now stated explicitly as the deriver's job.
+
+- **The reverse-engineering approval gate was escapable three ways**: scoped to `docs/`
+  while `repo-types.md` puts `ARCHITECTURE.md` at the root for some profiles; no waiver
+  clause, so "skip the approval" read as pre-approval; no defined non-interactive
+  behaviour. The gate is now on the *writing*, not the directory, and a waived review
+  produces a **labelled** document (markers, an unreviewed banner, filed stories, a
+  CONTEXT entry) rather than a confident one.
+
+- **koni-setup contradicted itself on stubs.** §2 licensed writing "if absent or a stub",
+  §3 required asking first, and the new RE table said stubs may be overwritten — with no
+  precedence rule and no definition of "stub". Now defined, with §2 scoped to bootstrap.
+
+- **The frontmatter budget check went silent on the case it was written for.** Everything
+  sat behind `if fm:`, so a `SKILL.md` with **no frontmatter at all** — the catastrophic
+  case the check's own comment cites — reported zero problems, and the fixture used a
+  well-formed block so nothing exercised the hole. LESSONS §39's exact shape, one file
+  away from where it was cited. Also fixed: hyphenated frontmatter keys
+  (`allowed-tools:`) were swallowed into the value and over-counted, and block-scalar
+  indicators (`|`, `>-`) leaked into the character count.
+
+- **`security` was asserted trigger-enforced in four places without reading the code**,
+  which says "opt-in by design" in bold. Both are true of *different objects*: the
+  **obligation** is trigger-enforced, the **gate** is dormant until
+  `.koni-harness/security-paths` is declared. That split is now stated at all four sites
+  — two independent reviewers reached opposite verdicts on this, which is itself the
+  evidence it was under-specified.
+
+- **"Skipping is a claim, so it is stated" was contradicted** by "those skips are allowed
+  and silent" in two older files, with no precedence rule. Resolved: `loop.sh` is silent
+  because it tracks position, not process; once a story exists the skip and its named
+  condition go in it. And the obligation is now a stated **human exit criterion** rather
+  than being withdrawn by its own "documented, not gated" sentence.
+
+- **`example-loop.md` — the file SKILL.md calls "the example to copy" — did not obey the
+  protocol this work made mandatory at tier 2.** It now carries the questions file and the
+  `Applied:` / `Skipped:` block.
+
+- **`frame-protocol.md`'s worked example contradicted itself**: Q1 recorded as answered
+  `A`, then a CONTEXT D-entry recording `B chosen over A/C`. And "that block is four
+  lines" described a six-line block.
+
+- **`gate-catalog.md` declared assertion counts "deliberately absent" while four
+  remained** — the four that predated the rule. Removing only the ones just added, then
+  stating the rule as if it held file-wide, is the same class the rule exists to prevent.
+
+- **The concern axis could not author a second concern**: no "where it lives", no
+  resolution rule from `concerns: [x]` to files, and the suggested `SEC-` / `A11Y-`
+  prefixes **already collide** with koni-qc's test-case category IDs. Concerns now
+  explicitly carry no rule table of their own.
+
+### Fixed — pre-existing, and the two most dangerous
+
+- **A false verification claim.** `gate-catalog.md` stated the `security-review` check
+  "is checked against three mutations" — no mutation harness existed anywhere for it. The
+  claim sat four paragraphs above the section arguing that an unverified guard is
+  worthless. **Made true rather than deleted**: the suite now runs its five cases against
+  three deliberately broken copies of the check (opt-in guard removed, warn exit forced to
+  0, reminder pointing at a nonexistent reference) and fails if any survives — plus a
+  guard that reports a mutation which no longer matches anything.
+
+- **Band D never propagated.** `quality-bar.md` gained a fourth band (density) and the
+  pass rule requires it, but koni-qc's `SKILL.md` still taught "three bands", and
+  `quality-bar.md`'s own Contents omitted Band D. An agent self-grading from the router
+  applied a bar that permits thin suites. LESSONS §18, again.
+
+### Changed
+
+- `check-references.py`'s docstring claimed **three** defect classes while implementing
+  **seven** — the drift class the file exists to catch, in its own header.
+- The "Testing a check" section is now marked monorepo-only: `install-gate.sh` vendors no
+  `__tests__/` and no `run-all.sh`, so step 4 of *Adding a custom check* does not exist in
+  a consumer repo.
+- CI is described as running "on pushes to `main` and on every PR" — a feature-branch push
+  with no PR open runs nothing.
+
+- **`story-lint` rejected a spec-legal story.** `frontmatter-spec.md` §3.1 documents
+  `sprint: ''` as the legal empty value for an unscheduled story, but the field reader
+  stripped only *double* quotes — so filing the first backlog story of this round failed
+  the gate with `sprint '' has no file at docs/sprints/''.md`. Found by the gate blocking
+  a correct commit; pinned by three assertions (both quote styles pass; a quoted sprint
+  naming a missing file still fails), proven to die when the fix is reverted.
+
+### Guards
+
+Self-test 41 → **42** planted classes, mutants 24 → **25**, both floors raised. Coverage
+gate green (272 lines). Harness evaluator: 15 suites, 0 failed, 10 checks, 0 uncovered.
+
+---
+
+## [0.71.0] — 2026-09-29 — run the skill-grading pass v0.70.0 owed, and guard the budget it broke
+
+The koni-harness loop says that when the deliverable is a **skill**, Review runs koni-qc
+**skill-grading** (≥95/100, [D19](CONTEXT.md)) instead of the product AC↔TC gate. Four
+skills changed in v0.70.0 and none was graded — the Review stage was reported complete on
+a step that never ran. This runs the dimension that needs no subagents (D4,
+best-practices) and fixes what it found.
+
+### Fixed
+
+- **`koni-harness`'s `description` was 1282 characters against a 1024 platform maximum.**
+  Over the limit the field truncates at load, and a truncated description is a skill that
+  silently stops triggering on whatever fell off the end. It had been at 1013/1024 —
+  eleven characters of headroom — for several versions; one round of added triggers took
+  it 269 past the edge, and nothing objected because nothing here read that budget.
+  Rewritten **triggers-only** (the rubric forbids workflow/ownership prose in
+  frontmatter): 876 chars. New: [LESSONS §43](LESSONS.md).
+
+- **Four prose assertion-counts in `gate-catalog.md`** — added in v0.70.0, and the exact
+  drift class US-3.19 mechanized for `checks`. Per [LESSONS §28](LESSONS.md) an ambiguous
+  count is de-numbered rather than mechanized, and this one genuinely is: the suites report
+  in three dialects and one prints a single line covering five cases. Removed, with the
+  reason stated in place so the next author does not helpfully restore them.
+
+### Added
+
+- **`check-references.py` now enforces the two SKILL.md frontmatter budgets** (`name` ≤ 64,
+  `description` ≤ 1024) and reports a missing `name:` / `description:`. A limit that lives
+  in the platform's spec rather than in this repo is one nobody here was checking — so it
+  is imported into the guard, with the number and the consequence in the failure message.
+
+  Pinned to the repo's existing discipline: three planted defect classes in the self-test
+  (floor 38 → 41), three mutants that narrow the new branch (floor 21 → 24), and a fixture
+  for the missing-field path. The coverage gate rejected the first attempt for precisely
+  that missing fixture, which is the gate working.
+
+### Notes
+
+- **D1 / D2 / D3 had not run at the time of this release.** They ran immediately after,
+  in v0.72.0 — see that entry for the scorecard. This bullet is left as written and
+  corrected here rather than edited away: the state it describes was true when it shipped.
+  D4 remains **UNGRADED**, because it was run by the author (see v0.72.0).
+- No story: a Review-stage pass over already-shipped FRs ([D33](CONTEXT.md) anti-sprawl →
+  sprint note + CHANGELOG).
+
+---
+
+## [0.70.2] — 2026-09-29 — the first CI run failed, and the way it failed was the point
 
 v0.70.0 added CI so that "all green" would be reproduced by something other than the
 machine claiming it. Its first run found two defects on the first try, both invisible
@@ -48,7 +388,7 @@ locally, and in opposite directions. New: [LESSONS §42](LESSONS.md).
 
 ---
 
-## [0.70.1] — 2026-09-04 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
+## [0.70.1] — 2026-09-29 — finish v0.70.0's doc surface: the activation contract, the guard commands, the structure tree, the kanban
 
 v0.70.0 shipped its CHANGELOG / CONTEXT / LESSONS / PRD / EPIC / story surface and stopped
 there. This completes it. One of the four was a live defect, not a gap.
@@ -104,7 +444,7 @@ there. This completes it. One of the four was a live defect, not a gap.
 
 ---
 
-## [0.70.0] — 2026-09-04 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
+## [0.70.0] — 2026-09-29 — five patterns absorbed from AI-DLC: a specified Frame, a reverse-engineering onboard, a guard evaluator with CI, and a second extension axis
 
 A comparative read of AWS Labs' [`aidlc-workflows`](https://github.com/awslabs/aidlc-workflows)
 against the Koni Agentic Loop came out lopsided in a useful way: Koni leads on the back half
@@ -188,7 +528,7 @@ absorbs five patterns from it and explicitly declines two. See [CONTEXT D43](CON
   either is taught, with the nesting restated each time (LESSONS §21).
 - `koni-qc` SKILL.md — the security-review row now names itself as the `security` concern.
 - Sprint bookkeeping: **W30 closed** at its real end date after five weeks at
-  `in-progress`; W31–W35 not opened (nothing shipped); [W36](sprints/sprint-2026-W36.md)
+  `in-progress`; W31–W35 not opened (nothing shipped); [W40](sprints/sprint-2026-W40.md)
   opened on the date `date` reports. The first attempt at this release opened the sprint as
   W35 from an inferred date — the [D40](CONTEXT.md) trap, hit a second time and corrected
   before commit.

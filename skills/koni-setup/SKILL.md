@@ -210,7 +210,14 @@ to live".
    [`references/reverse-engineering.md`](references/reverse-engineering.md).
    Doing this **before** step 4 is the point: it is what step 4 has to write.
 4. **Fill missing scaffolding only** — for each ⬜, create it (skeleton via this
-   skill, content via koni-docs). For each ⚠️ stub, ask before touching.
+   skill, content via koni-docs). For each ⚠️ stub, **ask before touching — one
+   confirmation covers the batch, but never proceed on silence.** A *stub* is a
+   file whose entire body is a `# Title` plus a `> TODO:` pointer; **anything a
+   human typed is real content** and falls under this section's no-rewrite rule,
+   however thin or stale. §2's "write only if absent or a stub" is a *bootstrap*
+   rule and licenses no overwrite here. The one exception is `ARCHITECTURE.md` /
+   `BRIEF.md` inside the reverse-engineering pass (step 3), where the approval
+   gate replaces this ask.
 5. **Re-wire skills if broken** — confirm the **core trio** (koni-docs +
    koni-harness + koni-qc) is wired and re-point any dangling symlink (see
    `references/skill-wiring.md` §repair); if koni-harness is wired but

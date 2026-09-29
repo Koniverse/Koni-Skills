@@ -1,23 +1,18 @@
 ---
 name: koni-harness
 description: >
-  Use when setting up or running a Koniverse repo's development loop or its
-  commit/release safety net — "set up the harness", "install / wire the gate",
-  "pre-commit / pre-push gate", "agentic loop", or "make the loop portable across
-  Claude / Cursor / Codex / Gemini". Also when a change risks a bad version bump, a
-  missing changelog anchor, leaked secrets, or broken doc references; to right-size
-  process; when stories get too small/fragmented (story sprawl); to learn from past
-  mistakes (read +
-  write LESSONS.md, lesson verdict); for a **story's UI work in the loop** — run the
-  design-skill trio (`/design-consultation` → `frontend-design` → `/design-review`)
-  for desktop **and** mobile, to `DESIGN.md` + design lessons (design-first); when
-  docs are filled "just enough" (doc-completeness bar); or to pick the next
-  dependency-ready story. Also to run work **multi-agent / in parallel** — "run the
-  sprint in parallel / swarm ready stories", "fan out review/tests across
-  agents" (swarm planner + worktree-per-story). Also at **Frame**, before code:
-  "what should I ask before building this", "is this ambiguous enough to stop",
-  "do I need an ADR / security review / design consultation for this change", or
-  "record why we skipped that step" (frame protocol + stage-applicability table).
+  Runs a Koniverse repo's development loop and its commit/release safety net.
+  Use for: "set up the harness", "install / wire the gate", "pre-commit /
+  pre-push gate", "agentic loop", "make the loop portable across Claude /
+  Cursor / Codex / Gemini"; a bad version bump, a missing changelog anchor,
+  leaked secrets, or broken doc references; right-sizing process; story sprawl;
+  reading or writing LESSONS.md; a story's UI work (the design-skill trio,
+  desktop and mobile); docs filled "just enough"; picking the next
+  dependency-ready story; running the sprint multi-agent / in parallel
+  ("swarm ready stories", "fan out review across agents"); at Frame — "what
+  should I ask before building this", "do I need an ADR / security review /
+  design consultation", "record why we skipped that step"; and testing the gate
+  itself ("does this check have a self-test", "prove the gate coverage").
 ---
 # koni-harness — Koni Agentic Loop + portable gate
 
@@ -115,6 +110,7 @@ coverage is derived from `gates.conf`, so a check named by no suite fails the
 run rather than passing unnoticed:
 
 ```sh
+# monorepo-only: install-gate.sh does not vendor the evaluator into a consumer repo
 sh skills/koni-harness/scripts/__tests__/run-all.sh
 ```
 
@@ -122,7 +118,7 @@ sh skills/koni-harness/scripts/__tests__/run-all.sh
 fail *before* asserting the clean case, and pin the skip-passes as skip-passes
 (most checks no-op when their subject is absent, which is how a check can exit
 `0` forever without ever running). The obligations, the floors, and the CI
-matrix (`sh`/dash **and** bash on every push and PR) are in
+matrix (`sh`/dash **and** bash, on pushes to `main` and on every PR) are in
 [`references/gate-catalog.md`](references/gate-catalog.md#testing-a-check).
 
 ## Run a story through the loop

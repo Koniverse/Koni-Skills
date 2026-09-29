@@ -112,8 +112,10 @@ CLAUDE.md and both loaded *alongside* this rule set, never instead of it:
   live in plugin skills; `koni-docs:` → `plugins: [supabase, nextjs]` loads them.
 - **`concerns:`** — what the repo must *guarantee*, independent of stack;
   `koni-docs:` → `concerns: [security]`. A concern names its own trigger surface, and
-  some are **trigger-enforced** — they apply when that surface is present whether or
-  not the repo listed them.
+  `security` is **trigger-enforced**: the **obligation** is trigger-enforced (a trust boundary in the diff owes a review whether or not `concerns:` lists it); the **gate** is opt-in and stays dormant until `.koni-harness/security-paths` declares where the boundaries are. Removing the declaration removes the reminder, never the obligation. "This repo
+  doesn't handle money" is not the trigger test — auth, authz/multi-tenancy,
+  untrusted input, secrets/crypto, upload, deserialization, and any new outbound
+  call are each triggers on their own.
 
 See [`references/plugin-pattern.md`](references/plugin-pattern.md) for both axes: how each
 is structured, discovered, and composed. `koni-nextjs` is the reference plugin; `security`
